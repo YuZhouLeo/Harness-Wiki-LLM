@@ -1,0 +1,15 @@
+// merge 到 ~/.claude/settings.json 的「頂層」（⚠️ 必須在最外層，不可放進 "permissions" 內，否則不會生效）
+//
+// ⚠️ 注意：是 **全域** ~/.claude/settings.json，不是專案的 <project>/.claude/settings.json。
+//   全域 merge 後所有專案共用，符合 multi-agent-dev skill 的全域共享設計。
+//
+// 啟用後，"SendMessage" / "TeamCreate" / "TeamDelete" 三個 deferred tools 會自動上線，
+// 主代理就能用 SendMessage 喚醒同一個 subagent 帶歷史續跑（多代理工作流核心機制）。
+//
+// 詳細驗證步驟見 ~/.claude/skills/multi-agent-dev/spec/SendMessage子代理續用使用指南.md。
+
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}

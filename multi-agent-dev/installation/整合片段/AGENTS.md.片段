@@ -1,0 +1,19 @@
+## Multi-agent workflow
+
+多代理工作流：使用全域 `multi-agent-dev` skill。觸發語：「**啟動多代理開發**」或顯式 `/multi-agent-dev`。
+
+- Skill 入口：`~/.claude/skills/multi-agent-dev/SKILL.md`（11 步調度流程）
+- 子代理：`~/.claude/agents/{planner,executor,lesson-keeper}.md`（user-level）
+- 完整設計規範：`~/.claude/skills/multi-agent-dev/spec/多代理協作工作流計劃.md`
+- 工作流 ADR（0001-0006）：`~/.claude/skills/multi-agent-dev/adr/`
+- 本專案累積經驗（planner/executor 開工前必 grep）：`wiki/lessons.md`（cwd 相對）
+- 本專案 Run Log 索引：`wiki/runs/INDEX.md`（cwd 相對）
+- 本專案業務 ADR（0007 起算）：`docs/ADR/`（cwd 相對）
+
+## Invariants
+
+Hard rules — not suggestions. **Canonical reference**: [docs/invariants.md](docs/invariants.md)。違反任一條 → impl-validator critical FAIL。
+
+- INV-01 — <一行摘要>
+- INV-02 — <一行摘要>
+- ...（依專案實際內容補上）

@@ -1,0 +1,56 @@
+# Project Invariants
+
+> Hard rules. Not suggestions. Violations are **critical FAIL** conditions for the impl-validator (see `~/.claude/skills/multi-agent-dev/codex-prompts/impl-validator-prompt.md` §嚴重度定義).
+>
+> **Canonical source**: this file. `AGENTS.md §Invariants` keeps a one-line summary list.
+
+---
+
+## How to use this template
+
+1. 把這份 `.範本` 複製到 `<project>/docs/invariants.md`（去掉 `.範本` 後綴）
+2. 把範本中所有 `<...>` 占位符與 INV-01 範例改成本專案實際內容
+3. 每條 invariant 寫成完整段：**Rule** / **Why** / **Violation examples** / **Correct pattern** / **Enforcement**
+4. 在 `AGENTS.md` 加一段 §Invariants 一行摘要列出所有 INV-NN
+
+**寫 invariants 的判準**：違反就會「真的炸」、不是品味問題的硬規則才上 invariant。可讀性、命名偏好、樣式偏好等屬於 conventions，放 `<project>/docs/conventions/`，不要放這裡。
+
+---
+
+## Index
+
+| ID | Domain | Rule | Mechanical check |
+|---|---|---|---|
+| [INV-01](#inv-01--example-rule-name) | example | <一句話> | manual / lint / script |
+
+---
+
+## INV-01 — Example rule name
+
+**Rule**: <Required behavior — must be testable / falsifiable>
+
+**Why**: <Why this is a hard rule, not a suggestion. Reference any past incident if applicable.>
+
+**Violation examples**:
+- <Concrete example 1>
+- <Concrete example 2>
+
+**Correct pattern**:
+```
+<code or pattern showing the right way>
+```
+
+**Enforcement**: <ESLint rule / CI script / manual review during PR>
+
+---
+
+## How the impl-validator uses this file
+
+When reviewing implementation diffs, the impl-validator (Codex adversarial-review mode) treats every rule above as a **critical FAIL** condition. Any violation must be reported with the corresponding `INV-XX` ID and the offending `<file>:<line>`. See `~/.claude/skills/multi-agent-dev/codex-prompts/impl-validator-prompt.md` for the full validator contract.
+
+## Adding new invariants
+
+1. Open an ADR in `<project>/docs/ADR/`（編號 0007 起算；工作流自身 ADR 0001-0006 在 `~/.claude/skills/multi-agent-dev/adr/`，不要動）explaining why this rule belongs at the invariant tier (vs. a convention or a code-review nit).
+2. Add the rule here following the `INV-NN` format (Index row + dedicated section).
+3. Update the `AGENTS.md §Invariants` summary list to mirror the new `INV-NN`.
+4. If mechanically enforceable, add the ESLint rule or CI script in the same PR.
