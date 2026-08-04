@@ -1,0 +1,56 @@
+# Run Log Index
+
+> 多代理工作流每次執行的索引。詳細時間線見對應 run 檔（命名 `<YYYYMMDD-HHmm>-<功能 slug>.md`）。
+>
+> **本檔（INDEX.md）會 commit**；單一 run 日誌（`[0-9]*.md`）**不 commit**（見 [.gitignore](../../.gitignore)、[計劃書 §9 #4](../../plans/多代理協作工作流計劃.md)）。
+>
+> **唯一寫入者**：主代理（orchestrator）。每個 run 結束時追加一行。
+
+---
+
+| 開始時間 | 任務 | 結果 | 連結 |
+|---|---|---|---|
+
+<!--
+範例條目：
+
+| 2026-05-06 14:32 | 台股 daily summary | ✅ PASS（plan=1 / impl=1 / lessons=2） | [run](20260506-1432-台股-daily-summary.md) |
+| 2026-05-06 16:10 | watchlist export | ⚠️ handoff（impl 3 輪 FAIL） | [run](20260506-1610-watchlist-export.md) |
+| 2026-05-07 09:00 | UI tweak | ⚠️ advisor-stuck（plan 3 輪無共識） | [run](20260507-0900-ui-tweak.md) |
+
+「結果」欄圖示：
+- ✅ PASS — 全程通過
+- ⚠️ handoff — 實作驗證 3 輪 FAIL，已寫 handoff MD 交棒使用者
+- ⚠️ advisor-stuck — 計劃顧問協商 3 輪無共識，已寫 advisor-stuck MD 交棒使用者
+-->
+
+---
+
+## 單一 run 檔的標準骨架
+
+由 [.claude/orchestrator.md](../../.claude/orchestrator.md) 步驟 0 規範。新建 run 檔時必須包含以下三個區塊：
+
+```markdown
+# Run: <功能名> — <YYYY-MM-DD HH:mm>
+
+## Agent ID 索引（SendMessage 用）
+
+| 角色 | agent_id | 說明 |
+|---|---|---|
+| planner | _待填_ | 規劃代理；步驟 1 spawn |
+| executor | _待填_ | 執行代理；步驟 6 spawn |
+| lesson-keeper | _待填_ | 經驗萃取代理；步驟 9 spawn（PASS 時） |
+
+## Codex Session ID 索引
+
+| 角色 | session_id | 說明 |
+|---|---|---|
+| advisor | _待填_ | 計劃顧問；步驟 2 開（`/codex:review --background`） |
+| impl-validator | _待填_ | 實作驗證者；步驟 7 開（`/codex:adversarial-review --background`） |
+
+## 時間線
+
+[HH:mm:ss] [orchestrator] Workflow start — feature="<功能名>"
+```
+
+每次 spawn 子代理或開 Codex session 後，**立即**把 ID 填進對應欄位，後續 SendMessage / `--resume` 直接從表中讀，不必回頭翻時間線。
