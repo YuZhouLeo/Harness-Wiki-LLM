@@ -81,8 +81,8 @@ td{border-bottom:1px solid var(--line);padding:7px 10px;vertical-align:top}
     </table>
     <ol class="steps">
       <li><span>安裝 <a href="https://code.visualstudio.com/">VS Code</a>。Chrome 也要有。</span></li>
-      <li><span>把入門包的 zip 解壓縮到桌面。<span class="see">不要直接在 zip 裡面開檔案。</span></span></li>
-      <li><span>在 VS Code 選 File → Open Folder，打開 <code>HTML講義入門包</code>。<span class="see">問你信不信任這個資料夾時，選信任。</span></span></li>
+      <li><span>把下載的 zip 解壓縮到桌面。<span class="see">不要直接在 zip 裡面開檔案。用 <code>git clone</code> 下載的人跳過這步。</span></span></li>
+      <li><span>在 VS Code 選 File → Open Folder，打開 <code>開始.html</code> 所在的資料夾。<span class="see">問你信不信任這個資料夾時，選信任。</span></span></li>
       <li><span>按 Ctrl+Shift+X（Mac 按 ⌘⇧X），搜尋上表的擴充功能，按 Install。</span></li>
       <li><span>打開擴充功能，登入你的帳號。<span class="see">它會開瀏覽器。不需要 API key。</span></span></li>
       <li><span>在對話框送出下面這句測試：<span class="say">讀 AGENTS.md，告訴我第 2 條規則是什麼</span><span class="see">AI 回答「內容只用原料和母版裡有的資料」就成功了。</span></span></li>
@@ -109,10 +109,10 @@ td{border-bottom:1px solid var(--line);padding:7px 10px;vertical-align:top}
 
   <section id="taste">
     <h2>先填喜好選單<small>做出屬於你的呈現方式</small></h2>
-    <p>喜好很難用嘴巴講，一張一張選比較快。講師的喜好也是這樣選出來的。</p>
+    <p>喜好很難用嘴巴講，一張一張選比較快。</p>
     <ol class="steps">
       <li><span>用 Chrome 打開 <a href="版面喜好選單/index.html"><code>版面喜好選單/index.html</code></a>。</span></li>
-      <li><span>每張範例選「喜歡」「留」或「不要」，至少選 3 個喜歡。<span class="see">想到什麼就寫在想法欄。徽章是講師的選擇，不想被影響就關掉開關。</span></span></li>
+      <li><span>每張範例選「喜歡」「留」或「不要」，至少選 3 個喜歡。<span class="see">拿不準就選「留」：適合時 AI 可以用。想到什麼就寫在想法欄。</span></span></li>
       <li><span>填完頁尾「你的喜好卡」的 6 題。</span></li>
       <li><span>下載 <code>我的喜好.md</code>，放進 <code>範例/</code>。</span></li>
       <li><span>跑 <code>find-style</code>。AI 會讀喜好卡和你喜歡的範例，把規則寫進 <code>AGENTS.md</code>。</span></li>
@@ -269,7 +269,7 @@ td{border-bottom:1px solid var(--line);padding:7px 10px;vertical-align:top}
     <h2>卡住了</h2>
     <table>
       <tr><th>狀況</th><th>怎麼辦</th></tr>
-      <tr><td>打 <code>/</code> 或 <code>$</code> 找不到 Skill</td><td>確認打開的是 <code>HTML講義入門包</code> 這個資料夾，不是上一層。再不行就送「照 <code>.agents/skills/…/SKILL.md</code> 做」。</td></tr>
+      <tr><td>打 <code>/</code> 或 <code>$</code> 找不到 Skill</td><td>確認打開的是 <code>開始.html</code> 所在的資料夾，不是上一層。再不行就送「照 <code>.agents/skills/…/SKILL.md</code> 做」。</td></tr>
       <tr><td>額度用完</td><td>和旁邊同學一起看他的畫面，步驟照學。各家額度重設的時間不同，回家再繼續。</td></tr>
       <tr><td>AI 說看不到圖</td><td>改用文字跟它說版面，或直接用模板：「用模板/講義-文史.html」。</td></tr>
       <tr><td>公式沒有排出來</td><td>確認講義和 <code>katex/</code> 資料夾都在 <code>產出/</code> 底下，沒有被搬開。</td></tr>
