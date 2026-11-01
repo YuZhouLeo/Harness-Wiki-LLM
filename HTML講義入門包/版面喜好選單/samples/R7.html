@@ -1,0 +1,473 @@
+<!doctype html>
+<!-- 版面喜好選單範例 R7｜工程圖紙總覽｜來源：講師範例庫 output範例/設計偏好選擇/samples/R7-工程圖紙總覽.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<!-- 範例 R7 工程圖紙總覽：借工程製圖的圖框，一頁看完一個規格、系統或流程的全貌。外框有座標（上下 1–8、左右 A–D），內部分成 A–F 六格、各有標題與小標，右下角是標題欄（圖名、規格、版次、日期）。淺色底、黑體為主、資訊密；每種顏色綁固定意思（藍＝核准／結構、紅＝不核准／警告、琥珀＝數量與上限、灰＝次要）。圖框、座標、格線、標題欄是版式本身的結構。來源參考圖：assets/1-raw/Karpathy - LLM 輸出格式建議/ASD-STE100 總覽.png；頁面內的文字是示意內容。 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>簡化技術英語總覽</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">')</script>
+<style>
+/* 變數名與 配色/palettes.css 的 P2 相同，換配色時整段蓋掉即可 */
+:root{
+  color-scheme:light;
+  --bg:#eef1f4;
+  --surface:#ffffff;
+  --surface-2:#f1f4f8;
+  --ink:#16191d;
+  --ink-2:#4b525b;
+  --line:#d5dce4;
+  --line-strong:#16191d;
+  --accent:#0b5cad;
+  --accent-soft:#e3eefa;
+  --warn:#8a5a00;
+  --warn-soft:#fff4d6;
+  --bad:#c0261c;
+  --bad-soft:#fcebea;
+  --sans:"IBM Plex Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,"Noto Sans TC","PingFang TC","Microsoft JhengHei",monospace;
+  --band:26px;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+h1,h2,h3,p,ul,ol,dl,dd{margin:0}
+ul,ol{padding:0;list-style:none}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.page{padding:20px 16px 48px}
+
+/* ===== 圖框：外框、座標帶、內框 ===== */
+.drawing{max-width:1760px;margin:0 auto;display:grid;grid-template-columns:var(--band) minmax(0,1fr) var(--band);grid-template-rows:var(--band) auto var(--band);background:var(--surface);border:1px solid var(--ink);box-shadow:0 1px 2px rgba(22,25,29,.08),0 12px 32px -20px rgba(22,25,29,.3)}
+.rt,.rb{grid-column:2;display:grid;grid-template-columns:repeat(8,minmax(0,1fr))}
+.rt{grid-row:1}
+.rb{grid-row:3}
+.rl,.rr{grid-row:2;display:grid;grid-template-rows:repeat(4,minmax(0,1fr))}
+.rl{grid-column:1}
+.rr{grid-column:3}
+.rt span,.rb span,.rl span,.rr span{display:grid;place-items:center;font:500 12px/1 var(--mono);color:var(--ink-2)}
+.rt span+span,.rb span+span{border-left:1px solid var(--ink)}
+.rl span+span,.rr span+span{border-top:1px solid var(--ink)}
+.field{grid-column:2;grid-row:2;border:2px solid var(--ink);padding:18px;display:grid;gap:16px;align-content:start}
+
+/* ===== 兩列格子 ===== */
+.row{display:grid;gap:16px;align-items:stretch}
+.row-1{grid-template-columns:minmax(0,4.3fr) minmax(0,6.4fr) minmax(0,4.2fr)}
+.row-2{grid-template-columns:minmax(0,8.4fr) minmax(0,4fr) minmax(0,4.2fr)}
+.stack{display:flex;flex-direction:column;gap:16px;min-width:0}
+.stack .cell{flex:1}
+
+.cell{display:flex;flex-direction:column;min-width:0;background:var(--surface);border:1.5px solid var(--ink)}
+.cell>header{display:flex;align-items:stretch;border-bottom:1.5px solid var(--ink)}
+.tag{display:grid;place-items:center;flex:0 0 38px;background:var(--ink);color:#fff;font:600 16px/1 var(--mono)}
+.cell h2{padding:8px 12px;font:600 17px/1.4 var(--sans)}
+.sub{margin-left:auto;align-self:center;padding:0 12px 0 4px;font:400 12px/1.3 var(--mono);color:var(--ink-2);text-align:right}
+.body{padding:14px 14px 12px;flex:1;display:flex;flex-direction:column;min-width:0}
+.fn{margin-top:auto;padding-top:12px;font-size:12px;line-height:1.5;color:var(--ink-2)}
+.fn+.fn{padding-top:2px;margin-top:0}
+
+/* 狀態：顏色加圖示加文字，不只靠顏色 */
+.st{display:inline-flex;align-items:center;gap:5px;font:500 13px/1.3 var(--sans);white-space:nowrap}
+.st svg{width:13px;height:13px;flex:none}
+.st.ok{color:var(--accent)}
+.st.no{color:var(--bad)}
+
+/* ===== A 文件結構 ===== */
+.tree{position:relative}
+.root{position:relative;width:62%;margin:0 auto;padding:7px 8px;text-align:center;background:var(--accent-soft);border:1.5px solid var(--accent);display:flex;flex-direction:column;line-height:1.35}
+.root strong{font:600 17px/1.3 var(--sans);color:var(--ink)}
+.root span{font-size:13px;color:var(--accent)}
+.root::after{content:"";position:absolute;left:50%;top:100%;height:16px;border-left:1.5px solid var(--ink)}
+.branches{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding-top:16px}
+.branches::before{content:"";position:absolute;top:0;left:25%;right:25%;border-top:1.5px solid var(--ink)}
+.part{min-width:0}
+.pbox{position:relative;padding:7px 6px;border:1.5px solid var(--ink);text-align:center;font-weight:600;font-size:14px;line-height:1.35;background:var(--surface)}
+.pbox::before{content:"";position:absolute;left:50%;bottom:100%;height:16px;border-left:1.5px solid var(--ink)}
+.tl{margin:12px 0 0 14px;border-left:1px solid var(--ink-2)}
+.tl li{position:relative;padding:3px 0 3px 14px;font-size:14px;line-height:1.45}
+.tl li::before{content:"";position:absolute;left:0;top:calc(50% - .5px);width:10px;border-top:1px solid var(--ink-2)}
+.tl .k{display:block;font:400 12px/1.2 var(--mono);color:var(--ink-2)}
+.tl small{display:block;font-size:12px;line-height:1.4;color:var(--ink-2)}
+.tl-words li{padding:9px 0 9px 14px}
+.tl-words li b{font-weight:500}
+.tl-sec li{padding:7px 0 7px 14px}
+.tl-sec .k{display:inline;margin-right:6px}
+.limit-box{margin-top:12px;padding:8px 10px;background:var(--surface-2);border:1px solid var(--line);font-size:14px;line-height:1.45}
+.limit-box b{display:block;font-weight:600}
+.limit-box small{font-size:12px;color:var(--ink-2)}
+
+/* ===== B 句子解剖 ===== */
+.orig-label{font:400 12px/1.4 var(--mono);color:var(--ink-2)}
+.orig{margin:4px 0 0;font:400 13px/1.6 var(--mono);color:var(--ink-2);overflow-wrap:anywhere}
+.orig .x{color:var(--bad)}
+.blk{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.blk h3{display:flex;align-items:center;gap:8px;font:600 14px/1.4 var(--sans)}
+.blk h3 b{display:grid;place-items:center;flex:none;width:20px;height:20px;border:1.5px solid var(--ink);font:600 12px/1 var(--mono)}
+.dim{display:flex;align-items:center;gap:8px;height:16px;margin:10px 0 10px;padding:0 1px;color:var(--warn);border-left:1.5px solid;border-right:1.5px solid;font:500 12px/1 var(--mono);white-space:nowrap}
+.ln{position:relative;flex:1;height:10px}
+.ln::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid currentColor}
+.ln::after{content:"";position:absolute;top:50%;margin-top:-4px;border:4px solid transparent}
+.ln.l::after{left:0;border-left:0;border-right:7px solid currentColor}
+.ln.r::after{right:0;border-right:0;border-left:7px solid currentColor}
+.gloss{display:flex;flex-wrap:wrap;align-items:flex-start;column-gap:.6em;row-gap:12px;font:400 14px/1.5 var(--mono)}
+.seg{display:flex;flex-direction:column;align-items:flex-start;max-width:100%;min-width:0}
+.seg .w{position:relative;white-space:nowrap}
+.seg.plain .w,.seg.long .w{white-space:normal}
+.seg.ok{--c:var(--accent)}
+.seg.no{--c:var(--bad)}
+.seg.ok .w,.seg.no .w{padding-bottom:10px}
+.seg.ok .w::after,.seg.no .w::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;border:1.5px solid var(--c);border-top:0}
+.seg small{display:block;max-width:9.5em;margin-top:2px;color:var(--c);font:400 12px/1.4 var(--sans)}
+.seg.long small{max-width:none}
+.callout{margin-top:10px;padding:5px 8px;border-left:3px solid var(--bad);background:var(--bad-soft);color:var(--bad);font-size:13px;line-height:1.5}
+.blk .meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 12px;margin-top:8px;font:400 12px/1.5 var(--mono);color:var(--ink-2)}
+.blk .meta .n{color:var(--warn)}
+
+/* ===== 表格（C、D）===== */
+table{width:100%;border-collapse:collapse}
+th{padding:6px 10px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);background:var(--surface-2);font:500 12px/1.4 var(--sans);color:var(--ink-2);text-align:left;white-space:nowrap}
+td{padding:7px 10px;vertical-align:middle;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+tbody tr:nth-child(odd){background:var(--surface-2)}
+tbody tr+tr td{border-top:1px solid var(--line)}
+.cell .body.flush{padding:0}
+.flush .tbl{padding:0}
+.flush .fn{padding:12px 14px 12px;border-top:1px solid var(--line);margin-top:auto}
+.ex{font:400 13px/1.5 var(--mono)}
+.t-verbs td{padding:10px 10px}
+.words{font:500 13px/1.45 var(--mono);white-space:nowrap}
+.words small{display:block;font:400 12px/1.3 var(--mono);color:var(--ink-2)}
+.t-dict .ex{font:400 13px/1.5 var(--sans)}
+.t-dict td{padding:7px 8px}
+.alt{font:600 13px/1.4 var(--mono);color:var(--accent)}
+.bad-ex{color:var(--bad)}
+.dash{color:var(--ink-2)}
+
+/* ===== E 上限 ===== */
+.lim+.lim{margin-top:18px}
+.lh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:14px;line-height:1.4}
+.lh small{font-size:12px;color:var(--ink-2);margin-left:6px}
+.mx{font:500 13px/1.3 var(--mono);color:var(--warn);white-space:nowrap}
+.axis{margin:5px 8px 0}
+.bar{height:14px;border:1px solid var(--ink-2);background:var(--surface)}
+.bar i{display:block;height:100%;background:var(--accent-soft);border-right:2px solid var(--accent)}
+.scale{position:relative;height:22px}
+.scale span{position:absolute;top:0;transform:translateX(-50%);font:400 12px/1 var(--mono);color:var(--ink-2);text-align:center}
+.scale span::before{content:"";display:block;width:1px;height:4px;margin:0 auto 2px;background:var(--ink-2)}
+.rules{margin-top:auto;padding-top:14px}
+.rules li{position:relative;padding:2px 0 2px 16px;font-size:13px;line-height:1.5}
+.rules li::before{content:"";position:absolute;left:2px;top:.72em;width:6px;height:6px;background:var(--ink)}
+
+/* ===== F 沿革、標題欄 ===== */
+.tline{margin:auto 0}
+.tline li{display:grid;grid-template-columns:56px 22px minmax(0,1fr);gap:0 8px;align-items:start;padding:0 0 18px;font-size:13px;line-height:1.55;color:var(--ink-2)}
+.tline li:last-child{padding-bottom:0}
+.tline .yr{padding-top:1px;font:500 16px/1.4 var(--mono);color:var(--ink)}
+.nd{display:block;position:relative;align-self:stretch}
+.nd::before{content:"";position:absolute;left:50%;top:0;bottom:-18px;border-left:1.5px solid var(--ink)}
+.tline li:first-child .nd::before{top:12px}
+.tline li:last-child .nd::before{display:none}
+.nd::after{content:"";position:absolute;left:50%;top:7px;width:11px;height:11px;margin-left:-6px;border:1.5px solid var(--ink);border-radius:50%;background:var(--surface)}
+.tb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);background:var(--surface);border:1.5px solid var(--ink)}
+.tb>div{padding:6px 10px 7px;min-width:0}
+.tb>div+div{border-top:1px solid var(--ink)}
+.tb dt{font:400 12px/1.4 var(--mono);color:var(--ink-2)}
+.tb dd{font:500 15px/1.4 var(--sans);overflow-wrap:anywhere}
+.tb .full{grid-column:1 / -1;border-top:0}
+.tb .full dd{font:600 17px/1.45 var(--sans)}
+.tb>div:nth-child(odd):not(.full){border-left:1px solid var(--ink)}
+
+/* ===== 版式說明（範例說明，交付物不要帶）===== */
+.spec{max-width:1760px;margin:20px auto 0;padding:16px 20px;background:var(--surface);border:1px solid var(--line);font-size:14px;line-height:1.7}
+.spec h2{font:600 15px/1.5 var(--sans);margin-bottom:6px}
+.spec dl{display:grid;grid-template-columns:96px minmax(0,1fr);gap:4px 14px}
+.spec dt{font-weight:600}
+.spec dd{overflow-wrap:anywhere}
+.spec code{font:400 13px/1.5 var(--mono)}
+.sw{display:inline-block;width:12px;height:12px;margin-right:4px;vertical-align:-1px;border:1px solid var(--ink-2)}
+
+@media (max-width:1180px){
+  .row-1,.row-2{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:760px){
+  .page{padding:10px 8px 32px}
+  .drawing{display:block}
+  .rt,.rb,.rl,.rr{display:none}
+  .field{padding:12px;gap:12px;border-width:1.5px;margin:6px}
+  .row,.stack{gap:12px}
+  .body{padding:12px}
+  .sub{display:none}
+  .branches{gap:8px}
+  .root{width:80%}
+  .seg .w{white-space:normal}
+  .gloss{column-gap:.5em}
+  .dim{font-size:12px}
+  /* 表格改成卡片列 */
+  table,thead,tbody,tr,td{display:block}
+  thead{display:none}
+  tbody tr{padding:8px 12px;border-top:1px solid var(--line)}
+  tbody tr:first-child{border-top:0}
+  tbody tr+tr td{border-top:0}
+  td,.t-verbs td,.t-dict td{padding:1px 0}
+  .tl-sec .k{display:block;margin:0}
+  .t-verbs tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 10px;align-items:center}
+  .t-verbs td:nth-child(2){grid-column:1 / -1;grid-row:2}
+  .t-verbs td:nth-child(3){grid-column:2;grid-row:1}
+  .t-dict tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 10px;align-items:center}
+  .t-dict td:nth-child(n+3){grid-column:1 / -1}
+  .t-dict td[data-l]::before{content:attr(data-l) "　";font:400 12px/1.5 var(--sans);color:var(--ink-2)}
+  .t-dict td.dash{display:none}
+  .spec{padding:14px 14px}
+  .spec dl{grid-template-columns:1fr;gap:0}
+  .spec dd{margin-bottom:8px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-ok" viewBox="0 0 14 14"><path d="M2.5 7.4l3 3 6-6.6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-no" viewBox="0 0 14 14"><path d="M3 3l8 8M11 3l-8 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+</svg>
+
+<div class="page">
+<h1 class="sr-only">簡化技術英語 ASD-STE100 總覽（工程圖紙版式）</h1>
+
+<main class="drawing">
+  <!-- 座標：上下 1–8、左右 A–D，只是圖框結構，手機上隱藏 -->
+  <div class="rt" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+  <div class="rl" aria-hidden="true"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+
+  <div class="field">
+
+    <div class="row row-1">
+
+      <!-- A 文件結構 -->
+      <section class="cell" aria-labelledby="h-a">
+        <header><span class="tag" aria-hidden="true">A</span><h2 id="h-a">文件結構</h2><span class="sub">ASD-STE100 規格</span></header>
+        <div class="body">
+          <div class="tree">
+            <div class="root"><strong lang="en">ASD-STE100</strong><span>簡化技術英語</span></div>
+            <div class="branches">
+              <div class="part">
+                <div class="pbox">第 1 部：寫作規則</div>
+                <ul class="tl tl-sec">
+                  <li><span class="k">第 1 節</span>詞彙</li>
+                  <li><span class="k">第 2 節</span>名詞群</li>
+                  <li><span class="k">第 3 節</span>動詞</li>
+                  <li><span class="k">第 4 節</span>句子</li>
+                  <li><span class="k">第 5 節</span>程序</li>
+                  <li><span class="k">第 6 節</span>描述性寫作</li>
+                  <li><span class="k">第 7 節</span>安全指示</li>
+                  <li><span class="k">第 8 節</span>標點與字數</li>
+                  <li><span class="k">第 9 節</span>寫作慣例</li>
+                </ul>
+              </div>
+              <div class="part">
+                <div class="pbox">第 2 部：字典</div>
+                <ul class="tl tl-words">
+                  <li><b>核准詞</b><small>關鍵字用大寫，一詞一義</small></li>
+                  <li><b>不核准詞</b><small>小寫，附核准的替代詞</small></li>
+                  <li><b>技術名稱</b><small>公司用詞，依類別定義</small></li>
+                  <li><b>技術動詞</b><small>公司用動詞，依類別定義</small></li>
+                </ul>
+                <div class="limit-box"><b>約 900 個核准詞</b><small>一詞只有一種詞性與意思</small></div>
+              </div>
+            </div>
+          </div>
+          <p class="fn">規則依章節編號，例如規則 5.1 屬於第 5 節「程序」。</p>
+        </div>
+      </section>
+
+      <!-- B 句子解剖 -->
+      <section class="cell" aria-labelledby="h-b">
+        <header><span class="tag" aria-hidden="true">B</span><h2 id="h-b">句子解剖</h2><span class="sub">標註範例</span></header>
+        <div class="body">
+          <p class="orig-label">原文（不是 STE），不核准的字以紅字標出</p>
+          <p class="orig" lang="en">It is <span class="x">imperative</span> that the operator <span class="x">ensures</span> the hydraulic reservoir is <span class="x">replenished prior to commencing</span> operation.</p>
+
+          <div class="blk">
+            <h3><b>1</b>程序句（同一個指示，改寫後）</h3>
+            <div class="dim" role="img" aria-label="13 個字，上限 20"><span class="ln l"></span><span>13 個字，上限 20</span><span class="ln r"></span></div>
+            <div class="gloss">
+              <span class="seg ok"><span class="w" lang="en">Make sure that</span><small>核准動詞，命令式</small></span>
+              <span class="seg plain"><span class="w" lang="en">the</span></span>
+              <span class="seg ok"><span class="w" lang="en">hydraulic reservoir</span><small>技術名稱：2 字名詞群（上限 3）</small></span>
+              <span class="seg ok"><span class="w" lang="en">is full</span><small>不用「replenished」</small></span>
+              <span class="seg ok"><span class="w" lang="en">before</span><small>不用「prior to」</small></span>
+              <span class="seg ok"><span class="w" lang="en">you</span><small>主動語態</small></span>
+              <span class="seg ok"><span class="w" lang="en">start</span><small>不用「commencing」</small></span>
+              <span class="seg plain"><span class="w" lang="en">the operation.</span></span>
+            </div>
+          </div>
+
+          <div class="blk">
+            <h3><b>2</b>安全指示</h3>
+            <div class="gloss" style="margin-top:10px">
+              <span class="seg no"><span class="w" lang="en">WARNING:</span><small>警告字樣</small></span>
+              <span class="seg ok long"><span class="w" lang="en">Do not touch the brake unit until it is cool.</span><small>先講：清楚、簡單的命令</small></span>
+              <span class="seg ok long"><span class="w" lang="en">Hot parts can cause injury.</span><small>再講：風險</small></span>
+            </div>
+            <p class="callout">WARNING 表示人員受傷的風險，CAUTION 表示設備損壞的風險。</p>
+          </div>
+
+          <div class="blk">
+            <h3><b>3</b>描述句</h3>
+            <div class="dim" role="img" aria-label="12 個字，上限 25"><span class="ln l"></span><span>12 個字，上限 25</span><span class="ln r"></span></div>
+            <div class="gloss">
+              <span class="seg plain"><span class="w" lang="en">The pump</span></span>
+              <span class="seg ok"><span class="w" lang="en">supplies</span><small>簡單現在式</small></span>
+              <span class="seg plain"><span class="w" lang="en">fuel to the engine when the switch is on.</span></span>
+            </div>
+            <p class="meta"><span class="n">每段最多 6 句</span><span>一段只寫一個主題</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- C 動詞形式 -->
+      <section class="cell" aria-labelledby="h-c">
+        <header><span class="tag" aria-hidden="true">C</span><h2 id="h-c">動詞形式</h2><span class="sub">第 3 節</span></header>
+        <div class="body flush">
+          <table class="t-verbs">
+            <thead><tr><th>形式</th><th>範例</th><th>狀態</th></tr></thead>
+            <tbody>
+              <tr><td>命令式</td><td class="ex" lang="en">Close the valve.</td><td><span class="st ok"><svg aria-hidden="true"><use href="#i-ok"/></svg>核准</span></td></tr>
+              <tr><td>簡單現在式</td><td class="ex" lang="en">The valve closes.</td><td><span class="st ok"><svg aria-hidden="true"><use href="#i-ok"/></svg>核准</span></td></tr>
+              <tr><td>簡單過去式</td><td class="ex" lang="en">The valve closed.</td><td><span class="st ok"><svg aria-hidden="true"><use href="#i-ok"/></svg>核准</span></td></tr>
+              <tr><td>簡單未來式</td><td class="ex" lang="en">The valve will close.</td><td><span class="st ok"><svg aria-hidden="true"><use href="#i-ok"/></svg>核准</span></td></tr>
+              <tr><td>不定詞</td><td class="ex" lang="en">Turn the knob to close it.</td><td><span class="st ok"><svg aria-hidden="true"><use href="#i-ok"/></svg>核准</span></td></tr>
+              <tr><td>過去分詞（作形容詞）</td><td class="ex" lang="en">The closed valve</td><td><span class="st ok"><svg aria-hidden="true"><use href="#i-ok"/></svg>核准</span></td></tr>
+              <tr><td>進行式（-ing）</td><td class="ex" lang="en">The valve is closing.</td><td><span class="st no"><svg aria-hidden="true"><use href="#i-no"/></svg>不核准</span></td></tr>
+              <tr><td>完成式</td><td class="ex" lang="en">The valve has closed.</td><td><span class="st no"><svg aria-hidden="true"><use href="#i-no"/></svg>不核准</span></td></tr>
+              <tr><td>被動語態（用於程序）</td><td class="ex" lang="en">The valve must be closed.</td><td><span class="st no"><svg aria-hidden="true"><use href="#i-no"/></svg>不核准</span></td></tr>
+            </tbody>
+          </table>
+          <p class="fn">-ing 形式只能出現在技術名稱裡，例如 “landing gear”。描述性文字必要時才可用被動語態。</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="row row-2">
+
+      <!-- D 字典條目 -->
+      <section class="cell" aria-labelledby="h-d">
+        <header><span class="tag" aria-hidden="true">D</span><h2 id="h-d">字典條目</h2><span class="sub">第 2 部的格式</span></header>
+        <div class="body flush">
+          <table class="t-dict">
+            <thead><tr><th>詞（詞性）</th><th>狀態</th><th>意思或替代詞</th><th>核准範例</th><th>不核准的寫法</th></tr></thead>
+            <tbody>
+              <tr><td class="words" lang="en">CLOSE<small>(v)</small></td><td><span class="st ok"><svg aria-hidden="true"><use href="#i-ok"/></svg>核准</span></td><td data-l="意思">使閉合；使停止流動</td><td class="ex" lang="en" data-l="核准範例">CLOSE the valve.</td><td class="dash" data-l="不核准">—</td></tr>
+              <tr><td class="words" lang="en">close<small>(adj)</small></td><td><span class="st no"><svg aria-hidden="true"><use href="#i-no"/></svg>不核准</span></td><td class="alt" lang="en" data-l="改用">NEAR</td><td class="ex" lang="en" data-l="核准範例">Put the tool NEAR the panel.</td><td class="ex bad-ex" lang="en" data-l="不核准">Put the tool close to the panel.</td></tr>
+              <tr><td class="words" lang="en">commence<small>(v)</small></td><td><span class="st no"><svg aria-hidden="true"><use href="#i-no"/></svg>不核准</span></td><td class="alt" lang="en" data-l="改用">START</td><td class="ex" lang="en" data-l="核准範例">START the pump.</td><td class="ex bad-ex" lang="en" data-l="不核准">Commence pumping.</td></tr>
+              <tr><td class="words" lang="en">ensure<small>(v)</small></td><td><span class="st no"><svg aria-hidden="true"><use href="#i-no"/></svg>不核准</span></td><td class="alt" lang="en" data-l="改用">MAKE SURE</td><td class="ex" lang="en" data-l="核准範例">MAKE SURE THAT the switch is off.</td><td class="ex bad-ex" lang="en" data-l="不核准">Ensure the switch is off.</td></tr>
+              <tr><td class="words" lang="en">prior to<small>(prep)</small></td><td><span class="st no"><svg aria-hidden="true"><use href="#i-no"/></svg>不核准</span></td><td class="alt" lang="en" data-l="改用">BEFORE</td><td class="ex" lang="en" data-l="核准範例">BEFORE you start the engine,</td><td class="ex bad-ex" lang="en" data-l="不核准">Prior to starting the engine,</td></tr>
+              <tr><td class="words" lang="en">replenish<small>(v)</small></td><td><span class="st no"><svg aria-hidden="true"><use href="#i-no"/></svg>不核准</span></td><td class="alt" lang="en" data-l="改用">FILL</td><td class="ex" lang="en" data-l="核准範例">FILL the reservoir.</td><td class="ex bad-ex" lang="en" data-l="不核准">Replenish the reservoir.</td></tr>
+              <tr><td class="words" lang="en">utilize<small>(v)</small></td><td><span class="st no"><svg aria-hidden="true"><use href="#i-no"/></svg>不核准</span></td><td class="alt" lang="en" data-l="改用">USE</td><td class="ex" lang="en" data-l="核准範例">USE a torque wrench.</td><td class="ex bad-ex" lang="en" data-l="不核准">Utilize a torque wrench.</td></tr>
+              <tr><td class="words" lang="en">approximately<small>(adv)</small></td><td><span class="st no"><svg aria-hidden="true"><use href="#i-no"/></svg>不核准</span></td><td class="alt" lang="en" data-l="改用">ABOUT</td><td class="ex" lang="en" data-l="核准範例">Wait for ABOUT 10 minutes.</td><td class="ex bad-ex" lang="en" data-l="不核准">Wait approximately 10 minutes.</td></tr>
+              <tr><td class="words" lang="en">TEST<small>(v)</small></td><td><span class="st ok"><svg aria-hidden="true"><use href="#i-ok"/></svg>核准</span></td><td data-l="意思">找出是否運作正常</td><td class="ex" lang="en" data-l="核准範例">TEST the circuit.</td><td class="dash" data-l="不核准">—</td></tr>
+              <tr><td class="words" lang="en">in order to</td><td><span class="st no"><svg aria-hidden="true"><use href="#i-no"/></svg>不核准</span></td><td class="alt" lang="en" data-l="改用">TO</td><td class="ex" lang="en" data-l="核准範例">Remove the panel TO get access.</td><td class="ex bad-ex" lang="en" data-l="不核准">Remove the panel in order to get access.</td></tr>
+            </tbody>
+          </table>
+          <p class="fn">慣例：核准詞用大寫，不核准詞用小寫。<br>核准詞只保留列出的意思與詞性：“close” 只能當動詞（關閉），不能當形容詞（靠近）。</p>
+        </div>
+      </section>
+
+      <!-- E 寫作規則上限 -->
+      <section class="cell" aria-labelledby="h-e">
+        <header><span class="tag" aria-hidden="true">E</span><h2 id="h-e">寫作規則上限</h2><span class="sub">最大值</span></header>
+        <div class="body">
+          <div class="lim">
+            <div class="lh"><span>程序句</span><span class="mx">上限 20 字</span></div>
+            <div class="axis">
+              <div class="bar" role="img" aria-label="程序句上限 20 字，刻度 0 到 30"><i style="width:66.67%"></i></div>
+              <div class="scale" aria-hidden="true"><span style="left:0%">0</span><span style="left:16.67%">5</span><span style="left:33.33%">10</span><span style="left:50%">15</span><span style="left:66.67%">20</span><span style="left:83.33%">25</span><span style="left:100%">30</span></div>
+            </div>
+          </div>
+          <div class="lim">
+            <div class="lh"><span>描述句</span><span class="mx">上限 25 字</span></div>
+            <div class="axis">
+              <div class="bar" role="img" aria-label="描述句上限 25 字，刻度 0 到 30"><i style="width:83.33%"></i></div>
+              <div class="scale" aria-hidden="true"><span style="left:0%">0</span><span style="left:16.67%">5</span><span style="left:33.33%">10</span><span style="left:50%">15</span><span style="left:66.67%">20</span><span style="left:83.33%">25</span><span style="left:100%">30</span></div>
+            </div>
+          </div>
+          <div class="lim">
+            <div class="lh"><span>描述段落</span><span class="mx">上限 6 句</span></div>
+            <div class="axis">
+              <div class="bar" role="img" aria-label="描述段落上限 6 句，刻度 0 到 10"><i style="width:60%"></i></div>
+              <div class="scale" aria-hidden="true"><span style="left:0%">0</span><span style="left:10%">1</span><span style="left:20%">2</span><span style="left:30%">3</span><span style="left:40%">4</span><span style="left:50%">5</span><span style="left:60%">6</span><span style="left:70%">7</span><span style="left:80%">8</span><span style="left:90%">9</span><span style="left:100%">10</span></div>
+            </div>
+          </div>
+          <div class="lim">
+            <div class="lh"><span>名詞群</span><span class="mx">上限 3 字</span></div>
+            <div class="axis">
+              <div class="bar" role="img" aria-label="名詞群上限 3 字，刻度 0 到 5"><i style="width:60%"></i></div>
+              <div class="scale" aria-hidden="true"><span style="left:0%">0</span><span style="left:20%">1</span><span style="left:40%">2</span><span style="left:60%">3</span><span style="left:80%">4</span><span style="left:100%">5</span></div>
+            </div>
+          </div>
+          <div class="lim">
+            <div class="lh"><span>每句的指示數<small>（同時進行的動作除外）</small></span><span class="mx">上限 1</span></div>
+            <div class="axis">
+              <div class="bar" role="img" aria-label="每句指示數上限 1，刻度 0 到 3"><i style="width:33.33%"></i></div>
+              <div class="scale" aria-hidden="true"><span style="left:0%">0</span><span style="left:33.33%">1</span><span style="left:66.67%">2</span><span style="left:100%">3</span></div>
+            </div>
+          </div>
+          <ul class="rules">
+            <li>同一件事每次都用同一個詞。</li>
+            <li>不要省略 “the”、“a”、“this” 這類字。</li>
+            <li>程序裡用主動語態。</li>
+            <li>內容複雜時用直式清單。</li>
+            <li>每段只寫一個主題。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- F 沿革＋標題欄 -->
+      <div class="stack">
+        <section class="cell" aria-labelledby="h-f">
+          <header><span class="tag" aria-hidden="true">F</span><h2 id="h-f">沿革</h2></header>
+          <div class="body">
+            <ol class="tline">
+              <li><b class="yr">1979</b><i class="nd" aria-hidden="true"></i><span>AECMA 開始研究航空業用的受控英語</span></li>
+              <li><b class="yr">1986</b><i class="nd" aria-hidden="true"></i><span>AECMA 簡化英語指南首次出版</span></li>
+              <li><b class="yr">2005</b><i class="nd" aria-hidden="true"></i><span>2004 年 AECMA 併入 ASD，更名為 ASD-STE100</span></li>
+              <li><b class="yr">現在</b><i class="nd" aria-hidden="true"></i><span>免費下載，由 ASD-STEMG 修訂</span></li>
+            </ol>
+            <p class="fn">STEMG：Simplified Technical English Maintenance Group，簡化技術英語維護小組。</p>
+          </div>
+        </section>
+
+        <!-- 標題欄：圖名、規格、版次、日期 -->
+        <dl class="tb" aria-label="標題欄">
+          <div class="full"><dt>圖名</dt><dd>簡化技術英語：總覽</dd></div>
+          <div><dt>規格</dt><dd lang="en">ASD-STE100</dd></div>
+          <div><dt>負責單位</dt><dd>ASD</dd></div>
+          <div><dt>原始領域</dt><dd>航空維修</dd></div>
+          <div><dt>現用領域</dt><dd>國防、鐵路、工業</dd></div>
+          <div><dt>來源</dt><dd lang="en">asd-ste100.org</dd></div>
+          <div><dt>圖紙</dt><dd>第 1 張，共 1 張</dd></div>
+          <div><dt>版次</dt><dd>A</dd></div>
+          <div><dt>日期</dt><dd>2026-10-08</dd></div>
+        </dl>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="rr" aria-hidden="true"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+  <div class="rb" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+</main>
+
+<!-- 版式說明：範例說明，交付物不要帶 -->
+<footer class="spec">
+  <h2>R7 工程圖紙總覽：版式說明（範例說明，交付物不要帶）</h2>
+  <dl>
+    <dt>適合</dt>
+    <dd>內容是「一頁看完一個規格、系統或流程全貌」的總覽頁：能切成 4 到 6 個各有主題的分區（結構圖、標註範例、對照表、上限或指標、沿革），讀者要的是一眼掃過全部、再挑一格細看。右下的標題欄寫圖名、規格、版次、日期，讓這一頁像一張可以歸檔的圖紙。</dd>
+    <dt>風險</dt>
+    <dd>資訊很密，格子數與位置接近固定：內容少於四塊會顯得空，多於六塊要拆頁；敘述型、需要從頭讀到尾的內容不適合。手機上六格改成單欄、座標隱藏，圖紙感會變弱，只剩分區與標題欄。標題欄的版次與日期如果沒有真實資料，要寫「需使用者提供」，不要編。</dd>
+    <dt>做法要點</dt>
+    <dd>圖框、座標、格線、標題欄是版式的結構，不是裝飾，保留。每個顏色綁一種意思：<span class="sw" style="background:var(--accent)"></span>藍＝核准、正確、結構；<span class="sw" style="background:var(--bad)"></span>紅＝不核准、錯誤、警告；<span class="sw" style="background:var(--warn)"></span>琥珀＝數量與上限；灰＝次要說明與座標。狀態一律加圖示與文字，不只靠顏色。英文範例與數值用等寬字，中文說明用黑體。</dd>
+    <dt>來源</dt>
+    <dd>使用者給的參考圖：<code>assets/1-raw/Karpathy - LLM 輸出格式建議/ASD-STE100 總覽.png</code>。頁面內的文字、數字都是示意內容。</dd>
+  </dl>
+</footer>
+</div>
+</body>
+</html>

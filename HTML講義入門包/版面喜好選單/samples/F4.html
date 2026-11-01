@@ -1,0 +1,767 @@
+<!doctype html>
+<!-- 版面喜好選單範例 F4｜原稿用紙極簡版｜來源：講師範例庫 output範例/網頁設計風格/F4-原稿用紙添削.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F4 極簡×手繪｜日文寫作：原稿用紙與文体</title>
+<style>
+/* ===== 風格本體：所有規則都收在 .style 底下。照 3-output/NCCU/製作規範.md：
+   白紙、系統字型、全部靜態、一般文流、高度跟著內容，列印是無縫直式（182×243mm，文字跨頁接續） ===== */
+:root { color-scheme: light; }
+body { margin: 0; background: #ececea; }
+.style {
+  --paper: #fdfdfb;
+  /* 每個顏色綁一件事，整頁只有紅筆是彩色 */
+  --ink: #151515;      /* 黑＝課本：日文原文、活用表、例句 */
+  --gray: #5e5e5e;     /* 灰＝白話說明 */
+  --red: #c0241a;      /* 紅筆＝老師：這門課固定的規則、扣分、添削 */
+  --soft: rgba(21,21,21,.2);
+  --tint: rgba(192,36,26,.1);
+  --sans: "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+  --ja: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic Medium", "Yu Gothic", "Meiryo", "Noto Sans JP", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --kyo: "UD Digi Kyokasho N-R", "YuKyokasho", "Klee", "Hiragino Mincho ProN", "Yu Mincho", "MS Mincho", serif;   /* 稿紙示範格裡的字 */
+  --kai: "BiauKai", "DFKai-SB", "Kaiti TC", "KaiTi", serif;
+  --hand: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+  color: var(--ink);
+  font: 400 14.5px/1.7 var(--sans);
+  text-spacing-trim: space-first;
+}
+.style *, .style *::before, .style *::after { box-sizing: border-box; }
+.style h1, .style h2, .style h3, .style h4 { margin: 0; line-height: 1.3; text-wrap: balance; }
+.style p { margin: 0; text-wrap: pretty; }
+.style ul, .style ol, .style dl, .style dd { margin: 0; padding: 0; list-style: none; }
+.style a { color: inherit; text-underline-offset: 3px; }
+.style [lang="ja"] { font-family: var(--ja); }
+.style u { text-decoration-thickness: 1px; text-underline-offset: 4px; }
+
+/* 工具列：只在螢幕上出現 */
+.style .bar { width: 182mm; max-width: 100%; margin: 0 auto; padding: 12px 8mm 0; display: flex; align-items: center; gap: 12px; font-size: 13.5px; color: var(--gray); }
+.style .bar button { flex: none; white-space: nowrap; font: inherit; font-weight: 700; color: #fff; background: var(--ink); border: 0; border-radius: 999px; padding: 7px 18px; cursor: pointer; }
+.style .bar button:focus-visible, .style a:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+/* 紙：螢幕上寬 182mm、左右留白跟 @page 的邊界一樣（8mm），內容寬 166mm，所以螢幕上的換行跟 PDF 一致（上下留白只在螢幕上多給一點） */
+.style .sheet { width: 182mm; max-width: 100%; margin: 12px auto 0; padding: 10mm 8mm 12mm; background: var(--paper); }
+
+/* ---------- 極簡：白、細線、層級只靠字級 ---------- */
+.style .meta { display: flex; flex-wrap: wrap; gap: 2px 22px; font-size: 13.5px; color: var(--gray); }
+.style h1 { margin-top: 26px; font-size: 64px; font-weight: 300; line-height: 1.1; }
+.style .units { margin-top: 12px; font-size: 17px; }
+.style .units i { font-style: normal; color: var(--gray); padding: 0 8px; }
+.style .scrawl { margin: 18px 0 0; display: inline-block; position: relative; font: 400 21px/1.4 var(--kai); color: var(--red); transform: rotate(-1.6deg); }
+.style .scrawl svg { position: absolute; left: -2%; bottom: -9px; width: 104%; height: 10px; overflow: visible; }
+.style .pen { fill: none; stroke: var(--red); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.style .gates { margin-top: 34px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 28px; }
+.style .gates li { border-top: 1px solid var(--ink); padding-top: 8px; color: var(--gray); }
+.style .gates b { display: flex; align-items: baseline; gap: 10px; font-size: 21px; font-weight: 400; color: var(--ink); }
+.style .gates b span { font: 300 34px/1 "Segoe UI", "SF Pro Display", system-ui, sans-serif; }
+.style .terms { margin-top: 26px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 28px; }
+.style .terms dt { font-size: 17px; font-weight: 700; }
+.style .terms dd { color: var(--gray); }
+.style .legend { margin-top: 28px; padding: 10px 0; display: flex; flex-wrap: wrap; gap: 6px 30px; border-top: 1px solid var(--soft); border-bottom: 1px solid var(--soft); font-size: 14px; }
+.style .legend li { display: flex; align-items: center; gap: 9px; }
+.style .legend i { flex: none; width: 26px; height: 0; border-top: 3px solid var(--ink); }
+.style .legend .g i { border-color: var(--gray); }
+.style .legend .r i { border-color: var(--red); transform: rotate(-4deg); }
+.style .legend .r { font: 400 16.5px/1.5 var(--kai); color: var(--red); }
+
+.style .sec { margin-top: 64px; }
+.style .sh { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: baseline; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--ink); margin-bottom: 26px; }
+.style .sh .no { font: 300 15px/1 "Segoe UI", system-ui, sans-serif; color: var(--gray); font-variant-numeric: tabular-nums; }
+.style .sh h2 { font-size: 34px; font-weight: 300; line-height: 1.2; }
+.style .sh .pg { font-size: 13.5px; color: var(--gray); }
+.style h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.style h3 small { font-size: 13.5px; font-weight: 400; color: var(--gray); margin-left: 8px; }
+.style .sub { margin-top: 40px; }
+.style .gray { color: var(--gray); }
+.style .cap { font-size: 13.5px; color: var(--gray); }
+
+/* ---------- 手繪：只有紅筆。楷體紅字＋SVG 手繪線 ---------- */
+.style .t { font: 400 16.5px/1.6 var(--kai); color: var(--red); }       /* 老師的話 */
+.style .t .ts, .style .ts { font: 13px/1 Consolas, "SF Mono", Menlo, monospace; color: var(--gray); white-space: nowrap; }
+.style .circ { position: relative; display: inline-block; padding: 0 .3em; }
+.style .circ svg { position: absolute; left: -3px; top: -3px; width: calc(100% + 6px); height: calc(100% + 6px); overflow: visible; }
+.style .x { display: inline-block; }                    /* ×＝話しことば。這是課本的分類，所以 × 與 → 用黑色，不用紅筆 */
+.style .x::before { content: "×"; margin-right: 7px; font-weight: 700; color: var(--ink); }
+
+/* 稿紙示範：格子是真的框線 */
+.style .genko { width: 166mm; max-width: 100%; margin: 12px auto 0; }
+.style .gr { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); }
+.style .gr > span { aspect-ratio: 1; border-right: 1px solid var(--soft); border-bottom: 1px solid var(--ink); display: grid; place-items: center; font: 400 20px/1 var(--kyo); }
+.style .gr > span:nth-child(5n) { border-right-color: rgba(21,21,21,.45); }
+.style .gr > span:last-child { border-right-color: var(--ink); }
+.style .gr .m { background: var(--tint); }                       /* 紅筆標到的格子 */
+.style .gr .ph { color: #6f6f6f; }                               /* 佔位的字 */
+.style .gr .sm { place-items: end start; padding: 0 0 8% 0; text-indent: -2px; }  /* 小字靠左下 */
+.style .gr .two { grid-template-columns: auto auto; place-content: center; font-size: 15px; }
+.style .gr .two em { font-style: normal; align-self: end; }
+.style .gr .num { font: 400 17px/1 Consolas, "SF Mono", Menlo, monospace; }
+.style .ga { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); min-height: 30px; padding-top: 1px; font: 700 15px/1.5 var(--hand); color: var(--red); text-align: center; }
+.style .keys { margin-top: 10px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 34px; }
+.style .keys li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 4px; padding: 6px 0; border-bottom: 1px solid var(--soft); }
+.style .keys .t { font-size: 16px; }
+.style .keys li > b { font: 700 15px/1.75 var(--hand); color: var(--red); }
+.style .keys small { font: 400 13.5px/1.5 var(--sans); color: var(--gray); white-space: nowrap; }
+
+/* 小字的位置 */
+.style .pos { display: flex; flex-wrap: wrap; gap: 14px 44px; align-items: flex-start; }
+.style .pos > p { flex: 1 1 100%; }
+.style .pos figure { margin: 0; }
+.style .big { display: inline-grid; grid-auto-flow: column; grid-auto-columns: 46px; border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); }
+.style .big span { position: relative; height: 46px; border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink); display: grid; place-items: center; font: 400 30px/1 var(--kyo); }
+.style .big span::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px dashed var(--soft); }
+.style .big span::after { content: ""; position: absolute; top: 50%; left: 0; right: 0; border-top: 1px dashed var(--soft); }
+.style .big .sm { place-items: end start; padding: 0 0 4px 3px; }
+.style .big .m { background: var(--tint); }
+.style .pos figcaption { margin-top: 5px; font-size: 14px; line-height: 1.5; }
+.style .pos figcaption .t { display: block; font-size: 16px; }
+
+/* 課本十條 */
+.style .rules li { display: grid; grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1.08fr); gap: 4px 22px; padding: 12px 0 13px; border-bottom: 1px solid var(--soft); }
+.style .rules li:first-child { border-top: 1px solid var(--soft); }
+.style .rules .n { font-size: 26px; font-weight: 300; line-height: 1.05; }
+.style .rules .jp { font-size: 15px; line-height: 1.75; }
+.style .rules .zh { color: var(--gray); }
+.style .rules .t { display: block; margin-top: 3px; }
+
+/* 老師固定下來的規則：手繪紅框 */
+.style .fix { position: relative; padding: 18px 22px 20px; border: 1.8px solid var(--red); border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px; }
+.style .fix h3 { font: 400 22px/1.3 var(--kai); color: var(--red); margin-bottom: 8px; }
+.style .fix ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px 30px; }
+.style .fix li { display: grid; grid-template-columns: 18px minmax(0, 1fr); font: 400 16.5px/1.6 var(--kai); color: var(--red); }
+.style .fix li::before { content: "・"; }
+.style .minus { margin-top: 26px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 28px; }
+.style .minus li { border-top: 1.6px solid var(--red); padding-top: 4px; }
+.style .minus b { display: block; font: 700 46px/1.25 var(--hand); color: var(--red); }
+.style .minus b small { font: 400 18px/1 var(--kai); margin-left: 4px; }
+
+/* 表格：只有橫向細線 */
+.style table { width: 100%; border-collapse: collapse; font-size: 14.5px; line-height: 1.55; }
+.style th, .style td { text-align: left; vertical-align: top; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--soft); font-weight: 400; }
+.style thead th { font-size: 13.5px; color: var(--gray); border-bottom: 1px solid var(--ink); }
+.style tbody th { white-space: nowrap; color: var(--gray); font-size: 13.5px; }
+.style tbody th.k { color: var(--ink); font-size: 15px; font-weight: 700; }
+.style tr.top > * { border-top: 1px solid var(--ink); }
+.style td.plain { font-weight: 700; }
+.style .after { margin-top: 10px; display: grid; gap: 4px; }
+.style .notes3 li { display: grid; grid-template-columns: 34px minmax(0, 1fr); padding: 5px 0; border-bottom: 1px solid var(--soft); }
+.style .notes3 li > span:first-child { color: var(--gray); }
+
+/* 例句：☞ 正確、× 錯誤 */
+.style .two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 34px; }
+.style .ex li { display: grid; grid-template-columns: 26px minmax(0, 1fr); padding: 5px 0; border-bottom: 1px solid var(--soft); font-size: 15px; }
+.style .ex li.no > :first-child { font-weight: 700; }
+.style .ex li.col { color: var(--gray); }
+.style .ex b { font-weight: 700; }
+.style .orig { font-size: 15px; line-height: 1.75; }
+.style .orig + .gray { margin-top: 4px; }
+
+/* 話しことば → 書きことば */
+.style .pairs h4 { margin: 14px 0 2px; font-size: 14px; font-weight: 700; }
+.style .pairs h4:first-child { margin-top: 0; }
+.style .pairs li { display: grid; grid-template-columns: minmax(0, 1fr) 30px minmax(0, 1.05fr); align-items: center; padding: 5px 0; border-bottom: 1px solid var(--soft); font-size: 15px; }
+.style .pairs li b { font-weight: 700; }
+.style .feat > div { display: grid; grid-template-columns: 10.5em minmax(0, 1fr); gap: 4px 20px; padding: 10px 0; border-bottom: 1px solid var(--soft); }
+.style .feat > div:first-child { border-top: 1px solid var(--soft); }
+.style .feat dt { font-weight: 700; }
+.style .feat dd p + p { margin-top: 2px; }
+
+/* 記住三件事、作業：方格可以打勾 */
+.style .recap { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 34px; }
+.style .recap h3 { padding-bottom: 6px; border-bottom: 1px solid var(--ink); }
+.style .checks li { display: grid; grid-template-columns: 17px minmax(0, 1fr); gap: 9px; padding: 3px 0; }
+.style .checks li::before { content: ""; width: 15px; height: 15px; margin-top: 5px; border: 1px solid var(--ink); }
+.style .checks.t li::before { border: 1.5px solid var(--red); border-radius: 3px 5px 2px 4px; margin-top: 6px; }
+
+/* 練習格：inline SVG 的實線，滿版 166mm，一格約 8.2mm */
+.style .practice { display: block; width: 166mm; max-width: 100%; height: auto; margin: 14px auto 0; }
+.style .foot { margin-top: 44px; padding-top: 10px; border-top: 1px solid var(--soft); font-size: 13.5px; color: var(--gray); }
+
+@media (max-width: 640px) {
+  .style .sheet { padding: 22px 16px 28px; }
+  .style h1 { font-size: 42px; }
+  .style .sh h2 { font-size: 26px; }
+  .style .gates, .style .terms, .style .keys, .style .two-col, .style .recap, .style .minus, .style .fix ul { grid-template-columns: minmax(0, 1fr); }
+  .style .gates li, .style .terms > div { margin-bottom: 12px; }
+  .style .gr > span { font-size: 12px; }
+  .style .gr .two { font-size: 12px; }
+  .style .gr .two em { margin-left: -3px; }
+  .style .gr .num { font-size: 12px; }
+  .style .ga { font-size: 12px; min-height: 22px; }
+  .style .rules li { grid-template-columns: 30px minmax(0, 1fr); }
+  .style .rules .zh { grid-column: 2; }
+  .style table { font-size: 14px; }
+  .style th, .style td { padding-right: 6px; }
+  .style tbody th { white-space: normal; }
+  .style .feat > div { grid-template-columns: minmax(0, 1fr); }
+  .style .fix { padding: 16px 16px 18px; }
+}
+/* 列印：無縫直式（照 3-output/NCCU/製作規範.md 第 1 節）：182×243mm、邊界上下 4mm 左右 8mm、不印頁碼。
+   六個邊界框都給空字串，Chrome 才不會印自己的頁首頁尾 */
+@page {
+  size: 182mm 243mm; margin: 4mm 8mm 4mm;
+  @top-left { content: "" } @top-center { content: "" } @top-right { content: "" }
+  @bottom-left { content: "" } @bottom-center { content: "" } @bottom-right { content: "" }
+}
+@media print {
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { background: #fff; }             /* Chrome 不會把底色鋪到 @page 的邊界，所以頁面留白底 */
+  .style .bar, .spec { display: none !important; }
+  .style .sheet { width: auto; max-width: none; margin: 0; padding: 0; background: #fff; }
+  /* 分頁點：文字（段落、條列、課本十條、手繪框、對照）一律可以跨頁，每頁填到底；
+     不拆的只有圖、表格的每一列、比一頁小的格子（稿紙示範、練習格、大格示範、三欄的小格組）；標題與欄頭不落單在頁尾 */
+  .style .genko, .style .practice, .style figure, .style .big, .style tr,
+  .style .gates, .style .terms, .style .minus, .style .legend { break-inside: avoid; }
+  .style h1, .style h2, .style h3, .style h4, .style .sh, .style .orig, .style .units { break-after: avoid; }
+  .style h1, .style h2, .style h3, .style h4, .style .sh { break-inside: avoid; }   /* 兩行的標題不拆成上下兩頁 */
+  .style figcaption, .style .practice, .style .ga { break-before: avoid; }
+  .style p, .style li { orphans: 1; widows: 1; }
+  /* 螢幕上的兩欄在紙上改單欄：分頁點才穩，也不會一欄跨頁、另一欄留白 */
+  .style .two-col, .style .recap, .style .keys, .style .fix ul { display: block; }
+  .style .two-col > div + div, .style .recap > section + section { margin-top: 18px; }
+  /* 打勾方格的條列改回一般區塊（方格改成絕對定位）：grid 的條列在 Chrome 會讓前面小標的 break-after: avoid 失效 */
+  .style .checks li { display: block; position: relative; padding-left: 26px; }
+  .style .checks li::before { position: absolute; left: 0; top: 3px; }
+  .style .checks.t li::before { top: 4px; }
+  .style .pairs li { display: block; }         /* 同上；改成一行字：× 口語 → 書面 */
+  .style .pairs li > span:nth-child(2) { padding: 0 10px; }
+  .style .sh { display: block; position: relative; }   /* 節標題的三欄 grid 也改回區塊，不然整節不拆、標題不落單都會失效 */
+  .style .sh .no { display: inline-block; margin-right: 14px; }
+  .style .sh h2 { display: inline; }
+  .style .sh .pg { position: absolute; right: 0; bottom: 12px; }
+  /* 標題後面那一塊明寫「前面不換頁」：只靠標題的 break-after，Chrome 遇到巢狀的兩欄或 grid 會把標題留在頁尾 */
+  .style :is(h1, h2, h3, h4, .sh, .orig, .units) + *,
+  .style .pairs > div:first-child > h4:first-child { break-before: avoid; }
+  .style .prac { break-inside: avoid; }        /* 練習格整節（標題＋一行說明＋格子）比一頁矮，連標題一起不拆，放不下就整節移到下一頁 */
+  .style .foot { break-inside: avoid; margin-top: 16px; }   /* 頁尾說明只有兩行，不拆；上緣收緊，才跟練習格擠得進同一頁 */
+  .style .sec { margin-top: 32px; }
+  .style .sub { margin-top: 20px; }
+  .style h1 { margin-top: 14px; }
+  .style th, .style td { padding-top: 5px; padding-bottom: 5px; }
+}
+
+/* ===== 共用：風格規格面板（各頁相同，逐字複製，不要改） ===== */
+.spec { all: initial; display: block; background: #f6f5f1; color: #1c1b19; color-scheme: light; border-top: 1px solid #dcd9d0;
+  font: 400 15px/1.7 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; text-spacing-trim: space-first;
+  padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 48px) 64px; }
+.spec *, .spec *::before, .spec *::after { box-sizing: border-box; }
+.spec .spec-in { max-width: 1120px; margin: 0 auto; }
+.spec .spec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin: 0 0 6px; }
+.spec .spec-code { font: 700 13px/1 ui-monospace, Consolas, monospace; color: #fff; background: #1c1b19; padding: 5px 9px; border-radius: 6px; }
+.spec h2 { margin: 0; font-size: clamp(22px, 3vw, 30px); line-height: 1.3; font-weight: 700; text-wrap: balance; }
+.spec .spec-en { font: 500 14px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-def { margin: 0 0 22px; max-width: 46em; color: #3b3935; }
+.spec .spec-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.spec .spec-card { background: #fff; border: 1px solid #e4e1da; border-radius: 12px; padding: 16px 18px; min-width: 0; }
+.spec .spec-card.wide { grid-column: 1 / -1; }
+.spec h3 { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: #6b6862; }
+.spec ul, .spec ol { margin: 0; padding-left: 1.2em; }
+.spec li { margin: 2px 0; }
+.spec p { margin: 0; }
+.spec p + p { margin-top: 6px; }
+.spec code { font: 13px/1.5 ui-monospace, Consolas, monospace; background: #f0eee8; padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.spec .spec-traits { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 16px; }
+.spec .spec-traits small { display: block; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-sw { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.spec .spec-sw li { margin: 0; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #3b3935; }
+.spec .spec-sw i { display: block; height: 34px; border-radius: 8px; border: 1px solid rgba(0,0,0,.12); margin-bottom: 4px; }
+.spec .spec-fit b { display: inline-block; min-width: 4.2em; }
+.spec .spec-prompt { background: #efedff; border-color: #dcd8ff; }
+.spec .spec-back { display: inline-block; margin-top: 22px; color: #1c1b19; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 720px) { .spec .spec-grid { grid-template-columns: 1fr; } }
+@media print { .spec { border-top: 0; } .spec .spec-card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<main class="style">
+  <div class="bar">
+    <button type="button" id="pdf" title="iPad 直式、無縫分頁（182×243mm，文字跨頁接續），給 GoodNotes 垂直捲動閱讀；在列印視窗的目的地選「另存為 PDF」，其他設定不用動">匯出 PDF（GoodNotes 直式）</button>
+    <span>輸出成 iPad 直式、無縫分頁的 PDF（182×243mm），匯進 GoodNotes 垂直捲動、手寫。</span>
+  </div>
+
+  <div class="sheet" id="sheet">
+
+    <header>
+      <p class="meta"><span>日文寫作（一）</span><span>國立政治大學</span><span>2026-09-16</span><span>課本 p.12–23</span></p>
+      <h1>作文預備知識</h1>
+      <p class="units" lang="ja">原稿用紙の使い方<i>・</i>文体について<i>・</i>書きことばと話しことば</p>
+      <p class="scrawl">格式錯誤扣分比文法錯誤重
+        <svg viewBox="0 0 200 10" preserveAspectRatio="none" aria-hidden="true"><path class="pen" d="M2,6 C30,2 62,9 98,5 C132,2 166,8 198,4"/></svg>
+      </p>
+
+      <ol class="gates" aria-label="動筆前的三道關卡">
+        <li><b><span>1</span>格式</b>把字放進稿紙正確的位置：標題、名字、一字空け、促音、句讀點、括弧、數字。</li>
+        <li><b><span>2</span>文体</b>整篇統一丁寧体或普通体；意見文、レポート、論文用普通体。</li>
+        <li><b><span>3</span>用語</b>把話しことば（縮約、省略、倒裝、終助詞）換回書きことば。</li>
+      </ol>
+
+      <dl class="terms" aria-label="讀之前先記三個詞">
+        <div><dt lang="ja">マス</dt><dd>稿紙的一格。</dd></div>
+        <div><dt lang="ja">丁寧体／普通体</dt><dd>句尾用です・ます還是だ。</dd></div>
+        <div><dt lang="ja">口語縮約形</dt><dd>說話時把音省掉的短形式，例如「のです→んです」。</dd></div>
+      </dl>
+
+      <ul class="legend" aria-label="圖例：每個顏色只代表一件事">
+        <li><i></i>黑字＝課本：日文原文、活用表、例句</li>
+        <li class="g"><i></i>灰字＝白話說明</li>
+        <li class="r"><i></i>紅筆＝老師：這門課固定的規則、扣分、★ 強調</li>
+      </ul>
+    </header>
+
+    <!-- 01 -->
+    <section class="sec">
+      <header class="sh"><span class="no">01</span><h2 lang="ja">原稿用紙の使い方</h2><span class="pg">p.12–14</span></header>
+
+      <div>
+        <h3>小字靠的是位置，不是大小<small>虛線是格子的中線</small></h3>
+        <div class="pos">
+          <figure>
+            <div class="big" lang="ja"><span>い</span><span>し</span><span class="sm m">ゃ</span></div>
+            <figcaption><span lang="ja">いしゃ（医者）</span><span class="t">靠左下，才是拗音</span></figcaption>
+          </figure>
+          <figure>
+            <div class="big" lang="ja"><span>い</span><span>し</span><span class="m">や</span></div>
+            <figcaption><span lang="ja">いしや</span><span class="t">寫正中間，就是另一個字</span></figcaption>
+          </figure>
+          <figure>
+            <div class="big" lang="ja"><span>び</span><span class="sm m">っ</span><span>く</span><span>り</span></div>
+            <figcaption><span lang="ja">びっくり</span><span class="t">促音也是一格</span></figcaption>
+          </figure>
+          <p class="t">★ 不是靠大小，沒有人拿尺量你的字，是靠位置：小字在格子裡靠左下（橫書），寫在正中間就是正常大小的字、就是錯字。印刷的小字其實只有原字的三分之二。<span class="ts">〔1-13:18〕</span></p>
+        </div>
+      </div>
+
+      <div class="sub demo">
+        <h3>稿紙示範</h3>
+        <p class="gray">直式橫書：稿紙直放、橫著寫，一行 20 格。字是 p.15 練習短文的開頭；標題自己取，這裡只放「タイトル」佔位。淡紅的格子是紅筆標到的地方，字母對到下面的說明。</p>
+        <div class="genko" lang="ja" aria-label="稿紙示範：五行，每行二十格">
+          <div class="gr"><span class="m"></span><span class="m"></span><span class="m"></span><span class="ph">タ</span><span class="ph">イ</span><span class="ph">ト</span><span class="ph">ル</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="ga"><span style="grid-column:2">A</span></div>
+          <div class="gr"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span class="m">日</span><span class="m">文</span><span class="m">一</span><span class="m"></span><span>李</span><span>〇</span><span>〇</span><span class="m"></span></div>
+          <div class="ga"><span style="grid-column:14">B</span><span style="grid-column:16">C</span><span style="grid-column:20">D</span></div>
+          <div class="gr"><span class="m"></span><span>き</span><span>の</span><span>う</span><span>、</span><span>ス</span><span>ー</span><span>パ</span><span>ー</span><span>マ</span><span>ー</span><span>ケ</span><span class="sm">ッ</span><span>ト</span><span>に</span><span>行</span><span>き</span><span>ま</span><span>し</span><span class="two m">た<em>。</em></span></div>
+          <div class="ga"><span style="grid-column:1">E</span><span style="grid-column:20">F</span></div>
+          <div class="gr"><span>ト</span><span>マ</span><span>ト</span><span>と</span><span>ビ</span><span class="m">ー</span><span>ル</span><span>と</span><span>パ</span><span>ン</span><span>と</span><span>紙</span><span>を</span><span>買</span><span class="sm m">っ</span><span>て</span><span class="m">、</span><span>全</span><span>部</span><span>で</span></div>
+          <div class="ga"><span style="grid-column:6">G</span><span style="grid-column:15">H</span><span style="grid-column:17">I</span></div>
+          <div class="gr"><span class="num m">12</span><span class="num m">00</span><span>円</span><span>で</span><span>し</span><span>た</span><span>。</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="ga"><span style="grid-column:1 / span 2">J</span></div>
+        </div>
+        <ol class="keys" aria-label="紅筆標記的說明">
+          <li><b>A</b><span class="t">標題固定空三格，從第四格開始寫。 <small>課本①：二～四字分</small></span></li>
+          <li><b>B</b><span class="t">名字前面加系級：這是輔系課，同學來自不同科系。</span></li>
+          <li><b>C</b><span class="t">系級和姓名中間空一格，是習慣，不是日文規定。</span></li>
+          <li><b>D</b><span class="t">名字最後固定空一格。 <small>課本①：一、二字分</small></span></li>
+          <li><b>E</b><span class="gray">段落開頭空一格，不是中文習慣的空兩格。 <small>課本③</small></span></li>
+          <li><b>F</b><span class="gray">句號不能落到下一行的第一格，跟這一行最後一個字共用一格。 <small>課本⑥</small></span></li>
+          <li><b>G</b><span class="gray">長音「ー」也佔一格。 <small>課本②</small></span></li>
+          <li><b>H</b><span class="gray">促音「っ」佔一格。 <small>課本②</small><span class="t">　不能跟前面的字擠在一起；小字靠左下。</span></span></li>
+          <li><b>I</b><span class="gray">読点佔一格，橫書打在左下，不能寫在格子正中央。 <small>課本④</small><span class="t">　逗號一定是「、」。</span></span></li>
+          <li><b>J</b><span class="gray">橫書的阿拉伯數字，一格寫一個或兩個字。 <small>課本⑩</small><span class="t">　★ 原則上兩個字一格。</span></span></li>
+        </ol>
+      </div>
+
+      <div class="sub">
+        <h3>課本的十條<small>左：課本原文　右：白話，紅字是老師在這一條講的</small></h3>
+        <ol class="rules">
+          <li><span class="n">①</span>
+            <p class="jp" lang="ja">タイトルは一行目、名前は二行目に書く。タイトルは上を二～四字分空け、名前は下を一、二字分空けるとよい。<u>タイトルや名前を欄外に書いてはいけない。</u></p>
+            <p class="zh">標題寫第一行，名字寫第二行。標題上面空二到四格，名字下面空一到兩格。都要寫在格子裡，不能寫到稿紙外面的空白處。
+              <span class="t">★ 這門課稿紙固定：標題空三格、從第四格開始寫；名字最後空一格。</span></p></li>
+          <li><span class="n">②</span>
+            <p class="jp" lang="ja">漢字・ひらがな・カタカナとも一字一マス。ひらがな・カタカナの促音・長音も一マス使う。拗音（「きゃ」「きゅ」「きょ」等）は、二文字と見なして二マス使う。</p>
+            <p class="zh">漢字、平假名、片假名一個字佔一格。促音「っ」和長音「ー」也各佔一格。拗音算兩個字，佔兩格。
+              <span class="t">每個字一格，促音也是一格，不能跟前面的字擠在一起。</span></p></li>
+          <li><span class="n">③</span>
+            <p class="jp" lang="ja">段落の最初は一字空ける。（二字空けではないので注意。）</p>
+            <p class="zh">每段開頭空一格，不是中文習慣的空兩格。
+              <span class="t">★ 剛開始寫最容易犯的錯。段落沒得選，日文就是不空兩格；報紙、小說都一樣空一格。</span></p></li>
+          <li><span class="n">④</span>
+            <p class="jp" lang="ja">句読点は一マス使う。句点も読点も、マスの真ん中に書いてはいけない。縦書きの場合は右上、横書きの場合は左下に打つのがよい。</p>
+            <p class="zh">句號「。」和逗號「、」各佔一格，但不能寫在格子正中央：直書寫在格子右上角，橫書寫在左下角。
+              <span class="t">★ 日文不區分逗號和頓號，逗號一定是「、」；打成中文的「，」也算錯。</span>
+              <span class="t">★ 読点是朗讀時停頓的地方，沒有文法功能；句点有——它告訴讀者句子到這裡結束。</span></p></li>
+          <li><span class="n">⑤</span>
+            <p class="jp" lang="ja">「」『』（）などの括弧も一マス使う。それぞれ、次のように書く。</p>
+            <p class="zh">各種括號也各佔一格。橫書的起括號寫在右上、收括號寫在左下。
+              <span class="t">上引號靠中線右邊、下引號靠中線左邊，一定靠著它包的內容，不能在正中間。</span></p></li>
+          <li><span class="n">⑥</span>
+            <p class="jp" lang="ja">句読点は、最上段のマスに書いてはいけない。行の最後の文字といっしょに書く。</p>
+            <p class="zh">句讀點不能寫在一行的第一格。落到下一行開頭時，擠進上一行最後一格，跟最後一個字共用一格。
+              <span class="t">第二十格剛好寫完要加句號，就跟最後那個字共用一格。</span></p></li>
+          <li><span class="n">⑦</span>
+            <p class="jp" lang="ja">始めの括弧「は、行の最後に書いてはいけない。「の次の文字といっしょに行の最後に書く。</p>
+            <p class="zh">起括號「不能孤零零地留在一行的最後一格；把「和下一個字一起寫進最後一格。
+              <span class="t">上引號不能寫在行尾，因為後面沒有東西可以引。</span></p></li>
+          <li><span class="n">⑧</span>
+            <p class="jp" lang="ja">終わりの括弧」は、行の始めに書いてはいけない。行の最後の文字といっしょに書く。</p>
+            <p class="zh">收括號」不能出現在行首，跟句讀點一樣，擠進上一行最後一格。
+              <span class="t">★ 這門課：下引號前面如果是一句話，請不要加句號。日文的引號裡的句子最後不會有句號。</span></p></li>
+          <li><span class="n">⑨</span>
+            <p class="jp" lang="ja">会話文は独立させる。会話文の始まりは一字空けなくてもよい。</p>
+            <p class="zh">對話（引號裡的句子）要另起一行獨立成段，這一行開頭可以不空格。
+              <span class="t">這學年不會寫故事類的文章，⑨大概用不到，看一下就好。</span></p></li>
+          <li><span class="n">⑩</span>
+            <p class="jp" lang="ja">数字は、縦書きの場合は漢数字を用い、アラビア数字を用いてはいけない。横書きの場合は漢数字、アラビア数字のどちらでもよいが、アラビア数字は一マスに一字または二字書く。</p>
+            <p class="zh">直書一律用漢數字，不能用阿拉伯數字。橫書兩種都可以，但阿拉伯數字一格寫一個或兩個數字。
+              <span class="t">★ 阿拉伯數字原則上兩個字一格：1998 年寫成「19｜98」；五位數的 25000 寫成「2｜50｜00」。</span></p></li>
+        </ol>
+      </div>
+
+      <div class="sub keep">
+        <div class="fix">
+          <h3>老師固定下來的規則</h3>
+          <ul>
+            <li>標題固定空三格，從第四格開始寫。</li>
+            <li>名字前加系級：「日文一　李〇〇」，名字最後固定空一格。</li>
+            <li>每個段落空一格。</li>
+            <li>下引號前不加句號。</li>
+            <li>逗號一定是「、」。</li>
+            <li>固定直式橫書：稿紙直放、橫著寫。</li>
+            <li>幾乎所有作文都在課堂上手寫，只有修正拿回家。</li>
+            <li>所有作文的漢字都不用標音。</li>
+            <li>稿紙有「20×20」字樣的那一邊是上方，不要拿反。</li>
+            <li>筆不限，要清晰、用力、不要寫太小；用鉛筆要夠黑。</li>
+          </ul>
+        </div>
+        <ul class="minus" aria-label="扣分規則">
+          <li><b>−1<small>分</small></b><span class="t">文法、單字、清濁音、字醜，每個錯誤扣一分。</span></li>
+          <li><b>−2<small>分</small></b><span class="t">標題或名字前後空格不對，每次扣兩分。</span></li>
+          <li><b>−5<small>分</small></b><span class="t">名字寫在第一行後面或寫在欄外、標題沒寫。</span></li>
+        </ul>
+        <p class="t" style="margin-top:10px">格式有時比內容重要，寫論文也是。<span class="ts">〔1-11:54〕</span></p>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="sec">
+      <header class="sh"><span class="no">02</span><h2 lang="ja">文体について</h2><span class="pg">p.16–18</span></header>
+
+      <p class="orig" lang="ja">文体（文の文末形式）には、丁寧体と普通体がある。日本語で文章を書く時には、必ずどちらかの文体に統一すべきであり、一つの文章の中では、<u>決して丁寧体と普通体を混合して使ってはならない。</u></p>
+      <p class="gray">「文体」指句尾的形式，分兩種：丁寧体（です・ます）和普通体（だ・である）。一篇文章必須選一種從頭用到尾，絕對不能混用。</p>
+      <p class="t">★ 這門課敬體（丁寧体）、常體（普通体）都可以；唯一的限制是必須統一。<span class="ts">〔2-27:26〕</span></p>
+
+      <div class="sub">
+        <h3>丁寧体と普通体<small>四種形的對照</small></h3>
+        <table lang="ja">
+          <thead><tr><th></th><th></th><th>現在肯定形</th><th>現在否定形</th><th>過去肯定形</th><th>過去否定形</th></tr></thead>
+          <tbody>
+            <tr class="top"><th class="k" rowspan="2">動詞文</th><th>丁寧体</th><td>行きます</td><td>行きません</td><td>行きました</td><td>行きませんでした</td></tr>
+            <tr><th>普通体</th><td class="plain">行く</td><td class="plain">行かない</td><td class="plain">行った</td><td class="plain">行かなかった</td></tr>
+            <tr class="top"><th class="k" rowspan="2">イ形容詞文</th><th>丁寧体</th><td>寒いです</td><td>寒くありません<br>（寒くないです）</td><td>寒かったです</td><td>寒くありませんでした<br>（寒くなかったです）</td></tr>
+            <tr><th>普通体</th><td class="plain">寒い</td><td class="plain">寒くない</td><td class="plain">寒かった</td><td class="plain">寒くなかった</td></tr>
+            <tr class="top"><th class="k" rowspan="3">ナ形容詞文・<br>名詞文<br><span class="gray" style="font-weight:400;font-size:13.5px">①静か／②学生 ＋</span></th><th>丁寧体</th><td>です</td><td>で（は）ありません</td><td>でした</td><td>で（は）ありませんでした</td></tr>
+            <tr><th>丁寧体<br>（口語）</th><td></td><td><span class="circ">ではないです<svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path class="pen" d="M8,24 C3,10 28,3 54,4 C80,5 97,11 95,22 C93,33 68,37 44,36 C22,35 6,31 9,17"/></svg></span></td><td></td><td>ではなかったです</td></tr>
+            <tr><th>普通体</th><td class="plain">だ</td><td class="plain">で（は）ない</td><td class="plain">だった</td><td class="plain">で（は）なかった</td></tr>
+          </tbody>
+        </table>
+        <div class="after">
+          <p class="t">★ 圈起來的那一列（静かではないです、学生ではなかったです）在初級日語視為錯誤，課本列出來是告訴你它存在。作文寫了 ではないです，老師還是會說錯。<span class="ts">〔2-31:14〕</span></p>
+          <p class="t">「くないです」「くなかったです」其實偏口語；「寒くありません」才是標準寫法。這門課不強制。<span class="ts">〔2-29:52〕</span></p>
+        </div>
+      </div>
+
+      <div class="sub">
+        <h3 lang="ja">動詞文に特有の文型</h3>
+        <table lang="ja">
+          <thead><tr><th></th><th colspan="2">意向形</th><th colspan="2">依頼の文型</th><th colspan="2">命令の文型</th></tr>
+            <tr><th></th><th>丁寧体</th><th>普通体</th><th>丁寧体</th><th>普通体</th><th>丁寧体</th><th>普通体</th></tr></thead>
+          <tbody>
+            <tr><th>Ⅰ類</th><td>行きましょう</td><td class="plain">行こう</td><td>行ってください</td><td class="plain">行ってくれ</td><td>行きなさい</td><td class="plain">行け</td></tr>
+            <tr><th>Ⅱ類</th><td>見ましょう</td><td class="plain">見よう</td><td>見てください</td><td class="plain">見てくれ</td><td>見なさい</td><td><b>見ろ</b><br>（文語は「見よ」）</td></tr>
+            <tr><th>特別</th><td>しましょう</td><td class="plain">しよう</td><td>してください</td><td class="plain">してくれ</td><td>しなさい</td><td><b>しろ</b><br>（文語は「せよ」）</td></tr>
+            <tr><th>特別</th><td>きましょう</td><td class="plain">こよう</td><td>きてください</td><td class="plain">きてくれ</td><td>きなさい</td><td><b>こい</b><br>（文語は「こよ」）</td></tr>
+          </tbody>
+        </table>
+        <div class="after">
+          <p class="gray">Ⅰ類是五段動詞（行く）、Ⅱ類是一段動詞（見る）、特別是する和くる。作文裡幾乎用不到命令形；這張表的重點是知道 ましょう／てください／なさい 都屬丁寧体。</p>
+          <p class="t">てください 本身就是敬體，變常體是 てくれ。なさい 也是命令，只是比真正的命令形客氣；なさい 的常體就是命令形。<span class="ts">〔2-29:10〕</span></p>
+        </div>
+      </div>
+
+      <div class="sub two-col">
+        <div>
+          <h3 lang="ja">推量の文型</h3>
+          <table lang="ja">
+            <tbody>
+              <tr class="top"><th>丁寧体</th><td>動詞文・イ形容詞文・ナ形容詞文・名詞文　普通体＋<b>でしょう</b></td></tr>
+              <tr><th>普通体</th><td>動詞文・イ形容詞文・ナ形容詞文・名詞文　普通体＋<b>だろう</b>（但し、ナ形容詞文・名詞文現在形は語幹＋｛でしょう／だろう｝）</td></tr>
+            </tbody>
+          </table>
+          <p class="gray" style="margin-top:8px">唯一的例外是ナ形容詞和名詞的現在形，語幹直接接：静かでしょう／学生だろう。</p>
+        </div>
+        <div>
+          <h3>課本的注</h3>
+          <ol class="notes3">
+            <li><span>(1)</span><span lang="ja">イ形容詞文・ナ形容詞文・名詞文の（　）内の語法は、口語的である。</span></li>
+            <li><span>(2)</span><span lang="ja">ナ形容詞文・名詞文の否定形における（は）は、必ずしも用いられるとは限らない。</span></li>
+            <li><span>(3)</span><span lang="ja">口語ではナ形容詞文・名詞文の否定形「静か<u>じゃ</u>ない」「学生<u>じゃ</u>ありませんでした」のような口語縮約形は正式感を欠くので、作文では用いない方がよい。</span></li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="sub">
+        <h3 lang="ja">接続助詞を伴う副詞節内の文体</h3>
+        <div class="two-col">
+          <div>
+            <p class="orig" lang="ja">逆接の接続助詞ガを含む文では、主節の文体が丁寧体の時はガの前の副詞節も丁寧体、全体が普通体の時はガの前も普通体にする。</p>
+            <p class="gray">「が」前半和後半的文体要一致。</p>
+            <ul class="ex" lang="ja" style="margin-top:8px">
+              <li><span>☞</span><span>「父は六十才<b>です</b>が、元気<b>です</b>。」</span></li>
+              <li><span>☞</span><span>「父は六十才<b>だ</b>が、元気<b>だ</b>。」</span></li>
+              <li class="no"><span>×</span><span>「父は六十才<b>です</b>が、元気<span class="circ"><b>だ</b><svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path class="pen" d="M8,24 C3,10 28,3 54,4 C80,5 97,11 95,22 C93,33 68,37 44,36 C22,35 6,31 9,17"/></svg></span>。」</span></li>
+              <li class="no"><span>×</span><span>「父は六十才<b>だ</b>が、元気<span class="circ"><b>です</b><svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path class="pen" d="M8,24 C3,10 28,3 54,4 C80,5 97,11 95,22 C93,33 68,37 44,36 C22,35 6,31 9,17"/></svg></span>。」</span></li>
+            </ul>
+            <p class="t" style="margin-top:8px">逆接的「が」：前後都です，或前後都だ。<span class="ts">〔2-35:00〕</span></p>
+          </div>
+          <div>
+            <p class="orig" lang="ja">その他の接続助詞、ケド、シ、カラ、などは、主節の文体の如何に関わらず普通体を用いる。主節の文体が丁寧体の時に丁寧体を用いることも可能だが、その場合はやや口語的になる。</p>
+            <p class="gray">「けど・し・から」前面固定普通体，跟「が」正好相反。</p>
+            <ul class="ex" lang="ja" style="margin-top:8px">
+              <li><span>☞</span><span>「父は六十才<b>だけど</b>、元気<b>です</b>。」</span></li>
+              <li><span>☞</span><span>「父は六十才<b>だけど</b>、元気<b>だ</b>。」</span></li>
+              <li class="col"><span></span><span>（「父は六十才<b>ですけど</b>、元気<b>です</b>。」は口語的。）</span></li>
+              <li><span>☞</span><span>「母は親切<b>だし</b>、美人<b>です</b>。」</span></li>
+              <li><span>☞</span><span>「母は親切<b>だし</b>、美人<b>だ</b>。」</span></li>
+              <li class="col"><span></span><span>（「母は親切<span class="circ"><b>ですし</b><svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path class="pen" d="M8,24 C3,10 28,3 54,4 C80,5 97,11 95,22 C93,33 68,37 44,36 C22,35 6,31 9,17"/></svg></span>、美人<b>です</b>。」は口語的。）</span></li>
+              <li><span>☞</span><span>「試験が<b>あるから</b>、勉強<b>します</b>。」</span></li>
+              <li><span>☞</span><span>「試験が<b>あるから</b>、勉強<b>する</b>。」</span></li>
+              <li class="col"><span></span><span>（「試験が<b>ありますから</b>、勉強<b>します</b>。」は口語的。）</span></li>
+            </ul>
+            <p class="t" style="margin-top:8px">★ 作文寫「親切ですし」，老師會視為錯誤：「ですし」在你們的教材裡從來沒出現過。<span class="ts">〔2-36:17〕</span></p>
+            <p class="t">ありますから 不算錯，あるから 比較典型；だけど 當然更好。<span class="ts">〔2-36:55〕</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <h3 lang="ja">丁寧体を使う文章と普通体を使う文章</h3>
+        <p class="orig" lang="ja">基本的に、書きことばにおいては特定の読者とコミュニケーションをしたい場合にのみ、丁寧体を用いる。作文では、基本的にはどちらを選んでもよいが、堅い内容の文（意見文、論説文など）では普通体が多く用いられる。しかし、<u>レポート、論文</u>を書く時は必ず普通体で書く。</p>
+        <p class="gray">書面語只有在想跟特定讀者對話時才用丁寧体。作文兩種都可以選，內容偏硬的意見文、論說文多用普通体；報告和論文一律普通体。</p>
+        <p class="t">★ 報告、論文一定用常體。在日本論文口頭發表時，就是照著論文念、把每句語尾改成敬體，就變成口頭稿了。給人看的和講給人聽的是兩種文体。<span class="ts">〔2-40:08〕</span></p>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="sec">
+      <header class="sh"><span class="no">03</span><h2 lang="ja">書きことばと話しことば</h2><span class="pg">p.20–23</span></header>
+      <p class="gray">適度用一點口語能讓文章柔和、有親切感；但不懂書面語的原則就一直用，文章會缺乏正式感，甚至讓讀的人反感。</p>
+      <p class="t">我們不是日本人，反而不會講出太多口語變化。這些是會話時才會這麼說，寫文章不會這樣用。<span class="ts">〔2-41:40〕</span></p>
+
+      <div class="sub">
+        <h3 lang="ja">音の変化による語形変化（口語縮約形）<small lang="zh-Hant">課本的分類：左邊打 × 的是話しことば，作文寫右邊的形</small></h3>
+        <div class="two-col pairs" lang="ja">
+          <div>
+            <h4>（1）母音の脱落</h4>
+            <ul>
+              <li><span><span class="x">～んです</span></span><span>→</span><b>～のです</b></li>
+              <li><span><span class="x">してる</span></span><span>→</span><b>している</b></li>
+              <li><span><span class="x">しとく</span></span><span>→</span><b>しておく</b></li>
+              <li><span><span class="x">ほんとに</span></span><span>→</span><b>ほんとうに</b></li>
+            </ul>
+            <h4>（2）子音の脱落</h4>
+            <ul>
+              <li><span><span class="x">あたし</span></span><span>→</span><b>わたし</b></li>
+              <li><span><span class="x">すいません</span></span><span>→</span><b>すみません</b></li>
+            </ul>
+            <h4>（4）促音・撥音の挿入</h4>
+            <ul>
+              <li><span><span class="x">やっぱり</span></span><span>→</span><b>やはり</b></li>
+              <li><span><span class="x">ばっかり</span></span><span>→</span><b>ばかり</b></li>
+              <li><span><span class="x">暑くって</span></span><span>→</span><b>暑くて</b></li>
+              <li><span><span class="x">あんまり</span></span><span>→</span><b>あまり</b></li>
+            </ul>
+            <h4>（5）「ａｉ」→「ｅｅ」<br><span style="font-weight:400">（口語の俗語。会話でも用いない方がいい。）</span></h4>
+            <ul>
+              <li><span><span class="x">いてえ</span></span><span>→</span><b>いたい（痛い）</b></li>
+              <li><span><span class="x">ねえ</span></span><span>→</span><b>ない</b></li>
+            </ul>
+          </div>
+          <div>
+            <h4>（3）母音・子音の脱落変化</h4>
+            <ul>
+              <li><span><span class="x">お帰んなさい</span></span><span>→</span><b>お帰りなさい</b></li>
+              <li><span><span class="x">それじゃ</span></span><span>→</span><b>それでは</b></li>
+              <li><span><span class="x">行ってんだ</span></span><span>→</span><b>行っているのだ</b></li>
+              <li><span><span class="x">行っちゃった</span></span><span>→</span><b>行ってしまった</b></li>
+              <li><span><span class="x">行ったって</span></span><span>→</span><b>行っても</b></li>
+              <li><span><span class="x">読んだって</span></span><span>→</span><b>読んでも</b></li>
+              <li><span><span class="x">行きゃ</span></span><span>→</span><b>行けば</b></li>
+              <li><span><span class="x">行っちゃ</span></span><span>→</span><b>行っては</b></li>
+              <li><span><span class="x">行かなけりゃ</span><br><span class="x">行かなきゃ</span><br><span class="x">行かにゃ</span></span><span>→</span><b>行かなければ</b></li>
+              <li><span><span class="x">～って言った</span></span><span>→</span><b>～と言った</b></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <h3>其他三類口語特徵<small>例句照課本；（　）裡是口語省掉的部分</small></h3>
+        <dl class="feat">
+          <div><dt lang="ja">助詞の省略</dt>
+            <dd><p lang="ja">「私（は）、陳です。」「もうご飯（を）、食べましたか。」「図書館（へ）、行って来ます。」</p>
+              <p class="t">★ 你們的作文如果漏掉助詞，直接視為文法錯誤。<span class="ts">〔2-42:19〕</span></p></dd></div>
+          <div><dt lang="ja">述語の省略</dt>
+            <dd><p lang="ja">「私は、チャーハン（<b>がいいです</b>）。」</p></dd></div>
+          <div><dt lang="ja">一人称、二人称の省略</dt>
+            <dd><p lang="ja">「（あなたは）陳さんですか。」「いいえ、（私は）李です。」</p></dd></div>
+          <div><dt lang="ja">文の倒置</dt>
+            <dd><p lang="ja">「もう遅いから、帰りましょう。」→「帰りましょう、もう遅いから。」</p>
+              <p class="gray">書面語的語序是理由在前、結論在後，倒裝是口語。</p></dd></div>
+          <div><dt lang="ja">言いさし表現</dt>
+            <dd><p lang="ja">「あの人、ほんとにずうずうしいんだ<b>から</b>。」「はい、吉田です<b>が</b>。」</p>
+              <p class="gray">話說一半就停。會話很自然，作文裡句子必須說完。</p></dd></div>
+          <div><dt lang="ja">ＡトカＢトカ</dt>
+            <dd><p lang="ja">名詞並列の「ＡトカＢトカ」は、口語的。「ＡヤＢナド」の方が書きことば的。</p>
+              <p lang="ja">「みんな集まって、コーヒー<span class="circ"><b>とか</b><svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path class="pen" d="M8,24 C3,10 28,3 54,4 C80,5 97,11 95,22 C93,33 68,37 44,36 C22,35 6,31 9,17"/></svg></span>紅茶<span class="circ"><b>とか</b><svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path class="pen" d="M8,24 C3,10 28,3 54,4 C80,5 97,11 95,22 C93,33 68,37 44,36 C22,35 6,31 9,17"/></svg></span>飲みました。」</p>
+              <p class="gray">書面語用「A や B など」：コーヒーや紅茶などを飲みました。</p>
+              <p class="t">★ 寫文章用 や 比較好。とか 總數未知，や 總數已知；や 只能接名詞，とか 可以接句子、動詞。<span class="ts">〔2-42:55〕</span></p></dd></div>
+          <div><dt lang="ja">間投詞の挿入</dt>
+            <dd><p lang="ja">ああ　あっ　うーん　ええ　えっ　おい　おお　さあ　ほら　等</p></dd></div>
+          <div><dt lang="ja">終助詞の添加</dt>
+            <dd><p lang="ja">～ね　～よ　～か　～わ　～よね　～な　～さ　～ぜ　等</p>
+              <p class="gray">都是對聽話者的互動標記，作文裡不出現。</p></dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section class="sec">
+      <header class="sh"><span class="no">04</span><h2>記住三件事</h2><span class="pg">每一節三件，記起來的打勾</span></header>
+      <div class="recap">
+        <section>
+          <h3>原稿用紙</h3>
+          <ul class="checks">
+            <li><span>標題第一行、本課固定空三格；名字第二行寫「系級＋姓名」、後面空一格；段首空一格（不是兩格）；會話文另起一行可不空。</span></li>
+            <li><span>一字一格：促音「っ」、長音「ー」各一格，拗音「きゃ」兩格；小字的位置（直書右上、橫書左下）決定它是不是促音。</span></li>
+            <li><span>句讀點、收括號不能在行首，起括號不能在行尾，擠進上一行最後一格；逗號一定是「、」，下引號前不加句號；直書用漢數字。</span></li>
+          </ul>
+        </section>
+        <section>
+          <h3>丁寧体と普通体</h3>
+          <ul class="checks">
+            <li><span>文体＝句尾形式，一篇只能用一種：丁寧体＝です・ます，普通体＝だ・である。</span></li>
+            <li><span>活用表括號裡的（寒くないです、ではないです）是口語；「じゃ」是縮約，作文都不要寫，用 ありません 系列。</span></li>
+            <li><span>推量：普通体＋でしょう／だろう；ナ形容詞與名詞的現在形直接用語幹接（静かでしょう、学生だろう）。</span></li>
+          </ul>
+        </section>
+        <section>
+          <h3>接続助詞と文体の選び方</h3>
+          <ul class="checks">
+            <li><span>「が」前後文体一致；「けど・し・から」前面固定普通体，用丁寧体就變口語。</span></li>
+            <li><span>想跟特定讀者對話才用丁寧体；意見文、論説文多用普通体。</span></li>
+            <li><span>レポート、論文一律普通体（である体），沒有例外。</span></li>
+          </ul>
+        </section>
+        <section>
+          <h3>口語縮約形</h3>
+          <ul class="checks">
+            <li><span>口語縮約＝把音省掉或多插一個音：んです、してる、じゃ、ちゃった、なきゃ、って、やっぱり。</span></li>
+            <li><span>認得出縮約形就能還原：じゃ→では、ちゃった→てしまった、なきゃ→なければ、って→と、やっぱり→やはり。</span></li>
+            <li><span>作文一律用還原後的形；ai→ee（いてえ、ねえ）連說話都別用。</span></li>
+          </ul>
+        </section>
+        <section>
+          <h3>語法・語義・コミュニケーションの語</h3>
+          <ul class="checks">
+            <li><span>口語會省：助詞（は、を、へ、が）、述語、人稱、非焦點詞；作文要補回，語序理由在前、結論在後。</span></li>
+            <li><span>有些接續詞在會話裡變語氣詞（だから、それが、もう、また、しかし）；列舉用「や～など」不用「とか」。</span></li>
+            <li><span>間投詞（ああ、ほら）和終助詞（ね、よ）是說話用的，作文裡不出現。</span></li>
+          </ul>
+        </section>
+        <section>
+          <h3 class="t" style="font-size:20px;font-weight:400;border-color:var(--red)">本週作業</h3>
+          <ul class="checks t">
+            <li><span>p.15 的短文：自己取標題，抄到四百字稿紙（直式橫書），漢字不標音，引用不獨立成行，下引號前不加句號。下次上課開始時交。</span></li>
+            <li><span>p.19 練習 1、2 自行對照課本後面的答案。</span></li>
+          </ul>
+        </section>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="sec prac">
+      <header class="sh"><span class="no">05</span><h2>練習格</h2><span class="pg">20 欄 × 16 行，一格約 8.2mm</span></header>
+      <p class="gray">橫著寫。行與行之間的空白留給修改和註記。</p>
+      <svg class="practice" viewBox="-1 -1 174 190.6" role="img" aria-label="空白稿紙格：十六行，每行二十格">
+        <defs>
+          <g id="grow" fill="none" stroke="#151515">
+            <rect width="172" height="8.6" stroke-width=".3"/>
+            <path stroke-width=".18" d="M8.6 0v8.6M17.2 0v8.6M25.8 0v8.6M34.4 0v8.6M51.6 0v8.6M60.2 0v8.6M68.8 0v8.6M77.4 0v8.6M94.6 0v8.6M103.2 0v8.6M111.8 0v8.6M120.4 0v8.6M137.6 0v8.6M146.2 0v8.6M154.8 0v8.6M163.4 0v8.6"/>
+            <path stroke-width=".3" d="M43 0v8.6M86 0v8.6M129 0v8.6"/>
+          </g>
+        </defs>
+        <use href="#grow"/><use href="#grow" y="12"/><use href="#grow" y="24"/><use href="#grow" y="36"/><use href="#grow" y="48"/><use href="#grow" y="60"/><use href="#grow" y="72"/><use href="#grow" y="84"/><use href="#grow" y="96"/><use href="#grow" y="108"/><use href="#grow" y="120"/><use href="#grow" y="132"/><use href="#grow" y="144"/><use href="#grow" y="156"/><use href="#grow" y="168"/><use href="#grow" y="180"/>
+      </svg>
+    </section>
+
+    <p class="foot">內容取自 2-wiki／日文寫作／日文寫作-作文預備知識。日文照課本原文，課本印的ルビ這一頁沒有標。〔1-13:18〕表示第 1 段錄音 13:18，要回查逐字稿才用得到。</p>
+  </div>
+</main>
+
+<!-- ========== 風格規格：給人挑、也給之後照這個風格實作的 AI 讀（不進 PDF） ========== -->
+<section class="spec" id="spec">
+  <div class="spec-in">
+    <div class="spec-head">
+      <span class="spec-code">F4</span>
+      <h2>原稿用紙添削</h2>
+      <span class="spec-en">Minimalism × Hand-drawn</span>
+    </div>
+    <p class="spec-def">白紙、黑字、細線，層級只靠字級；整頁唯一的顏色是老師改作文的紅筆，凡是紅的都是老師說的。</p>
+
+    <div class="spec-grid">
+      <div class="spec-card">
+        <h3>從兩個風格各拿什麼</h3>
+        <ul>
+          <li><b>W01 極簡主義</b>：近白底、64px 細體大標、1px 細線、段與段之間 40–64px 留白、表格只留橫線、沒有色塊。</li>
+          <li><b>W19 手繪插畫風</b>：紅筆的手繪圈、手繪底線、不規則圓角的手繪框、楷體與手寫英數的旁註。</li>
+          <li><b>沒有拿的</b>：插畫人物與植物、奶油色底、彩色按鈕、產品圖、導覽列。</li>
+        </ul>
+      </div>
+      <div class="spec-card">
+        <h3>字型</h3>
+        <p>只用系統字型。中文黑體 <code>PingFang TC</code>／<code>Microsoft JhengHei</code>，大標用 300 字重。標 <code>lang="ja"</code> 的日文改用日文黑體 <code>Hiragino Sans</code>／<code>Yu Gothic</code>／<code>Meiryo</code>，句讀點才會落在左下。稿紙格裡的字用教科書體 <code>UD Digi Kyokasho</code>／<code>Klee</code>。紅筆用楷體 <code>BiauKai</code>／<code>DFKai-SB</code>，標記字母用 <code>Segoe Print</code>。內文 14.5px。</p>
+      </div>
+      <div class="spec-card wide">
+        <h3>色票（每個顏色綁一件事）</h3>
+        <ul class="spec-sw">
+          <li><i style="background:#151515"></i>黑＝課本原文 #151515</li>
+          <li><i style="background:#5e5e5e"></i>灰＝白話說明 #5e5e5e</li>
+          <li><i style="background:#c0241a"></i>紅筆＝老師 #c0241a</li>
+          <li><i style="background:#f8e8e5"></i>紅筆標到的格子 rgba(192,36,26,.1)</li>
+          <li><i style="background:#d0d0ce"></i>細線 rgba(21,21,21,.2)</li>
+          <li><i style="background:#fdfdfb"></i>紙 #fdfdfb</li>
+        </ul>
+      </div>
+      <div class="spec-card wide">
+        <h3>關鍵做法</h3>
+        <ol>
+          <li>紙寬 <code>182mm</code>、左右留白與 <code>@page</code> 的邊界相同（8mm，內容寬 166mm），螢幕上的換行跟 PDF 一致。段落之間不畫框，只用 1px 線與留白分開；標題字重 300，內文 400，層級靠字級（64／34／16／14.5px）。</li>
+          <li>稿紙示範是 <code>grid-template-columns: repeat(20, 1fr)</code>，每格 <code>aspect-ratio: 1</code> 加真的 <code>border</code>（不用漸層畫格線，PDF 才不會糊）。整張滿版 <code>166mm</code>（內容寬），一格 8.3mm。</li>
+          <li>小字靠左下：那一格改 <code>place-items: end start</code>；句號與最後一個字共用一格時，兩個字放在同一個格子裡。</li>
+          <li>紅筆標記：被標的格子鋪 <code>rgba(192,36,26,.1)</code>，格子下方一列同樣 20 欄的格線放手寫字母 A–J，說明寫在示範下面，不用拉線。</li>
+          <li>紅圈是 inline SVG 路徑（<code>preserveAspectRatio="none"</code>、<code>vector-effect: non-scaling-stroke</code>）；標記字母用手寫英文字型；手繪框用 <code>border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px</code>。</li>
+          <li>頁尾練習格是一張 inline SVG：一行 <code>&lt;rect&gt;</code> 加 19 條直線，用 <code>&lt;use&gt;</code> 重複 16 行，滿版 166mm 時一格約 8.2mm、行距約 3.2mm；整張比一頁矮，列印時不拆，放不下就整張移到下一頁。</li>
+          <li>列印是無縫直式、白底：<code>@page { size: 182mm 243mm; margin: 4mm 8mm 4mm }</code>，六個邊界框給空字串、不印頁碼。文字（段落、條列、課本十條、手繪框）都可以跨頁，每頁填到底；只有稿紙示範、練習格、圖、表格的每一列、三欄小格組 <code>break-inside: avoid</code>，標題與課本原文段 <code>break-after: avoid</code>；螢幕上的兩欄在紙上改單欄。</li>
+        </ol>
+      </div>
+      <div class="spec-card wide spec-fit">
+        <h3>套到學校資料</h3>
+        <p><b>適合</b>語言課的規則整理、活用表、對照表、要直接在上面練習的講義：內容本身是黑白的，老師的要求用紅筆疊上去。</p>
+        <p><b>不適合</b>需要分很多類別的總覽（只有一個顏色可用）、圖多的內容。分類多用 F1、F2。</p>
+        <p><b>規範</b>符合 NCCU 製作規範：白底、全部靜態、一般文流、高度跟著內容、系統字型、無縫直式（182×243mm，文字跨頁接續）且稿紙格、圖與表格列不被切開（規格面板與工具列不進 PDF）。</p>
+      </div>
+      <div class="spec-card wide spec-prompt">
+        <h3>AI 描述詞</h3>
+        <p>原稿用紙添削（Minimalism × Hand-drawn）：白紙黑字的極簡講義，細體大標、1px 細線、大量留白、表格只留橫線；唯一的顏色是老師改作文的紅筆——手繪紅圈、手繪紅框、紅色楷體旁註，紅色只用在老師說過的話；用 CSS 格線畫 20 欄原稿用紙示範，被標記的格子鋪淡紅、下方用手寫字母對應說明；頁尾留空白稿紙格可手寫；黑體為主、系統字型、靜態，列印成 iPad 直式無縫分頁（182×243mm，文字跨頁接續），稿紙格、圖與表格列不拆。</p>
+      </div>
+    </div>
+    <a class="spec-back" href="../index.html">← 回喜好選單</a>
+  </div>
+</section>
+
+<script>
+/* 匯出 PDF：分頁與邊界都寫在上面的 @page，這裡只開列印視窗（照 3-output/NCCU/製作規範.md 第 1 節） */
+document.getElementById('pdf').addEventListener('click', function () { window.print(); });
+</script>
+</body>
+</html>

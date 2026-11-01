@@ -1,0 +1,1497 @@
+<!doctype html>
+<!-- 版面喜好選單範例 L10｜海報學習地圖｜來源：講師範例庫 output範例/設計偏好選擇/samples/L10-N5學習地圖海報筆記.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N5 學習地圖・海報筆記版</title>
+<meta name="description" content="JLPT N5 學習地圖的海報筆記版：首頁、假名、單字、漢字、考試用暖紙海報；文法 6 站 88 條用橫線筆記紙講解（公式框、螢光筆、旁註、變化表、插圖）。">
+<!--
+  混搭版：B 手繪海報（首頁、頁首頁尾帶、分頁籤、假名、單字、漢字、考試、路由）＋ A 橫線筆記本（文法第 1～6 站的講解紙）。
+  配色 P5 原版暖紙。唯一強調色 --answer 只用在每站第一條的主句型框（.fbox.main）。
+  分類色：文法 c1、單字 c3、漢字 c2、考試 c4（全站固定）。
+  螢光筆（A 的配色，全站同一個意思）：粉＝助詞、黃＝句尾・禮貌形、綠＝旁註、藍細框＝詞類位置；こそあど 近／中／遠／哪 四色。
+  日文字型：CSS 變數 --jp，預設 Klee One（2026-10-23 定案）；網址加 ?font=<key> 切換（見下方 JPFONTS）。只有選到 Google Fonts 時才動態插入那一個 <link>。
+  資料：頁尾三個 <script type="application/json">（由 build.py 從舊版 N5 地圖原樣搬入）；插圖片段由 build.py 插在 @@ILLUS@@。
+-->
+<script>
+/* 日文字型切換：?font=<key>。預設 klee（Klee One，2026-10-23 使用者定案）；?font=sys 為系統黑體，不載外部字型 */
+(() => {
+  const SYS = '"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Yu Gothic","Meiryo",sans-serif';
+  const F = {
+    sys: { name: '系統黑體（Hiragino Sans／Yu Gothic）', stack: SYS },
+    klee: { name: 'Klee One', g: 'Klee+One:wght@400;600', stack: '"Klee One",' + SYS },
+    mincho: { name: '系統明體（Hiragino Mincho／Yu Mincho）', stack: '"Hiragino Mincho ProN","Yu Mincho","YuMincho",serif' },
+    bizud: { name: 'BIZ UDPGothic', g: 'BIZ+UDPGothic:wght@400;700', stack: '"BIZ UDPGothic",' + SYS },
+    zenmaru: { name: 'Zen Maru Gothic', g: 'Zen+Maru+Gothic:wght@400;700', stack: '"Zen Maru Gothic",' + SYS },
+    mplusr: { name: 'M PLUS Rounded 1c', g: 'M+PLUS+Rounded+1c:wght@400;700', stack: '"M PLUS Rounded 1c",' + SYS },
+    notojp: { name: 'Noto Sans JP', g: 'Noto+Sans+JP:wght@400;700', stack: '"Noto Sans JP",' + SYS },
+    yomogi: { name: 'Yomogi', g: 'Yomogi', stack: '"Yomogi",' + SYS },
+  };
+  let key = 'klee';
+  try { key = new URLSearchParams(location.search).get('font') || 'klee'; } catch (e) { key = 'klee'; }
+  if (!F[key]) key = 'klee';
+  const f = F[key];
+  document.documentElement.style.setProperty('--jp', f.stack);
+  window.JPFONT = { key, name: f.name, keys: Object.keys(F) };
+  if (f.g && navigator.onLine) {
+    const l = document.createElement('link');
+    l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=' + f.g + '&display=swap';
+    l.id = 'jpfont-link';
+    l.addEventListener('load', () => { window.dispatchEvent(new Event('jpfont-load')); });
+    document.head.appendChild(l);
+  }
+})();
+</script>
+<style>
+:root{
+  --bg:#f6efe7; --surface:#fffbf6; --surface-2:#efe9de; --ink:#1f1c18; --ink-2:#5a5249;
+  --line:#e3dbcd; --line-strong:#5a3b1c; --accent:#7a4a1e;
+  --c1:#365a7c; --c2:#85550d; --c3:#3a6a4c; --c4:#625b54;
+  --c1-soft:#e4ecf4; --c2-soft:#f8eed6; --c3-soft:#e3efe5; --c4-soft:#efebe4;
+  --bad:#8f2d1f; --answer:#b8331a; --hl:#ffe76a; --ok:#3a6a4c; --warn:#85550d;
+  /* 非分類的裝飾色：便條紙 */
+  --note:#fbf4cf;
+  /* 螢光筆（A 的配色）：每色一個固定意思，全站一致 */
+  --mk-pt:rgba(236,128,160,.32);     /* 粉：助詞 */
+  --mk-end:rgba(251,214,90,.55);     /* 黃：句尾・禮貌形 */
+  --mk-note:rgba(150,190,90,.30);    /* 綠：旁註的底 */
+  --ko:rgba(236,128,160,.38);        /* こ：近我 */
+  --so:rgba(251,214,90,.6);          /* そ：近你 */
+  --a:rgba(110,170,220,.38);         /* あ：離兩人都遠 */
+  --do:rgba(160,155,145,.3);         /* ど：哪 */
+  /* 橫線筆記紙 */
+  --paper:#fffdf7;
+  --rule:#d6e3ec;
+  --margin-line:rgba(200,110,100,.30);
+  --row:36px;
+  --rule-shift:-5px;
+  --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --sans:var(--font);
+  --jp:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Yu Gothic","Meiryo",sans-serif;
+  --r-hand:18px 13px 20px 12px / 13px 20px 12px 18px;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0; min-width:1100px; color:var(--ink); font-family:var(--font); font-size:15px; line-height:1.65;
+  background-color:var(--bg);
+  background-image:radial-gradient(rgba(90,59,28,.07) 1px, transparent 1.2px);
+  background-size:22px 22px;
+}
+[lang="ja"]{font-family:var(--jp)}
+button{font:inherit;color:inherit}
+a{color:inherit}
+rt{font-size:max(12px,.55em);color:var(--ink-2);font-family:var(--jp)}
+h1,h2,h3,h4{margin:0;line-height:1.3}
+p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- 深藍頁首帶＋分頁籤 ---------- */
+.top{background:var(--c1);color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 0 rgba(31,28,24,.18)}
+.top-in{max-width:1360px;margin:0 auto;padding:10px 32px;display:flex;align-items:center;gap:24px}
+.brand{display:flex;flex-direction:column;text-decoration:none;line-height:1.25;flex:none}
+.brand b{font-size:19px}
+.brand span{font-size:12px;opacity:.85}
+.tabs{display:flex;align-items:center;gap:4px;margin-left:auto;flex-wrap:nowrap}
+.tab{display:inline-flex;align-items:center;gap:5px;text-decoration:none;font-size:14px;padding:5px 11px;border-radius:999px;border:1.5px solid transparent;white-space:nowrap;transition:background-color .15s,border-color .15s}
+.tab i{font-style:normal;font-size:12px;width:19px;height:19px;border-radius:50%;display:inline-grid;place-items:center;border:1.5px solid rgba(255,255,255,.7);font-weight:700}
+.tab:hover{border-color:rgba(255,255,255,.55)}
+.tab[aria-current="page"]{background:var(--surface);color:var(--c1);font-weight:700}
+.tab[aria-current="page"] i{border-color:var(--c1)}
+.tabgrp{display:inline-flex;align-items:center;gap:2px;padding:0 6px;margin:0 4px;border-left:1.5px dashed rgba(255,255,255,.45);border-right:1.5px dashed rgba(255,255,255,.45)}
+.tabgrp > span{font-size:12px;opacity:.8;margin-right:4px}
+/* 學完的站：站號旁的 ✓ */
+.tab .tck{display:none;font-size:12px;font-weight:800;line-height:1;margin-left:-3px;color:#cfe8d5}
+.tab.done .tck{display:inline}
+.tab[aria-current="page"] .tck{color:var(--ok)}
+/* 窄一點的桌機視窗（1100～1320px）：分頁籤收緊，不出現橫向捲軸 */
+@media (max-width:1320px){.top-in{padding:10px 20px;gap:12px}.tabs{gap:2px}.tab{padding:5px 7px;font-size:13px}.tabgrp{padding:0 3px;margin:0 2px}.brand b{font-size:17px}}
+
+/* ---------- 海報紙面 ---------- */
+main{max-width:1360px;margin:0 auto;padding:30px 32px 44px}
+.page{display:none}
+.page.on{display:block;animation:pagein .3s ease-out}
+@keyframes pagein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* 毛筆刷色帶（深藍） */
+.brush{position:relative;display:inline-block;color:#fff;padding:14px 46px 16px;isolation:isolate}
+.brush::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--c1);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 120' preserveAspectRatio='none'%3E%3Cpath d='M16 20 C110 6 300 14 470 9 C530 7 572 11 590 18 L582 38 L597 57 L585 79 L593 101 C470 113 300 105 150 112 C84 115 36 110 9 104 L19 84 L4 62 L17 41 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 120' preserveAspectRatio='none'%3E%3Cpath d='M16 20 C110 6 300 14 470 9 C530 7 572 11 590 18 L582 38 L597 57 L585 79 L593 101 C470 113 300 105 150 112 C84 115 36 110 9 104 L19 84 L4 62 L17 41 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+
+/* 虛線便當格 */
+.box{position:relative;background:var(--surface);border:2px dashed color-mix(in srgb,var(--tone,var(--line-strong)) 50%,transparent);
+  border-radius:var(--r-hand);padding:34px 22px 20px}
+.box.solid{border-style:solid;border-color:color-mix(in srgb,var(--tone,var(--line-strong)) 30%,transparent)}
+.t1{--tone:var(--c1);--tone-soft:var(--c1-soft)}
+.t2{--tone:var(--c2);--tone-soft:var(--c2-soft)}
+.t3{--tone:var(--c3);--tone-soft:var(--c3-soft)}
+.t4{--tone:var(--c4);--tone-soft:var(--c4-soft)}
+.tn{--tone:var(--line-strong);--tone-soft:var(--surface-2)}
+
+/* 編號緞帶標題（雙層 clip-path 做出描邊） */
+.ribbon{position:absolute;top:-17px;left:16px;max-width:calc(100% - 32px);background:color-mix(in srgb,var(--tone) 70%,var(--surface));padding:1.5px;transform:rotate(-1deg);
+  clip-path:polygon(0 0,100% 0,calc(100% - 11px) 50%,100% 100%,0 100%,11px 50%)}
+.ribbon > span{display:block;background:var(--tone-soft);padding:4px 26px 4px 24px;font-weight:700;font-size:15px;line-height:1.4;
+  clip-path:polygon(0 0,100% 0,calc(100% - 10px) 50%,100% 100%,0 100%,10px 50%)}
+.ribbon b{color:var(--tone);margin-right:6px}
+.ribbon.big > span{font-size:18px;padding:6px 30px 6px 28px}
+.ribbon.right{left:auto;right:16px;transform:rotate(1deg)}
+
+/* 便條紙 */
+.sticky{position:relative;background:var(--note);padding:26px 22px 18px;transform:rotate(1.6deg);
+  box-shadow:0 10px 14px -10px rgba(60,40,20,.45),0 1px 0 rgba(60,40,20,.08);border-radius:2px 2px 14px 2px}
+.sticky.l{transform:rotate(-1.8deg)}
+.sticky .clip{position:absolute;top:-16px;right:26px;width:20px;height:44px;color:var(--ink-2)}
+.sticky .tape{position:absolute;top:-10px;left:50%;width:76px;height:20px;margin-left:-38px;background:rgba(214,196,160,.55);transform:rotate(-3deg)}
+.sticky h4{font-size:13px;color:var(--ink-2);font-weight:700;margin-bottom:4px}
+.sticky p{font-size:15px}
+
+/* 小插圖 */
+.illus{display:block;color:var(--ink)}
+.illus *{vector-effect:non-scaling-stroke}
+
+/* 螢光筆與詞類方框 */
+/* 螢光筆（A 的手繪邊緣）：粉＝助詞、黃＝句尾、綠＝旁註、こそあど 四色 */
+.mk{--mkc:var(--hl);background:linear-gradient(100deg,transparent 0 2%,var(--mkc) 5% 95%,transparent 98%);
+  border-radius:.7em .25em .8em .3em / .4em .8em .3em .7em;padding:.02em .28em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.mk.pt{--mkc:var(--mk-pt)}
+.mk.end{--mkc:var(--mk-end)}
+.mk.note{--mkc:var(--mk-note)}
+.mk.ko{--mkc:var(--ko)} .mk.so{--mkc:var(--so)} .mk.a{--mkc:var(--a)} .mk.do{--mkc:var(--do)}
+/* 詞類位置：藍細框 */
+.posbox{display:inline-block;font:600 13px/22px var(--sans);color:var(--c1);border:1.5px solid var(--c1);background:var(--c1-soft);
+  border-radius:3px 5px 3px 6px;padding:0 6px;white-space:nowrap;vertical-align:middle}
+.posbox.tilde{padding:0 3px;font-weight:400}
+/* 圖例用的小框樣本 */
+.fsample{display:inline-block;font-size:12px;line-height:20px;padding:0 8px;border:2px solid var(--c1);border-radius:3px 6px 4px 5px;background:var(--paper)}
+.fsample.main{border-color:var(--answer)}
+
+/* 唸出來 */
+[data-say]{cursor:pointer}
+.say{flex:none;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line-strong);background:var(--surface);display:grid;place-items:center;cursor:pointer;color:var(--line-strong);transition:transform .15s,background-color .15s}
+.say svg{width:14px;height:14px}
+.say:hover{background:var(--surface-2);transform:scale(1.06)}
+.say:active{transform:scale(.94)}
+
+/* ---------- 版面通用 ---------- */
+.grid12{display:grid;grid-template-columns:repeat(12,1fr);gap:34px 22px}
+.span{grid-column:span var(--span,4)}
+.sec-gap{margin-top:46px}
+.lead{color:var(--ink-2)}
+.legend-row{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-size:13px;color:var(--ink-2)}
+.legend-row > span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:22px;height:14px;border-radius:4px;display:inline-block;border:1.5px solid var(--tone);background:var(--tone-soft)}
+.ja-lg{font-size:1.15em}
+.hint{font-size:12px;color:var(--ink-2)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line-strong);background:var(--surface);border-radius:999px;padding:6px 16px;font-size:14px;cursor:pointer;text-decoration:none;transition:background-color .15s,transform .15s}
+.btn:hover{background:var(--surface-2)}
+.btn:active{transform:scale(.97)}
+.btn[disabled]{opacity:.35;cursor:default}
+
+/* ---------- 首頁 ---------- */
+.hero{display:grid;grid-template-columns:230px 1fr 250px;gap:24px;align-items:center;margin-bottom:46px}
+.hero-mid{text-align:center}
+.hero-eyebrow{font-size:14px;color:var(--ink-2);margin-bottom:6px}
+.hero h1{font-size:54px;font-weight:900;line-height:1.15}
+.hero h1 small{display:block;font-size:17px;font-weight:400;opacity:.9;margin-top:2px}
+.tagline{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:16px;font-size:19px;font-weight:700;color:var(--ink)}
+.tagline .dot{color:var(--ink-2);font-weight:400}
+.tagline svg{width:34px;height:22px;color:var(--ink-2)}
+.hero .sticky p{font-size:17px;line-height:1.6;text-align:center}
+.hero .sticky p b{font-size:20px}
+
+.steps{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.step{display:flex;flex-direction:column;background:var(--surface);border:2px solid color-mix(in srgb,var(--tone) 35%,transparent);border-radius:14px;padding:16px 14px 14px;text-decoration:none;cursor:pointer;transition:transform .18s,box-shadow .18s}
+.step:hover{transform:translateY(-3px);box-shadow:0 10px 18px -12px rgba(60,40,20,.5)}
+.step-h{display:flex;gap:10px;align-items:flex-start;min-height:52px}
+.num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--tone);color:#fff;display:grid;place-items:center;font-weight:800;font-size:17px}
+.step-h h3{font-size:16px}
+.step-h h3 small{display:block;font-size:12px;color:var(--ink-2);font-weight:400}
+.step ul{margin:10px 0 0;padding:0 0 0 2px;list-style:none;font-size:13px;line-height:1.5}
+.step li{position:relative;padding-left:14px;margin-bottom:5px}
+.step li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--tone)}
+.step .illus{width:118px;height:84px;margin:auto auto 10px;padding-top:6px}
+.tip{min-height:62px;display:flex;gap:8px;align-items:flex-start;background:var(--surface-2);border-radius:10px;padding:8px 10px;font-size:13px;line-height:1.45}
+.tip svg{flex:none;width:22px;height:22px;color:var(--ink-2)}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:16px 14px}
+.stat b{display:block;font-size:38px;line-height:1.05;font-weight:800;font-variant-numeric:tabular-nums}
+.stat b::after{content:"";display:block;width:34px;height:5px;border-radius:3px;background:var(--tone);margin-top:6px}
+.stat span{font-size:13px;color:var(--ink-2)}
+
+.legend-list{display:grid;gap:9px;font-size:14px}
+.legend-list > div{display:flex;align-items:center;gap:10px}
+.legend-list .k{flex:none;width:86px}
+.legend-list small{color:var(--ink-2);font-size:12px}
+.legend-sub{margin-top:14px;padding-top:12px;border-top:1.5px dashed var(--line)}
+.legend-sub .k{width:118px;white-space:nowrap}
+
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.checks label{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:14px;line-height:1.45}
+.checks input{position:absolute;opacity:0;pointer-events:none}
+.cb{flex:none;width:19px;height:19px;border:2px solid var(--line-strong);border-radius:3px;display:grid;place-items:center;margin-top:1px;background:var(--surface);transition:background-color .15s}
+.cb svg{width:13px;height:13px;color:var(--surface);transform:scale(0);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.checks input:checked + .cb{background:var(--line-strong)}
+.checks input:checked + .cb svg{transform:scale(1)}
+.checks input:checked ~ .tx{color:var(--ink-2);text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--ink-2) 60%,transparent)}
+.checks input:focus-visible + .cb{outline:2px solid var(--c1);outline-offset:2px}
+.check-foot{margin-top:10px;font-size:12px;color:var(--ink-2)}
+
+.order{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.order li{display:flex;gap:12px;align-items:flex-start;font-size:14px;line-height:1.5}
+.order .n{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;background:var(--tone-soft);border:1.5px solid var(--tone);color:var(--ink)}
+.notes{display:grid;gap:22px;padding:6px 6px 0}
+.quote{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;height:100%}
+.quote p{font-size:17px;font-weight:700;line-height:1.6}
+
+/* 時間軸（箭頭串起的格子） */
+.tl{display:flex;align-items:stretch;gap:0;margin-top:6px}
+.tl-cell{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px 6px;border:1.5px solid color-mix(in srgb,var(--tone) 45%,transparent);background:var(--tone-soft);border-radius:10px;text-decoration:none;min-width:0;transition:transform .15s}
+.tl-cell:hover{transform:translateY(-2px)}
+.tl-cell b{font-size:13px;color:var(--ink-2);font-weight:700}
+.tl-cell span{font-size:15px;font-weight:700}
+.tl-cell small{font-size:12px;color:var(--ink-2)}
+.tl-cell.cur{background:var(--surface);border-width:2.5px;border-color:var(--tone)}
+.tl-arrow{flex:none;width:26px;display:grid;place-items:center;color:var(--ink-2)}
+.tl-arrow svg{width:20px;height:14px}
+
+/* ---------- 站頁（假名＋文法） ---------- */
+.st-head{display:grid;grid-template-columns:1fr 190px 290px;gap:26px;align-items:center;margin-bottom:44px}
+.st-title .brush{padding:10px 40px 12px}
+.st-title .brush h1{font-size:30px;font-weight:900;display:flex;align-items:baseline;gap:14px}
+.st-title .brush h1 .no{font-size:16px;font-weight:700;opacity:.85}
+.st-title .brush h1 small{font-size:15px;font-weight:400;opacity:.9}
+.st-sum{margin-top:14px;font-size:16px;max-width:640px}
+.st-meta{margin-top:10px}
+.st-head .illus{width:190px;height:142px}
+.st-head .sticky p{font-size:16px;line-height:1.6}
+
+/* ---------- 文法講解：一張橫線筆記紙（A 的做法） ---------- */
+.sheet{position:relative;background-color:var(--paper);border-radius:4px;font-size:16px;line-height:36px;
+  box-shadow:0 1px 2px rgba(31,28,24,.08),0 12px 30px -16px rgba(60,40,20,.38);
+  padding:36px 32px 36px 96px;
+  background-image:
+    linear-gradient(to right,transparent 71px,var(--margin-line) 71px 73px,transparent 73px),
+    repeating-linear-gradient(to bottom,transparent 0 35px,var(--rule) 35px 36px);
+  background-position:0 0,0 var(--rule-shift)}
+.sheet h2,.sheet p{margin:0}
+.nb-head{position:relative;height:72px;display:flex;align-items:center;justify-content:space-between}
+.nb-title{font-size:15px;color:var(--ink-2);line-height:36px}
+.nb-title [lang="ja"]{font-size:18px;color:var(--ink);font-weight:600;margin-right:10px}
+
+/* 這站學完了（彈簧勾選） */
+.donebox{display:inline-flex;align-items:center;gap:10px;height:36px;font-size:14px;cursor:pointer;user-select:none;
+  padding:0 14px 0 8px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);transition:background-color .2s,border-color .2s}
+.donebox:hover{background:var(--surface-2)}
+.donebox input{position:absolute;opacity:0;pointer-events:none}
+.donebox .bx{width:24px;height:24px;border:2px solid var(--ink);border-radius:4px 6px 4px 5px;display:grid;place-items:center;background:var(--surface)}
+.donebox .bx svg{width:20px;height:20px;overflow:visible}
+.donebox .bx path{fill:none;stroke:var(--ok);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:30;stroke-dashoffset:30;transition:stroke-dashoffset .28s ease-out .05s}
+.donebox input:checked + .bx{animation:springIn .55s cubic-bezier(.34,1.8,.5,1);border-color:var(--ok)}
+.donebox input:checked + .bx path{stroke-dashoffset:0}
+.donebox input:focus-visible + .bx{outline:2px solid var(--c1);outline-offset:2px}
+.donebox input:checked ~ .lb{color:var(--ok);font-weight:700}
+.donebox:has(input:checked){border-color:color-mix(in srgb,var(--ok) 45%,transparent)}
+@keyframes springIn{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+/* 每條句型 */
+.gi{margin-top:36px}
+.gi-zh{height:36px;font-size:17px;font-weight:700;display:flex;align-items:baseline;gap:8px;white-space:nowrap;line-height:36px}
+.gi-zh .arr{font:400 15px/36px var(--sans);color:var(--ink-2)}
+.gi-zh .no{font:400 12px var(--sans);color:var(--ink-2);margin-left:4px}
+.fline{display:flex;flex-wrap:wrap;align-items:center}
+.fline > .frow{flex:0 1 auto;min-width:0}
+.frow{display:flex;flex-wrap:wrap;align-items:center;column-gap:12px;min-height:72px}
+.fbox{display:inline-flex;flex-wrap:wrap;align-items:center;column-gap:6px;row-gap:0;min-height:48px;margin:12px 0;padding:4px 14px;
+  border:2px solid var(--c1);border-radius:3px 6px 4px 5px;background:color-mix(in srgb,var(--paper) 85%,transparent);line-height:40px}
+.fbox.main{border-color:var(--answer)}
+.fbox .tk{font:400 21px/40px var(--jp);white-space:nowrap}
+.fbox .tk.oth{font-weight:600}
+.fbox .plus{font:400 16px var(--sans);color:var(--ink-2)}
+.fbox .sl{font:400 15px var(--sans);color:var(--ink-2);margin:0 1px}
+.fbox .dot{font:400 18px var(--jp);color:var(--ink-2)}
+.colon{font:400 16px var(--sans);color:var(--ink-2);margin:0 2px 0 -2px}
+.fbox .grp{display:inline-flex;align-items:center;column-gap:3px;white-space:nowrap}
+.fbox .opts{display:inline-flex;flex-wrap:wrap;align-items:center;column-gap:2px}
+.fbox .tk .mk{padding:.02em .22em}
+.flabel{display:inline-flex;align-items:center}
+.bigsl{font:300 34px/1 var(--sans);color:var(--ink-2)}
+.ftag{font-size:13px;color:var(--ink-2);border:1px dashed var(--c4);border-radius:999px;padding:0 10px;line-height:24px}
+
+/* 變化表 */
+.ctab{display:block;margin:12px 0;padding:0 14px;width:600px}
+.crow{display:flex;align-items:flex-start;gap:10px;min-height:36px}
+.crow + .crow{border-top:1px dashed var(--line)}
+.crow .ch{flex:none;margin-top:6px;font:700 13px/22px var(--sans);color:var(--paper);background:var(--ink);border-radius:4px 7px 4px 6px;padding:0 8px}
+.crow .cc{display:flex;flex-wrap:wrap;align-items:center;column-gap:8px}
+.cchip{display:inline-flex;align-items:center;gap:2px;height:28px;margin:4px 0;padding:0 8px;border:1px solid var(--line);border-radius:6px 4px 7px 5px;background:var(--surface);font:400 17px/28px var(--jp);white-space:nowrap}
+.crow .whole{font-size:15px;line-height:36px}
+.harr{display:inline-block;width:26px;height:14px;vertical-align:middle;margin:0 2px;color:var(--c1)}
+.harr path{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* 旁註：緊接在公式框右邊，中間一段短彎箭頭；放不下就換到下方、箭頭往上指 */
+.anno{flex:none;display:flex;align-items:center;max-width:540px;min-width:0}
+.anno .curl{flex:none;display:block;width:96px;height:36px;overflow:visible;color:var(--c3)}
+.curl path{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.snote{flex:0 1 auto;max-width:440px;font-size:13px;line-height:18px;padding:9px 12px;background:var(--mk-note);
+  border-radius:14px 5px 16px 6px / 6px 16px 5px 14px}
+.snote [lang="ja"]{font-size:14px}
+.anno.below{flex-direction:column;align-items:flex-start;flex-basis:100%;max-width:none}
+.anno.below .curl{width:48px;height:36px}
+
+/* 例句 */
+.gi-ex{display:flex;align-items:baseline;gap:10px;min-height:36px}
+.gi-ex .lb{flex:none;font:13px var(--sans);color:var(--ink-2)}
+.gi-ex .ja{font:400 19px/36px var(--jp);cursor:pointer;border-radius:3px;transition:background-color .15s}
+.gi-ex .ja:hover{background:color-mix(in srgb,var(--mk-end) 60%,transparent)}
+.gi-ex .say{align-self:center}
+.gi-exzh{padding-left:34px;font-size:14px;color:var(--ink-2);line-height:36px}
+.ill{margin-top:0}
+/* 插圖片段的日文也跟著 --jp 走（比 illus-css 的規則更具體） */
+body .il-ja,body .il-wrap [lang="ja"]{font-family:var(--jp)}
+
+.quick{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.quick .q{display:inline-flex;align-items:center;gap:8px;font-size:15px}
+.quick .q span[lang]{font-size:16px;font-weight:600}
+.quick .arr{color:var(--ink-2);display:inline-grid;place-items:center}
+.quick .arr svg{width:20px;height:14px;display:block}
+.st-nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px}
+
+/* 假名表 */
+.kana{border-collapse:separate;border-spacing:5px;width:100%}
+.kana td{background:var(--surface);border:1.5px solid var(--line);border-radius:9px;text-align:center;padding:4px 2px 3px;cursor:pointer;transition:background-color .12s,border-color .12s}
+.kana td:hover{background:var(--c1-soft);border-color:var(--c1)}
+.kana td.empty{background:transparent;border-style:dashed;border-color:var(--line);cursor:default}
+.kana .k{display:block;font-size:24px;line-height:1.25;font-weight:600}
+.kana .ro{display:block;font-size:12px;color:var(--ink-2);line-height:1.2}
+.kana.y .k{font-size:20px}
+.knote{font-size:14px;line-height:1.7;margin-bottom:8px;padding-left:16px;position:relative}
+.knote::before{content:"";position:absolute;left:0;top:.65em;width:7px;height:7px;border-radius:50%;background:var(--c1)}
+.knote b{font-size:16px}
+
+/* ---------- 單字 ---------- */
+.list-head{display:grid;grid-template-columns:1fr 470px;gap:30px;align-items:start;margin-bottom:46px}
+.list-head .brush h1{font-size:30px;font-weight:900}
+.list-head .brush h1 small{font-size:15px;font-weight:400;opacity:.9;margin-left:10px}
+.search{display:flex;align-items:center;gap:10px;margin-top:20px;background:var(--surface);border:2px solid var(--line-strong);border-radius:999px;padding:8px 18px;max-width:520px;transition:box-shadow .15s}
+.search:focus-within{box-shadow:0 0 0 3px var(--c1-soft)}
+.search svg{width:18px;height:18px;flex:none;color:var(--ink-2)}
+.search input{border:0;outline:0;background:transparent;font:inherit;font-size:16px;flex:1;min-width:0;color:var(--ink)}
+.search-count{margin-top:8px;font-size:13px;color:var(--ink-2);min-height:1.6em}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.chip{border:1.5px solid color-mix(in srgb,var(--tone) 45%,transparent);background:var(--tone-soft);border-radius:999px;padding:2px 11px;font-size:13px;cursor:pointer;transition:background-color .12s}
+.chip:hover{background:var(--surface)}
+.chip em{font-style:normal;color:var(--ink-2);font-size:12px;margin-left:3px}
+
+.masonry{column-count:4;column-gap:22px}
+.masonry > .mcell{break-inside:avoid;padding:22px 0 14px}
+.masonry > .mcell > .box{display:block}
+.masonry.k2{column-count:2;column-gap:26px}
+.mcell[hidden]{display:none!important}
+.box-sub{font-size:12px;color:var(--ink-2);margin:-6px 0 8px}
+.vsub{font-size:13px;font-weight:700;color:var(--tone);margin:10px 0 2px;padding-bottom:2px;border-bottom:1.5px dashed var(--line)}
+.vsub small{font-weight:400;color:var(--ink-2)}
+.wd{display:grid;grid-template-columns:minmax(118px,auto) 1fr;gap:10px;align-items:end;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:5px 4px 3px;cursor:pointer;border-radius:4px}
+.wd:hover{background:var(--tone-soft)}
+.wd .w{font-size:17px;line-height:1.35}
+.wd .w small{font-size:12px;color:var(--ink-2);font-family:var(--font)}
+.wd .zh{font-size:13px;color:var(--ink-2);line-height:1.45;padding-bottom:2px}
+.wd[hidden],.box[hidden],.kc[hidden]{display:none!important}
+.empty-msg{display:none;padding:30px;text-align:center;color:var(--ink-2)}
+
+/* 長條圖（單字分類、考試時間） */
+.bars{display:grid;gap:3px}
+.bar{display:grid;grid-template-columns:118px 1fr 34px;align-items:center;gap:8px;font-size:12px;line-height:1.3;cursor:pointer;border-radius:4px;padding:1px 2px}
+.bar:hover{background:var(--surface-2)}
+.bar .lb{color:var(--ink);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .tr{height:12px;position:relative}
+.bar .fill{position:absolute;left:0;top:0;bottom:0;background:var(--tone);border-radius:0 4px 4px 0}
+.bar .v{font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.bars.exam .bar{grid-template-columns:190px 1fr 56px;font-size:14px;padding:6px 2px}
+.bars.exam .tr{height:26px}
+.bars.exam .v{color:var(--ink);font-weight:700}
+.axis{display:grid;grid-template-columns:190px 1fr 56px;gap:8px;font-size:12px;color:var(--ink-2);padding:0 2px}
+.axis .ticks{position:relative;height:16px;border-top:1px solid var(--line)}
+.axis .ticks span{position:absolute;top:2px;transform:translateX(-50%)}
+.axis > span:last-child{padding-left:14px}
+.chart-tip{position:fixed;z-index:50;pointer-events:none;background:var(--ink);color:var(--surface);font-size:12px;line-height:1.5;padding:6px 10px;border-radius:6px;max-width:280px;opacity:0;transition:opacity .12s}
+.chart-tip.show{opacity:1}
+
+/* ---------- 漢字 ---------- */
+.kcards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.kc{display:grid;grid-template-columns:62px 1fr;gap:10px;background:var(--surface);border:1.5px solid color-mix(in srgb,var(--c2) 55%,transparent);border-radius:10px;padding:10px 12px}
+.kc.extra{border-style:dashed;border-color:color-mix(in srgb,var(--c2) 40%,transparent)}
+.kc .big{font-size:44px;line-height:1;text-align:center;font-family:var(--jp);font-weight:600;padding-top:4px;border-radius:8px}
+.kc .big:hover{background:var(--c2-soft)}
+.kc .zh{font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px}
+.kc .tag{font-size:12px;font-weight:400;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:0 6px}
+.kc .rd{font-size:13px;color:var(--ink-2);line-height:1.5}
+.kc .rd i{font-style:normal;display:inline-block;font-size:12px;border:1px solid var(--line-strong);border-radius:3px;padding:0 3px;margin-right:5px;line-height:1.3;color:var(--ink)}
+.kc ul{list-style:none;margin:5px 0 0;padding:0;font-size:13px}
+.kc li{display:flex;gap:8px;align-items:baseline;line-height:1.9}
+.kc li .ja{font-size:15px}
+.kc li .ja:hover{background:var(--c2-soft);border-radius:3px}
+.kc li .z{color:var(--ink-2)}
+
+/* ---------- 考試 ---------- */
+.big-num{font-size:64px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.big-num small{font-size:20px;font-weight:700;margin-left:4px}
+.map-rows{display:grid;gap:12px}
+.map-row{display:grid;grid-template-columns:150px 30px 1fr;align-items:center;gap:8px;font-size:14px}
+.map-row .s{font-weight:700}
+.map-row .links{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ---------- 深藍頁尾帶 ---------- */
+.foot{background:var(--c1);color:#fff;margin-top:20px}
+.foot-in{max-width:1360px;margin:0 auto;padding:26px 32px 22px}
+.foot-cells{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.foot-cell{display:flex;align-items:center;gap:14px;padding:4px 22px;border-left:1.5px dashed rgba(255,255,255,.35);font-size:15px;line-height:1.45}
+.foot-cell:first-child{border-left:0;padding-left:0}
+.foot-cell svg{flex:none;width:42px;height:42px;color:#fff}
+.foot-font{margin-top:6px!important;padding-top:0!important;border-top:0!important}
+.foot-src{margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.25);font-size:12px;line-height:1.6;opacity:.85}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--surface);padding:8px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:60}
+.toast.show{opacity:1;transform:translateX(-50%)}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .step:hover,.tl-cell:hover,.say:hover,.say:active,.btn:active{transform:none}
+  .checks input:checked + .cb svg{transform:scale(1)}
+  .toast{transform:translateX(-50%)}
+  .donebox .bx path{transition:none!important}
+  .donebox input:checked + .bx{animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#/"><b>N5 學習地圖</b><span lang="ja">にほんご はじめの一歩 ・ 海報筆記版</span></a>
+    <nav class="tabs" id="tabs" aria-label="分頁"></nav>
+  </div>
+</header>
+
+<main id="app">
+  <section class="page" id="p-home" aria-label="首頁"></section>
+  <section class="page" id="p-kana" aria-label="第 0 站 假名"></section>
+  <section class="page" id="p-g1"></section>
+  <section class="page" id="p-g2"></section>
+  <section class="page" id="p-g3"></section>
+  <section class="page" id="p-g4"></section>
+  <section class="page" id="p-g5"></section>
+  <section class="page" id="p-g6"></section>
+  <section class="page" id="p-vocab" aria-label="單字"></section>
+  <section class="page" id="p-kanji" aria-label="漢字"></section>
+  <section class="page" id="p-exam" aria-label="考試"></section>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div class="foot-cells" id="foot-cells"></div>
+    <p class="foot-src">資料：文法順序依 2-wiki/日文-N5到N3學習地圖.md 與 日文-JLPT-N5出題範圍.md；單字 718 字取自 open-anki-jlpt-decks（MIT，源自 tanos.co.uk），中文意思與分類由 AI 補上，可能有少數不精準；漢字依 N5 出題範圍頁。JLPT 官方不公布單字與文法表，這些清單只當學習範圍參考。站的順序參考 Genki I 與みんなの日本語 初級Ⅰ 的課序。</p>
+    <p class="foot-src foot-font" id="foot-font">日文字型：系統黑體</p>
+  </div>
+</footer>
+
+<div class="chart-tip" id="ctip" role="tooltip"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script type="application/json" id="data-grammar">{"stations":[{"id":"g1","no":1,"title":"名詞句","jp":"めいしぶん","goal":"學完能說：我是台灣人、這是我的書","summary":"用「は～です」介紹人和東西，再加上指示詞和疑問詞。","items":[{"p":"N は N です","zh":"N 是 N（肯定）","note":"は 標示主題，讀作 wa；です 讓句子變禮貌。","ex":"わたしは たいわんじんです。","exzh":"我是台灣人。"},{"p":"N じゃ ありません／では ありません","zh":"N 不是 N（否定）","note":"では 較正式，じゃ 較口語，意思相同。","ex":"わたしは がくせいじゃ ありません。","exzh":"我不是學生。"},{"p":"～か","zh":"～嗎？（疑問句）","note":"句尾加か就變問句；回答用 はい／いいえ。","ex":"やまださんは せんせいですか。","exzh":"山田先生是老師嗎？"},{"p":"N も","zh":"N 也～","note":"取代は（或が、を），表示「也一樣」。","ex":"わたしも たいわんじんです。","exzh":"我也是台灣人。"},{"p":"これ・それ・あれ・どれ","zh":"這個／那個／那個（遠）／哪個","note":"單獨當名詞用；これ 近自己，それ 近對方，あれ 離兩人都遠。","ex":"それは じしょです。","exzh":"那是字典。"},{"p":"N の N","zh":"N 的 N","note":"表示所屬或內容；後面名詞清楚時可省略：わたしの。","ex":"これは わたしの ほんです。","exzh":"這是我的書。"},{"p":"この・その・あの・どの＋N","zh":"這個～／那個～／哪個～","note":"後面一定接名詞；これ 類才能單獨用。","ex":"この かさは わたしのです。","exzh":"這把傘是我的。"},{"p":"ここ・そこ・あそこ・どこ","zh":"這裡／那裡／那裡（遠）／哪裡","note":"こちら・そちら・あちら・どちら 是禮貌說法，也指方向。","ex":"トイレは どこですか。……あそこです。","exzh":"廁所在哪裡？……在那裡。"},{"p":"なん（なに）・だれ","zh":"什麼／誰","note":"疑問詞放在要問的位置，句尾加か；だれ 的禮貌說法是 どなた。","ex":"あの ひとは だれですか。","exzh":"那個人是誰？"},{"p":"N は いくらですか","zh":"N 多少錢？","note":"數字＋えん；300 さんびゃく、600 ろっぴゃく、800 はっぴゃく。","ex":"この とけいは いくらですか。","exzh":"這支錶多少錢？"},{"p":"～さい","zh":"～歲","note":"いっさい、はっさい、じゅっさい；20 歲說 はたち；問年齡用 なんさい。","ex":"いもうとは ななさいです。","exzh":"我妹妹七歲。"},{"p":"N でした／N じゃ ありませんでした","zh":"過去是 N／過去不是 N","note":"名詞句的過去式；否定在 じゃ ありません 後面加 でした。","ex":"きのうは やすみでした。","exzh":"昨天是休假日。"},{"p":"～ね","zh":"～吧／～呢（確認、同感）","note":"期待對方同意時用；回答常說 そうですね。","ex":"あしたは にちようびですね。","exzh":"明天是星期日吧。"},{"p":"～よ","zh":"～喔（告訴對方）","note":"告訴對方不知道的事；用太多會顯得在教人。","ex":"それは わたしの かさですよ。","exzh":"那是我的傘喔。"}]},{"id":"g2","no":2,"title":"動詞ます形＋助詞","jp":"ますけいと じょし","goal":"學完能說：我每天七點起床、在圖書館讀書","summary":"學動詞禮貌形的四種時態，再用助詞說出對象、時間、地點和同伴。","items":[{"p":"ます形","zh":"動詞禮貌形","note":"1類：い段＋ます（かく→かきます）；2類：る→ます（たべる→たべます）；3類：する→します、くる→きます。","ex":"わたしは まいにち はたらきます。","exzh":"我每天工作。"},{"p":"～ます／～ません／～ました／～ませんでした","zh":"現在肯定／否定／過去肯定／否定","note":"ます 也表示未來和習慣；過去否定是 ませんでした。","ex":"きのうは はたらきませんでした。","exzh":"我昨天沒有工作。"},{"p":"N を V","zh":"動作的對象（受詞）","note":"を 讀作 o，標示吃、喝、看等動作的對象。","ex":"あさ パンを たべます。","exzh":"早上吃麵包。"},{"p":"場所 へ いきます／きます／かえります","zh":"往～去／來／回","note":"へ 讀作 e，表示移動的方向；也可以用に。","ex":"あした がっこうへ いきます。","exzh":"明天去學校。"},{"p":"～じ ～ふん","zh":"～點～分","note":"4時よじ、7時しちじ、9時くじ；いっぷん、さんぷん、じゅっぷん；30分＝はん。","ex":"いま くじ ごふんです。","exzh":"現在九點五分。"},{"p":"時間 に V","zh":"在～（時間）做～","note":"幾點、星期幾要加に；きょう、まいにち、いつ 不加。","ex":"まいあさ しちじに おきます。","exzh":"我每天早上七點起床。"},{"p":"人 に V","zh":"給～／對～（對象）","note":"給予、聯絡的對象：あげます、かします、でんわします。","ex":"ともだちに てがみを かきます。","exzh":"寫信給朋友。"},{"p":"N で V","zh":"在～（地點）／用～（方法）","note":"動作發生的地點；交通工具、工具、語言也用で：バスで、はしで。","ex":"としょかんで にほんごを べんきょうします。","exzh":"在圖書館讀日文。"},{"p":"人 と V／N と N","zh":"和～一起／～和～","note":"和某人一起做；連接名詞時表示全部列出。一個人做說 ひとりで。","ex":"ともだちと えいがを みます。","exzh":"和朋友看電影。"},{"p":"～から ～まで","zh":"從～到～","note":"時間、地點的起點和終點；兩個也可以分開單獨用。","ex":"くじから ごじまで はたらきます。","exzh":"從九點工作到五點。"},{"p":"よく／ときどき V","zh":"常常／有時候","note":"頻率副詞，放在動詞前面。","ex":"あさ よく こうえんを さんぽします。","exzh":"早上常常在公園散步。"},{"p":"あまり／ぜんぜん ～ません","zh":"不太～／完全不～","note":"後面一定接否定形。","ex":"わたしは あまり テレビを みません。","exzh":"我不太看電視。"},{"p":"～ませんか","zh":"要不要（一起）～？","note":"用否定問句邀請，比 ～ますか 更客氣。","ex":"いっしょに ひるごはんを たべませんか。","exzh":"要不要一起吃午餐？"},{"p":"～ましょう","zh":"一起～吧（提議）","note":"提議一起做；回應邀請時說 ええ、～ましょう。","ex":"ちょっと やすみましょう。","exzh":"休息一下吧。"},{"p":"～ましょうか","zh":"要我來～嗎？／要不要～？","note":"主動提出幫忙；也可用來商量：なにを たべましょうか。","ex":"まどを あけましょうか。","exzh":"要我開窗嗎？"},{"p":"N や N など","zh":"～和～等等（舉例）","note":"只舉幾個例子，不全部列出；など 可以省略。","ex":"みせで にくや やさいなどを かいます。","exzh":"在店裡買肉、蔬菜等等。"}]},{"id":"g3","no":3,"title":"存在與形容詞","jp":"そんざいと けいようし","goal":"學完能說：房間裡有電視、昨天很冷","summary":"用あります／います說有什麼、有幾個，再用形容詞描述人和東西。","items":[{"p":"場所 に N が あります","zh":"某處有～（物品、植物）","note":"沒有生命的東西用あります；に 標示地點，が 標示存在的東西。","ex":"へやに テレビが あります。","exzh":"房間裡有電視。"},{"p":"場所 に N が います","zh":"某處有～（人、動物）","note":"有生命、會自己動的用います；否定是 いません。","ex":"こうえんに こどもが います。","exzh":"公園裡有小孩。"},{"p":"N は 場所 に あります／います","zh":"～在某處","note":"位置詞：うえ・した・なか・まえ・うしろ・となり，用「Nの うえに」。","ex":"ねこは つくえの したに います。","exzh":"貓在桌子下面。"},{"p":"～つ・～こ／いくつ","zh":"～個（一般物品）／幾個","note":"ひとつ～とお；いっこ、ろっこ、じゅっこ。數量放在助詞後、動詞前。","ex":"りんごが みっつ あります。","exzh":"有三顆蘋果。"},{"p":"～にん（人）・～ひき","zh":"～個人／～隻（小動物）","note":"ひとり、ふたり、さんにん；いっぴき、さんびき、ろっぴき。","ex":"きょうしつに がくせいが ごにん います。","exzh":"教室裡有五個學生。"},{"p":"～まい・～ほん・～さつ・～だい・～かい・～ばん","zh":"張／條／本／台／次・樓／號","note":"薄的まい、細長ほん、書さつ、機器だい、次數或樓層かい、順序ばん。","ex":"かばんの なかに ほんが にさつ あります。","exzh":"包包裡有兩本書。"},{"p":"～だけ","zh":"只～（限定範圍）","note":"接在名詞或數量後面；肯定句、否定句都能用。","ex":"へやに いすが ひとつだけ あります。","exzh":"房間裡只有一張椅子。"},{"p":"～しか ～ない","zh":"只有～（強調少）","note":"後面一定接否定；禮貌說法是 しか ～ません。","ex":"さいふに ひゃくえんしか ありません。","exzh":"錢包裡只有一百日圓。"},{"p":"～くらい／～ぐらい","zh":"大約～","note":"接在數量、時間後面；兩種說法意思相同。","ex":"きょうしつに がくせいが にじゅうにんぐらい います。","exzh":"教室裡大約有二十個學生。"},{"p":"い形容詞：～いです／～くないです","zh":"い形容詞現在肯定／否定","note":"否定去い加くない；いい→よくない。接名詞直接放前面：たかい ほん。","ex":"この へやは あまり ひろくないです。","exzh":"這個房間不太寬敞。"},{"p":"い形容詞：～かったです／～くなかったです","zh":"い形容詞過去肯定／否定","note":"去い加かった、くなかった；いい→よかった。","ex":"きのうは さむかったです。","exzh":"昨天很冷。"},{"p":"な形容詞：～です／～じゃ ありません／～な＋N","zh":"な形容詞現在形、接名詞","note":"接名詞時加な：しずかな まち；きれい、ゆうめい 也是な形容詞。","ex":"ここは しずかな まちです。","exzh":"這裡是安靜的城鎮。"},{"p":"な形容詞：～でした／～じゃ ありませんでした","zh":"な形容詞過去肯定／否定","note":"變法和名詞句相同。","ex":"きのうは ひまでした。","exzh":"昨天很閒。"},{"p":"どう／どんな＋N","zh":"怎麼樣／什麼樣的～","note":"どう 單獨問感想；どんな 後面一定接名詞。","ex":"にほんの たべものは どうですか。","exzh":"日本的食物怎麼樣？"},{"p":"とても／すこし／たくさん","zh":"很／一點／很多","note":"とても、すこし 修飾形容詞或動詞；たくさん 表示數量多。","ex":"この みせの りょうりは とても おいしいです。","exzh":"這家店的菜很好吃。"},{"p":"N が すき／きらい／じょうず／へた です；N が わかります／できます","zh":"喜歡、討厭、擅長、懂、會～","note":"這些詞的對象用が，不用を。","ex":"わたしは ねこが すきです。","exzh":"我喜歡貓。"}]},{"id":"g4","no":4,"title":"て形","jp":"てけい","goal":"學完能說：請在這裡寫名字、可以拍照嗎","summary":"學て形的變法，用來請求、許可、禁止，並說正在做的事和動作順序。","items":[{"p":"て形","zh":"動詞的て形","note":"1類：く→いて、ぐ→いで、む・ぶ・ぬ→んで、う・つ・る→って、す→して；いく→いって。2類：る→て。3類：して、きて。","ex":"あさ おきて、かおを あらいます。","exzh":"早上起床後洗臉。"},{"p":"V て、V て、V ます","zh":"先～，再～，然後～","note":"用て形依序連接動作；時態由最後一個動詞決定。","ex":"うちへ かえって、ばんごはんを たべて、ねます。","exzh":"回家、吃晚餐，然後睡覺。"},{"p":"～て ください","zh":"請～","note":"禮貌的請求或指示；開頭加 すみませんが 更客氣。","ex":"ここに なまえを かいて ください。","exzh":"請在這裡寫名字。"},{"p":"～ずつ","zh":"各～、每次～","note":"接在數量詞後面，表示平均分配或每次的量。","ex":"ひとり ふたつずつ とって ください。","exzh":"請每人拿兩個。"},{"p":"～ても いいです","zh":"可以～（許可）","note":"問句「～ても いいですか」徵求同意；回答 ええ、どうぞ。","ex":"ここで しゃしんを とっても いいですか。","exzh":"可以在這裡拍照嗎？"},{"p":"～ては いけません","zh":"不可以～（禁止）","note":"語氣強，多用在規則、告示。","ex":"ここで たばこを すっては いけません。","exzh":"這裡不可以抽菸。"},{"p":"～て います（進行）","zh":"正在～","note":"動作正在進行中。","ex":"いま あめが ふって います。","exzh":"現在正在下雨。"},{"p":"～て います（狀態）","zh":"～著、處於～的狀態","note":"動作結束後留下的狀態：けっこんして います、しって います。","ex":"あねは けっこんして います。","exzh":"我姊姊已經結婚了。"},{"p":"もう ～ました","zh":"已經～了","note":"動作已經完成；問句是「もう ～ましたか」。","ex":"もう ひるごはんを たべました。","exzh":"已經吃過午餐了。"},{"p":"まだ ～て いません","zh":"還沒～","note":"回答「もう～ましたか」的否定；不說 ～ませんでした。","ex":"しゅくだいは まだ して いません。","exzh":"作業還沒寫。"},{"p":"～てから","zh":"做完～之後再～","note":"強調先後順序，前一個動作完成才做下一個。","ex":"てを あらってから、ごはんを たべます。","exzh":"洗完手再吃飯。"},{"p":"い形容詞：～くて","zh":"又～又～（い形容詞連接）","note":"去い加くて；いい→よくて。","ex":"この へやは ひろくて、あかるいです。","exzh":"這個房間又寬敞又明亮。"},{"p":"な形容詞・N：～で","zh":"又～又～／是～，而且～","note":"な形容詞和名詞加で，連接下一句。","ex":"この まちは しずかで、きれいです。","exzh":"這個城鎮安靜又漂亮。"}]},{"id":"g5","no":5,"title":"普通形","jp":"ふつうけい","goal":"學完能說：我覺得明天會下雨、這是昨天買的書","summary":"學辭書形、ない形、た形，用普通形說想法、修飾名詞和說理由。","items":[{"p":"辞書形","zh":"動詞原形（字典上的形）","note":"1類：ます前的い段→う段（かきます→かく）；2類：ます→る；3類：する、くる。","ex":"あしたは がっこうへ いく。","exzh":"明天要去學校。"},{"p":"ない形","zh":"動詞否定形","note":"1類：う段→あ段＋ない（う→わ：かう→かわない）；2類：る→ない；3類：しない、こない；ある→ない。","ex":"きょうは がっこうへ いかない。","exzh":"今天不去學校。"},{"p":"た形","zh":"動詞過去形","note":"把て形的て→た、で→だ：かいた、のんだ、たべた、した、きた。","ex":"きのう ともだちと えいがを みた。","exzh":"昨天和朋友看了電影。"},{"p":"～なかった","zh":"動詞過去否定（普通形）","note":"ない形的ない→なかった：いかなかった、たべなかった。","ex":"けさは あさごはんを たべなかった。","exzh":"今天早上沒吃早餐。"},{"p":"い形容詞普通形：～い／～くない／～かった／～くなかった","zh":"い形容詞的普通形","note":"禮貌形去掉です就是普通形。","ex":"きょうは あつくない。","exzh":"今天不熱。"},{"p":"N・な形容詞：～だ／～じゃない／～だった／～じゃなかった","zh":"名詞、な形容詞的普通形","note":"現在肯定加だ；じゃない 也可說 ではない。","ex":"きのうは ひまだった。","exzh":"昨天很閒。"},{"p":"～ないで ください","zh":"請不要～","note":"ない形＋で ください。","ex":"ここで しゃしんを とらないで ください。","exzh":"請不要在這裡拍照。"},{"p":"普通形＋と おもいます","zh":"我覺得～、我想～","note":"と 表示引用的內容；名詞、な形容詞現在形要加だ：あめだと。","ex":"あしたは あめが ふると おもいます。","exzh":"我覺得明天會下雨。"},{"p":"普通形＋N（名詞修飾）","zh":"用一句話修飾名詞","note":"動詞普通形直接放在名詞前；子句的主詞用が。","ex":"これは きのう かった ほんです。","exzh":"這是昨天買的書。"},{"p":"辞書形＋のが すき／じょうず です","zh":"喜歡做～／擅長做～","note":"の 把動詞變成名詞，後面接が。","ex":"わたしは うたを うたうのが すきです。","exzh":"我喜歡唱歌。"},{"p":"～から（理由）","zh":"因為～，所以～","note":"接普通形或です・ます形；から 後面放結果。","ex":"じかんが ないから、タクシーで いきます。","exzh":"因為沒時間，所以搭計程車去。"},{"p":"どうして ～か","zh":"為什麼～？","note":"問理由；回答用「～からです」。","ex":"どうして きのう がっこうを やすみましたか。……あたまが いたかったからです。","exzh":"你昨天為什麼沒去學校？……因為頭痛。"},{"p":"～が、～（逆接）","zh":"～，但是～","note":"連接兩句，前後內容相反；也可當開場白：すみませんが。","ex":"この みせは たかいですが、おいしいです。","exzh":"這家店很貴，但是很好吃。"},{"p":"～けど、～","zh":"～，但是～（口語）","note":"意思和が相同，較口語；接普通形或です・ます形。","ex":"にほんごは むずかしいけど、おもしろい。","exzh":"日文很難，但是很有趣。"}]},{"id":"g6","no":6,"title":"常用句型","jp":"よく つかう ぶんけい","goal":"學完能說：我想去日本、我爬過富士山","summary":"學願望、目的、比較、變化、時間先後、經驗和推測的常用說法。","items":[{"p":"ます形＋たい","zh":"想要做～","note":"去ます加たい，變化同い形容詞；を 可換成が。","ex":"わたしは にほんへ いきたいです。","exzh":"我想去日本。"},{"p":"N が ほしい","zh":"想要～（東西）","note":"ほしい 是い形容詞；用在自己身上，不直接問長輩。","ex":"あたらしい かばんが ほしいです。","exzh":"我想要新的包包。"},{"p":"ます形＋に いく／くる／かえる","zh":"去／來／回去做～（目的）","note":"去ます加に；する 動詞可直接用名詞：かいものに いきます。","ex":"しょくどうへ ひるごはんを たべに いきます。","exzh":"去餐廳吃午餐。"},{"p":"ます形＋ながら","zh":"一邊～一邊～","note":"同一個人同時做兩件事；主要的動作放後面。","ex":"おんがくを ききながら、べんきょうします。","exzh":"一邊聽音樂一邊讀書。"},{"p":"N1 は N2 より ～","zh":"N1 比 N2 ～","note":"より 標示比較的基準。","ex":"きょうは きのうより さむいです。","exzh":"今天比昨天冷。"},{"p":"N1 と N2 と どちらが ～か；N の ほうが ～","zh":"哪一個比較～？／～比較～","note":"兩者比較；回答用「Nの ほうが」，也可說「N2 より N1 の ほうが」。","ex":"コーヒーと こうちゃと どちらが すきですか。……こうちゃの ほうが すきです。","exzh":"咖啡和紅茶，你比較喜歡哪個？……我比較喜歡紅茶。"},{"p":"N の なかで ～が いちばん ～","zh":"在～之中最～","note":"三者以上比較；問句用 なに、だれ、どこ、いつ。","ex":"くだものの なかで なにが いちばん すきですか。","exzh":"水果裡你最喜歡什麼？"},{"p":"～く なる／～に なる","zh":"變得～／變成～","note":"い形容詞去い加く；な形容詞和名詞加に。","ex":"そとが くらく なりました。","exzh":"外面變暗了。"},{"p":"辞書形／N の＋まえに","zh":"做～之前","note":"まえに 前面一律用辭書形，不管句尾的時態。","ex":"ねる まえに、はを みがきます。","exzh":"睡覺前刷牙。"},{"p":"た形＋あとで","zh":"做完～之後","note":"あとで 前面一律用た形。","ex":"ごはんを たべた あとで、さんぽします。","exzh":"吃完飯後去散步。"},{"p":"N の あとで","zh":"～之後","note":"接表示活動的名詞：しごと、パーティー。","ex":"しごとの あとで、えいがを みます。","exzh":"工作結束後去看電影。"},{"p":"～たり ～たり する","zh":"又～又～（舉例動作）","note":"た形＋り；從幾個動作裡舉例，時態由最後的 する 決定。","ex":"にちようびは そうじを したり、せんたくを したり します。","exzh":"星期天會打掃、洗衣服什麼的。"},{"p":"た形＋ことが ある","zh":"曾經～過","note":"說過去的經驗；否定是 ことが ありません。","ex":"わたしは ふじさんに のぼった ことが あります。","exzh":"我爬過富士山。"},{"p":"～とき","zh":"～的時候","note":"動詞普通形、い形容詞、な形容詞＋な、名詞＋の，後面接とき。","ex":"こどもの とき、よく この こうえんで あそびました。","exzh":"小時候常在這個公園玩。"},{"p":"～でしょう","zh":"大概～吧（推測）","note":"接普通形；名詞、な形容詞不加だ，直接接でしょう。","ex":"あしたは はれるでしょう。","exzh":"明天大概會放晴吧。"}]}]}</script>
+<script type="application/json" id="data-vocab">[{"w":"ああ","r":"ああ","zh":"啊（感嘆）","pos":"感嘆詞","cat":"adv"},{"w":"会う","r":"あう","zh":"見面、遇見","pos":"動詞1類","cat":"v_daily"},{"w":"青","r":"あお","zh":"藍色","pos":"名詞","cat":"wear"},{"w":"青い","r":"あおい","zh":"藍色的","pos":"い形容詞","cat":"adj_i"},{"w":"赤","r":"あか","zh":"紅色","pos":"名詞","cat":"wear"},{"w":"赤い","r":"あかい","zh":"紅色的","pos":"い形容詞","cat":"adj_i"},{"w":"明るい","r":"あかるい","zh":"明亮的、開朗的","pos":"い形容詞","cat":"adj_i"},{"w":"秋","r":"あき","zh":"秋天","pos":"名詞","cat":"nature"},{"w":"開く","r":"あく","zh":"開、打開（自動）","pos":"動詞1類","cat":"v_daily"},{"w":"開ける","r":"あける","zh":"打開（他動）","pos":"動詞2類","cat":"v_daily"},{"w":"上げる","r":"あげる","zh":"舉起、給（人）","pos":"動詞2類","cat":"v_mind"},{"w":"朝","r":"あさ","zh":"早上","pos":"名詞","cat":"time"},{"w":"朝御飯","r":"あさごはん","zh":"早餐","pos":"名詞","cat":"food"},{"w":"明後日","r":"あさって","zh":"後天","pos":"名詞","cat":"time"},{"w":"足; 脚","r":"あし","zh":"腳、腿","pos":"名詞","cat":"body"},{"w":"明日","r":"あした","zh":"明天","pos":"名詞","cat":"time"},{"w":"あそこ","r":"あそこ","zh":"那裡","pos":"代名詞","cat":"deixis"},{"w":"遊ぶ","r":"あそぶ","zh":"玩、遊玩","pos":"動詞1類","cat":"v_daily"},{"w":"暖かい","r":"あたたかい","zh":"溫暖的","pos":"い形容詞","cat":"adj_i"},{"w":"頭","r":"あたま","zh":"頭","pos":"名詞","cat":"body"},{"w":"新しい","r":"あたらしい","zh":"新的","pos":"い形容詞","cat":"adj_i"},{"w":"あちら","r":"あちら","zh":"那邊、那位（敬）","pos":"代名詞","cat":"deixis"},{"w":"暑い","r":"あつい","zh":"熱的（天氣）","pos":"い形容詞","cat":"adj_i"},{"w":"熱い","r":"あつい","zh":"燙的、熱的（物）","pos":"い形容詞","cat":"adj_i"},{"w":"厚い","r":"あつい","zh":"厚的、深厚的","pos":"い形容詞","cat":"adj_i"},{"w":"あっち","r":"あっち","zh":"那邊","pos":"代名詞","cat":"deixis"},{"w":"後","r":"あと","zh":"之後、以後","pos":"名詞","cat":"time"},{"w":"あなた","r":"あなた","zh":"你","pos":"代名詞","cat":"people"},{"w":"兄","r":"あに","zh":"哥哥（自己的）","pos":"名詞","cat":"people"},{"w":"姉","r":"あね","zh":"姊姊（自己的）","pos":"名詞","cat":"people"},{"w":"アパート","r":"アパート","zh":"公寓","pos":"名詞","cat":"home"},{"w":"あの","r":"あの","zh":"那個～、那個…（遲疑）","pos":"其他","cat":"deixis"},{"w":"浴びる","r":"あびる","zh":"淋浴、沖澡","pos":"動詞2類","cat":"v_daily"},{"w":"危ない","r":"あぶない","zh":"危險的","pos":"い形容詞","cat":"adj_i"},{"w":"甘い","r":"あまい","zh":"甜的、寬鬆的","pos":"い形容詞","cat":"adj_i"},{"w":"余り","r":"あまり","zh":"不太（接否定）、剩餘","pos":"副詞","cat":"adv"},{"w":"雨","r":"あめ","zh":"雨","pos":"名詞","cat":"nature"},{"w":"飴","r":"あめ","zh":"糖果","pos":"名詞","cat":"food"},{"w":"洗う","r":"あらう","zh":"洗","pos":"動詞1類","cat":"v_daily"},{"w":"在る","r":"ある","zh":"有、在（無生命）","pos":"動詞1類","cat":"v_mind"},{"w":"有る","r":"ある","zh":"有、在（無生命）","pos":"動詞1類","cat":"v_mind"},{"w":"歩く","r":"あるく","zh":"走路","pos":"動詞1類","cat":"v_move"},{"w":"あれ","r":"あれ","zh":"那個（遠處）","pos":"代名詞","cat":"deixis"},{"w":"いい; よい","r":"いい; よい","zh":"好的","pos":"い形容詞","cat":"adj_i"},{"w":"いいえ","r":"いいえ","zh":"不、不客氣","pos":"感嘆詞","cat":"greet"},{"w":"言う","r":"いう","zh":"說","pos":"動詞1類","cat":"v_mind"},{"w":"家","r":"いえ","zh":"家、房子","pos":"名詞","cat":"home"},{"w":"いかが","r":"いかが","zh":"如何、怎麼樣","pos":"副詞","cat":"deixis"},{"w":"行く","r":"いく; ゆく","zh":"去","pos":"動詞1類","cat":"v_move"},{"w":"いくつ","r":"いくつ","zh":"幾個、幾歲","pos":"代名詞","cat":"deixis"},{"w":"いくら","r":"いくら","zh":"多少錢、多少","pos":"代名詞","cat":"deixis"},{"w":"池","r":"いけ","zh":"池塘","pos":"名詞","cat":"nature"},{"w":"医者","r":"いしゃ","zh":"醫生","pos":"名詞","cat":"people"},{"w":"椅子","r":"いす","zh":"椅子","pos":"名詞","cat":"home"},{"w":"忙しい","r":"いそがしい","zh":"忙碌的","pos":"い形容詞","cat":"adj_i"},{"w":"痛い","r":"いたい","zh":"痛的","pos":"い形容詞","cat":"adj_i"},{"w":"一","r":"いち","zh":"一","pos":"名詞","cat":"number"},{"w":"一日","r":"いちにち","zh":"一天、一號","pos":"名詞","cat":"time"},{"w":"一番","r":"いちばん","zh":"最、第一","pos":"副詞","cat":"adv"},{"w":"いつ","r":"いつ","zh":"何時","pos":"代名詞","cat":"deixis"},{"w":"五日","r":"いつか","zh":"五天、五號","pos":"名詞","cat":"time"},{"w":"一緒","r":"いっしょ","zh":"一起","pos":"名詞","cat":"adv"},{"w":"五つ","r":"いつつ","zh":"五個","pos":"名詞","cat":"number"},{"w":"いつも","r":"いつも","zh":"總是、經常","pos":"副詞","cat":"adv"},{"w":"犬","r":"いぬ","zh":"狗","pos":"名詞","cat":"nature"},{"w":"今","r":"いま","zh":"現在","pos":"名詞","cat":"time"},{"w":"意味","r":"いみ","zh":"意思、意義","pos":"名詞","cat":"school"},{"w":"妹","r":"いもうと","zh":"妹妹（自己的）","pos":"名詞","cat":"people"},{"w":"嫌","r":"いや","zh":"討厭的、不喜歡的","pos":"な形容詞","cat":"adj_na"},{"w":"入口","r":"いりぐち","zh":"入口","pos":"名詞","cat":"place"},{"w":"居る","r":"いる","zh":"在、有（有生命）","pos":"動詞2類","cat":"v_mind"},{"w":"要る","r":"いる","zh":"需要","pos":"動詞1類","cat":"v_mind"},{"w":"入れる","r":"いれる","zh":"放入、放進","pos":"動詞2類","cat":"v_daily"},{"w":"色","r":"いろ","zh":"顏色","pos":"名詞","cat":"wear"},{"w":"色々","r":"いろいろ","zh":"各式各樣","pos":"な形容詞","cat":"adj_na"},{"w":"上","r":"うえ","zh":"上面、上方","pos":"名詞","cat":"place"},{"w":"後ろ","r":"うしろ","zh":"後面","pos":"名詞","cat":"place"},{"w":"薄い","r":"うすい","zh":"薄的、淡的","pos":"い形容詞","cat":"adj_i"},{"w":"歌","r":"うた","zh":"歌","pos":"名詞","cat":"school"},{"w":"歌う","r":"うたう","zh":"唱歌","pos":"動詞1類","cat":"v_daily"},{"w":"うち","r":"うち","zh":"家、我家","pos":"名詞","cat":"home"},{"w":"生まれる","r":"うまれる","zh":"出生","pos":"動詞2類","cat":"v_mind"},{"w":"海","r":"うみ","zh":"海","pos":"名詞","cat":"nature"},{"w":"売る","r":"うる","zh":"賣","pos":"動詞1類","cat":"v_daily"},{"w":"うるさい","r":"うるさい","zh":"吵的、煩人的","pos":"い形容詞","cat":"adj_i"},{"w":"上着","r":"うわぎ","zh":"外套","pos":"名詞","cat":"wear"},{"w":"絵","r":"え","zh":"畫","pos":"名詞","cat":"school"},{"w":"映画","r":"えいが","zh":"電影","pos":"名詞","cat":"school"},{"w":"映画館","r":"えいがかん","zh":"電影院","pos":"名詞","cat":"town"},{"w":"英語","r":"えいご","zh":"英語","pos":"名詞","cat":"school"},{"w":"ええ","r":"ええ","zh":"是的、嗯","pos":"感嘆詞","cat":"greet"},{"w":"駅","r":"えき","zh":"車站","pos":"名詞","cat":"town"},{"w":"エレベーター","r":"エレベーター","zh":"電梯","pos":"名詞","cat":"home"},{"w":"～円","r":"～えん","zh":"～日圓","pos":"量詞","cat":"number"},{"w":"鉛筆","r":"えんぴつ","zh":"鉛筆","pos":"名詞","cat":"school"},{"w":"お～","r":"お～","zh":"敬語接頭詞（お～）","pos":"接頭／接尾詞","cat":"adv"},{"w":"美味しい","r":"おいしい","zh":"好吃的","pos":"い形容詞","cat":"adj_i"},{"w":"多い","r":"おおい","zh":"多的","pos":"い形容詞","cat":"adj_i"},{"w":"大きい","r":"おおきい","zh":"大的","pos":"い形容詞","cat":"adj_i"},{"w":"大きな","r":"おおきな","zh":"大的（連體形）","pos":"其他","cat":"adj_i"},{"w":"大勢","r":"おおぜい","zh":"很多人","pos":"名詞","cat":"people"},{"w":"お母さん","r":"おかあさん","zh":"媽媽","pos":"名詞","cat":"people"},{"w":"お菓子","r":"おかし","zh":"點心、糖果","pos":"名詞","cat":"food"},{"w":"お金","r":"おかね","zh":"錢","pos":"名詞","cat":"home"},{"w":"起きる","r":"おきる","zh":"起床、發生","pos":"動詞2類","cat":"v_daily"},{"w":"置く","r":"おく","zh":"放置","pos":"動詞1類","cat":"v_daily"},{"w":"奥さん","r":"おくさん","zh":"（別人的）太太","pos":"名詞","cat":"people"},{"w":"お酒","r":"おさけ","zh":"酒","pos":"名詞","cat":"food"},{"w":"お皿","r":"おさら","zh":"盤子","pos":"名詞","cat":"food"},{"w":"伯父; 叔父さん","r":"おじさん","zh":"叔叔、伯伯","pos":"名詞","cat":"people"},{"w":"おじいさん","r":"おじいさん","zh":"爺爺、老先生","pos":"名詞","cat":"people"},{"w":"教える","r":"おしえる","zh":"教、告知","pos":"動詞2類","cat":"v_mind"},{"w":"押す","r":"おす","zh":"推、按","pos":"動詞1類","cat":"v_daily"},{"w":"遅い","r":"おそい","zh":"慢的、晚的","pos":"い形容詞","cat":"adj_i"},{"w":"お茶","r":"おちゃ","zh":"茶","pos":"名詞","cat":"food"},{"w":"お手洗い","r":"おてあらい","zh":"洗手間","pos":"名詞","cat":"home"},{"w":"お父さん","r":"おとうさん","zh":"爸爸","pos":"名詞","cat":"people"},{"w":"弟","r":"おとうと","zh":"弟弟","pos":"名詞","cat":"people"},{"w":"男","r":"おとこ","zh":"男人","pos":"名詞","cat":"people"},{"w":"男の子","r":"おとこのこ","zh":"男孩","pos":"名詞","cat":"people"},{"w":"一昨日","r":"おととい","zh":"前天","pos":"名詞","cat":"time"},{"w":"おととし","r":"おととし","zh":"前年","pos":"名詞","cat":"time"},{"w":"大人","r":"おとな","zh":"大人","pos":"名詞","cat":"people"},{"w":"お腹","r":"おなか","zh":"肚子","pos":"名詞","cat":"body"},{"w":"同じ","r":"おなじ","zh":"相同的","pos":"な形容詞","cat":"adj_na"},{"w":"お兄さん","r":"おにいさん","zh":"哥哥（敬稱）","pos":"名詞","cat":"people"},{"w":"お姉さん","r":"おねえさん","zh":"姊姊（敬稱）","pos":"名詞","cat":"people"},{"w":"伯母さん; 叔母さん","r":"おばさん","zh":"阿姨、伯母","pos":"名詞","cat":"people"},{"w":"おばあさん","r":"おばあさん","zh":"奶奶、老太太","pos":"名詞","cat":"people"},{"w":"お風呂","r":"おふろ","zh":"浴缸、洗澡","pos":"名詞","cat":"home"},{"w":"お弁当","r":"おべんとう","zh":"便當","pos":"名詞","cat":"food"},{"w":"覚える","r":"おぼえる","zh":"記住、學會","pos":"動詞2類","cat":"v_mind"},{"w":"おまわりさん","r":"おまわりさん","zh":"警察","pos":"名詞","cat":"people"},{"w":"重い","r":"おもい","zh":"重的","pos":"い形容詞","cat":"adj_i"},{"w":"面白い","r":"おもしろい","zh":"有趣的","pos":"い形容詞","cat":"adj_i"},{"w":"泳ぐ","r":"およぐ","zh":"游泳","pos":"動詞1類","cat":"v_move"},{"w":"降りる","r":"おりる","zh":"下（車）","pos":"動詞2類","cat":"v_move"},{"w":"終る","r":"おわる","zh":"結束","pos":"動詞1類","cat":"v_mind"},{"w":"音楽","r":"おんがく","zh":"音樂","pos":"名詞","cat":"school"},{"w":"女","r":"おんな","zh":"女人","pos":"名詞","cat":"people"},{"w":"女の子","r":"おんなのこ","zh":"女孩","pos":"名詞","cat":"people"},{"w":"～回","r":"～かい","zh":"～次","pos":"量詞","cat":"number"},{"w":"～階","r":"～かい","zh":"～樓","pos":"量詞","cat":"number"},{"w":"外国","r":"がいこく","zh":"外國","pos":"名詞","cat":"town"},{"w":"外国人","r":"がいこくじん","zh":"外國人","pos":"名詞","cat":"people"},{"w":"会社","r":"かいしゃ","zh":"公司","pos":"名詞","cat":"school"},{"w":"階段","r":"かいだん","zh":"樓梯","pos":"名詞","cat":"home"},{"w":"買い物","r":"かいもの","zh":"購物","pos":"名詞","cat":"town"},{"w":"買う","r":"かう","zh":"買","pos":"動詞1類","cat":"v_daily"},{"w":"返す","r":"かえす","zh":"歸還","pos":"動詞1類","cat":"v_mind"},{"w":"帰る","r":"かえる","zh":"回去、回家","pos":"動詞1類","cat":"v_move"},{"w":"顔","r":"かお","zh":"臉","pos":"名詞","cat":"body"},{"w":"かかる","r":"かかる","zh":"花（時間、金錢）","pos":"動詞1類","cat":"v_mind"},{"w":"鍵","r":"かぎ","zh":"鑰匙、鎖","pos":"名詞","cat":"home"},{"w":"書く","r":"かく","zh":"寫","pos":"動詞1類","cat":"v_daily"},{"w":"学生","r":"がくせい","zh":"學生","pos":"名詞","cat":"people"},{"w":"～か月","r":"～かげつ","zh":"～個月","pos":"量詞","cat":"time"},{"w":"掛ける","r":"かける","zh":"戴（眼鏡）、掛","pos":"動詞2類","cat":"v_daily"},{"w":"かける","r":"かける","zh":"打（電話）、坐下","pos":"動詞2類","cat":"v_daily"},{"w":"傘","r":"かさ","zh":"傘","pos":"名詞","cat":"home"},{"w":"貸す","r":"かす","zh":"借出","pos":"動詞1類","cat":"v_mind"},{"w":"風","r":"かぜ","zh":"風","pos":"名詞","cat":"nature"},{"w":"風邪","r":"かぜ","zh":"感冒","pos":"名詞","cat":"body"},{"w":"方","r":"かた","zh":"位（敬稱）、方法","pos":"名詞","cat":"people"},{"w":"家族","r":"かぞく","zh":"家人","pos":"名詞","cat":"people"},{"w":"片仮名","r":"かたかな","zh":"片假名","pos":"名詞","cat":"school"},{"w":"～月","r":"～がつ","zh":"～月","pos":"量詞","cat":"time"},{"w":"学校","r":"がっこう","zh":"學校","pos":"名詞","cat":"school"},{"w":"カップ","r":"カップ","zh":"杯子","pos":"名詞","cat":"food"},{"w":"家庭","r":"かてい","zh":"家庭","pos":"名詞","cat":"home"},{"w":"角","r":"かど","zh":"角落、轉角","pos":"名詞","cat":"place"},{"w":"かばん","r":"かばん","zh":"包包","pos":"名詞","cat":"home"},{"w":"花瓶","r":"かびん","zh":"花瓶","pos":"名詞","cat":"home"},{"w":"かぶる","r":"かぶる","zh":"戴（帽子）","pos":"動詞1類","cat":"v_daily"},{"w":"紙","r":"かみ","zh":"紙","pos":"名詞","cat":"school"},{"w":"カメラ","r":"カメラ","zh":"相機","pos":"名詞","cat":"school"},{"w":"火曜日","r":"かようび","zh":"星期二","pos":"名詞","cat":"time"},{"w":"辛い","r":"からい","zh":"辣的、鹹的","pos":"い形容詞","cat":"adj_i"},{"w":"体","r":"からだ","zh":"身體","pos":"名詞","cat":"body"},{"w":"借りる","r":"かりる","zh":"借入","pos":"動詞2類","cat":"v_mind"},{"w":"～がる","r":"～がる","zh":"覺得～、感到～","pos":"接頭／接尾詞","cat":"adv"},{"w":"軽い","r":"かるい","zh":"輕的、輕微的","pos":"い形容詞","cat":"adj_i"},{"w":"カレー","r":"カレー","zh":"咖哩","pos":"名詞","cat":"food"},{"w":"カレンダー","r":"カレンダー","zh":"月曆","pos":"名詞","cat":"home"},{"w":"川; 河","r":"かわ","zh":"河川","pos":"名詞","cat":"nature"},{"w":"～側","r":"～がわ","zh":"～邊、～側","pos":"接頭／接尾詞","cat":"place"},{"w":"可愛い","r":"かわいい","zh":"可愛的","pos":"い形容詞","cat":"adj_i"},{"w":"漢字","r":"かんじ","zh":"漢字","pos":"名詞","cat":"school"},{"w":"木","r":"き","zh":"樹、木頭","pos":"名詞","cat":"nature"},{"w":"黄色","r":"きいろ","zh":"黃色","pos":"名詞","cat":"wear"},{"w":"黄色い","r":"きいろい","zh":"黃色的","pos":"い形容詞","cat":"adj_i"},{"w":"消える","r":"きえる","zh":"消失、熄滅","pos":"動詞2類","cat":"v_daily"},{"w":"聞く","r":"きく","zh":"聽、詢問","pos":"動詞1類","cat":"v_daily"},{"w":"北","r":"きた","zh":"北方","pos":"名詞","cat":"place"},{"w":"ギター","r":"ギター","zh":"吉他","pos":"名詞","cat":"school"},{"w":"汚い","r":"きたない","zh":"骯髒的","pos":"い形容詞","cat":"adj_i"},{"w":"喫茶店","r":"きっさてん","zh":"咖啡廳","pos":"名詞","cat":"town"},{"w":"切手","r":"きって","zh":"郵票","pos":"名詞","cat":"town"},{"w":"切符","r":"きっぷ","zh":"車票","pos":"名詞","cat":"town"},{"w":"昨日","r":"きのう","zh":"昨天","pos":"名詞","cat":"time"},{"w":"九","r":"きゅう","zh":"九","pos":"名詞","cat":"number"},{"w":"牛肉","r":"ぎゅうにく","zh":"牛肉","pos":"名詞","cat":"food"},{"w":"牛乳","r":"ぎゅうにゅう","zh":"牛奶","pos":"名詞","cat":"food"},{"w":"今日","r":"きょう","zh":"今天","pos":"名詞","cat":"time"},{"w":"教室","r":"きょうしつ","zh":"教室","pos":"名詞","cat":"school"},{"w":"兄弟","r":"きょうだい","zh":"兄弟姊妹","pos":"名詞","cat":"people"},{"w":"去年","r":"きょねん","zh":"去年","pos":"名詞","cat":"time"},{"w":"嫌い","r":"きらい","zh":"討厭","pos":"な形容詞","cat":"adj_na"},{"w":"切る","r":"きる","zh":"切、掛斷（電話）","pos":"動詞1類","cat":"v_daily"},{"w":"着る","r":"きる","zh":"穿（上衣）","pos":"動詞2類","cat":"v_daily"},{"w":"綺麗","r":"きれい","zh":"漂亮、乾淨","pos":"な形容詞","cat":"adj_na"},{"w":"キロ; キログラム","r":"キロ; キログラム","zh":"公斤","pos":"名詞","cat":"number"},{"w":"キロ; キロメートル","r":"キロ; キロメートル","zh":"公里","pos":"名詞","cat":"number"},{"w":"銀行","r":"ぎんこう","zh":"銀行","pos":"名詞","cat":"town"},{"w":"金曜日","r":"きんようび","zh":"星期五","pos":"名詞","cat":"time"},{"w":"九","r":"く","zh":"九","pos":"名詞","cat":"number"},{"w":"薬","r":"くすり","zh":"藥","pos":"名詞","cat":"body"},{"w":"下さい","r":"ください","zh":"請（給我）、請～","pos":"其他","cat":"greet"},{"w":"果物","r":"くだもの","zh":"水果","pos":"名詞","cat":"food"},{"w":"口","r":"くち","zh":"嘴巴、出入口","pos":"名詞","cat":"body"},{"w":"靴","r":"くつ","zh":"鞋子","pos":"名詞","cat":"wear"},{"w":"靴下","r":"くつした","zh":"襪子","pos":"名詞","cat":"wear"},{"w":"国","r":"くに","zh":"國家、故鄉","pos":"名詞","cat":"town"},{"w":"曇り","r":"くもり","zh":"陰天","pos":"名詞","cat":"nature"},{"w":"曇る","r":"くもる","zh":"變陰、變模糊","pos":"動詞1類","cat":"v_mind"},{"w":"暗い","r":"くらい","zh":"暗的、陰沉的","pos":"い形容詞","cat":"adj_i"},{"w":"～くらい; ぐらい","r":"～くらい; ぐらい","zh":"大約～、～左右","pos":"接頭／接尾詞","cat":"adv"},{"w":"クラス","r":"クラス","zh":"班級","pos":"名詞","cat":"school"},{"w":"グラム","r":"グラム","zh":"公克","pos":"名詞","cat":"number"},{"w":"来る","r":"くる","zh":"來","pos":"動詞3類","cat":"v_move"},{"w":"車","r":"くるま","zh":"車子","pos":"名詞","cat":"town"},{"w":"黒","r":"くろ","zh":"黑色","pos":"名詞","cat":"wear"},{"w":"黒い","r":"くろい","zh":"黑色的、黑的","pos":"い形容詞","cat":"adj_i"},{"w":"警官","r":"けいかん","zh":"警察","pos":"名詞","cat":"people"},{"w":"今朝","r":"けさ","zh":"今天早上","pos":"名詞","cat":"time"},{"w":"消す","r":"けす","zh":"關掉、擦掉","pos":"動詞1類","cat":"v_daily"},{"w":"結構","r":"けっこう","zh":"很好、足夠","pos":"な形容詞","cat":"adj_na"},{"w":"結婚","r":"けっこん (する)","zh":"結婚","pos":"動詞3類","cat":"v_daily"},{"w":"月曜日","r":"げつようび","zh":"星期一","pos":"名詞","cat":"time"},{"w":"玄関","r":"げんかん","zh":"玄關","pos":"名詞","cat":"home"},{"w":"元気","r":"げんき","zh":"健康、有精神","pos":"な形容詞","cat":"adj_na"},{"w":"～個","r":"～こ","zh":"～個","pos":"量詞","cat":"number"},{"w":"五","r":"ご","zh":"五","pos":"名詞","cat":"number"},{"w":"～語","r":"～ご","zh":"～語、～文","pos":"接頭／接尾詞","cat":"school"},{"w":"公園","r":"こうえん","zh":"公園","pos":"名詞","cat":"town"},{"w":"交差点","r":"こうさてん","zh":"十字路口","pos":"名詞","cat":"town"},{"w":"紅茶","r":"こうちゃ","zh":"紅茶","pos":"名詞","cat":"food"},{"w":"交番","r":"こうばん","zh":"派出所","pos":"名詞","cat":"town"},{"w":"声","r":"こえ","zh":"聲音","pos":"名詞","cat":"body"},{"w":"コート","r":"コート","zh":"外套","pos":"名詞","cat":"wear"},{"w":"コーヒー","r":"コーヒー","zh":"咖啡","pos":"名詞","cat":"food"},{"w":"ここ","r":"ここ","zh":"這裡","pos":"代名詞","cat":"deixis"},{"w":"午後","r":"ごご","zh":"下午","pos":"名詞","cat":"time"},{"w":"九日","r":"ここのか","zh":"九號、九天","pos":"名詞","cat":"time"},{"w":"九つ","r":"ここのつ","zh":"九個","pos":"名詞","cat":"number"},{"w":"午前","r":"ごぜん","zh":"上午","pos":"名詞","cat":"time"},{"w":"答える","r":"こたえる","zh":"回答","pos":"動詞2類","cat":"v_mind"},{"w":"こちら","r":"こちら","zh":"這位、這邊（禮貌）","pos":"代名詞","cat":"deixis"},{"w":"こっち","r":"こっち","zh":"這位、這邊","pos":"代名詞","cat":"deixis"},{"w":"コップ","r":"コップ","zh":"杯子","pos":"名詞","cat":"food"},{"w":"今年","r":"ことし","zh":"今年","pos":"名詞","cat":"time"},{"w":"言葉","r":"ことば","zh":"語言、話語","pos":"名詞","cat":"school"},{"w":"子供","r":"こども","zh":"小孩","pos":"名詞","cat":"people"},{"w":"この","r":"この","zh":"這個～","pos":"其他","cat":"deixis"},{"w":"御飯","r":"ごはん","zh":"飯、餐點","pos":"名詞","cat":"food"},{"w":"コピーする","r":"コピーする","zh":"影印","pos":"動詞3類","cat":"v_daily"},{"w":"困る","r":"こまる","zh":"困擾、為難","pos":"動詞1類","cat":"v_mind"},{"w":"これ","r":"これ","zh":"這個","pos":"代名詞","cat":"deixis"},{"w":"～ころ; ～ごろ","r":"～ころ; ～ごろ","zh":"～左右（時間）","pos":"接頭／接尾詞","cat":"time"},{"w":"今月","r":"こんげつ","zh":"這個月","pos":"名詞","cat":"time"},{"w":"今週","r":"こんしゅう","zh":"這個星期","pos":"名詞","cat":"time"},{"w":"こんな","r":"こんな","zh":"這樣的","pos":"其他","cat":"deixis"},{"w":"今晩","r":"こんばん","zh":"今晚","pos":"名詞","cat":"time"},{"w":"さあ","r":"さあ","zh":"來吧、嗯","pos":"感嘆詞","cat":"greet"},{"w":"～歳","r":"～さい","zh":"～歲","pos":"量詞","cat":"number"},{"w":"財布","r":"さいふ","zh":"錢包","pos":"名詞","cat":"home"},{"w":"魚","r":"さかな","zh":"魚","pos":"名詞","cat":"food"},{"w":"先","r":"さき","zh":"之前、前方、未來","pos":"名詞","cat":"time"},{"w":"咲く","r":"さく","zh":"開（花）","pos":"動詞1類","cat":"v_mind"},{"w":"作文","r":"さくぶん","zh":"作文","pos":"名詞","cat":"school"},{"w":"差す","r":"さす","zh":"撐（傘）、伸出","pos":"動詞1類","cat":"v_daily"},{"w":"～冊","r":"～さつ","zh":"～本（書）","pos":"量詞","cat":"number"},{"w":"雑誌","r":"ざっし","zh":"雜誌","pos":"名詞","cat":"school"},{"w":"砂糖","r":"さとう","zh":"砂糖","pos":"名詞","cat":"food"},{"w":"寒い","r":"さむい","zh":"冷的（天氣）","pos":"い形容詞","cat":"adj_i"},{"w":"さ来年","r":"さらいねん","zh":"後年","pos":"名詞","cat":"time"},{"w":"～さん","r":"～さん","zh":"～先生、～小姐","pos":"接頭／接尾詞","cat":"people"},{"w":"三","r":"さん","zh":"三","pos":"名詞","cat":"number"},{"w":"散歩","r":"さんぽ (する)","zh":"散步","pos":"動詞3類","cat":"v_move"},{"w":"四","r":"し","zh":"四","pos":"名詞","cat":"number"},{"w":"～時","r":"～じ","zh":"～點（時間）","pos":"量詞","cat":"time"},{"w":"塩","r":"しお","zh":"鹽","pos":"名詞","cat":"food"},{"w":"しかし","r":"しかし","zh":"可是、但是","pos":"連接詞","cat":"adv"},{"w":"時間","r":"じかん","zh":"時間","pos":"名詞","cat":"time"},{"w":"～時間","r":"～じかん","zh":"～小時","pos":"量詞","cat":"time"},{"w":"仕事","r":"しごと","zh":"工作","pos":"名詞","cat":"school"},{"w":"辞書","r":"じしょ","zh":"字典","pos":"名詞","cat":"school"},{"w":"静か","r":"しずか","zh":"安靜的","pos":"な形容詞","cat":"adj_na"},{"w":"下","r":"した","zh":"下面","pos":"名詞","cat":"place"},{"w":"七","r":"しち","zh":"七","pos":"名詞","cat":"number"},{"w":"質問","r":"しつもん","zh":"問題、提問","pos":"名詞","cat":"school"},{"w":"自転車","r":"じてんしゃ","zh":"腳踏車","pos":"名詞","cat":"town"},{"w":"自動車","r":"じどうしゃ","zh":"汽車","pos":"名詞","cat":"town"},{"w":"死ぬ","r":"しぬ","zh":"死","pos":"動詞1類","cat":"v_mind"},{"w":"字引","r":"じびき","zh":"字典","pos":"名詞","cat":"school"},{"w":"自分","r":"じぶん","zh":"自己","pos":"代名詞","cat":"people"},{"w":"閉まる","r":"しまる","zh":"關上、關閉","pos":"動詞1類","cat":"v_daily"},{"w":"閉める","r":"しめる","zh":"關（門窗）","pos":"動詞2類","cat":"v_daily"},{"w":"締める","r":"しめる","zh":"繫上、扣緊","pos":"動詞2類","cat":"v_daily"},{"w":"じゃ; じゃあ","r":"じゃ; じゃあ","zh":"那麼、好吧","pos":"連接詞","cat":"adv"},{"w":"写真","r":"しゃしん","zh":"照片","pos":"名詞","cat":"school"},{"w":"シャツ","r":"シャツ","zh":"襯衫","pos":"名詞","cat":"wear"},{"w":"シャワー","r":"シャワー","zh":"淋浴","pos":"名詞","cat":"home"},{"w":"十","r":"じゅう","zh":"十","pos":"名詞","cat":"number"},{"w":"～中","r":"～じゅう","zh":"整個～、～期間","pos":"接頭／接尾詞","cat":"time"},{"w":"～週間","r":"～しゅうかん","zh":"～週","pos":"量詞","cat":"time"},{"w":"授業","r":"じゅぎょう","zh":"上課、課程","pos":"名詞","cat":"school"},{"w":"宿題","r":"しゅくだい","zh":"作業","pos":"名詞","cat":"school"},{"w":"上手","r":"じょうず","zh":"擅長、拿手","pos":"な形容詞","cat":"adj_na"},{"w":"丈夫","r":"じょうぶ","zh":"堅固、結實","pos":"な形容詞","cat":"adj_na"},{"w":"醤油","r":"しょうゆ","zh":"醬油","pos":"名詞","cat":"food"},{"w":"食堂","r":"しょくどう","zh":"食堂","pos":"名詞","cat":"town"},{"w":"知る","r":"しる","zh":"知道、認識","pos":"動詞1類","cat":"v_mind"},{"w":"白","r":"しろ","zh":"白色","pos":"名詞","cat":"wear"},{"w":"白い","r":"しろい","zh":"白色的、白的","pos":"い形容詞","cat":"adj_i"},{"w":"～人","r":"～じん","zh":"～人","pos":"量詞","cat":"number"},{"w":"新聞","r":"しんぶん","zh":"報紙","pos":"名詞","cat":"school"},{"w":"水曜日","r":"すいようび","zh":"星期三","pos":"名詞","cat":"time"},{"w":"吸う","r":"すう","zh":"吸（菸、氣）","pos":"動詞1類","cat":"v_daily"},{"w":"スカート","r":"スカート","zh":"裙子","pos":"名詞","cat":"wear"},{"w":"好き","r":"すき","zh":"喜歡","pos":"な形容詞","cat":"adj_na"},{"w":"～すぎ","r":"～すぎ","zh":"超過～、～過度","pos":"接頭／接尾詞","cat":"adv"},{"w":"少ない","r":"すくない","zh":"少的","pos":"い形容詞","cat":"adj_i"},{"w":"すぐに","r":"すぐに","zh":"馬上、立刻","pos":"副詞","cat":"adv"},{"w":"少し","r":"すこし","zh":"一點點、稍微","pos":"副詞","cat":"adv"},{"w":"涼しい","r":"すずしい","zh":"涼爽的","pos":"い形容詞","cat":"adj_i"},{"w":"～ずつ","r":"～ずつ","zh":"各～、每次～","pos":"接頭／接尾詞","cat":"adv"},{"w":"ストーブ","r":"ストーブ","zh":"暖爐","pos":"名詞","cat":"home"},{"w":"スプーン","r":"スプーン","zh":"湯匙","pos":"名詞","cat":"food"},{"w":"スポーツ","r":"スポーツ","zh":"運動","pos":"名詞","cat":"school"},{"w":"ズボン","r":"ズボン","zh":"褲子","pos":"名詞","cat":"wear"},{"w":"住む","r":"すむ","zh":"住","pos":"動詞1類","cat":"v_daily"},{"w":"する","r":"する","zh":"做、戴（小飾品）","pos":"動詞3類","cat":"v_daily"},{"w":"座る","r":"すわる","zh":"坐","pos":"動詞1類","cat":"v_daily"},{"w":"背","r":"せい","zh":"身高","pos":"名詞","cat":"body"},{"w":"生徒","r":"せいと","zh":"學生（中小學）","pos":"名詞","cat":"people"},{"w":"セーター","r":"セーター","zh":"毛衣","pos":"名詞","cat":"wear"},{"w":"石鹸","r":"せっけん","zh":"肥皂","pos":"名詞","cat":"home"},{"w":"背広","r":"せびろ","zh":"西裝","pos":"名詞","cat":"wear"},{"w":"狭い","r":"せまい","zh":"狹窄的","pos":"い形容詞","cat":"adj_i"},{"w":"ゼロ","r":"ゼロ","zh":"零","pos":"名詞","cat":"number"},{"w":"千","r":"せん","zh":"千","pos":"名詞","cat":"number"},{"w":"先月","r":"せんげつ","zh":"上個月","pos":"名詞","cat":"time"},{"w":"先週","r":"せんしゅう","zh":"上個星期","pos":"名詞","cat":"time"},{"w":"先生","r":"せんせい","zh":"老師","pos":"名詞","cat":"people"},{"w":"洗濯","r":"せんたく","zh":"洗衣服","pos":"動詞3類","cat":"v_daily"},{"w":"全部","r":"ぜんぶ","zh":"全部","pos":"名詞","cat":"adv"},{"w":"そう; そうです","r":"そう; そうです","zh":"是的、這樣","pos":"副詞","cat":"adv"},{"w":"掃除","r":"そうじ (する)","zh":"打掃","pos":"動詞3類","cat":"v_daily"},{"w":"そうして; そして","r":"そうして; そして","zh":"然後、而且","pos":"連接詞","cat":"adv"},{"w":"そこ","r":"そこ","zh":"那裡、那邊","pos":"代名詞","cat":"deixis"},{"w":"そちら","r":"そちら","zh":"那邊、您那邊","pos":"代名詞","cat":"deixis"},{"w":"そっち","r":"そっち","zh":"那邊","pos":"代名詞","cat":"deixis"},{"w":"外","r":"そと","zh":"外面","pos":"名詞","cat":"place"},{"w":"その","r":"その","zh":"那個（連體詞）","pos":"其他","cat":"deixis"},{"w":"そば","r":"そば","zh":"旁邊、蕎麥麵","pos":"名詞","cat":"place"},{"w":"空","r":"そら","zh":"天空","pos":"名詞","cat":"nature"},{"w":"それ","r":"それ","zh":"那個","pos":"代名詞","cat":"deixis"},{"w":"それから","r":"それから","zh":"然後、接著","pos":"連接詞","cat":"adv"},{"w":"それでは","r":"それでは","zh":"那麼、既然如此","pos":"連接詞","cat":"adv"},{"w":"～台","r":"～だい","zh":"～台（車輛、機器）","pos":"量詞","cat":"number"},{"w":"大学","r":"だいがく","zh":"大學","pos":"名詞","cat":"school"},{"w":"大使館","r":"たいしかん","zh":"大使館","pos":"名詞","cat":"town"},{"w":"大丈夫","r":"だいじょうぶ","zh":"沒問題、不要緊","pos":"な形容詞","cat":"adj_na"},{"w":"大好き","r":"だいすき","zh":"很喜歡","pos":"な形容詞","cat":"adj_na"},{"w":"大切","r":"たいせつ","zh":"重要、珍貴","pos":"な形容詞","cat":"adj_na"},{"w":"台所","r":"だいどころ","zh":"廚房","pos":"名詞","cat":"home"},{"w":"大変","r":"たいへん","zh":"非常、辛苦、不得了","pos":"な形容詞","cat":"adj_na"},{"w":"高い","r":"たかい","zh":"高的、貴的","pos":"い形容詞","cat":"adj_i"},{"w":"～だけ","r":"～だけ","zh":"只有、僅僅","pos":"其他","cat":"adv"},{"w":"沢山","r":"たくさん","zh":"很多","pos":"副詞","cat":"adv"},{"w":"タクシー","r":"タクシー","zh":"計程車","pos":"名詞","cat":"town"},{"w":"出す","r":"だす","zh":"拿出、交出","pos":"動詞1類","cat":"v_daily"},{"w":"～たち","r":"～たち","zh":"～們（複數）","pos":"接頭／接尾詞","cat":"people"},{"w":"立つ","r":"たつ","zh":"站立、站起來","pos":"動詞1類","cat":"v_daily"},{"w":"たて","r":"たて","zh":"縱向、高度","pos":"名詞","cat":"place"},{"w":"建物","r":"たてもの","zh":"建築物","pos":"名詞","cat":"town"},{"w":"楽しい","r":"たのしい","zh":"開心的、愉快的","pos":"い形容詞","cat":"adj_i"},{"w":"頼む","r":"たのむ","zh":"拜託、請求","pos":"動詞1類","cat":"v_mind"},{"w":"たばこ","r":"たばこ","zh":"香菸","pos":"名詞","cat":"home"},{"w":"多分","r":"たぶん","zh":"大概、也許","pos":"副詞","cat":"adv"},{"w":"食べ物","r":"たべもの","zh":"食物","pos":"名詞","cat":"food"},{"w":"食べる","r":"たべる","zh":"吃","pos":"動詞2類","cat":"v_daily"},{"w":"卵","r":"たまご","zh":"蛋","pos":"名詞","cat":"food"},{"w":"誰","r":"だれ","zh":"誰","pos":"代名詞","cat":"deixis"},{"w":"誰か","r":"だれか","zh":"某人","pos":"代名詞","cat":"deixis"},{"w":"誕生日","r":"たんじょうび","zh":"生日","pos":"名詞","cat":"time"},{"w":"段々","r":"だんだん","zh":"漸漸地","pos":"副詞","cat":"adv"},{"w":"小さい","r":"ちいさい","zh":"小的","pos":"い形容詞","cat":"adj_i"},{"w":"小さな","r":"ちいさな","zh":"小的（連體詞）","pos":"其他","cat":"adj_i"},{"w":"近い","r":"ちかい","zh":"近的","pos":"い形容詞","cat":"adj_i"},{"w":"違う","r":"ちがう","zh":"不同、不對","pos":"動詞1類","cat":"v_mind"},{"w":"近く","r":"ちかく","zh":"附近","pos":"名詞","cat":"place"},{"w":"地下鉄","r":"ちかてつ","zh":"地下鐵","pos":"名詞","cat":"town"},{"w":"地図","r":"ちず","zh":"地圖","pos":"名詞","cat":"town"},{"w":"父","r":"ちち","zh":"家父、我的爸爸","pos":"名詞","cat":"people"},{"w":"茶色","r":"ちゃいろ","zh":"茶色、褐色","pos":"名詞","cat":"wear"},{"w":"茶碗","r":"ちゃわん","zh":"飯碗","pos":"名詞","cat":"food"},{"w":"～中","r":"～ちゅう","zh":"～期間、正在～","pos":"接頭／接尾詞","cat":"time"},{"w":"丁度","r":"ちょうど","zh":"剛好、正好","pos":"副詞","cat":"adv"},{"w":"ちょっと","r":"ちょっと","zh":"一點、稍微","pos":"副詞","cat":"adv"},{"w":"一日","r":"ついたち","zh":"一號、一天","pos":"名詞","cat":"time"},{"w":"使う","r":"つかう","zh":"使用","pos":"動詞1類","cat":"v_daily"},{"w":"疲れる","r":"つかれる","zh":"累、疲倦","pos":"動詞2類","cat":"v_mind"},{"w":"次","r":"つぎ","zh":"下一個、其次","pos":"名詞","cat":"time"},{"w":"着く","r":"つく","zh":"到達","pos":"動詞1類","cat":"v_move"},{"w":"机","r":"つくえ","zh":"書桌","pos":"名詞","cat":"home"},{"w":"作る","r":"つくる","zh":"做、製作","pos":"動詞1類","cat":"v_daily"},{"w":"つける","r":"つける","zh":"打開、附上","pos":"動詞2類","cat":"v_daily"},{"w":"勤める","r":"つとめる","zh":"任職、上班","pos":"動詞2類","cat":"v_daily"},{"w":"つまらない","r":"つまらない","zh":"無聊的、不重要的","pos":"い形容詞","cat":"adj_i"},{"w":"冷たい","r":"つめたい","zh":"冰冷的","pos":"い形容詞","cat":"adj_i"},{"w":"強い","r":"つよい","zh":"強的","pos":"い形容詞","cat":"adj_i"},{"w":"手","r":"て","zh":"手","pos":"名詞","cat":"body"},{"w":"テープ","r":"テープ","zh":"錄音帶、膠帶","pos":"名詞","cat":"school"},{"w":"テープレコーダー","r":"テープレコーダー","zh":"錄音機","pos":"名詞","cat":"home"},{"w":"テーブル","r":"テーブル","zh":"桌子","pos":"名詞","cat":"home"},{"w":"出かける","r":"でかける","zh":"出門、外出","pos":"動詞2類","cat":"v_move"},{"w":"手紙","r":"てがみ","zh":"信","pos":"名詞","cat":"school"},{"w":"できる","r":"できる","zh":"會、能夠","pos":"動詞2類","cat":"v_mind"},{"w":"出口","r":"でぐち","zh":"出口","pos":"名詞","cat":"town"},{"w":"テスト","r":"テスト","zh":"測驗","pos":"名詞","cat":"school"},{"w":"では","r":"では","zh":"那麼、好吧","pos":"連接詞","cat":"adv"},{"w":"デパート","r":"デパート","zh":"百貨公司","pos":"名詞","cat":"town"},{"w":"でも","r":"でも","zh":"但是、可是","pos":"連接詞","cat":"adv"},{"w":"出る","r":"でる","zh":"出去、出現","pos":"動詞2類","cat":"v_move"},{"w":"テレビ","r":"テレビ","zh":"電視","pos":"名詞","cat":"home"},{"w":"天気","r":"てんき","zh":"天氣","pos":"名詞","cat":"nature"},{"w":"電気","r":"でんき","zh":"電、電燈","pos":"名詞","cat":"home"},{"w":"電車","r":"でんしゃ","zh":"電車","pos":"名詞","cat":"town"},{"w":"電話","r":"でんわ","zh":"電話","pos":"名詞","cat":"home"},{"w":"戸","r":"と","zh":"（和式）門","pos":"名詞","cat":"home"},{"w":"～度","r":"～ど","zh":"～次、～度","pos":"量詞","cat":"number"},{"w":"ドア","r":"ドア","zh":"（西式）門","pos":"名詞","cat":"home"},{"w":"トイレ","r":"トイレ","zh":"廁所","pos":"名詞","cat":"home"},{"w":"どう","r":"どう","zh":"如何、怎麼樣","pos":"副詞","cat":"deixis"},{"w":"どうして","r":"どうして","zh":"為什麼","pos":"副詞","cat":"deixis"},{"w":"どうぞ","r":"どうぞ","zh":"請","pos":"感嘆詞","cat":"greet"},{"w":"動物","r":"どうぶつ","zh":"動物","pos":"名詞","cat":"nature"},{"w":"どうも","r":"どうも","zh":"謝謝、實在是","pos":"副詞","cat":"greet"},{"w":"十","r":"(〜を) とお","zh":"十","pos":"名詞","cat":"number"},{"w":"遠い","r":"とおい","zh":"遠的","pos":"い形容詞","cat":"adj_i"},{"w":"十日","r":"とおか","zh":"十號、十天","pos":"名詞","cat":"time"},{"w":"～時","r":"～とき","zh":"～的時候","pos":"接頭／接尾詞","cat":"time"},{"w":"時々","r":"ときどき","zh":"有時候","pos":"副詞","cat":"adv"},{"w":"時計","r":"とけい","zh":"時鐘、手錶","pos":"名詞","cat":"home"},{"w":"どこ","r":"どこ","zh":"哪裡","pos":"代名詞","cat":"deixis"},{"w":"所","r":"ところ","zh":"地方","pos":"名詞","cat":"place"},{"w":"年","r":"とし","zh":"年、年紀","pos":"名詞","cat":"time"},{"w":"図書館","r":"としょかん","zh":"圖書館","pos":"名詞","cat":"town"},{"w":"どちら","r":"どちら","zh":"哪邊、哪一個","pos":"代名詞","cat":"deixis"},{"w":"どっち","r":"どっち","zh":"哪邊、哪一個","pos":"代名詞","cat":"deixis"},{"w":"とても","r":"とても","zh":"非常","pos":"副詞","cat":"adv"},{"w":"どなた","r":"どなた","zh":"哪一位","pos":"代名詞","cat":"deixis"},{"w":"隣","r":"となり","zh":"隔壁、旁邊","pos":"名詞","cat":"place"},{"w":"どの","r":"どの","zh":"哪一個（連體詞）","pos":"其他","cat":"deixis"},{"w":"飛ぶ","r":"とぶ","zh":"飛","pos":"動詞1類","cat":"v_move"},{"w":"止まる","r":"とまる","zh":"停止、停下","pos":"動詞1類","cat":"v_move"},{"w":"友達","r":"ともだち","zh":"朋友","pos":"名詞","cat":"people"},{"w":"土曜日","r":"どようび","zh":"星期六","pos":"名詞","cat":"time"},{"w":"鳥","r":"とり","zh":"鳥、雞","pos":"名詞","cat":"nature"},{"w":"鶏肉","r":"とりにく","zh":"雞肉","pos":"名詞","cat":"food"},{"w":"取る","r":"とる","zh":"拿取、修（課）","pos":"動詞1類","cat":"v_daily"},{"w":"撮る","r":"とる","zh":"拍（照片）","pos":"動詞1類","cat":"v_daily"},{"w":"どれ","r":"どれ","zh":"哪一個","pos":"代名詞","cat":"deixis"},{"w":"どんな","r":"どんな","zh":"什麼樣的","pos":"其他","cat":"deixis"},{"w":"ない","r":"ない","zh":"沒有、無","pos":"い形容詞","cat":"adj_i"},{"w":"ナイフ","r":"ナイフ","zh":"刀子","pos":"名詞","cat":"home"},{"w":"中","r":"なか","zh":"裡面、中間","pos":"名詞","cat":"place"},{"w":"長い","r":"ながい","zh":"長的","pos":"い形容詞","cat":"adj_i"},{"w":"鳴く","r":"なく","zh":"（動物）叫","pos":"動詞1類","cat":"v_daily"},{"w":"無くす","r":"なくす","zh":"弄丟、遺失","pos":"動詞1類","cat":"v_daily"},{"w":"なぜ","r":"なぜ","zh":"為什麼","pos":"副詞","cat":"deixis"},{"w":"夏","r":"なつ","zh":"夏天","pos":"名詞","cat":"nature"},{"w":"夏休み","r":"なつやすみ","zh":"暑假","pos":"名詞","cat":"school"},{"w":"～など","r":"～など","zh":"～等等","pos":"其他","cat":"adv"},{"w":"七つ","r":"ななつ","zh":"七個","pos":"名詞","cat":"number"},{"w":"何","r":"なん; なに","zh":"什麼","pos":"代名詞","cat":"deixis"},{"w":"七日","r":"なのか","zh":"七號、七天","pos":"名詞","cat":"time"},{"w":"名前","r":"なまえ","zh":"名字","pos":"名詞","cat":"people"},{"w":"習う","r":"ならう","zh":"學習","pos":"動詞1類","cat":"v_mind"},{"w":"並ぶ","r":"ならぶ","zh":"排隊","pos":"動詞1類","cat":"v_mind"},{"w":"並べる","r":"ならべる","zh":"排列、擺放","pos":"動詞2類","cat":"v_daily"},{"w":"なる","r":"なる","zh":"變成、成為","pos":"動詞1類","cat":"v_mind"},{"w":"何～","r":"なん～","zh":"什麼～、幾～","pos":"接頭／接尾詞","cat":"deixis"},{"w":"二","r":"に","zh":"二","pos":"名詞","cat":"number"},{"w":"にぎやか","r":"にぎやか","zh":"熱鬧","pos":"な形容詞","cat":"adj_na"},{"w":"肉","r":"にく","zh":"肉","pos":"名詞","cat":"food"},{"w":"西","r":"にし","zh":"西邊","pos":"名詞","cat":"place"},{"w":"～日","r":"～にち","zh":"～號、～天","pos":"量詞","cat":"time"},{"w":"日曜日","r":"にちようび","zh":"星期日","pos":"名詞","cat":"time"},{"w":"荷物","r":"にもつ","zh":"行李","pos":"名詞","cat":"home"},{"w":"ニュース","r":"ニュース","zh":"新聞、消息","pos":"名詞","cat":"school"},{"w":"庭","r":"にわ","zh":"庭院","pos":"名詞","cat":"home"},{"w":"～人","r":"～にん","zh":"～人","pos":"量詞","cat":"number"},{"w":"脱ぐ","r":"ぬぐ","zh":"脫（衣物）","pos":"動詞1類","cat":"v_daily"},{"w":"温い","r":"ぬるい","zh":"微溫的","pos":"い形容詞","cat":"adj_i"},{"w":"ネクタイ","r":"ネクタイ","zh":"領帶","pos":"名詞","cat":"wear"},{"w":"猫","r":"ねこ","zh":"貓","pos":"名詞","cat":"nature"},{"w":"寝る","r":"ねる","zh":"睡覺","pos":"動詞2類","cat":"v_daily"},{"w":"～年","r":"～ねん","zh":"～年","pos":"量詞","cat":"time"},{"w":"ノート","r":"ノート","zh":"筆記本","pos":"名詞","cat":"school"},{"w":"登る","r":"のぼる","zh":"爬、攀登","pos":"動詞1類","cat":"v_move"},{"w":"飲み物","r":"のみもの","zh":"飲料","pos":"名詞","cat":"food"},{"w":"飲む","r":"のむ","zh":"喝","pos":"動詞1類","cat":"v_daily"},{"w":"乗る","r":"のる","zh":"搭乘、騎乘","pos":"動詞1類","cat":"v_move"},{"w":"歯","r":"は","zh":"牙齒","pos":"名詞","cat":"body"},{"w":"パーティー","r":"パーティー","zh":"派對","pos":"名詞","cat":"school"},{"w":"はい","r":"はい","zh":"是、好（應答）","pos":"感嘆詞","cat":"greet"},{"w":"～杯","r":"～はい","zh":"～杯","pos":"量詞","cat":"number"},{"w":"灰皿","r":"はいざら","zh":"菸灰缸","pos":"名詞","cat":"home"},{"w":"入る","r":"はいる","zh":"進入","pos":"動詞1類","cat":"v_move"},{"w":"葉書","r":"はがき","zh":"明信片","pos":"名詞","cat":"school"},{"w":"はく","r":"はく","zh":"穿（下半身衣物）","pos":"動詞1類","cat":"v_daily"},{"w":"箱","r":"はこ","zh":"箱子","pos":"名詞","cat":"home"},{"w":"橋","r":"はし","zh":"橋","pos":"名詞","cat":"town"},{"w":"箸","r":"はし","zh":"筷子","pos":"名詞","cat":"food"},{"w":"始まる","r":"はじまる","zh":"開始","pos":"動詞1類","cat":"v_mind"},{"w":"初め; 始め","r":"はじめ","zh":"開始、最初","pos":"名詞","cat":"time"},{"w":"初めて","r":"はじめて","zh":"第一次、初次","pos":"副詞","cat":"adv"},{"w":"走る","r":"はしる","zh":"跑","pos":"動詞1類","cat":"v_move"},{"w":"バス","r":"バス","zh":"公車","pos":"名詞","cat":"town"},{"w":"バター","r":"バター","zh":"奶油","pos":"名詞","cat":"food"},{"w":"二十歳","r":"はたち","zh":"二十歲","pos":"名詞","cat":"number"},{"w":"働く","r":"はたらく","zh":"工作","pos":"動詞1類","cat":"v_daily"},{"w":"八","r":"はち","zh":"八","pos":"名詞","cat":"number"},{"w":"二十日","r":"はつか","zh":"二十號、二十天","pos":"名詞","cat":"time"},{"w":"花","r":"はな","zh":"花","pos":"名詞","cat":"nature"},{"w":"鼻","r":"はな","zh":"鼻子","pos":"名詞","cat":"body"},{"w":"話","r":"はなし","zh":"談話、故事","pos":"名詞","cat":"school"},{"w":"話す","r":"はなす","zh":"說話、講","pos":"動詞1類","cat":"v_mind"},{"w":"母","r":"はは","zh":"母親、媽媽","pos":"名詞","cat":"people"},{"w":"早い","r":"はやい","zh":"早的","pos":"い形容詞","cat":"adj_i"},{"w":"速い","r":"はやい","zh":"快的","pos":"い形容詞","cat":"adj_i"},{"w":"春","r":"はる","zh":"春天","pos":"名詞","cat":"nature"},{"w":"貼る","r":"はる","zh":"貼","pos":"動詞1類","cat":"v_daily"},{"w":"晴れ","r":"はれ","zh":"晴天","pos":"名詞","cat":"nature"},{"w":"晴れる","r":"はれる","zh":"放晴","pos":"動詞2類","cat":"v_mind"},{"w":"半","r":"はん","zh":"半、一半","pos":"名詞","cat":"time"},{"w":"晩","r":"ばん","zh":"晚上","pos":"名詞","cat":"time"},{"w":"～番","r":"～ばん","zh":"第～名","pos":"接頭／接尾詞","cat":"number"},{"w":"パン","r":"パン","zh":"麵包","pos":"名詞","cat":"food"},{"w":"ハンカチ","r":"ハンカチ","zh":"手帕","pos":"名詞","cat":"wear"},{"w":"番号","r":"ばんごう","zh":"號碼","pos":"名詞","cat":"number"},{"w":"晩御飯","r":"ばんごはん","zh":"晚餐","pos":"名詞","cat":"food"},{"w":"半分","r":"はんぶん","zh":"一半","pos":"名詞","cat":"number"},{"w":"東","r":"ひがし","zh":"東邊","pos":"名詞","cat":"place"},{"w":"～匹","r":"～ひき","zh":"～隻（小動物）","pos":"量詞","cat":"number"},{"w":"引く","r":"ひく","zh":"拉、減","pos":"動詞1類","cat":"v_daily"},{"w":"弾く","r":"ひく","zh":"彈（琴）","pos":"動詞1類","cat":"v_daily"},{"w":"低い","r":"ひくい","zh":"矮的、低的","pos":"い形容詞","cat":"adj_i"},{"w":"飛行機","r":"ひこうき","zh":"飛機","pos":"名詞","cat":"town"},{"w":"左","r":"ひだり","zh":"左邊","pos":"名詞","cat":"place"},{"w":"人","r":"ひと","zh":"人","pos":"名詞","cat":"people"},{"w":"一つ","r":"ひとつ","zh":"一個","pos":"名詞","cat":"number"},{"w":"一月","r":"ひとつき","zh":"一個月","pos":"名詞","cat":"time"},{"w":"一人","r":"ひとり","zh":"一個人","pos":"名詞","cat":"number"},{"w":"暇","r":"ひま","zh":"空閒、閒暇","pos":"名詞","cat":"time"},{"w":"百","r":"ひゃく","zh":"百","pos":"名詞","cat":"number"},{"w":"病院","r":"びょういん","zh":"醫院","pos":"名詞","cat":"town"},{"w":"病気","r":"びょうき","zh":"生病、疾病","pos":"名詞","cat":"body"},{"w":"平仮名","r":"ひらがな","zh":"平假名","pos":"名詞","cat":"school"},{"w":"昼","r":"ひる","zh":"中午、白天","pos":"名詞","cat":"time"},{"w":"昼御飯","r":"ひるごはん","zh":"午餐","pos":"名詞","cat":"food"},{"w":"広い","r":"ひろい","zh":"寬廣的","pos":"い形容詞","cat":"adj_i"},{"w":"フィルム","r":"フィルム","zh":"底片","pos":"名詞","cat":"school"},{"w":"封筒","r":"ふうとう","zh":"信封","pos":"名詞","cat":"school"},{"w":"プール","r":"プール","zh":"游泳池","pos":"名詞","cat":"town"},{"w":"フォーク","r":"フォーク","zh":"叉子","pos":"名詞","cat":"food"},{"w":"吹く","r":"ふく","zh":"吹（風）","pos":"動詞1類","cat":"v_mind"},{"w":"服","r":"ふく","zh":"衣服","pos":"名詞","cat":"wear"},{"w":"二つ","r":"ふたつ","zh":"兩個","pos":"名詞","cat":"number"},{"w":"豚肉","r":"ぶたにく","zh":"豬肉","pos":"名詞","cat":"food"},{"w":"二人","r":"ふたり","zh":"兩個人","pos":"名詞","cat":"number"},{"w":"二日","r":"ふつか","zh":"兩天、二號","pos":"名詞","cat":"time"},{"w":"太い","r":"ふとい","zh":"粗的、胖的","pos":"い形容詞","cat":"adj_i"},{"w":"冬","r":"ふゆ","zh":"冬天","pos":"名詞","cat":"nature"},{"w":"降る","r":"ふる","zh":"下（雨、雪）","pos":"動詞1類","cat":"v_mind"},{"w":"古い","r":"ふるい","zh":"舊的","pos":"い形容詞","cat":"adj_i"},{"w":"～分","r":"～ふん","zh":"～分鐘","pos":"量詞","cat":"time"},{"w":"文章","r":"ぶんしょう","zh":"文章","pos":"名詞","cat":"school"},{"w":"ページ","r":"ページ","zh":"頁","pos":"名詞","cat":"school"},{"w":"下手","r":"へた","zh":"不擅長","pos":"な形容詞","cat":"adj_na"},{"w":"ベッド","r":"ベッド","zh":"床","pos":"名詞","cat":"home"},{"w":"ペット","r":"ペット","zh":"寵物","pos":"名詞","cat":"nature"},{"w":"部屋","r":"へや","zh":"房間","pos":"名詞","cat":"home"},{"w":"辺","r":"へん","zh":"附近、一帶","pos":"名詞","cat":"place"},{"w":"ペン","r":"ペン","zh":"筆","pos":"名詞","cat":"school"},{"w":"勉強","r":"べんきょう (する)","zh":"學習、讀書","pos":"動詞3類","cat":"v_daily"},{"w":"便利","r":"べんり","zh":"方便","pos":"な形容詞","cat":"adj_na"},{"w":"帽子","r":"ぼうし","zh":"帽子","pos":"名詞","cat":"wear"},{"w":"ボールペン","r":"ボールペン","zh":"原子筆","pos":"名詞","cat":"school"},{"w":"外","r":"ほか","zh":"其他、別處","pos":"名詞","cat":"place"},{"w":"ポケット","r":"ポケット","zh":"口袋","pos":"名詞","cat":"wear"},{"w":"欲しい","r":"ほしい","zh":"想要的","pos":"い形容詞","cat":"adj_i"},{"w":"ポスト","r":"ポスト","zh":"郵筒、職位","pos":"名詞","cat":"town"},{"w":"細い","r":"ほそい","zh":"細的","pos":"い形容詞","cat":"adj_i"},{"w":"ボタン","r":"ボタン","zh":"鈕扣、按鈕","pos":"名詞","cat":"wear"},{"w":"ホテル","r":"ホテル","zh":"飯店","pos":"名詞","cat":"town"},{"w":"本","r":"ほん","zh":"書","pos":"名詞","cat":"school"},{"w":"～本","r":"～ほん","zh":"～支（細長物）","pos":"量詞","cat":"number"},{"w":"本棚","r":"ほんだな","zh":"書架","pos":"名詞","cat":"home"},{"w":"本当","r":"ほんとう","zh":"真的","pos":"名詞","cat":"adv"},{"w":"～枚","r":"～まい","zh":"～張（扁平物）","pos":"量詞","cat":"number"},{"w":"毎朝","r":"まいあさ","zh":"每天早上","pos":"名詞","cat":"time"},{"w":"毎月","r":"まいげつ; まいつき","zh":"每個月","pos":"名詞","cat":"time"},{"w":"毎週","r":"まいしゅう","zh":"每週","pos":"名詞","cat":"time"},{"w":"毎日","r":"まいにち","zh":"每天","pos":"名詞","cat":"time"},{"w":"毎年","r":"まいねん; まいとし","zh":"每年","pos":"名詞","cat":"time"},{"w":"毎晩","r":"まいばん","zh":"每天晚上","pos":"名詞","cat":"time"},{"w":"前","r":"まえ","zh":"前面、以前","pos":"名詞","cat":"place"},{"w":"～前","r":"～まえ","zh":"～前","pos":"接頭／接尾詞","cat":"place"},{"w":"曲る","r":"まがる","zh":"轉彎、彎曲","pos":"動詞1類","cat":"v_move"},{"w":"まずい","r":"まずい","zh":"難吃的","pos":"い形容詞","cat":"adj_i"},{"w":"また","r":"また","zh":"又、而且","pos":"連接詞","cat":"adv"},{"w":"まだ","r":"まだ","zh":"還、尚未","pos":"副詞","cat":"adv"},{"w":"町","r":"まち","zh":"城鎮","pos":"名詞","cat":"town"},{"w":"待つ","r":"まつ","zh":"等待","pos":"動詞1類","cat":"v_daily"},{"w":"まっすぐ","r":"まっすぐ","zh":"一直往前","pos":"副詞","cat":"adv"},{"w":"マッチ","r":"マッチ","zh":"火柴","pos":"名詞","cat":"home"},{"w":"窓","r":"まど","zh":"窗戶","pos":"名詞","cat":"home"},{"w":"丸い; 円い","r":"まるい","zh":"圓的","pos":"い形容詞","cat":"adj_i"},{"w":"万","r":"まん","zh":"萬","pos":"名詞","cat":"number"},{"w":"万年筆","r":"まんねんひつ","zh":"鋼筆","pos":"名詞","cat":"school"},{"w":"磨く","r":"みがく","zh":"刷（牙）、擦亮","pos":"動詞1類","cat":"v_daily"},{"w":"右","r":"みぎ","zh":"右邊","pos":"名詞","cat":"place"},{"w":"短い","r":"みじかい","zh":"短的","pos":"い形容詞","cat":"adj_i"},{"w":"水","r":"みず","zh":"水","pos":"名詞","cat":"food"},{"w":"店","r":"みせ","zh":"店","pos":"名詞","cat":"town"},{"w":"見せる","r":"みせる","zh":"給…看","pos":"動詞2類","cat":"v_daily"},{"w":"道","r":"みち","zh":"路、方向","pos":"名詞","cat":"town"},{"w":"三日","r":"みっか","zh":"三天、三號","pos":"名詞","cat":"time"},{"w":"三つ","r":"みっつ","zh":"三個","pos":"名詞","cat":"number"},{"w":"緑","r":"みどり","zh":"綠色","pos":"名詞","cat":"wear"},{"w":"皆さん","r":"みなさん","zh":"各位、大家","pos":"代名詞","cat":"people"},{"w":"南","r":"みなみ","zh":"南邊","pos":"名詞","cat":"place"},{"w":"耳","r":"みみ","zh":"耳朵","pos":"名詞","cat":"body"},{"w":"見る","r":"みる","zh":"看","pos":"動詞2類","cat":"v_daily"},{"w":"みんな","r":"みんな","zh":"大家","pos":"代名詞","cat":"people"},{"w":"六日","r":"むいか","zh":"六天、六號","pos":"名詞","cat":"time"},{"w":"向こう","r":"むこう","zh":"對面、那邊","pos":"名詞","cat":"place"},{"w":"難しい","r":"むずかしい","zh":"難的","pos":"い形容詞","cat":"adj_i"},{"w":"六つ","r":"むっつ","zh":"六個","pos":"名詞","cat":"number"},{"w":"村","r":"むら","zh":"村莊","pos":"名詞","cat":"town"},{"w":"目","r":"め","zh":"眼睛","pos":"名詞","cat":"body"},{"w":"メートル","r":"メートル","zh":"公尺","pos":"量詞","cat":"number"},{"w":"眼鏡","r":"めがね","zh":"眼鏡","pos":"名詞","cat":"wear"},{"w":"もう","r":"もう","zh":"已經、再","pos":"副詞","cat":"adv"},{"w":"木曜日","r":"もくようび","zh":"星期四","pos":"名詞","cat":"time"},{"w":"もしもし","r":"もしもし","zh":"喂（電話用語）","pos":"感嘆詞","cat":"greet"},{"w":"持つ","r":"もつ","zh":"拿、持有","pos":"動詞1類","cat":"v_daily"},{"w":"もっと","r":"もっと","zh":"更加","pos":"副詞","cat":"adv"},{"w":"物","r":"もの","zh":"東西","pos":"名詞","cat":"home"},{"w":"門","r":"もん","zh":"門","pos":"名詞","cat":"home"},{"w":"問題","r":"もんだい","zh":"問題","pos":"名詞","cat":"school"},{"w":"～屋","r":"～や","zh":"～店","pos":"接頭／接尾詞","cat":"town"},{"w":"八百屋","r":"やおや","zh":"蔬果店","pos":"名詞","cat":"town"},{"w":"野菜","r":"やさい","zh":"蔬菜","pos":"名詞","cat":"food"},{"w":"易しい","r":"やさしい","zh":"簡單的","pos":"い形容詞","cat":"adj_i"},{"w":"安い","r":"やすい","zh":"便宜的","pos":"い形容詞","cat":"adj_i"},{"w":"休み","r":"やすみ","zh":"休假、假日","pos":"名詞","cat":"time"},{"w":"休む","r":"やすむ","zh":"休息、請假","pos":"動詞1類","cat":"v_daily"},{"w":"八つ","r":"やっつ","zh":"八個","pos":"名詞","cat":"number"},{"w":"山","r":"やま","zh":"山","pos":"名詞","cat":"nature"},{"w":"やる","r":"やる","zh":"做、給（晚輩）","pos":"動詞1類","cat":"v_daily"},{"w":"夕方","r":"ゆうがた","zh":"傍晚","pos":"名詞","cat":"time"},{"w":"夕飯","r":"ゆうはん","zh":"晚餐","pos":"名詞","cat":"food"},{"w":"郵便局","r":"ゆうびんきょく","zh":"郵局","pos":"名詞","cat":"town"},{"w":"昨夜","r":"ゆうべ","zh":"昨晚","pos":"名詞","cat":"time"},{"w":"有名","r":"ゆうめい","zh":"有名","pos":"な形容詞","cat":"adj_na"},{"w":"雪","r":"ゆき","zh":"雪","pos":"名詞","cat":"nature"},{"w":"ゆっくりと","r":"ゆっくりと","zh":"慢慢地","pos":"副詞","cat":"adv"},{"w":"八日","r":"ようか","zh":"八天、八號","pos":"名詞","cat":"time"},{"w":"洋服","r":"ようふく","zh":"西式服裝","pos":"名詞","cat":"wear"},{"w":"よく","r":"よく","zh":"常常、好好地","pos":"副詞","cat":"adv"},{"w":"横","r":"よこ","zh":"旁邊、橫向","pos":"名詞","cat":"place"},{"w":"四日","r":"よっか","zh":"四天、四號","pos":"名詞","cat":"time"},{"w":"四つ","r":"よっつ","zh":"四個","pos":"名詞","cat":"number"},{"w":"呼ぶ","r":"よぶ","zh":"呼叫、邀請","pos":"動詞1類","cat":"v_mind"},{"w":"読む","r":"よむ","zh":"讀、閱讀","pos":"動詞1類","cat":"v_daily"},{"w":"夜","r":"よる","zh":"夜晚","pos":"名詞","cat":"time"},{"w":"弱い","r":"よわい","zh":"弱的","pos":"い形容詞","cat":"adj_i"},{"w":"来月","r":"らいげつ","zh":"下個月","pos":"名詞","cat":"time"},{"w":"来週","r":"らいしゅう","zh":"下週","pos":"名詞","cat":"time"},{"w":"来年","r":"らいねん","zh":"明年","pos":"名詞","cat":"time"},{"w":"ラジオ","r":"ラジオ","zh":"收音機","pos":"名詞","cat":"home"},{"w":"ラジオカセ","r":"ラジオカセ","zh":"卡式收音機","pos":"名詞","cat":"home"},{"w":"りっぱ","r":"りっぱ","zh":"了不起、出色","pos":"な形容詞","cat":"adj_na"},{"w":"留学生","r":"りゅうがくせい","zh":"留學生","pos":"名詞","cat":"people"},{"w":"両親","r":"りょうしん","zh":"父母","pos":"名詞","cat":"people"},{"w":"料理","r":"りょうり","zh":"料理、烹飪","pos":"名詞","cat":"food"},{"w":"旅行","r":"りょこう","zh":"旅行","pos":"名詞","cat":"town"},{"w":"零","r":"れい","zh":"零","pos":"名詞","cat":"number"},{"w":"冷蔵庫","r":"れいぞうこ","zh":"冰箱","pos":"名詞","cat":"home"},{"w":"レコード","r":"レコード","zh":"唱片","pos":"名詞","cat":"school"},{"w":"レストラン","r":"レストラン","zh":"餐廳","pos":"名詞","cat":"town"},{"w":"練習","r":"れんしゅう (する)","zh":"練習","pos":"動詞3類","cat":"v_daily"},{"w":"廊下","r":"ろうか","zh":"走廊","pos":"名詞","cat":"home"},{"w":"六","r":"ろく","zh":"六","pos":"名詞","cat":"number"},{"w":"ワイシャツ","r":"ワイシャツ","zh":"白襯衫","pos":"名詞","cat":"wear"},{"w":"若い","r":"わかい","zh":"年輕的","pos":"い形容詞","cat":"adj_i"},{"w":"分かる","r":"わかる","zh":"懂、明白","pos":"動詞1類","cat":"v_mind"},{"w":"忘れる","r":"わすれる","zh":"忘記","pos":"動詞2類","cat":"v_mind"},{"w":"私","r":"わたし","zh":"我","pos":"代名詞","cat":"people"},{"w":"私","r":"わたくし","zh":"我（正式）","pos":"代名詞","cat":"people"},{"w":"渡す","r":"わたす","zh":"交給、遞","pos":"動詞1類","cat":"v_mind"},{"w":"渡る","r":"わたる","zh":"渡過、穿越","pos":"動詞1類","cat":"v_move"},{"w":"悪い","r":"わるい","zh":"壞的、不好的","pos":"い形容詞","cat":"adj_i"}]</script>
+<script type="application/json" id="data-kanji">{"kanji":[{"k":"一","on":"イチ、イツ","kun":"ひと・つ","zh":"一","words":[{"w":"一つ","r":"ひとつ","zh":"一個"},{"w":"一人","r":"ひとり","zh":"一個人"},{"w":"一月","r":"いちがつ","zh":"一月"}],"set":"core","group":"num"},{"k":"二","on":"ニ","kun":"ふた・つ","zh":"二","words":[{"w":"二人","r":"ふたり","zh":"兩個人"},{"w":"二つ","r":"ふたつ","zh":"兩個"},{"w":"二月","r":"にがつ","zh":"二月"}],"set":"core","group":"num"},{"k":"三","on":"サン","kun":"みっ・つ","zh":"三","words":[{"w":"三月","r":"さんがつ","zh":"三月"},{"w":"三つ","r":"みっつ","zh":"三個"},{"w":"三人","r":"さんにん","zh":"三個人"}],"set":"core","group":"num"},{"k":"四","on":"シ","kun":"よっ・つ、よん","zh":"四","words":[{"w":"四月","r":"しがつ","zh":"四月"},{"w":"四つ","r":"よっつ","zh":"四個"},{"w":"四人","r":"よにん","zh":"四個人"}],"set":"core","group":"num"},{"k":"五","on":"ゴ","kun":"いつ・つ","zh":"五","words":[{"w":"五月","r":"ごがつ","zh":"五月"},{"w":"五つ","r":"いつつ","zh":"五個"},{"w":"五日","r":"いつか","zh":"五號"}],"set":"core","group":"num"},{"k":"六","on":"ロク","kun":"むっ・つ","zh":"六","words":[{"w":"六月","r":"ろくがつ","zh":"六月"},{"w":"六つ","r":"むっつ","zh":"六個"},{"w":"六日","r":"むいか","zh":"六號"}],"set":"core","group":"num"},{"k":"七","on":"シチ","kun":"なな・つ、なな","zh":"七","words":[{"w":"七月","r":"しちがつ","zh":"七月"},{"w":"七つ","r":"ななつ","zh":"七個"},{"w":"七時","r":"しちじ","zh":"七點"}],"set":"core","group":"num"},{"k":"八","on":"ハチ","kun":"やっ・つ","zh":"八","words":[{"w":"八月","r":"はちがつ","zh":"八月"},{"w":"八つ","r":"やっつ","zh":"八個"},{"w":"八日","r":"ようか","zh":"八號"}],"set":"core","group":"num"},{"k":"九","on":"キュウ、ク","kun":"ここの・つ","zh":"九","words":[{"w":"九月","r":"くがつ","zh":"九月"},{"w":"九つ","r":"ここのつ","zh":"九個"},{"w":"九時","r":"くじ","zh":"九點"}],"set":"core","group":"num"},{"k":"十","on":"ジュウ","kun":"とお","zh":"十","words":[{"w":"十月","r":"じゅうがつ","zh":"十月"},{"w":"十","r":"とお","zh":"十個"},{"w":"十日","r":"とおか","zh":"十號"}],"set":"core","group":"num"},{"k":"百","on":"ヒャク","kun":"","zh":"百","words":[{"w":"三百","r":"さんびゃく","zh":"三百"},{"w":"百円","r":"ひゃくえん","zh":"一百日圓"}],"set":"core","group":"num"},{"k":"千","on":"セン","kun":"ち","zh":"千","words":[{"w":"千円","r":"せんえん","zh":"一千日圓"},{"w":"三千","r":"さんぜん","zh":"三千"}],"set":"core","group":"num"},{"k":"万","on":"マン","kun":"","zh":"萬","words":[{"w":"一万円","r":"いちまんえん","zh":"一萬日圓"},{"w":"二万","r":"にまん","zh":"兩萬"}],"set":"core","group":"num"},{"k":"円","on":"エン","kun":"","zh":"日圓；圓","words":[{"w":"百円","r":"ひゃくえん","zh":"一百日圓"},{"w":"千円","r":"せんえん","zh":"一千日圓"}],"set":"core","group":"num"},{"k":"日","on":"ニチ、ジツ","kun":"ひ、か","zh":"日；太陽","words":[{"w":"日曜日","r":"にちようび","zh":"星期日"},{"w":"今日","r":"きょう","zh":"今天"},{"w":"毎日","r":"まいにち","zh":"每天"}],"set":"core","group":"time"},{"k":"月","on":"ゲツ、ガツ","kun":"つき","zh":"月；月亮","words":[{"w":"月曜日","r":"げつようび","zh":"星期一"},{"w":"一月","r":"いちがつ","zh":"一月"},{"w":"月","r":"つき","zh":"月亮"}],"set":"core","group":"time"},{"k":"火","on":"カ","kun":"ひ","zh":"火","words":[{"w":"火曜日","r":"かようび","zh":"星期二"},{"w":"火","r":"ひ","zh":"火"}],"set":"core","group":"time"},{"k":"水","on":"スイ","kun":"みず","zh":"水","words":[{"w":"水曜日","r":"すいようび","zh":"星期三"},{"w":"水","r":"みず","zh":"水"}],"set":"core","group":"time"},{"k":"木","on":"モク","kun":"き","zh":"樹；木","words":[{"w":"木曜日","r":"もくようび","zh":"星期四"},{"w":"木","r":"き","zh":"樹"}],"set":"core","group":"time"},{"k":"金","on":"キン","kun":"かね","zh":"金；錢","words":[{"w":"金曜日","r":"きんようび","zh":"星期五"},{"w":"お金","r":"おかね","zh":"錢"}],"set":"core","group":"time"},{"k":"土","on":"ド","kun":"つち","zh":"土","words":[{"w":"土曜日","r":"どようび","zh":"星期六"},{"w":"土","r":"つち","zh":"土"}],"set":"core","group":"time"},{"k":"年","on":"ネン","kun":"とし","zh":"年","words":[{"w":"今年","r":"ことし","zh":"今年"},{"w":"来年","r":"らいねん","zh":"明年"},{"w":"去年","r":"きょねん","zh":"去年"}],"set":"core","group":"time"},{"k":"時","on":"ジ","kun":"とき","zh":"時；時候","words":[{"w":"一時","r":"いちじ","zh":"一點"},{"w":"時間","r":"じかん","zh":"時間"},{"w":"何時","r":"なんじ","zh":"幾點"}],"set":"core","group":"time"},{"k":"間","on":"カン","kun":"あいだ","zh":"之間；期間","words":[{"w":"時間","r":"じかん","zh":"時間"},{"w":"一週間","r":"いっしゅうかん","zh":"一個星期"},{"w":"間","r":"あいだ","zh":"之間"}],"set":"core","group":"time"},{"k":"今","on":"コン","kun":"いま","zh":"現在","words":[{"w":"今","r":"いま","zh":"現在"},{"w":"今日","r":"きょう","zh":"今天"},{"w":"今年","r":"ことし","zh":"今年"}],"set":"core","group":"time"},{"k":"午","on":"ゴ","kun":"","zh":"正午","words":[{"w":"午前","r":"ごぜん","zh":"上午"},{"w":"午後","r":"ごご","zh":"下午"}],"set":"core","group":"time"},{"k":"前","on":"ゼン","kun":"まえ","zh":"前","words":[{"w":"前","r":"まえ","zh":"前面；以前"},{"w":"午前","r":"ごぜん","zh":"上午"},{"w":"名前","r":"なまえ","zh":"名字"}],"set":"core","group":"time"},{"k":"後","on":"ゴ","kun":"あと、うし・ろ","zh":"後","words":[{"w":"後ろ","r":"うしろ","zh":"後面"},{"w":"午後","r":"ごご","zh":"下午"},{"w":"後で","r":"あとで","zh":"待會"}],"set":"core","group":"time"},{"k":"先","on":"セン","kun":"さき","zh":"先；前一個","words":[{"w":"先月","r":"せんげつ","zh":"上個月"},{"w":"先週","r":"せんしゅう","zh":"上星期"},{"w":"先生","r":"せんせい","zh":"老師"}],"set":"core","group":"time"},{"k":"毎","on":"マイ","kun":"","zh":"每","words":[{"w":"毎日","r":"まいにち","zh":"每天"},{"w":"毎週","r":"まいしゅう","zh":"每週"},{"w":"毎年","r":"まいとし","zh":"每年"}],"set":"core","group":"time"},{"k":"半","on":"ハン","kun":"","zh":"半","words":[{"w":"半分","r":"はんぶん","zh":"一半"},{"w":"三時半","r":"さんじはん","zh":"三點半"}],"set":"core","group":"time"},{"k":"分","on":"ブン、フン","kun":"わ・かる","zh":"分；懂","words":[{"w":"五分","r":"ごふん","zh":"五分鐘"},{"w":"半分","r":"はんぶん","zh":"一半"},{"w":"分かる","r":"わかる","zh":"懂"}],"set":"extra","group":"time"},{"k":"週","on":"シュウ","kun":"","zh":"週","words":[{"w":"今週","r":"こんしゅう","zh":"本週"},{"w":"来週","r":"らいしゅう","zh":"下週"},{"w":"毎週","r":"まいしゅう","zh":"每週"}],"set":"extra","group":"time"},{"k":"曜","on":"ヨウ","kun":"","zh":"星期","words":[{"w":"日曜日","r":"にちようび","zh":"星期日"},{"w":"何曜日","r":"なんようび","zh":"星期幾"}],"set":"extra","group":"time"},{"k":"上","on":"ジョウ","kun":"うえ、あ・がる","zh":"上","words":[{"w":"上","r":"うえ","zh":"上面"},{"w":"上手","r":"じょうず","zh":"擅長"},{"w":"机の上","r":"つくえのうえ","zh":"桌上"}],"set":"core","group":"place"},{"k":"下","on":"カ、ゲ","kun":"した、くだ・さる","zh":"下","words":[{"w":"下","r":"した","zh":"下面"},{"w":"下手","r":"へた","zh":"不擅長"},{"w":"靴下","r":"くつした","zh":"襪子"}],"set":"core","group":"place"},{"k":"中","on":"チュウ","kun":"なか","zh":"中；裡面","words":[{"w":"中","r":"なか","zh":"裡面"},{"w":"中国","r":"ちゅうごく","zh":"中國"},{"w":"中学校","r":"ちゅうがっこう","zh":"國中"}],"set":"core","group":"place"},{"k":"外","on":"ガイ","kun":"そと","zh":"外","words":[{"w":"外","r":"そと","zh":"外面"},{"w":"外国","r":"がいこく","zh":"外國"},{"w":"外国人","r":"がいこくじん","zh":"外國人"}],"set":"core","group":"place"},{"k":"右","on":"ウ","kun":"みぎ","zh":"右","words":[{"w":"右","r":"みぎ","zh":"右邊"},{"w":"右手","r":"みぎて","zh":"右手"}],"set":"core","group":"place"},{"k":"左","on":"サ","kun":"ひだり","zh":"左","words":[{"w":"左","r":"ひだり","zh":"左邊"},{"w":"左手","r":"ひだりて","zh":"左手"}],"set":"core","group":"place"},{"k":"東","on":"トウ","kun":"ひがし","zh":"東","words":[{"w":"東","r":"ひがし","zh":"東邊"},{"w":"東京","r":"とうきょう","zh":"東京"},{"w":"東口","r":"ひがしぐち","zh":"東口"}],"set":"core","group":"place"},{"k":"西","on":"セイ、サイ","kun":"にし","zh":"西","words":[{"w":"西","r":"にし","zh":"西邊"},{"w":"西口","r":"にしぐち","zh":"西口"}],"set":"core","group":"place"},{"k":"南","on":"ナン","kun":"みなみ","zh":"南","words":[{"w":"南","r":"みなみ","zh":"南邊"},{"w":"南口","r":"みなみぐち","zh":"南口"}],"set":"core","group":"place"},{"k":"北","on":"ホク","kun":"きた","zh":"北","words":[{"w":"北","r":"きた","zh":"北邊"},{"w":"北口","r":"きたぐち","zh":"北口"},{"w":"北海道","r":"ほっかいどう","zh":"北海道"}],"set":"core","group":"place"},{"k":"人","on":"ジン、ニン","kun":"ひと","zh":"人","words":[{"w":"人","r":"ひと","zh":"人"},{"w":"日本人","r":"にほんじん","zh":"日本人"},{"w":"三人","r":"さんにん","zh":"三個人"}],"set":"core","group":"people"},{"k":"男","on":"ダン、ナン","kun":"おとこ","zh":"男","words":[{"w":"男の人","r":"おとこのひと","zh":"男人"},{"w":"男の子","r":"おとこのこ","zh":"男孩"}],"set":"core","group":"people"},{"k":"女","on":"ジョ","kun":"おんな","zh":"女","words":[{"w":"女の人","r":"おんなのひと","zh":"女人"},{"w":"女の子","r":"おんなのこ","zh":"女孩"}],"set":"core","group":"people"},{"k":"子","on":"シ","kun":"こ","zh":"孩子","words":[{"w":"子ども","r":"こども","zh":"小孩"},{"w":"女の子","r":"おんなのこ","zh":"女孩"},{"w":"男の子","r":"おとこのこ","zh":"男孩"}],"set":"core","group":"people"},{"k":"母","on":"ボ","kun":"はは","zh":"母親","words":[{"w":"母","r":"はは","zh":"（我的）母親"},{"w":"お母さん","r":"おかあさん","zh":"媽媽"}],"set":"core","group":"people"},{"k":"父","on":"フ","kun":"ちち","zh":"父親","words":[{"w":"父","r":"ちち","zh":"（我的）父親"},{"w":"お父さん","r":"おとうさん","zh":"爸爸"}],"set":"core","group":"people"},{"k":"友","on":"ユウ","kun":"とも","zh":"朋友","words":[{"w":"友達","r":"ともだち","zh":"朋友"}],"set":"core","group":"people"},{"k":"名","on":"メイ","kun":"な","zh":"名字","words":[{"w":"名前","r":"なまえ","zh":"名字"},{"w":"有名","r":"ゆうめい","zh":"有名"}],"set":"core","group":"people"},{"k":"手","on":"シュ","kun":"て","zh":"手","words":[{"w":"手","r":"て","zh":"手"},{"w":"上手","r":"じょうず","zh":"擅長"},{"w":"手紙","r":"てがみ","zh":"信"}],"set":"extra","group":"people"},{"k":"目","on":"モク","kun":"め","zh":"眼睛","words":[{"w":"目","r":"め","zh":"眼睛"}],"set":"extra","group":"people"},{"k":"口","on":"コウ、ク","kun":"くち","zh":"嘴；出入口","words":[{"w":"口","r":"くち","zh":"嘴"},{"w":"入口","r":"いりぐち","zh":"入口"},{"w":"出口","r":"でぐち","zh":"出口"}],"set":"extra","group":"people"},{"k":"耳","on":"ジ","kun":"みみ","zh":"耳朵","words":[{"w":"耳","r":"みみ","zh":"耳朵"}],"set":"extra","group":"people"},{"k":"足","on":"ソク","kun":"あし","zh":"腳","words":[{"w":"足","r":"あし","zh":"腳"}],"set":"extra","group":"people"},{"k":"山","on":"サン","kun":"やま","zh":"山","words":[{"w":"山","r":"やま","zh":"山"},{"w":"富士山","r":"ふじさん","zh":"富士山"}],"set":"core","group":"nature"},{"k":"川","on":"セン","kun":"かわ","zh":"河川","words":[{"w":"川","r":"かわ","zh":"河"}],"set":"core","group":"nature"},{"k":"天","on":"テン","kun":"","zh":"天","words":[{"w":"天気","r":"てんき","zh":"天氣"},{"w":"天ぷら","r":"てんぷら","zh":"天婦羅"}],"set":"core","group":"nature"},{"k":"気","on":"キ","kun":"","zh":"氣；精神","words":[{"w":"天気","r":"てんき","zh":"天氣"},{"w":"元気","r":"げんき","zh":"有精神"},{"w":"電気","r":"でんき","zh":"電；電燈"}],"set":"core","group":"nature"},{"k":"雨","on":"ウ","kun":"あめ","zh":"雨","words":[{"w":"雨","r":"あめ","zh":"雨"},{"w":"大雨","r":"おおあめ","zh":"大雨"}],"set":"core","group":"nature"},{"k":"空","on":"クウ","kun":"そら","zh":"天空","words":[{"w":"空","r":"そら","zh":"天空"},{"w":"空港","r":"くうこう","zh":"機場"}],"set":"extra","group":"nature"},{"k":"花","on":"カ","kun":"はな","zh":"花","words":[{"w":"花","r":"はな","zh":"花"},{"w":"花見","r":"はなみ","zh":"賞花"},{"w":"花火","r":"はなび","zh":"煙火"}],"set":"extra","group":"nature"},{"k":"魚","on":"ギョ","kun":"さかな","zh":"魚","words":[{"w":"魚","r":"さかな","zh":"魚"},{"w":"金魚","r":"きんぎょ","zh":"金魚"}],"set":"extra","group":"nature"},{"k":"本","on":"ホン","kun":"もと","zh":"書；根本","words":[{"w":"本","r":"ほん","zh":"書"},{"w":"日本","r":"にほん","zh":"日本"},{"w":"本屋","r":"ほんや","zh":"書店"}],"set":"core","group":"life"},{"k":"国","on":"コク","kun":"くに","zh":"國家","words":[{"w":"国","r":"くに","zh":"國家"},{"w":"外国","r":"がいこく","zh":"外國"},{"w":"中国","r":"ちゅうごく","zh":"中國"}],"set":"core","group":"life"},{"k":"学","on":"ガク","kun":"まな・ぶ","zh":"學習","words":[{"w":"学校","r":"がっこう","zh":"學校"},{"w":"大学","r":"だいがく","zh":"大學"},{"w":"学生","r":"がくせい","zh":"學生"}],"set":"core","group":"life"},{"k":"校","on":"コウ","kun":"","zh":"學校","words":[{"w":"学校","r":"がっこう","zh":"學校"},{"w":"高校","r":"こうこう","zh":"高中"},{"w":"小学校","r":"しょうがっこう","zh":"小學"}],"set":"core","group":"life"},{"k":"生","on":"セイ、ショウ","kun":"","zh":"生；學生","words":[{"w":"先生","r":"せんせい","zh":"老師"},{"w":"学生","r":"がくせい","zh":"學生"},{"w":"一年生","r":"いちねんせい","zh":"一年級生"}],"set":"core","group":"life"},{"k":"語","on":"ゴ","kun":"","zh":"語言","words":[{"w":"日本語","r":"にほんご","zh":"日語"},{"w":"英語","r":"えいご","zh":"英語"}],"set":"core","group":"life"},{"k":"電","on":"デン","kun":"","zh":"電","words":[{"w":"電話","r":"でんわ","zh":"電話"},{"w":"電車","r":"でんしゃ","zh":"電車"},{"w":"電気","r":"でんき","zh":"電；電燈"}],"set":"core","group":"life"},{"k":"車","on":"シャ","kun":"くるま","zh":"車","words":[{"w":"車","r":"くるま","zh":"車"},{"w":"電車","r":"でんしゃ","zh":"電車"},{"w":"自転車","r":"じてんしゃ","zh":"腳踏車"}],"set":"core","group":"life"},{"k":"大","on":"ダイ、タイ","kun":"おお・きい","zh":"大","words":[{"w":"大きい","r":"おおきい","zh":"大的"},{"w":"大学","r":"だいがく","zh":"大學"},{"w":"大人","r":"おとな","zh":"大人"}],"set":"core","group":"life"},{"k":"小","on":"ショウ","kun":"ちい・さい","zh":"小","words":[{"w":"小さい","r":"ちいさい","zh":"小的"},{"w":"小学校","r":"しょうがっこう","zh":"小學"}],"set":"core","group":"life"},{"k":"長","on":"チョウ","kun":"なが・い","zh":"長","words":[{"w":"長い","r":"ながい","zh":"長的"},{"w":"社長","r":"しゃちょう","zh":"社長"}],"set":"core","group":"life"},{"k":"高","on":"コウ","kun":"たか・い","zh":"高；貴","words":[{"w":"高い","r":"たかい","zh":"高的；貴的"},{"w":"高校","r":"こうこう","zh":"高中"}],"set":"core","group":"life"},{"k":"白","on":"ハク","kun":"しろ・い","zh":"白","words":[{"w":"白い","r":"しろい","zh":"白的"},{"w":"白","r":"しろ","zh":"白色"}],"set":"core","group":"life"},{"k":"何","on":"カ","kun":"なに、なん","zh":"什麼","words":[{"w":"何","r":"なに","zh":"什麼"},{"w":"何時","r":"なんじ","zh":"幾點"},{"w":"何人","r":"なんにん","zh":"幾個人"}],"set":"core","group":"life"},{"k":"会","on":"カイ","kun":"あ・う","zh":"見面；會","words":[{"w":"会う","r":"あう","zh":"見面"},{"w":"会社","r":"かいしゃ","zh":"公司"}],"set":"extra","group":"life"},{"k":"社","on":"シャ","kun":"","zh":"公司；神社","words":[{"w":"会社","r":"かいしゃ","zh":"公司"},{"w":"社長","r":"しゃちょう","zh":"社長"}],"set":"extra","group":"life"},{"k":"店","on":"テン","kun":"みせ","zh":"店","words":[{"w":"店","r":"みせ","zh":"店"},{"w":"喫茶店","r":"きっさてん","zh":"咖啡廳"}],"set":"extra","group":"life"},{"k":"駅","on":"エキ","kun":"","zh":"車站","words":[{"w":"駅","r":"えき","zh":"車站"}],"set":"extra","group":"life"},{"k":"道","on":"ドウ","kun":"みち","zh":"道路","words":[{"w":"道","r":"みち","zh":"路"},{"w":"北海道","r":"ほっかいどう","zh":"北海道"}],"set":"extra","group":"life"},{"k":"新","on":"シン","kun":"あたら・しい","zh":"新","words":[{"w":"新しい","r":"あたらしい","zh":"新的"},{"w":"新聞","r":"しんぶん","zh":"報紙"}],"set":"extra","group":"life"},{"k":"古","on":"コ","kun":"ふる・い","zh":"舊","words":[{"w":"古い","r":"ふるい","zh":"舊的"}],"set":"extra","group":"life"},{"k":"安","on":"アン","kun":"やす・い","zh":"便宜；安","words":[{"w":"安い","r":"やすい","zh":"便宜的"}],"set":"extra","group":"life"},{"k":"多","on":"タ","kun":"おお・い","zh":"多","words":[{"w":"多い","r":"おおい","zh":"多的"}],"set":"extra","group":"life"},{"k":"少","on":"ショウ","kun":"すく・ない、すこ・し","zh":"少","words":[{"w":"少し","r":"すこし","zh":"一點點"},{"w":"少ない","r":"すくない","zh":"少的"}],"set":"extra","group":"life"},{"k":"元","on":"ゲン","kun":"もと","zh":"元；根本","words":[{"w":"元気","r":"げんき","zh":"有精神"}],"set":"extra","group":"life"},{"k":"行","on":"コウ、ギョウ","kun":"い・く","zh":"去；行","words":[{"w":"行く","r":"いく","zh":"去"},{"w":"銀行","r":"ぎんこう","zh":"銀行"},{"w":"旅行","r":"りょこう","zh":"旅行"}],"set":"core","group":"verb"},{"k":"来","on":"ライ","kun":"く・る","zh":"來","words":[{"w":"来る","r":"くる","zh":"來"},{"w":"来週","r":"らいしゅう","zh":"下週"},{"w":"来年","r":"らいねん","zh":"明年"}],"set":"core","group":"verb"},{"k":"出","on":"シュツ","kun":"で・る、だ・す","zh":"出","words":[{"w":"出る","r":"でる","zh":"出去；出來"},{"w":"出口","r":"でぐち","zh":"出口"},{"w":"出す","r":"だす","zh":"拿出；寄出"}],"set":"core","group":"verb"},{"k":"入","on":"ニュウ","kun":"はい・る、い・れる","zh":"進入；放入","words":[{"w":"入る","r":"はいる","zh":"進入"},{"w":"入口","r":"いりぐち","zh":"入口"},{"w":"入れる","r":"いれる","zh":"放入"}],"set":"core","group":"verb"},{"k":"見","on":"ケン","kun":"み・る","zh":"看","words":[{"w":"見る","r":"みる","zh":"看"},{"w":"花見","r":"はなみ","zh":"賞花"}],"set":"core","group":"verb"},{"k":"聞","on":"ブン","kun":"き・く","zh":"聽；問","words":[{"w":"聞く","r":"きく","zh":"聽；問"},{"w":"新聞","r":"しんぶん","zh":"報紙"}],"set":"core","group":"verb"},{"k":"読","on":"ドク","kun":"よ・む","zh":"讀","words":[{"w":"読む","r":"よむ","zh":"讀"}],"set":"core","group":"verb"},{"k":"話","on":"ワ","kun":"はな・す","zh":"說；話","words":[{"w":"話す","r":"はなす","zh":"說話"},{"w":"電話","r":"でんわ","zh":"電話"},{"w":"話","r":"はなし","zh":"話；故事"}],"set":"core","group":"verb"},{"k":"食","on":"ショク","kun":"た・べる","zh":"吃","words":[{"w":"食べる","r":"たべる","zh":"吃"},{"w":"食べ物","r":"たべもの","zh":"食物"},{"w":"食事","r":"しょくじ","zh":"用餐"}],"set":"core","group":"verb"},{"k":"休","on":"キュウ","kun":"やす・む","zh":"休息","words":[{"w":"休む","r":"やすむ","zh":"休息；請假"},{"w":"休み","r":"やすみ","zh":"休假"},{"w":"夏休み","r":"なつやすみ","zh":"暑假"}],"set":"core","group":"verb"},{"k":"書","on":"ショ","kun":"か・く","zh":"寫","words":[{"w":"書く","r":"かく","zh":"寫"},{"w":"辞書","r":"じしょ","zh":"字典"}],"set":"core","group":"verb"},{"k":"立","on":"リツ","kun":"た・つ","zh":"站；立","words":[{"w":"立つ","r":"たつ","zh":"站立"}],"set":"extra","group":"verb"},{"k":"言","on":"ゲン","kun":"い・う","zh":"說","words":[{"w":"言う","r":"いう","zh":"說"},{"w":"言葉","r":"ことば","zh":"詞語"}],"set":"extra","group":"verb"},{"k":"買","on":"バイ","kun":"か・う","zh":"買","words":[{"w":"買う","r":"かう","zh":"買"},{"w":"買い物","r":"かいもの","zh":"購物"}],"set":"extra","group":"verb"},{"k":"飲","on":"イン","kun":"の・む","zh":"喝","words":[{"w":"飲む","r":"のむ","zh":"喝"},{"w":"飲み物","r":"のみもの","zh":"飲料"}],"set":"extra","group":"verb"}]}</script>
+<style id="illus-css">/* 手繪插圖片段：只用 il- 前綴 class 與規格列的變數 */
+.il-wrap{box-sizing:border-box;max-width:100%;color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.il-ja,.il-wrap [lang="ja"]{font-family:"Klee One","Hiragino Sans","Yu Gothic",sans-serif;font-style:normal;letter-spacing:0}
+.il-svg,.il-pic,.il-arrow{display:block;overflow:visible}
+.il-l{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.il-thin{stroke-width:1.6}
+.il-dash{stroke-dasharray:2 7;stroke:var(--ink-2)}
+.il-dot{fill:var(--ink);stroke:none}
+.il-fill-s{fill:var(--surface)}
+.il-fill-s2{fill:var(--surface-2)}
+.il-fill-c3{fill:var(--c3-soft)}
+.il-fill-c4{fill:var(--c4-soft)}
+.il-t{fill:var(--ink)}
+.il-t2{fill:var(--ink-2)}
+.il-hk{fill:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round}
+.il-hk-ko{stroke:var(--ko)}
+.il-hk-so{stroke:var(--so)}
+.il-hk-a{stroke:var(--a)}
+
+/* こそあど 表 */
+.il-grid{display:grid;grid-template-columns:96px repeat(4,126px);grid-auto-rows:36px;width:600px;max-width:100%;box-sizing:border-box;box-shadow:1px 0 0 var(--c4),0 1px 0 var(--c4);border-top:0}
+.il-cell{box-sizing:border-box;height:36px;border-left:1px solid var(--c4);border-top:1px solid var(--c4);display:flex;align-items:center;justify-content:center;gap:5px;padding:0 4px;background:color-mix(in srgb,var(--surface) 88%,transparent);line-height:1;white-space:nowrap;min-width:0}
+.il-cell small{font-size:12px;color:var(--ink-2);line-height:1}
+.il-cell .il-ja{font-size:17px;font-weight:600}
+.il-corner{background:var(--surface-2)}
+.il-rowl{justify-content:flex-start;padding-left:8px;font-size:13px;color:var(--ink-2);background:var(--surface-2)}
+.il-head{flex-direction:row;font-weight:600}
+.il-head .il-ja{font-size:20px}
+.il-head small{font-size:12px}
+.il-h-ko{background:var(--ko)}.il-h-so{background:var(--so)}.il-h-a{background:var(--a)}.il-h-do{background:var(--do)}
+.il-c-ko,.il-c-so,.il-c-a,.il-c-do{cursor:pointer;transition:background-color .18s}
+.il-c-ko:hover{background:var(--ko)}.il-c-so:hover{background:var(--so)}.il-c-a:hover{background:var(--a)}.il-c-do:hover{background:var(--do)}
+
+/* 語氣 */
+.il-reg{width:600px;max-width:100%;box-sizing:border-box}
+.il-reg-row{display:grid;grid-template-columns:344px 64px 1fr;align-items:end;height:36px;box-sizing:border-box;padding-bottom:5px;cursor:pointer}
+.il-sent{font-size:18px;line-height:26px;white-space:nowrap;height:26px}
+.il-arrow{align-self:end;margin-bottom:-5px}
+.il-arr{stroke-width:2.6}
+.il-a-c1 .il-arr{stroke:var(--c1)}.il-a-c3 .il-arr{stroke:var(--c3)}.il-a-c2 .il-arr{stroke:var(--c2)}
+.il-tag{display:flex;align-items:baseline;gap:6px;line-height:26px;height:26px;white-space:nowrap}
+.il-tag b{font-size:15px;font-weight:700}
+.il-tag small{font-size:12px;color:var(--ink-2)}
+.il-tag-c1 b{color:var(--c1)}.il-tag-c3 b{color:var(--c3)}.il-tag-c2 b{color:var(--c2)}
+.il-wrap mark{background:none;color:inherit;padding:0 2px;margin:0 -1px}
+.il-wrap mark.il-pt{background:var(--mk-pt);border-radius:3px 9px 4px 8px/8px 4px 9px 3px}
+.il-wrap mark.il-end{background:var(--mk-end);border-radius:8px 3px 9px 4px/4px 9px 3px 8px}
+.il-reg-row:hover .il-sent,.il-ex:hover{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:5px;text-decoration-color:var(--c4)}
+
+/* あります／います */
+.il-aru{display:grid;grid-template-columns:288px 288px;column-gap:24px;width:600px;max-width:100%;position:relative;height:144px}
+.il-aru::after{content:"";position:absolute;left:300px;top:6px;bottom:6px;border-left:2px dashed var(--line)}
+.il-aru-col{display:grid;grid-template-columns:120px 1fr;grid-template-rows:72px 36px 36px;column-gap:12px;width:288px}
+.il-aru-head{display:flex;flex-direction:column;justify-content:flex-start;height:72px}
+.il-big{font-size:22px;line-height:36px;height:36px;font-weight:600}
+.il-aru-head small{font-size:13px;line-height:18px;color:var(--ink-2)}
+.il-ex{grid-column:1 / 3;font-size:16px;line-height:26px;height:36px;padding-top:5px;box-sizing:border-box;white-space:nowrap;cursor:pointer}
+.il-zh{grid-column:1 / 3;font-size:13px;line-height:18px;height:36px;color:var(--ink-2);padding-top:9px;box-sizing:border-box}
+
+/* 路線圖 */
+.il-route{width:100%}
+.il-route-svg{width:100%;height:auto}
+.il-ln,.il-mk,.il-hit{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.il-ln{stroke-width:3.2}
+.il-mk{stroke-width:14;stroke-opacity:.26}
+.il-hit{stroke-width:30;stroke:var(--ink);stroke-opacity:0;pointer-events:stroke}
+.il-line-g .il-ln,.il-line-g .il-mk{stroke:var(--ink)}
+.il-line-v .il-ln,.il-line-v .il-mk{stroke:var(--c3)}
+.il-line-k .il-ln,.il-line-k .il-mk{stroke:var(--c1)}
+.il-pill-bg{stroke-width:2;stroke-linejoin:round}
+.il-pill-v .il-pill-bg{fill:var(--c3-soft);stroke:var(--c3)}.il-pill-v text{fill:var(--c3)}
+.il-pill-k .il-pill-bg{fill:var(--c1-soft);stroke:var(--c1)}.il-pill-k text{fill:var(--c1)}
+.il-hlmk{fill:var(--mk-end)}
+.il-node{fill:var(--surface);stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.il-node-lg{stroke-width:3}
+.il-node-end{fill:var(--hl);stroke-width:3.2}
+.il-hit-c{fill:var(--ink);fill-opacity:0}
+.il-stn{font-size:14px}
+.il-go{cursor:pointer;outline:none}
+.il-go .il-mk,.il-go .il-ln,.il-go .il-pill-bg,.il-go .il-node{transition:stroke-width .18s,stroke-opacity .18s,fill .18s}
+.il-go:hover .il-mk,.il-go:focus-visible .il-mk{stroke-width:20;stroke-opacity:.42}
+.il-go:hover .il-ln{stroke-width:4.4}
+.il-go:hover .il-pill-bg{stroke-width:3}
+.il-st:hover .il-node{fill:var(--hl)}
+.il-st:hover .il-node-end{fill:var(--mk-end)}
+@media (prefers-reduced-motion:reduce){
+  .il-c-ko,.il-c-so,.il-c-a,.il-c-do,
+  .il-go .il-mk,.il-go .il-ln,.il-go .il-pill-bg,.il-go .il-node{transition:none}
+}</style>
+<template id="illus-kosoado"><div class="il-wrap il-kosoado"><svg class="il-svg" viewBox="0 0 600 288" width="600" height="288" role="img" aria-label="わたし與あなた，三本書分別離兩人近與遠"><path class="il-l" d="M58 90.3 C59.8 91.2 66.1 92.7 68.7 95.6 C71.2 98.4 73.5 103.7 73.2 107.4 C72.8 111.2 69.7 115.8 66.7 118.2 C63.8 120.6 58.9 122.4 55.4 121.8 C51.8 121.2 47.4 117.8 45.5 114.5 C43.6 111.2 43.2 105.8 44.2 102 C45.1 98.3 47.9 93.5 51.1 91.8 C54.2 90.1 60.9 91.7 62.9 91.7"/><circle class="il-dot" cx="65" cy="103" r="1.8"/><path class="il-l il-thin" d="M60 113 C63 116 67 115 70 112"/><path class="il-l" d="M58 122 C57 142 59 166 57 192"/><path class="il-l" d="M58 134 C48 148 43 160 41 172"/><path class="il-l" d="M58 134 C76 140 98 152 110 164"/><path class="il-l" d="M57 192 C52 210 46 226 40 242"/><path class="il-l" d="M57 192 C66 212 74 226 82 241"/><text class="il-t il-ja" lang="ja" x="58" y="68" text-anchor="middle" font-size="17">わたし</text><path class="il-l" d="M311.1 91.1 C312.5 92.6 317.9 96.6 319.3 100.1 C320.6 103.7 320.5 109 319 112.5 C317.6 116 313.9 119.8 310.5 121.1 C307 122.4 301.3 122.3 298.3 120.3 C295.2 118.3 292.6 113.2 291.9 109.3 C291.2 105.5 292 100.3 294.1 97.1 C296.1 93.8 300.3 90.6 304 89.9 C307.7 89.3 314.1 92.7 316.1 93.2"/><circle class="il-dot" cx="299" cy="103" r="1.8"/><path class="il-l il-thin" d="M297 113 C300 116 304 115 307 112"/><path class="il-l" d="M306 122 C307 142 305 166 307 192"/><path class="il-l" d="M306 134 C292 144 284 156 282 168"/><path class="il-l" d="M306 134 C318 148 321 162 319 174"/><path class="il-l" d="M307 192 C312 210 318 226 324 242"/><path class="il-l" d="M307 192 C298 212 290 226 284 241"/><text class="il-t il-ja" lang="ja" x="306" y="68" text-anchor="middle" font-size="17">あなた</text><path class="il-l" d="M334 200 C360 198 392 201 418 199"/><path class="il-l" d="M342 201 L340 244"/><path class="il-l" d="M410 200 L412 244"/><path class="il-hk il-hk-ko" d="M98.8 138.2 C104.7 136.8 122.6 128.7 134 129.5 C145.4 130.3 160.8 135.4 167.4 143 C174 150.6 174.8 164.7 173.5 175.2 C172.2 185.6 167.8 199.1 159.5 205.6 C151.2 212.1 135 215.1 123.9 214.1 C112.8 213.2 99.8 207.2 92.9 199.9 C85.9 192.7 81.4 180.2 82 170.4 C82.7 160.6 88.7 148.4 96.8 141.3 C104.9 134.1 124.8 129.8 130.4 127.5"/><path class="il-hk il-hk-so" d="M370.5 129.4 C376 130.8 395.4 131.8 403.7 138 C412 144.2 419.4 156.9 420.4 166.6 C421.3 176.4 416.2 189.1 409.4 196.6 C402.5 204.2 389.8 211.3 379.4 212 C369 212.8 355.3 207.6 347.1 201.3 C339 195.1 332 184.1 330.5 174.7 C329 165.4 332.1 152.9 338.2 145.1 C344.2 137.2 356.3 129 366.7 127.6 C377.1 126.2 394.9 135 400.5 136.5"/><path class="il-hk il-hk-a" d="M473.5 60.5 C478.9 57.2 494.1 42.6 505.9 40.4 C517.7 38.3 534.4 41.7 544.3 47.7 C554.1 53.7 562.4 65.8 565 76.4 C567.5 87 566.1 102 559.7 111.2 C553.2 120.4 538.1 129.5 526.2 131.7 C514.3 133.9 498.3 130.1 488 124.5 C477.6 118.8 467 107.9 464.1 97.6 C461.1 87.4 464.2 72.6 470.4 63 C476.7 53.4 496.4 43.8 501.6 40"/><g transform="rotate(-6 128 172)"><path class="il-l il-fill-s" d="M110 151 C120.8 148 135.2 150 146 149 L147 195 C131.6 196.5 120.8 194 109 195 Z"/><path class="il-l il-thin" d="M117.2 150 L117.2 194"/><path class="il-l il-thin" d="M123 162.8 L140.2 162.3"/><path class="il-l il-thin" d="M123 170.2 L135.2 170.2"/></g><g transform="rotate(5 374 174)"><path class="il-l il-fill-s" d="M356 153 C366.8 150 381.2 152 392 151 L393 197 C377.6 198.5 366.8 196 355 197 Z"/><path class="il-l il-thin" d="M363.2 152 L363.2 196"/><path class="il-l il-thin" d="M369 164.8 L386.2 164.3"/><path class="il-l il-thin" d="M369 172.2 L381.2 172.2"/></g><g transform="rotate(-4 515 86)"><path class="il-l il-fill-s" d="M500 69 C509 66 521 68 530 67 L531 105 C518 106.5 509 104 499 105 Z"/><path class="il-l il-thin" d="M506 68 L506 104"/><path class="il-l il-thin" d="M510.8 78.4 L525.2 78"/><path class="il-l il-thin" d="M510.8 84.5 L521 84.5"/></g><text class="il-t il-ja" lang="ja" x="150" y="241" text-anchor="middle" font-size="22" font-weight="600">これ</text><text class="il-t2" x="150" y="262" text-anchor="middle" font-size="13">這個（近我）</text><text class="il-t il-ja" lang="ja" x="374" y="98" text-anchor="middle" font-size="22" font-weight="600">それ</text><text class="il-t2" x="374" y="116" text-anchor="middle" font-size="13">那個（近你）</text><text class="il-t il-ja" lang="ja" x="515" y="158" text-anchor="middle" font-size="22" font-weight="600">あれ</text><text class="il-t2" x="515" y="178" text-anchor="middle" font-size="13">那個（離兩人都遠）</text></svg><div class="il-grid" role="table"><div class="il-cell il-corner"></div><div class="il-cell il-head il-h-ko"><span class="il-ja" lang="ja">こ</span><small>近我</small></div><div class="il-cell il-head il-h-so"><span class="il-ja" lang="ja">そ</span><small>近你</small></div><div class="il-cell il-head il-h-a"><span class="il-ja" lang="ja">あ</span><small>遠</small></div><div class="il-cell il-head il-h-do"><span class="il-ja" lang="ja">ど</span><small>哪</small></div><div class="il-cell il-rowl">東西</div><div class="il-cell il-c-ko" data-say="これ"><span class="il-ja" lang="ja">これ</span><small>這個</small></div><div class="il-cell il-c-so" data-say="それ"><span class="il-ja" lang="ja">それ</span><small>那個</small></div><div class="il-cell il-c-a" data-say="あれ"><span class="il-ja" lang="ja">あれ</span><small>那個</small></div><div class="il-cell il-c-do" data-say="どれ"><span class="il-ja" lang="ja">どれ</span><small>哪個</small></div><div class="il-cell il-rowl">＋名詞</div><div class="il-cell il-c-ko" data-say="この"><span class="il-ja" lang="ja">この</span><small>這個～</small></div><div class="il-cell il-c-so" data-say="その"><span class="il-ja" lang="ja">その</span><small>那個～</small></div><div class="il-cell il-c-a" data-say="あの"><span class="il-ja" lang="ja">あの</span><small>那個～</small></div><div class="il-cell il-c-do" data-say="どの"><span class="il-ja" lang="ja">どの</span><small>哪個～</small></div><div class="il-cell il-rowl">地方</div><div class="il-cell il-c-ko" data-say="ここ"><span class="il-ja" lang="ja">ここ</span><small>這裡</small></div><div class="il-cell il-c-so" data-say="そこ"><span class="il-ja" lang="ja">そこ</span><small>那裡</small></div><div class="il-cell il-c-a" data-say="あそこ"><span class="il-ja" lang="ja">あそこ</span><small>那邊</small></div><div class="il-cell il-c-do" data-say="どこ"><span class="il-ja" lang="ja">どこ</span><small>哪裡</small></div><div class="il-cell il-rowl">方向・禮貌</div><div class="il-cell il-c-ko" data-say="こちら"><span class="il-ja" lang="ja">こちら</span><small>這邊</small></div><div class="il-cell il-c-so" data-say="そちら"><span class="il-ja" lang="ja">そちら</span><small>那邊</small></div><div class="il-cell il-c-a" data-say="あちら"><span class="il-ja" lang="ja">あちら</span><small>那邊</small></div><div class="il-cell il-c-do" data-say="どちら"><span class="il-ja" lang="ja">どちら</span><small>哪邊</small></div></div></div></template>
+<template id="illus-register"><div class="il-wrap il-register"><div class="il-reg"><div class="il-reg-row" data-say="わたしは がくせいでは ありません。"><span class="il-sent il-ja" lang="ja">わたしは がくせい<mark class="il-pt">では</mark> <mark class="il-end">ありません</mark>。</span><svg class="il-arrow il-a-c1" viewBox="0 0 64 36" width="64" height="36" aria-hidden="true"><path class="il-l il-arr" d="M3 24 C16 30 26 12 54 18"/><path class="il-l il-arr" d="M45 9 L55 18 L44 26"/></svg><span class="il-tag il-tag-c1"><b>正式</b><small>書面、演講</small></span></div><div class="il-reg-row" data-say="わたしは がくせいじゃ ありません。"><span class="il-sent il-ja" lang="ja">わたしは がくせい<mark class="il-pt">じゃ</mark> <mark class="il-end">ありません</mark>。</span><svg class="il-arrow il-a-c3" viewBox="0 0 64 36" width="64" height="36" aria-hidden="true"><path class="il-l il-arr" d="M3 20 C18 14 32 26 55 19"/><path class="il-l il-arr" d="M46 11 L56 19 L45 27"/></svg><span class="il-tag il-tag-c3"><b>一般禮貌</b><small>日常會話</small></span></div><div class="il-reg-row" data-say="わたしは がくせいじゃ ないです。"><span class="il-sent il-ja" lang="ja">わたしは がくせい<mark class="il-pt">じゃ</mark> <mark class="il-end">ないです</mark>。</span><svg class="il-arrow il-a-c2" viewBox="0 0 64 36" width="64" height="36" aria-hidden="true"><path class="il-l il-arr" d="M3 16 C20 12 34 24 54 20"/><path class="il-l il-arr" d="M45 12 L55 20 L44 28"/></svg><span class="il-tag il-tag-c2"><b>較隨意</b><small>熟人之間</small></span></div></div></div></template>
+<template id="illus-aru-iru"><div class="il-wrap il-aruiru"><div class="il-aru"><div class="il-aru-col"><svg class="il-pic" viewBox="0 0 120 72" width="120" height="72" aria-hidden="true"><path class="il-l il-thin" d="M0 66 C30 64 60 67 120 65"/><path class="il-l il-fill-s2" d="M7 37 C20 36 32 38 42 37 L41 64 C30 65 18 63 8 64 Z"/><path class="il-l il-fill-s2" d="M3 36 C20 33 34 35 46 35 L46 41 C32 42 16 41 3 42 Z"/><path class="il-l il-thin" d="M20 48 C24 50 28 50 31 48"/><path class="il-l il-fill-s2" d="M68 50 C76 49 88 51 96 50 L92 65 C86 66 78 65 72 65 Z"/><path class="il-l" d="M82 50 C81 40 83 30 81 18"/><path class="il-l il-fill-c3" d="M81 38 C67 37 62 27 64 20 C75 22 81 29 81 38 Z"/><path class="il-l il-fill-c3" d="M82 30 C95 30 101 20 99 11 C88 13 83 21 82 30 Z"/></svg><div class="il-aru-head"><span class="il-big il-ja" lang="ja"><mark class="il-end">あります</mark></span><small>沒有生命的東西<br>（物、植物）</small></div><div class="il-ex il-ja" lang="ja" data-say="つくえの うえに ほんが あります。">つくえの うえに ほん<mark class="il-pt">が</mark> <mark class="il-end">あります</mark>。</div><div class="il-zh">書桌上有書。</div></div><div class="il-aru-col"><svg class="il-pic" viewBox="0 0 120 72" width="120" height="72" aria-hidden="true"><path class="il-l il-thin" d="M0 66 C30 64 60 67 120 65"/><path class="il-l" d="M23.4 5.9 C24.3 6.7 27.5 8.3 28.6 10.3 C29.7 12.2 30.6 15.4 30.1 17.4 C29.6 19.5 27.4 21.7 25.6 22.7 C23.8 23.7 21.1 24.1 19.3 23.4 C17.4 22.7 15.1 20.5 14.4 18.5 C13.7 16.5 14.1 13.3 15 11.3 C15.9 9.3 17.8 7.1 19.6 6.4 C21.4 5.8 24.8 7.4 25.8 7.6"/><path class="il-l" d="M22 25 C21 33 23 41 22 49"/><path class="il-l" d="M22 31 C15 36 11 40 8 45"/><path class="il-l" d="M22 31 C29 36 33 40 36 45"/><path class="il-l" d="M22 49 C19 55 16 60 12 65"/><path class="il-l" d="M22 49 C25 55 28 60 32 65"/><path class="il-l il-fill-c4" d="M70 52 C72 42 100 41 104 50 C106 58 100 61 88 61 C78 61 69 59 70 52 Z"/><path class="il-l il-fill-c4" d="M106 32.4 C107.1 32.8 111.3 33.5 112.8 35.1 C114.3 36.7 115.2 39.6 115 41.7 C114.8 43.9 113.4 46.8 111.7 48 C109.9 49.2 106.7 49.6 104.5 49.2 C102.2 48.8 99.5 47.4 98.3 45.7 C97.1 43.9 96.6 40.8 97.2 38.8 C97.8 36.7 99.8 34.4 101.8 33.4 C103.8 32.4 107.9 33.1 109.1 33"/><path class="il-l" d="M99 35 L100 26 L106 32"/><path class="il-l" d="M107 32 L113 26 L114 36"/><circle class="il-dot" cx="104" cy="41" r="1.4"/><circle class="il-dot" cx="110" cy="41" r="1.4"/><path class="il-l" d="M71 50 C61 47 59 38 65 33"/><path class="il-l" d="M78 60 L78 65"/><path class="il-l" d="M98 60 L98 65"/></svg><div class="il-aru-head"><span class="il-big il-ja" lang="ja"><mark class="il-end">います</mark></span><small>有生命的<br>（人、動物）</small></div><div class="il-ex il-ja" lang="ja" data-say="にわに ねこが います。">にわに ねこ<mark class="il-pt">が</mark> <mark class="il-end">います</mark>。</div><div class="il-zh">院子裡有貓。</div></div></div></div></template>
+<template id="illus-route"><div class="il-wrap il-route"><svg class="il-svg il-route-svg" viewBox="0 0 640 460" width="100%" role="img" aria-label="N5 學習路線圖"><g class="il-line il-line-g"><path class="il-hit" d="M104 238 C107 227.7 110.7 196 122 176 C133.3 156 153.7 130 172 118 C190.3 106 212 103.7 232 104 C252 104.3 272 120.3 292 120 C312 119.7 332 102.3 352 102 C372 101.7 392 117.3 412 118 C432 118.7 456 100.7 472 106 C488 111.3 498.3 129 508 150 C517.7 171 526.3 218.3 530 232"/><path class="il-mk" d="M106 241 C109 230.7 112.7 199 124 179 C135.3 159 155.7 133 174 121 C192.3 109 214 106.7 234 107 C254 107.3 274 123.3 294 123 C314 122.7 334 105.3 354 105 C374 104.7 394 120.3 414 121 C434 121.7 458 103.7 474 109 C490 114.3 500.3 132 510 153 C519.7 174 528.3 221.3 532 235"/><path class="il-ln" d="M104 238 C107 227.7 110.7 196 122 176 C133.3 156 153.7 130 172 118 C190.3 106 212 103.7 232 104 C252 104.3 272 120.3 292 120 C312 119.7 332 102.3 352 102 C372 101.7 392 117.3 412 118 C432 118.7 456 100.7 472 106 C488 111.3 498.3 129 508 150 C517.7 171 526.3 218.3 530 232"/></g><g class="il-go" data-go="#/vocab" role="link" aria-label="單字 718 字"><g class="il-line il-line-v"><path class="il-hit" d="M104 250 C121.7 248.7 175 241.7 210 242 C245 242.3 279 252 314 252 C349 252 384.3 242.3 420 242 C455.7 241.7 510 248.7 528 250"/><path class="il-mk" d="M106 253 C123.7 251.7 177 244.7 212 245 C247 245.3 281 255 316 255 C351 255 386.3 245.3 422 245 C457.7 244.7 512 251.7 530 253"/><path class="il-ln" d="M104 250 C121.7 248.7 175 241.7 210 242 C245 242.3 279 252 314 252 C349 252 384.3 242.3 420 242 C455.7 241.7 510 248.7 528 250"/></g><g class="il-pill il-pill-v"><path class="il-pill-bg" d="M254 236 C280 233 350 234 376 237 C380 246 380 258 376 266 C350 269 280 268 254 265 C250 258 250 245 254 236 Z"/><text class="il-t" x="315" y="257" text-anchor="middle" font-size="16" font-weight="600">單字・718 字</text></g></g><g class="il-go" data-go="#/kanji" role="link" aria-label="漢字 105 字"><g class="il-line il-line-k"><path class="il-hit" d="M104 262 C107.3 272.7 111.3 307 124 326 C136.7 345 159 366 180 376 C201 386 227.7 385.3 250 386 C272.3 386.7 292.3 379.7 314 380 C335.7 380.3 357.3 388.3 380 388 C402.7 387.7 428.7 387.7 450 378 C471.3 368.3 495 348.7 508 330 C521 311.3 524.7 276.7 528 266"/><path class="il-mk" d="M106 265 C109.3 275.7 113.3 310 126 329 C138.7 348 161 369 182 379 C203 389 229.7 388.3 252 389 C274.3 389.7 294.3 382.7 316 383 C337.7 383.3 359.3 391.3 382 391 C404.7 390.7 430.7 390.7 452 381 C473.3 371.3 497 351.7 510 333 C523 314.3 526.7 279.7 530 269"/><path class="il-ln" d="M104 262 C107.3 272.7 111.3 307 124 326 C136.7 345 159 366 180 376 C201 386 227.7 385.3 250 386 C272.3 386.7 292.3 379.7 314 380 C335.7 380.3 357.3 388.3 380 388 C402.7 387.7 428.7 387.7 450 378 C471.3 368.3 495 348.7 508 330 C521 311.3 524.7 276.7 528 266"/></g><g class="il-pill il-pill-k"><path class="il-pill-bg" d="M254 366 C280 363 350 364 376 367 C380 376 380 388 376 396 C350 399 280 398 254 395 C250 388 250 375 254 366 Z"/><text class="il-t" x="315" y="387" text-anchor="middle" font-size="16" font-weight="600">漢字・105 字</text></g></g><path class="il-hlmk" d="M92 30 C120 26 170 29 206 27 C208 38 207 44 204 50 C170 53 120 52 94 50 C90 44 90 36 92 30 Z"/><text class="il-t" x="148" y="46" text-anchor="middle" font-size="17" font-weight="600">文法 6 站</text><g class="il-go il-st" data-go="#/g1" role="link" aria-label="第 1 站 名詞句"><circle class="il-hit-c" cx="172" cy="118" r="30"/><path class="il-node" d="M172 100.5 C174.2 101.5 182.2 102.9 185 106.1 C187.8 109.3 189.3 115.2 188.9 119.5 C188.5 123.7 185.8 129.2 182.5 131.7 C179.2 134.1 173.3 134.9 169.2 134.2 C165 133.4 159.7 130.7 157.4 127.3 C155.1 123.8 154.3 117.7 155.4 113.5 C156.5 109.4 160.1 104.3 163.8 102.3 C167.6 100.3 175.6 101.7 178 101.6"/><text class="il-t il-num" x="172" y="124" text-anchor="middle" font-size="17" font-weight="600">1</text><text class="il-t il-ja il-stn" lang="ja" x="172" y="91" text-anchor="middle" font-size="14">名詞句</text></g><g class="il-go il-st" data-go="#/g2" role="link" aria-label="第 2 站 ます形"><circle class="il-hit-c" cx="232" cy="104" r="30"/><path class="il-node" d="M232 87.3 C234.1 88.2 241.6 89.6 244.4 92.6 C247.3 95.7 249.6 101.4 249.2 105.5 C248.8 109.6 245.3 114.4 242 117 C238.6 119.5 233 121.4 229.1 120.7 C225.1 120 220.2 116.4 218 112.9 C215.9 109.4 215 103.6 216.1 99.7 C217.1 95.8 220.8 91.5 224.4 89.5 C228.1 87.4 235.7 88 237.9 87.7"/><text class="il-t il-num" x="232" y="110" text-anchor="middle" font-size="17" font-weight="600">2</text><text class="il-t il-ja il-stn" lang="ja" x="232" y="77" text-anchor="middle" font-size="14">ます形</text></g><g class="il-go il-st" data-go="#/g3" role="link" aria-label="第 3 站 形容詞"><circle class="il-hit-c" cx="292" cy="120" r="30"/><path class="il-node" d="M292 103.5 C294 104.4 301.5 105.8 304.3 108.7 C307.1 111.7 309.1 117.3 308.8 121.5 C308.5 125.7 305.9 131.4 302.7 133.9 C299.4 136.3 293.3 137 289.1 136.2 C285 135.4 280 132.5 277.7 129.1 C275.4 125.7 274.5 119.7 275.5 115.6 C276.5 111.5 280.2 106.5 283.9 104.5 C287.7 102.5 295.6 103.8 298 103.6"/><text class="il-t il-num" x="292" y="126" text-anchor="middle" font-size="17" font-weight="600">3</text><text class="il-t il-ja il-stn" lang="ja" x="292" y="93" text-anchor="middle" font-size="14">形容詞</text></g><g class="il-go il-st" data-go="#/g4" role="link" aria-label="第 4 站 て形"><circle class="il-hit-c" cx="352" cy="102" r="30"/><path class="il-node" d="M352 84.5 C354.1 85.5 361.5 87.6 364.3 90.7 C367.1 93.9 369.2 99.4 368.8 103.5 C368.5 107.6 365.5 112.7 362.2 115.3 C358.9 118 353.1 119.9 349 119.3 C344.8 118.6 339.3 115.1 337.1 111.5 C335 107.9 334.8 101.7 336 97.7 C337.2 93.7 340.7 89.2 344.4 87.3 C348 85.4 355.5 86.5 357.7 86.4"/><text class="il-t il-num" x="352" y="108" text-anchor="middle" font-size="17" font-weight="600">4</text><text class="il-t il-ja il-stn" lang="ja" x="352" y="75" text-anchor="middle" font-size="14">て形</text></g><g class="il-go il-st" data-go="#/g5" role="link" aria-label="第 5 站 普通形"><circle class="il-hit-c" cx="412" cy="118" r="30"/><path class="il-node" d="M412 101.4 C414.1 102.2 421.7 103.5 424.5 106.5 C427.4 109.6 429.5 115.4 429.1 119.5 C428.7 123.6 425.5 128.8 422.2 131.2 C418.8 133.7 413.2 134.8 409.2 134.1 C405.1 133.4 400 130.5 397.8 127.1 C395.5 123.7 394.7 117.7 395.8 113.6 C396.8 109.6 400.4 104.9 404.1 102.8 C407.8 100.8 415.7 101.7 418 101.4"/><text class="il-t il-num" x="412" y="124" text-anchor="middle" font-size="17" font-weight="600">5</text><text class="il-t il-ja il-stn" lang="ja" x="412" y="91" text-anchor="middle" font-size="14">普通形</text></g><g class="il-go il-st" data-go="#/g6" role="link" aria-label="第 6 站 句型"><circle class="il-hit-c" cx="472" cy="106" r="30"/><path class="il-node" d="M472 88.7 C474.1 89.7 481.7 91.4 484.5 94.5 C487.4 97.6 489.4 103.3 489.1 107.5 C488.8 111.7 485.8 117.2 482.5 119.7 C479.2 122.1 473.4 122.9 469.2 122.1 C464.9 121.4 459.5 118.9 457.2 115.4 C454.9 112 454.1 105.7 455.2 101.5 C456.3 97.3 460.1 92.4 463.9 90.5 C467.7 88.5 475.6 89.8 478 89.6"/><text class="il-t il-num" x="472" y="112" text-anchor="middle" font-size="17" font-weight="600">6</text><text class="il-t il-ja il-stn" lang="ja" x="472" y="79" text-anchor="middle" font-size="14">句型</text></g><g class="il-go il-st" data-go="#/g0" role="link" aria-label="第 0 站 かな"><circle class="il-hit-c" cx="70" cy="250" r="42"/><path class="il-node il-node-lg" d="M70 214.3 C73.7 215.6 86.6 217.4 92.3 222 C97.9 226.7 102.3 234.9 104.1 242.1 C105.9 249.4 105.9 259.1 102.8 265.6 C99.7 272.2 92 278.3 85.3 281.4 C78.6 284.4 69.6 285.6 62.4 284.1 C55.3 282.6 47.2 277.8 42.6 272.2 C38 266.6 35 257.7 34.9 250.3 C34.7 243 37.4 233.8 41.9 228.1 C46.5 222.4 54.7 217.7 61.9 216.1 C69 214.5 80.9 218.1 84.7 218.5"/><text class="il-t il-ja" lang="ja" x="70" y="250" text-anchor="middle" font-size="22" font-weight="600">かな</text><text class="il-t2" x="70" y="271" text-anchor="middle" font-size="13">第 0 站</text></g><g class="il-go il-st" data-go="#/exam" role="link" aria-label="終點 N5 しけん"><circle class="il-hit-c" cx="578" cy="250" r="56"/><path class="il-node il-node-end" d="M578 203.2 C582.8 204.9 599.3 207.5 607 213.5 C614.8 219.5 622.2 229.9 624.3 239.3 C626.5 248.7 624 260.8 619.9 270 C615.8 279.1 608.3 289.7 599.6 294.3 C590.9 298.8 577.2 299.7 567.5 297.2 C557.9 294.8 547.7 287.3 541.6 279.5 C535.5 271.7 531 260.2 530.8 250.4 C530.7 240.6 534.6 228.5 540.6 220.8 C546.6 213 557.4 206 566.9 203.8 C576.4 201.6 592.6 207 597.8 207.6"/><path class="il-l il-thin" d="M598.9 213.7 C601.9 217 613.6 225.7 616.8 233.3 C619.9 240.9 619.9 251.4 617.8 259.4 C615.7 267.5 610.6 276.3 604.3 281.4 C598.1 286.5 588.4 289.6 580.3 289.9 C572.3 290.3 562.8 287.8 556 283.4 C549.3 279.1 542.6 271.4 539.8 263.9 C537 256.4 537.1 246.3 539.3 238.4 C541.5 230.5 546.6 221.2 553 216.5 C559.5 211.7 573.8 210.9 578 209.8"/><text class="il-t" x="578" y="248" text-anchor="middle" font-size="22" font-weight="600">N5</text><text class="il-t il-ja" lang="ja" x="578" y="270" text-anchor="middle" font-size="16" font-weight="600">しけん</text></g></svg></div></template>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const G = JSON.parse($('#data-grammar').textContent).stations;
+  const V = JSON.parse($('#data-vocab').textContent);
+  const K = JSON.parse($('#data-kanji').textContent).kanji;
+  const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const pad2 = n => String(n).padStart(2, '0');
+
+  /* ---------- 發音（舊版 speak，ja-JP、rate .9） ---------- */
+  let jaVoice = null;
+  function pickVoice() {
+    const vs = speechSynthesis.getVoices();
+    jaVoice = vs.find(v => /^ja/i.test(v.lang) && /Google|Natural|Online/i.test(v.name)) || vs.find(v => /^ja/i.test(v.lang)) || null;
+  }
+  if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+  let warned = false;
+  function speak(text) {
+    if (!('speechSynthesis' in window)) return toast('這個瀏覽器不支援語音');
+    if (!jaVoice && !warned) { warned = true; toast('這台電腦沒有日文語音，發音可能不準'); }
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(String(text).replace(/[～~]/g, ''));
+    u.lang = 'ja-JP'; u.rate = .9; if (jaVoice) u.voice = jaVoice;
+    speechSynthesis.speak(u);
+  }
+  let toastT;
+  function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200); }
+
+  /* ---------- 分類表（沿用舊版） ---------- */
+  const CAT = {
+    greet: ['招呼・應答', 'あいさつ'], deixis: ['指示・疑問', 'こそあど'], number: ['數字・量詞', 'かず'],
+    time: ['時間・日期', 'じかん'], place: ['位置・方向', 'ばしょ'], people: ['人・家族', 'ひと'],
+    body: ['身體・健康', 'からだ'], food: ['食物・飲料', 'たべもの'], home: ['住家・日用品', 'いえ'],
+    wear: ['衣物・顏色', 'ふく・いろ'], v_move: ['移動・往來', 'いく・くる'], v_daily: ['日常動作', 'まいにち'],
+    v_mind: ['說話・思考・狀態', 'こころ・ようす'], adj_i: ['い形容詞', 'おおきい'], adj_na: ['な形容詞', 'しずか'],
+    adv: ['副詞・連接詞', 'とても・でも'], town: ['城市・交通', 'まち'], school: ['學校・工作・興趣', 'がっこう'],
+    nature: ['自然・天氣・動物', 'しぜん'],
+  };
+  const TRUNKS = [
+    { name: '基礎用語', cats: ['greet', 'deixis', 'number', 'time', 'place'] },
+    { name: '身邊的人事物', cats: ['people', 'body', 'food', 'home', 'wear'] },
+    { name: '動詞', cats: ['v_move', 'v_daily', 'v_mind'] },
+    { name: '形容與修飾', cats: ['adj_i', 'adj_na', 'adv'] },
+    { name: '外面的世界', cats: ['town', 'school', 'nature'] },
+  ];
+  const byCat = {};
+  V.forEach(w => (byCat[w.cat] ||= []).push(w));
+  const KGROUP = {
+    num: ['數字', 'かず'], time: ['時間', 'とき'], place: ['方位', 'ほうこう'], people: ['人・身體', 'ひと'],
+    nature: ['自然', 'しぜん'], life: ['生活・學校', 'くらし'], verb: ['動作', 'うごき'],
+  };
+  const KORDER = ['num', 'time', 'place', 'people', 'nature', 'life', 'verb'];
+  const kByGroup = {};
+  K.forEach(k => (kByGroup[k.group] ||= []).push(k));
+
+  const H_ROWS = [
+    ['あいうえお', 'a i u e o'], ['かきくけこ', 'ka ki ku ke ko'], ['さしすせそ', 'sa shi su se so'],
+    ['たちつてと', 'ta chi tsu te to'], ['なにぬねの', 'na ni nu ne no'], ['はひふへほ', 'ha hi fu he ho'],
+    ['まみむめも', 'ma mi mu me mo'], ['や・ゆ・よ', 'ya - yu - yo'], ['らりるれろ', 'ra ri ru re ro'],
+    ['わ・・・を', 'wa - - - wo'], ['ん・・・・', 'n - - - -'],
+  ];
+  const D_ROWS = [
+    ['がぎぐげご', 'ga gi gu ge go'], ['ざじずぜぞ', 'za ji zu ze zo'], ['だぢづでど', 'da ji zu de do'],
+    ['ばびぶべぼ', 'ba bi bu be bo'], ['ぱぴぷぺぽ', 'pa pi pu pe po'],
+  ];
+  const Y_ROWS = [
+    ['きゃ きゅ きょ', 'kya kyu kyo'], ['しゃ しゅ しょ', 'sha shu sho'], ['ちゃ ちゅ ちょ', 'cha chu cho'],
+    ['にゃ にゅ にょ', 'nya nyu nyo'], ['ひゃ ひゅ ひょ', 'hya hyu hyo'], ['みゃ みゅ みょ', 'mya myu myo'],
+    ['りゃ りゅ りょ', 'rya ryu ryo'], ['ぎゃ ぎゅ ぎょ', 'gya gyu gyo'], ['じゃ じゅ じょ', 'ja ju jo'],
+    ['びゃ びゅ びょ', 'bya byu byo'], ['ぴゃ ぴゅ ぴょ', 'pya pyu pyo'],
+  ];
+  const toKata = t => t.replace(/[ぁ-ゖ]/g, c => String.fromCharCode(c.charCodeAt(0) + 0x60));
+  const toHira = t => t.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+  const KANA_STATION = {
+    id: 'g0', no: 0, title: '假名與發音', jp: 'ひらがな・カタカナ',
+    goal: '學完能讀出所有假名，看得懂課本的注音',
+    summary: '平假名、片假名各 46 字，加上濁音、拗音、促音、長音。',
+  };
+  const SHORT = ['名詞句', 'ます形', '形容詞', 'て形', '普通形', '句型'];
+
+  /* ---------- 振假名：只在漢字段標讀音 ---------- */
+  const KJ = /[㐀-鿿々〆]/;
+  const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  function rubyOne(w, r) {
+    if (!KJ.test(w)) return esc(w);
+    const segs = w.match(/[㐀-鿿々〆]+|[^㐀-鿿々〆]+/g);
+    const re = new RegExp('^' + segs.map(s => KJ.test(s) ? '(.+?)' : reEsc(toHira(s))).join('') + '$');
+    const m = toHira(r).match(re);
+    if (!m) return `<ruby>${esc(w)}<rt>${esc(r)}</rt></ruby>`;
+    let gi = 1;
+    return segs.map(s => KJ.test(s) ? `<ruby>${esc(s)}<rt>${esc(m[gi++])}</rt></ruby>` : esc(s)).join('');
+  }
+  function wordParts(w, r) {
+    let suffix = '';
+    let rr = r.replace(/\s*\(する\)/, () => { suffix = 'する'; return ''; });
+    const ws = w.split(/;\s*/), rs = rr.split(/;\s*/);
+    const html = ws.map((x, i) => rubyOne(x, rs.length === ws.length ? rs[i] : rs[0])).join('<span class="sep">・</span>') +
+      (suffix ? `<small>（する）</small>` : '');
+    return { html, say: rs[0] + suffix };
+  }
+
+  /* ---------- 公式框：斷詞與上色（A 的規則） ---------- */
+  const POS = new Set(['N', 'N1', 'N2', 'V', '場所', '人', '時間', '普通形', '辞書形', 'ます形', 'た形', 'ない形', 'て形', 'い形容詞', 'な形容詞', 'い形容詞普通形']);
+  const PART = new Set(['は', 'が', 'を', 'に', 'へ', 'で', 'と', 'も', 'の', 'か', 'ね', 'よ', 'から', 'まで', 'や', 'より', 'など', 'だけ', 'しか', 'ずつ', 'くらい', 'ぐらい', 'けど', 'では', 'じゃ']);
+  const END_RE = /^(.*?)((?:ます|ません|ました|ませんでした|ましょう|ください|いけません)か?)$/;
+  const DESU_RE = /^(.+?)((?:です|でした|でしょう)か?)$/;
+  const NOSPLIT = new Set(['とても', 'いつも', 'なにも']);
+  const KSA = { 'こ': 'ko', 'そ': 'so', 'あ': 'a', 'ど': 'do' };
+
+  // 一個 token（不含空白、＋）→ 上色片段
+  function pieces(tok) {
+    if (!tok) return [];
+    if (tok === '～') return [{ t: '～', c: 'tilde' }];
+    if (POS.has(tok)) return [{ t: tok, c: 'pos' }];
+    if (tok.startsWith('～')) return [{ t: '～', c: 'tilde' }, ...pieces(tok.slice(1))];
+    if (tok.includes('、')) {
+      const out = [];
+      tok.split('、').forEach((p, i) => { if (i) out.push({ t: '、', c: 'punct' }); out.push(...pieces(p)); });
+      return out;
+    }
+    if (PART.has(tok)) return [{ t: tok, c: 'pt' }];
+    // ありませんでした／ませんでした 是一整個句尾，不拆成 ありません＋でした
+    if (/ませんでしたか?$/.test(tok)) return [{ t: tok, c: 'end' }];
+    let m = tok.match(DESU_RE);
+    if (m && m[1] && !m[1].endsWith('ま')) return [...pieces(m[1]), { t: m[2], c: 'end' }];
+    if (/^(です|でした|でしょう)か?$/.test(tok)) return [{ t: tok, c: 'end' }];
+    m = tok.match(END_RE);
+    if (m) return [{ t: tok, c: 'end' }];
+    if (!NOSPLIT.has(tok)) {
+      for (const suf of ['から', 'まで', 'が', 'に', 'で', 'を', 'は', 'も']) {
+        if (tok.length > suf.length && tok.endsWith(suf)) {
+          const pre = tok.slice(0, -suf.length);
+          if (pre.length >= 2 || pre === 'て' || pre === 'の') return [...pieces(pre), { t: suf, c: 'pt' }];
+        }
+      }
+    }
+    return [{ t: tok, c: 'oth' }];
+  }
+  function pieceHTML(pc) {
+    const t = esc(pc.t);
+    switch (pc.c) {
+      case 'tilde': return `<span class="posbox tilde">～</span>`;
+      case 'pos': return `<span class="posbox">${t}</span>`;
+      case 'pt': return `<span class="tk" lang="ja"><span class="mk pt">${t}</span></span>`;
+      case 'end': return `<span class="tk" lang="ja"><span class="mk end">${t}</span></span>`;
+      case 'punct': return `<span class="dot" lang="ja">${t}</span>`;
+      default: return `<span class="tk oth" lang="ja">${t}</span>`;
+    }
+  }
+  // 一個 token 可能含「・」：こそあど 塗距離色，其他當並列
+  function tokHTML(tok) {
+    if (tok.includes('・') && !POS.has(tok)) {
+      const segs = tok.split('・');
+      if (segs.every(s => KSA[s[0]])) {
+        return `<span class="grp">${segs.map(s => `<span class="tk" lang="ja"><span class="mk ${KSA[s[0]]}">${esc(s)}</span></span>`).join('<span class="dot" lang="ja">・</span>')}</span>`;
+      }
+      return `<span class="grp">${segs.map(s => pieces(s).map(pieceHTML).join('')).join('<span class="dot" lang="ja">・</span>')}</span>`;
+    }
+    return `<span class="grp">${pieces(tok).map(pieceHTML).join('')}</span>`;
+  }
+  const splitTok = s => s.trim().split(/[\s　＋]+/).filter(Boolean);
+  const PLUS = '<span class="plus">＋</span>';
+  const BIGSL = '<span class="bigsl">／</span>';
+  function seqHTML(seq) {
+    return seq.map(x => x.opts
+      ? `<span class="opts">${x.opts.map(o => splitTok(o).map(tokHTML).join(' ')).join('<span class="sl">／</span>')}</span>`
+      : tokHTML(x.tok)).join(PLUS);
+  }
+  function parseFormula(p) {
+    let tag = '';
+    const tm = p.match(/^(.*?)（([^（）]+)）$/);
+    if (tm && tm[1].trim()) { p = tm[1].trim(); tag = tm[2]; }
+    const segs = p.split('；').map(seg => {
+      let label = '', body = seg.trim();
+      const ci = body.indexOf('：');
+      if (ci > 0) { label = body.slice(0, ci); body = body.slice(ci + 1); }
+      const parts = body.split('／');
+      let alts;
+      if (parts.length > 1 && parts.every(x => /[\s　＋]/.test(x.trim()))) {
+        alts = parts.map(x => splitTok(x).map(t => ({ tok: t })));
+      } else if (parts.length > 1) {
+        const first = splitTok(parts[0]), last = splitTok(parts[parts.length - 1]);
+        const opts = [first[first.length - 1], ...parts.slice(1, -1).map(x => x.trim()), last[0]];
+        alts = [[...first.slice(0, -1).map(t => ({ tok: t })), { opts }, ...last.slice(1).map(t => ({ tok: t }))]];
+      } else {
+        alts = [splitTok(body).map(t => ({ tok: t }))];
+      }
+      return { label, alts };
+    });
+    return { tag, segs };
+  }
+  /* 手動覆寫：自動斷詞會斷錯的句型。boxes 每一項是一個並列框，框內用「＋」分 token */
+  const OVERRIDE = {
+    '辞書形／N の＋まえに': { boxes: ['辞書形＋まえに', 'N＋の＋まえに'] },
+    'どう／どんな＋N': { boxes: ['どう', 'どんな＋N'] },
+    'な形容詞：～です／～じゃ ありません／～な＋N': { label: 'な形容詞', boxes: ['～＋です', '～＋じゃ＋ありません', '～＋な＋N'] },
+    // 同一種斷錯（「じゃ」被當成和「～でした」並列）：一併照上面的寫法改成兩個並列框
+    'な形容詞：～でした／～じゃ ありませんでした': { label: 'な形容詞', boxes: ['～＋でした', '～＋じゃ＋ありませんでした'] },
+  };
+  function overrideHTML(o, main) {
+    const lab = o.label ? `<span class="flabel"><span class="posbox">${esc(o.label)}</span><span class="colon">：</span></span>` : '';
+    const boxes = o.boxes.map((b, bi) => `<span class="fbox${main && bi === 0 ? ' main' : ''}">${b.split('＋').map(t => tokHTML(t.trim())).join(PLUS)}</span>`);
+    return `<div class="frow">${lab}${boxes.join(BIGSL)}</div>`;
+  }
+  function formulaHTML(p, main) {
+    if (OVERRIDE[p]) return overrideHTML(OVERRIDE[p], main);
+    const { tag, segs } = parseFormula(p);
+    const boxes = [];
+    segs.forEach(seg => {
+      seg.alts.forEach((seq, ai) => {
+        const lab = seg.label && ai === 0
+          ? `<span class="posbox">${esc(seg.label)}</span><span class="colon">：</span>` : '';
+        boxes.push(`<span class="fbox${main ? ' main' : ''}">${lab}${seqHTML(seq)}</span>` + (ai < seg.alts.length - 1 ? BIGSL : ''));
+      });
+    });
+    return `<div class="frow">${boxes.join('')}${tag ? `<span class="ftag">${esc(tag)}</span>` : ''}</div>`;
+  }
+
+  /* 變化條目：note 拆成變化表 */
+  const HARR = '<svg class="harr" viewBox="0 0 26 14" aria-hidden="true"><path d="M2 8c5-3 11 1 20-2"/><path d="M17 2.5l5 3.5-5.5 3"/></svg>';
+  const CONJ = new Set(['ます形', 'て形', '辞書形', 'ない形', 'た形']);
+  const CONJ_SIDE = {
+    'ます形': '先判斷動詞是 1、2、3 類再變化；單字頁的「動詞」分類已經分好 1、2、3 類。',
+    'て形': '1 類變化最多，可以唸成口訣：う・つ・る→って、む・ぶ・ぬ→んで。いく 是例外。',
+    '辞書形': '字典查得到的形；普通形的句子都從這裡出發。',
+    'ない形': 'ある 的否定直接是 ない；1 類的 う 要變成 わ。',
+    'た形': '會て形就會た形：把て換成た、で換成だ。',
+  };
+  const jaWrap = s => esc(s).replace(/[ぁ-ゖァ-ヺー～][ぁ-ゖァ-ヺー～・]*/g, m => `<span lang="ja">${m}</span>`);
+  const arrowed = s => jaWrap(s).replace(/→/g, HARR);
+  function conjHTML(note, main) {
+    const segs = note.split(/[；。]/).map(s => s.trim()).filter(Boolean);
+    const rows = segs.map(seg => {
+      const ci = seg.indexOf('：');
+      if (ci > 0 && ci <= 4) {
+        const head = seg.slice(0, ci), body = seg.slice(ci + 1);
+        const chips = body.split('、').map(c => `<span class="cchip" lang="ja">${arrowed(c)}</span>`).join('');
+        return `<div class="crow"><span class="ch">${esc(head)}</span><span class="cc">${chips}</span></div>`;
+      }
+      return `<div class="crow"><span class="whole">${arrowed(seg)}</span></div>`;
+    }).join('');
+    return `<div class="frow"><div class="fbox ctab${main ? ' main' : ''}">${rows}</div></div>`;
+  }
+
+  /* 旁註彎箭頭：右側旁註 → 左邊公式框（96px）；換到下方時改成往上指（48px） */
+  const CURL_R = '<path d="M92,26 C66,30 40,6 6,18"/><path d="M12,11.4 L6,18 L14.9,19.3"/>';
+  const CURL_UP = '<path d="M30,34 C36,22 16,16 24,4"/><path d="M16,8 L24,4 L23,13"/>';
+
+  /* 插圖片段 */
+  function illus(id) {
+    const t = document.getElementById(id);
+    if (!t || !t.content) return null;
+    const d = document.createElement('div'); d.className = 'ill'; d.dataset.snap = '';
+    d.appendChild(t.content.cloneNode(true));
+    return d;
+  }
+  const ILLUS_AT = { 'g1:1': 'illus-register', 'g1:4': 'illus-kosoado', 'g3:1': 'illus-aru-iru' };
+
+  /* 讀完紀錄（localStorage，讀寫都包 try/catch） */
+  const DONE_KEY = 'n5ab-done';
+  function loadDone() { try { return new Set(JSON.parse(localStorage.getItem(DONE_KEY) || '[]')); } catch (e) { return new Set(); } }
+  function saveDone(set) { try { localStorage.setItem(DONE_KEY, JSON.stringify([...set])); } catch (e) { /* 存不了就只留在這次 */ } }
+  let DONE = loadDone();
+
+  /* ---------- 線條小插圖（inline SVG，不用 emoji） ---------- */
+  const S = 'fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"';
+  const IL = {
+    books: `<svg class="illus" viewBox="0 0 220 180" ${S}>
+      <path d="M150 20 l10 -8 l8 6 M158 12 v18"/><circle cx="182" cy="26" r="5" fill="var(--c2-soft)"/>
+      <path d="M40 150 h150 l6 -6 v-24 l-6 6 h-150 z" fill="var(--c2-soft)"/><path d="M40 150 v-24 M190 150 v-24"/>
+      <text x="115" y="143" font-size="15" text-anchor="middle" fill="currentColor" stroke="none" font-weight="700">漢字</text>
+      <path d="M32 120 h150 l6 -6 v-24 l-6 6 h-150 z" fill="var(--c3-soft)"/><path d="M32 120 v-24 M182 120 v-24"/>
+      <text x="107" y="113" font-size="15" text-anchor="middle" fill="currentColor" stroke="none" font-weight="700">單字</text>
+      <path d="M46 90 h150 l6 -6 v-24 l-6 6 h-150 z" fill="var(--c1-soft)"/><path d="M46 90 v-24 M196 90 v-24"/>
+      <text x="121" y="83" font-size="15" text-anchor="middle" fill="currentColor" stroke="none" font-weight="700">文法</text>
+      <path d="M120 60 v-50"/><path d="M120 12 h40 l-8 11 l8 11 h-40" fill="var(--surface)"/>
+      <text x="138" y="29" font-size="13" text-anchor="middle" fill="currentColor" stroke="none" font-weight="800">N5</text>
+      <path d="M20 40 l-8 -4 M24 28 l-6 -8 M34 22 l-2 -9"/></svg>`,
+    kana: `<svg class="illus" viewBox="0 0 120 84" ${S}>
+      <rect x="14" y="10" width="48" height="58" rx="6" fill="var(--c1-soft)" transform="rotate(-6 38 39)"/>
+      <text x="38" y="52" font-size="32" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)" transform="rotate(-6 38 39)">あ</text>
+      <rect x="54" y="18" width="44" height="54" rx="6" fill="var(--surface)" transform="rotate(5 76 45)"/>
+      <text x="76" y="58" font-size="28" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)" transform="rotate(5 76 45)">ア</text>
+      <path d="M100 10 l12 -6 M104 20 l12 -2"/></svg>`,
+    bubble: `<svg class="illus" viewBox="0 0 120 84" ${S}>
+      <path d="M10 14 h58 a8 8 0 0 1 8 8 v22 a8 8 0 0 1 -8 8 h-34 l-12 10 v-10 h-12 a8 8 0 0 1 -8 -8 v-22 a8 8 0 0 1 8 -8z" fill="var(--c1-soft)"/>
+      <text x="40" y="40" font-size="15" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)">は～です</text>
+      <path d="M62 44 h44 a6 6 0 0 1 6 6 v14 a6 6 0 0 1 -6 6 h-6 v8 l-10 -8 h-28 a6 6 0 0 1 -6 -6 v-14 a6 6 0 0 1 6 -6z" fill="var(--surface)"/>
+      <text x="84" y="62" font-size="13" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)">ます</text></svg>`,
+    chain: `<svg class="illus" viewBox="0 0 120 84" ${S}>
+      <rect x="6" y="14" width="30" height="24" rx="5" fill="var(--c1-soft)"/><text x="21" y="31" font-size="12" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)">て</text>
+      <path d="M38 26 h12 m-4 -4 l4 4 l-4 4"/>
+      <rect x="52" y="14" width="30" height="24" rx="5" fill="var(--surface)"/><text x="67" y="31" font-size="12" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)">て</text>
+      <path d="M84 26 h12 m-4 -4 l4 4 l-4 4"/>
+      <rect x="98" y="14" width="18" height="24" rx="5" fill="var(--surface)"/>
+      <path d="M20 46 v14 a6 6 0 0 0 6 6 h56 a6 6 0 0 0 6 -6 v-14" stroke-dasharray="3 4"/><path d="M84 52 l4 -6 l4 6"/>
+      <text x="56" y="80" font-size="11" text-anchor="middle" fill="currentColor" stroke="none">普通形</text></svg>`,
+    cards: `<svg class="illus" viewBox="0 0 120 84" ${S}>
+      <rect x="18" y="20" width="62" height="42" rx="6" fill="var(--c3-soft)" transform="rotate(-8 49 41)"/>
+      <rect x="30" y="16" width="62" height="42" rx="6" fill="var(--surface)" transform="rotate(4 61 37)"/>
+      <text x="61" y="38" font-size="15" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)" transform="rotate(4 61 37)">たべる</text>
+      <path d="M44 48 h34" transform="rotate(4 61 37)"/>
+      <path d="M96 60 l8 8 M100 52 l12 2 M92 68 l2 10"/></svg>`,
+    brush: `<svg class="illus" viewBox="0 0 120 84" ${S}>
+      <rect x="10" y="14" width="56" height="58" rx="4" fill="var(--c2-soft)"/>
+      <text x="38" y="56" font-size="34" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)">字</text>
+      <path d="M78 74 l26 -56" stroke-width="4"/><path d="M76 78 l4 -10 l6 3 z" fill="currentColor"/>
+      <ellipse cx="96" cy="74" rx="16" ry="5" fill="var(--surface)"/></svg>`,
+    sheet: `<svg class="illus" viewBox="0 0 120 84" ${S}>
+      <path d="M18 8 h50 l12 12 v58 h-62 z" fill="var(--c4-soft)"/><path d="M68 8 v12 h12"/>
+      <circle cx="30" cy="32" r="4"/><circle cx="44" cy="32" r="4" fill="currentColor"/><circle cx="58" cy="32" r="4"/>
+      <circle cx="30" cy="48" r="4" fill="currentColor"/><circle cx="44" cy="48" r="4"/><circle cx="58" cy="48" r="4"/>
+      <circle cx="30" cy="64" r="4"/><circle cx="44" cy="64" r="4"/><circle cx="58" cy="64" r="4" fill="currentColor"/>
+      <path d="M90 74 l20 -48 l7 3 l-20 48 l-8 5 z" fill="var(--surface)"/><path d="M107 33 l7 3"/></svg>`,
+    bulb: `<svg viewBox="0 0 24 24" ${S}><path d="M9 17h6M10 20h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/><path d="M12 7v3M3 10h1.5M19.5 10H21M5.5 4.5l1 1M18.5 4.5l-1 1"/></svg>`,
+    clip: `<svg class="clip" viewBox="0 0 20 44" ${S}><path d="M14 10v22a5 5 0 0 1-10 0V8a3.5 3.5 0 0 1 7 0v22a1.5 1.5 0 0 1-3 0V12"/></svg>`,
+    burstL: `<svg viewBox="0 0 34 22" ${S}><path d="M30 11 h-12 M28 3 l-10 4 M28 19 l-10 -4"/></svg>`,
+    burstR: `<svg viewBox="0 0 34 22" ${S}><path d="M4 11 h12 M6 3 l10 4 M6 19 l10 -4"/></svg>`,
+    plant: `<svg class="illus" viewBox="0 0 120 120" ${S}>
+      <path d="M40 80 h40 l-6 30 h-28 z" fill="var(--c4-soft)"/><path d="M40 88 h40" stroke-dasharray="3 3"/>
+      <path d="M60 80 v-40"/><path d="M60 60 c-18 -2 -26 -14 -26 -26 c14 0 24 8 26 26z" fill="var(--c3-soft)"/>
+      <path d="M60 48 c16 -2 24 -14 24 -28 c-14 2 -22 12 -24 28z" fill="var(--c3-soft)"/>
+      <path d="M60 70 c12 0 20 -8 22 -18 c-12 0 -20 6 -22 18z" fill="var(--c3-soft)"/>
+      <path d="M98 30 l6 -6 M100 42 h8 M24 30 l-6 -6"/></svg>`,
+    pencil: `<svg class="illus" viewBox="0 0 120 120" ${S}>
+      <path d="M30 96 l54 -54 l12 12 l-54 54 l-16 4 z" fill="var(--c2-soft)"/><path d="M78 48 l12 12 M30 96 l12 12"/>
+      <path d="M84 42 l8 -8 a4 4 0 0 1 6 0 l6 6 a4 4 0 0 1 0 6 l-8 8" fill="var(--surface)"/>
+      <path d="M20 40 c10 -10 24 -10 34 -2" stroke-dasharray="4 4"/><path d="M50 32 l4 6 l-7 2"/></svg>`,
+    target: `<svg class="illus" viewBox="0 0 120 120" ${S}>
+      <circle cx="56" cy="64" r="38" fill="var(--surface)"/><circle cx="56" cy="64" r="26" fill="var(--c4-soft)"/><circle cx="56" cy="64" r="13" fill="var(--surface)"/><circle cx="56" cy="64" r="4" fill="currentColor"/>
+      <path d="M56 64 l44 -44"/><path d="M92 16 l10 2 l-2 10 M88 20 l4 8"/>
+      <path d="M14 18 l6 6 M10 34 h8"/></svg>`,
+    /* 各站插圖 */
+    g0: `<svg class="illus" viewBox="0 0 190 142" ${S}>
+      <rect x="20" y="20" width="70" height="90" rx="8" fill="var(--c1-soft)" transform="rotate(-7 55 65)"/>
+      <text x="55" y="82" font-size="50" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)" transform="rotate(-7 55 65)">か</text>
+      <rect x="98" y="28" width="70" height="90" rx="8" fill="var(--surface)" transform="rotate(6 133 73)"/>
+      <text x="133" y="90" font-size="46" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)" transform="rotate(6 133 73)">カ</text>
+      <path d="M86 128 c10 6 22 6 32 0" /><path d="M112 124 l6 4 l-5 5"/><path d="M174 18 l8 -8 M176 32 l10 -2"/></svg>`,
+    g1: `<svg class="illus" viewBox="0 0 190 142" ${S}>
+      <circle cx="60" cy="40" r="18" fill="var(--surface)"/><path d="M54 38 h1 M66 38 h1 M55 47 c3 3 7 3 10 0"/>
+      <path d="M28 120 c0 -32 14 -52 32 -52 s32 20 32 52" fill="var(--c1-soft)"/>
+      <rect x="44" y="84" width="32" height="20" rx="3" fill="var(--surface)"/><path d="M50 94 h20"/>
+      <path d="M102 20 h70 a8 8 0 0 1 8 8 v26 a8 8 0 0 1 -8 8 h-50 l-12 10 v-10 h-8 a8 8 0 0 1 -8 -8 v-26 a8 8 0 0 1 8 -8z" fill="var(--surface)"/>
+      <text x="138" y="47" font-size="15" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)">わたしは…</text></svg>`,
+    g2: `<svg class="illus" viewBox="0 0 190 142" ${S}>
+      <circle cx="62" cy="60" r="42" fill="var(--surface)"/><circle cx="62" cy="60" r="35" fill="var(--c1-soft)" stroke="none"/>
+      <path d="M62 60 v-24 M62 60 l16 10"/><circle cx="62" cy="60" r="3" fill="currentColor"/>
+      <path d="M62 22 v4 M62 94 v4 M24 60 h4 M96 60 h4"/>
+      <path d="M118 120 c4 -6 10 -6 12 0 c2 6 -10 10 -12 0z" fill="var(--c1-soft)"/><path d="M142 104 c4 -6 10 -6 12 0 c2 6 -10 10 -12 0z" fill="var(--c1-soft)"/>
+      <path d="M160 80 c4 -6 10 -6 12 0 c2 6 -10 10 -12 0z" fill="var(--c1-soft)"/><path d="M112 40 h40 m-6 -6 l6 6 l-6 6"/>
+      <text x="132" y="30" font-size="13" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)">へ</text></svg>`,
+    g3: `<svg class="illus" viewBox="0 0 190 142" ${S}>
+      <path d="M20 60 l70 -44 l70 44" /><path d="M32 54 v74 h116 v-74" fill="var(--surface)"/>
+      <rect x="46" y="70" width="44" height="30" rx="3" fill="var(--c1-soft)"/><path d="M60 100 l-6 10 M76 100 l6 10"/>
+      <path d="M112 128 c0 -14 6 -22 14 -22 s14 8 14 22z" fill="var(--c3-soft)"/><circle cx="126" cy="98" r="9" fill="var(--c3-soft)"/>
+      <path d="M119 91 l2 -8 l4 5 M133 91 l-2 -8 l-4 5"/><path d="M140 122 c10 0 14 -6 14 -12"/>
+      <text x="68" y="132" font-size="12" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)" font-weight="600">あります</text>
+      <text x="126" y="80" font-size="12" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)" font-weight="600">います</text></svg>`,
+    g4: `<svg class="illus" viewBox="0 0 190 142" ${S}>
+      <path d="M44 128 v-58 c0 -6 10 -6 10 0 v-28 c0 -7 11 -7 11 0 v26 v-34 c0 -7 11 -7 11 0 v34 v-28 c0 -7 11 -7 11 0 v32 v-16 c0 -7 10 -7 10 0 v36 c0 18 -10 34 -26 36z" fill="var(--c1-soft)"/>
+      <path d="M118 30 h56 a6 6 0 0 1 6 6 v34 a6 6 0 0 1 -6 6 h-56 a6 6 0 0 1 -6 -6 v-34 a6 6 0 0 1 6 -6z" fill="var(--surface)"/>
+      <text x="146" y="50" font-size="13" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)">かいて</text>
+      <text x="146" y="68" font-size="13" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)">ください</text>
+      <path d="M100 52 h8 M98 40 l8 4 M98 64 l8 -4"/></svg>`,
+    g5: `<svg class="illus" viewBox="0 0 190 142" ${S}>
+      <circle cx="56" cy="88" r="20" fill="var(--surface)"/><path d="M48 86 h1 M62 86 h1 M50 96 h12"/>
+      <path d="M24 140 c0 -18 14 -28 32 -28 s32 10 32 28" fill="var(--c1-soft)"/>
+      <circle cx="84" cy="62" r="4"/><circle cx="96" cy="50" r="6"/>
+      <path d="M108 14 c18 -10 50 -6 60 10 c14 4 14 26 0 30 c-6 14 -40 16 -52 6 c-16 4 -26 -10 -18 -22 c-8 -10 0 -24 10 -24z" fill="var(--surface)"/>
+      <text x="138" y="40" font-size="13" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)">あめが ふる</text>
+      <text x="138" y="57" font-size="13" text-anchor="middle" fill="currentColor" stroke="none" style="font-family:var(--jp)">と おもう</text></svg>`,
+    g6: `<svg class="illus" viewBox="0 0 190 142" ${S}>
+      <path d="M10 128 l60 -84 c6 -8 14 -8 20 0 l60 84z" fill="var(--c1-soft)"/>
+      <path d="M58 60 l12 8 l10 -8 l10 8 l12 -8 l-12 -16 c-6 -8 -14 -8 -20 0z" fill="var(--surface)"/>
+      <path d="M80 36 v-26 l20 6 l-20 6"/><circle cx="156" cy="34" r="12" fill="var(--surface)"/>
+      <path d="M156 14 v-6 M174 34 h6 M170 20 l4 -4 M138 20 l-4 -4"/>
+      <path d="M136 118 c6 -10 14 -10 20 0 M160 108 c4 -8 10 -8 14 0"/></svg>`,
+    /* 頁尾圖示 */
+    f1: `<svg viewBox="0 0 48 48" ${S}><path d="M8 36 h30 l3 -3 v-6 l-3 3 h-30z"/><path d="M6 26 h30 l3 -3 v-6 l-3 3 h-30z"/><path d="M10 16 h30 l3 -3 v-6 l-3 3 h-30z"/></svg>`,
+    f2: `<svg viewBox="0 0 48 48" ${S}><path d="M8 18 h8 l10 -8 v28 l-10 -8 h-8z"/><path d="M32 17 a9 9 0 0 1 0 14 M36 12 a15 15 0 0 1 0 24"/></svg>`,
+    f3: `<svg viewBox="0 0 48 48" ${S}><path d="M24 12 c-6 -4 -14 -4 -18 -2 v26 c4 -2 12 -2 18 2 c6 -4 14 -4 18 -2 v-26 c-4 -2 -12 -2 -18 2z"/><path d="M24 12 v26"/></svg>`,
+    f4: `<svg viewBox="0 0 48 48" ${S}><circle cx="24" cy="24" r="16"/><circle cx="24" cy="24" r="9"/><circle cx="24" cy="24" r="2" fill="currentColor"/><path d="M24 24 l16 -16 M36 6 l4 2 l2 4"/></svg>`,
+  };
+  const SPEAK = '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 6h3l4-3v10L5 10H2z"/><path d="M11 5.5a3.5 3.5 0 010 5M12.8 3.6a6 6 0 010 8.8" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>';
+  const ARROW = '<svg viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7 c5 -2 9 2 15 0 M12 2 l5 5 l-5 5"/></svg>';
+  const TICK = '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5 l3 3 l6 -7"/></svg>';
+  const SEARCH = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>';
+  const sticky = (title, body, cls = '', deco = 'clip') =>
+    `<div class="sticky ${cls}">${deco === 'clip' ? IL.clip : '<span class="tape"></span>'}${title ? `<h4>${title}</h4>` : ''}<p>${body}</p></div>`;
+  const ribbon = (no, text, cls = '') => `<div class="ribbon ${cls}"><span>${no !== '' ? `<b>${no}</b>` : ''}${text}</span></div>`;
+
+  /* ---------- 頁首分頁籤 ---------- */
+  const ROUTES = ['home', 'kana', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'vocab', 'kanji', 'exam'];
+  $('#tabs').innerHTML =
+    `<a class="tab" href="#/" data-r="home">首頁</a>` +
+    `<a class="tab" href="#/kana" data-r="kana"><i>0</i>假名</a>` +
+    `<span class="tabgrp"><span>文法</span>${G.map((st, i) => `<a class="tab" href="#/${st.id}" data-r="${st.id}" title="第 ${st.no} 站 ${esc(st.title)}"><i>${st.no}</i><span class="tck" aria-label="已學完">✓</span>${SHORT[i]}</a>`).join('')}</span>` +
+    `<a class="tab" href="#/vocab" data-r="vocab">單字</a>` +
+    `<a class="tab" href="#/kanji" data-r="kanji">漢字</a>` +
+    `<a class="tab" href="#/exam" data-r="exam">考試</a>`;
+
+  /* ---------- 共用：時間軸 ---------- */
+  function timeline(cur) {
+    const cells = [
+      { r: 'kana', b: '第 0 站', s: '假名', sm: '92 字', t: 't1' },
+      ...G.map((st, i) => ({ r: st.id, b: `第 ${st.no} 站`, s: SHORT[i], sm: `${st.items.length} 條`, t: 't1' })),
+      { r: 'exam', b: '終點', s: 'N5 考試', sm: '90 分鐘', t: 't4' },
+    ];
+    return `<div class="tl">${cells.map((c, i) => (i ? `<span class="tl-arrow">${ARROW}</span>` : '') +
+      `<a class="tl-cell ${c.t}${c.r === cur ? ' cur' : ''}" href="#/${c.r}"${c.r === cur ? ' aria-current="step"' : ''}><b>${c.b}</b><span>${c.s}</span><small>${c.sm}</small></a>`).join('')}</div>`;
+  }
+  const markLegend = st => `<div class="legend-row">
+      <span><span class="mk pt" lang="ja">は・に</span>粉：助詞</span>
+      <span><span class="mk end" lang="ja">です・ます</span>黃：句尾・禮貌形</span>
+      <span><span class="posbox">N</span><span class="posbox">V</span>藍框：詞類位置</span>
+      <span><span class="mk note">旁註</span>綠：補充說明</span>
+      ${st.id === 'g1' ? '<span><span class="mk ko" lang="ja">こ</span><span class="mk so" lang="ja">そ</span><span class="mk a" lang="ja">あ</span><span class="mk do" lang="ja">ど</span>近／中／遠／哪</span>' : ''}
+      <span><span class="fsample main">主句型</span>朱框：這站的主句型</span>
+    </div>`;
+
+  /* ---------- 首頁 ---------- */
+  const STEPS = [
+    { t: 't1', go: 'kana', h: '先學假名', sub: '第 0 站', il: 'kana', li: ['平假名、片假名各 46 字', '再學濁音、拗音、促音、長音', '點格子聽發音，跟著念'], tip: '先會念再求會寫，1～2 週就夠。' },
+    { t: 't1', go: 'g1', h: '文法前半', sub: '第 1～3 站', il: 'bubble', li: ['名詞句：N は N です', '動詞ます形＋助詞', 'あります／います、形容詞'], tip: '每站先看朱框的主句型，再看變化。' },
+    { t: 't1', go: 'g4', h: '文法後半', sub: '第 4～6 站', il: 'chain', li: ['て形：請求、許可、進行', '普通形：說想法、說理由', '願望、比較、經驗、推測'], tip: 'て形最花時間，這站多留一週。' },
+    { t: 't3', go: 'vocab', h: '單字同時背', sub: `${V.length} 字・19 類`, il: 'cards', li: ['不用照順序，挑主題背', '先背招呼語和身邊的東西', '動詞順便記 1、2、3 類'], tip: '一天 20 字，約 5 週背完一輪。' },
+    { t: 't2', go: 'kanji', h: '漢字每週一組', sub: `${K.length} 字・7 組`, il: 'brush', li: ['從數字、時間開始', '每字記音讀、訓讀', '再記 1～2 個例詞'], tip: '每週 10～15 字，例詞比單字好記。' },
+    { t: 't4', go: 'exam', h: '終點：考試', sub: '3 科・90 分鐘', il: 'sheet', li: ['文字・語彙 20 分', '文法・讀解 40 分', '聽解 30 分'], tip: '例句多聽幾次，就是聽解練習。' },
+  ];
+  const CHECKS = [
+    '平假名 46 字會讀會寫', '片假名 46 字會讀', '第 1～3 站的主句型能造句', '第 4 站て形變化背熟',
+    '第 5～6 站的普通形與常用句型', `${V.length} 個單字至少背過一輪`, `${K.length} 個漢字會念例詞`, '做過一回完整模擬題（90 分鐘）',
+  ];
+  function buildHome() {
+    const total = G.reduce((a, st) => a + st.items.length, 0);
+    $('#p-home').innerHTML = `
+      <div class="hero">
+        <div>${IL.books}</div>
+        <div class="hero-mid">
+          <p class="hero-eyebrow" lang="ja">JLPT N5 ・ ゼロからの ルートマップ</p>
+          <div class="brush"><h1>N5 學習地圖<small lang="ja">かなから はじめて、しけんで あおう</small></h1></div>
+          <div class="tagline">${IL.burstL}<span>簡單</span><span class="dot">・</span><span>有順序</span><span class="dot">・</span><span>好複習</span><span class="dot">・</span><span>考試用</span>${IL.burstR}</div>
+        </div>
+        <div>${sticky('', `會念假名<br>＋ <b>${total}</b> 個句型<br>＋ <b>${V.length}</b> 個單字<br>＝ N5 過關`)}</div>
+      </div>
+
+      <div class="steps">${STEPS.map((s, i) => `
+        <a class="step ${s.t}" href="#/${s.go}">
+          <div class="step-h"><span class="num">${i + 1}</span><h3>${s.h}<small>${s.sub}</small></h3></div>
+          <ul>${s.li.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+          ${IL[s.il]}
+          <div class="tip">${IL.bulb}<span>Tip：${esc(s.tip)}</span></div>
+        </a>`).join('')}
+      </div>
+
+      <div class="grid12 sec-gap">
+        <div class="box span tn" style="--span:4">${ribbon('', '這張地圖有什麼', 'big')}
+          <div class="stats">
+            <div class="stat t1"><b>${total}</b><span>文法句型（6 站）</span></div>
+            <div class="stat t3"><b>${V.length}</b><span>單字（19 類）</span></div>
+            <div class="stat t2"><b>${K.length}</b><span>漢字（7 組）</span></div>
+            <div class="stat t4"><b>90</b><span>分鐘考試（3 科）</span></div>
+          </div>
+        </div>
+        <div class="box span tn" style="--span:4">${ribbon('', '顏色代表什麼', 'big')}
+          <div class="legend-list">
+            <div class="t1"><span class="k"><span class="sw"></span> 藍</span><span>文法（假名＋6 站）</span></div>
+            <div class="t3"><span class="k"><span class="sw"></span> 綠</span><span>單字</span></div>
+            <div class="t2"><span class="k"><span class="sw"></span> 土黃</span><span>漢字</span></div>
+            <div class="t4"><span class="k"><span class="sw"></span> 灰</span><span>考試</span></div>
+          </div>
+          <div class="legend-list legend-sub">
+            <div><span class="k"><span class="mk pt" lang="ja">は・を</span></span><span>粉：助詞</span></div>
+            <div><span class="k"><span class="mk end" lang="ja">です</span></span><span>黃：句尾、禮貌形</span></div>
+            <div><span class="k"><span class="posbox">N</span> <span class="posbox">V</span></span><span>藍框：詞類的位置</span></div>
+            <div><span class="k"><span class="mk note">旁註</span></span><span>綠：公式框旁的補充說明</span></div>
+            <div><span class="k"><span class="mk ko" lang="ja">こ</span><span class="mk so" lang="ja">そ</span><span class="mk a" lang="ja">あ</span><span class="mk do" lang="ja">ど</span></span><span>近我／近你／都遠／哪</span></div>
+            <div><span class="k"><span class="fsample main">主句型</span></span><span>朱框：每站的主句型</span></div>
+          </div>
+        </div>
+        <div class="box span tn" style="--span:4">${ribbon('', '必備清單', 'big')}
+          <ul class="checks" id="checks">${CHECKS.map((c, i) => `<li><label><input type="checkbox" data-i="${i}"><span class="cb">${TICK}</span><span class="tx">${esc(c)}</span></label></li>`).join('')}</ul>
+          <p class="check-foot" id="check-foot">勾選會記在這台電腦的瀏覽器裡。</p>
+        </div>
+
+        <div class="box span t1" style="--span:5">${ribbon('', '最好的走法', 'big')}
+          <ol class="order">
+            <li class="t1"><span class="n">1</span><span>先花 1～2 週學會假名，點假名表跟著念。</span></li>
+            <li class="t1"><span class="n">2</span><span>文法照站走，第 1 站到第 6 站有先後，學完一站再往下。</span></li>
+            <li class="t3"><span class="n">3</span><span>單字和文法同時背，每天固定一小段。</span></li>
+            <li class="t2"><span class="n">4</span><span>漢字每週 10～15 字，從數字、時間開始。</span></li>
+            <li class="t1"><span class="n">5</span><span>每條例句點來聽，念到不用看字也說得出來。</span></li>
+            <li class="t4"><span class="n">6</span><span>最後做模擬題，熟悉 3 科的題型和時間。</span></li>
+          </ol>
+        </div>
+        <div class="box span tn" style="--span:4">${ribbon('', '小提醒', 'big')}
+          <div class="notes">
+            ${sticky('助詞的念法', '<span lang="ja" class="mk pt">は</span> 念 wa、<span lang="ja" class="mk pt">へ</span> 念 e、<span lang="ja" class="mk pt">を</span> 念 o。', 'l', 'tape')}
+            ${sticky('點了就會念', '頁面上的日文（假名、例句、單字、例詞）點一下，瀏覽器就念給你聽。', '', 'tape')}
+          </div>
+        </div>
+        <div class="box span tn" style="--span:3"><div class="quote">${IL.plant.replace('class="illus"', 'class="illus" width="110" height="110"')}<p>一天一小站，<br>慢慢走到 N5。</p></div></div>
+      </div>
+
+      <div class="box t1 sec-gap">${ribbon('', '時間軸（一眼看完）', 'big')}${timeline('')}</div>`;
+
+    // 必備清單：localStorage 記住（讀寫包 try/catch）
+    const KEY = 'n5poster-check';
+    let state = {};
+    try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { state = {}; }
+    const boxes = $$('#checks input');
+    const foot = () => { const n = boxes.filter(b => b.checked).length; $('#check-foot').textContent = `已完成 ${n} / ${boxes.length}・勾選會記在這台電腦的瀏覽器裡。`; };
+    boxes.forEach(b => {
+      b.checked = !!state[b.dataset.i];
+      b.addEventListener('change', () => {
+        state[b.dataset.i] = b.checked;
+        try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* 無法存，只留在這次 */ }
+        foot();
+      });
+    });
+    foot();
+  }
+
+  /* ---------- 站頁頭 ---------- */
+  function stHead(st, illusKey, extra = '') {
+    return `<div class="st-head">
+      <div class="st-title">
+        <div class="brush"><h1><span class="no">第 ${st.no} 站</span>${esc(st.title)}<small lang="ja">${esc(st.jp)}</small></h1></div>
+        <p class="st-sum">${esc(st.summary)}</p>
+        <div class="st-meta">${extra}</div>
+      </div>
+      <div>${IL[illusKey]}</div>
+      <div>${sticky('這站的目標', esc(st.goal))}</div>
+    </div>`;
+  }
+  function stNav(idx) {
+    const order = ['kana', ...G.map(s => s.id)];
+    const names = ['假名', ...SHORT];
+    const prev = idx > 0 ? order[idx - 1] : null, next = idx < order.length - 1 ? order[idx + 1] : 'exam';
+    const nextName = idx < order.length - 1 ? `第 ${idx + 1} 站 ${names[idx + 1]}` : '終點：N5 考試';
+    return `<div class="st-nav">
+      ${prev ? `<a class="btn" href="#/${prev}">← 第 ${idx - 1} 站 ${names[idx - 1]}</a>` : `<a class="btn" href="#/">← 回首頁</a>`}
+      <a class="btn" href="#/${next}">下一站：${nextName} →</a></div>`;
+  }
+
+  /* ---------- 第 0 站 假名 ---------- */
+  function kanaTable(rows, kata, y) {
+    return `<table class="kana${y ? ' y' : ''}">${rows.map(([ks, ro]) => {
+      const kk = ks.includes(' ') ? ks.split(' ') : [...ks];
+      const rr = ro.split(' ');
+      return `<tr>${kk.map((k, i) => k === '・' ? '<td class="empty"></td>' :
+        `<td data-say="${esc(k)}" title="點一下聽發音"><span class="k" lang="ja">${kata ? toKata(k) : k}</span><span class="ro">${rr[i]}</span></td>`).join('')}</tr>`;
+    }).join('')}</table>`;
+  }
+  function buildKana() {
+    $('#p-kana').innerHTML = stHead(KANA_STATION, 'g0', '<p class="hint">點任何一格就會念出來。左邊平假名、右邊片假名，對照著學。</p>') + `
+      <div class="grid12">
+        <div class="box span t1" style="--span:6">${ribbon('1', '清音・平假名 <span lang="ja">ひらがな</span>')}${kanaTable(H_ROWS, false)}</div>
+        <div class="box span t1" style="--span:6">${ribbon('2', '清音・片假名 <span lang="ja">カタカナ</span>')}${kanaTable(H_ROWS, true)}</div>
+        <div class="box span t1" style="--span:4">${ribbon('3', '濁音・半濁音（平）')}<p class="box-sub">加上「゛」「゜」</p>${kanaTable(D_ROWS, false)}</div>
+        <div class="box span t1" style="--span:4">${ribbon('4', '濁音・半濁音（片）')}<p class="box-sub">寫法一樣加點、加圈</p>${kanaTable(D_ROWS, true)}</div>
+        <div class="box span t1" style="--span:4">${ribbon('5', '促音・長音・助詞念法')}
+          <p class="knote">促音：小的 <b lang="ja" data-say="っ">っ</b> 停頓一拍。<b lang="ja" data-say="きって">きって</b>（郵票）≠ <b lang="ja" data-say="きて">きて</b>（來）。</p>
+          <p class="knote">長音：母音拉長一拍。<b lang="ja" data-say="おばあさん">おばあさん</b>（奶奶）≠ <b lang="ja" data-say="おばさん">おばさん</b>（阿姨）。</p>
+          <p class="knote">片假名的長音寫成「ー」：<b lang="ja" data-say="コーヒー">コーヒー</b>、<b lang="ja" data-say="ケーキ">ケーキ</b>。</p>
+          <p class="knote">助詞例外：<b lang="ja" class="mk pt">は</b> 念 wa、<b lang="ja" class="mk pt">へ</b> 念 e、<b lang="ja" class="mk pt">を</b> 念 o。</p>
+        </div>
+        <div class="box span t1" style="--span:6">${ribbon('6', '拗音（平）')}<p class="box-sub">い段＋小的ゃゅょ，念成一拍</p>${kanaTable(Y_ROWS, false, true)}</div>
+        <div class="box span t1" style="--span:6">${ribbon('7', '拗音（片）')}<p class="box-sub">外來語常見</p>${kanaTable(Y_ROWS, true, true)}</div>
+      </div>
+      <div class="box t1 sec-gap">${ribbon('', '本站速記', 'big')}
+        <div class="quick">
+          <span class="q">平假名 <b>46</b></span><span class="arr">${ARROW}</span>
+          <span class="q">片假名 <b>46</b></span><span class="arr">${ARROW}</span>
+          <span class="q">濁音・半濁音 <b>25</b></span><span class="arr">${ARROW}</span>
+          <span class="q">拗音 <b>33</b></span><span class="arr">${ARROW}</span>
+          <span class="q">促音 <span lang="ja">っ</span>・長音 <span lang="ja">ー</span></span><span class="arr">${ARROW}</span>
+          <span class="q">可以進第 1 站了</span>
+        </div>
+      </div>
+      ${stNav(0)}
+      <div class="sec-gap">${timeline('kana')}</div>`;
+  }
+
+  /* ---------- 文法站：B 的頁頭＋A 的橫線筆記紙 ---------- */
+  function buildStation(st, idx) {
+    const meta = `${markLegend(st)}<p class="hint" style="margin-top:6px">${st.items.length} 條句型・第一條是這站的主句型・點例句或喇叭按鈕就會念</p>`;
+    const checked = DONE.has(st.id) ? ' checked' : '';
+    let sheet = `<header class="nb-head" data-snap>
+        <p class="nb-title"><span lang="ja">ぶんぽうノート</span>第 ${st.no} 站・${st.items.length} 條</p>
+        <label class="donebox"><input type="checkbox" data-done="${st.id}"${checked}><span class="bx"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg></span><span class="lb">這站學完了</span></label>
+      </header>`;
+    st.items.forEach((it, i) => {
+      const main = i === 0;
+      const isConj = CONJ.has(it.p);
+      const sideTxt = isConj ? CONJ_SIDE[it.p] : it.note;
+      const anno = `<aside class="anno"><svg class="curl" viewBox="0 0 96 36" aria-hidden="true">${CURL_R}</svg><p class="snote">${jaWrap(sideTxt)}</p></aside>`;
+      const formula = isConj
+        ? `<div class="frow" data-snap><div class="fbox${main ? ' main' : ''}">${tokHTML(it.p)}</div></div><div class="fline" data-snap>${conjHTML(it.note, main)}${anno}</div>`
+        : `<div class="fline" data-snap>${formulaHTML(it.p, main)}${anno}</div>`;
+      sheet += `<section class="gi" data-snap data-key="${st.id}:${i}">
+          <h2 class="gi-zh"><span class="arr">→</span>${esc(it.zh)}<span class="no">${st.no}-${i + 1}</span></h2>
+          ${formula}
+          <p class="gi-ex"><span class="lb">例：</span><span class="ja" lang="ja" data-say="${esc(it.ex)}">${esc(it.ex)}</span><button class="say" data-say="${esc(it.ex)}" aria-label="聽例句">${SPEAK}</button></p>
+          <p class="gi-exzh">${esc(it.exzh)}</p>
+          <div class="gi-ill"></div>
+        </section>`;
+    });
+    const page = $('#p-' + st.id);
+    page.innerHTML = stHead(st, st.id, meta) + `<article class="sheet" id="sheet-${st.id}" aria-label="第 ${st.no} 站 筆記">${sheet}</article>
+      ${stNav(idx + 1)}
+      <div class="sec-gap">${timeline(st.id)}</div>`;
+    $$('.gi', page).forEach(sec => {
+      const id = ILLUS_AT[sec.dataset.key];
+      if (!id) return;
+      const el = illus(id);
+      if (el) $('.gi-ill', sec).appendChild(el);
+    });
+  }
+
+  /* ---------- 筆記紙排版：旁註位置＋對齊橫線 ---------- */
+  // 旁註放不下公式框右邊時（flex 換行了），改到下方、箭頭往上指著最後一個公式框
+  function placeAnnos(root) {
+    $$('.fline', root).forEach(fl => {
+      const anno = $('.anno', fl), row = $('.frow', fl), svg = $('.curl', anno);
+      anno.classList.remove('below'); anno.style.paddingLeft = ''; anno.style.width = '';
+      svg.setAttribute('viewBox', '0 0 96 36'); svg.innerHTML = CURL_R;
+      // 先量公式框那一列自己的寬度，剩下的空間夠放「箭頭＋旁註」就放右邊
+      anno.style.display = 'none';
+      const fw = fl.getBoundingClientRect().width, rw = row.getBoundingClientRect().width;
+      anno.style.display = '';
+      const avail = Math.floor(fw - rw);
+      if (avail >= 96 + 170) { anno.style.width = Math.min(avail, 540) + 'px'; return; }
+      anno.classList.add('below');
+      svg.setAttribute('viewBox', '0 0 48 36'); svg.innerHTML = CURL_UP;
+      const boxes = $$('.fbox', row);
+      const lb = boxes[boxes.length - 1].getBoundingClientRect();
+      const fr = fl.getBoundingClientRect();
+      const tipX = lb.left + Math.min(lb.width / 2, 80) - fr.left;
+      const nw = $('.snote', anno).getBoundingClientRect().width;
+      const ml = Math.max(0, Math.min(tipX - 24, fr.width - nw));
+      anno.style.paddingLeft = Math.round(ml) + 'px';
+    });
+  }
+  // 把區塊高度補到 36 的倍數，文字才會坐在線上
+  function snapAll(root) {
+    const els = $$('[data-snap]', root).reverse();
+    els.forEach(el => { el.style.paddingBottom = ''; });
+    els.forEach(el => {
+      const u = +el.dataset.snap || 36;
+      const h = Math.round(el.getBoundingClientRect().height);
+      const r = h % u;
+      if (r) el.style.paddingBottom = (parseFloat(getComputedStyle(el).paddingBottom) || 0) + (u - r) + 'px';
+    });
+  }
+  function layoutSheet() {
+    const sh = $('.page.on .sheet');
+    if (!sh) return;
+    placeAnnos(sh); snapAll(sh);
+  }
+  window.N5AB = { layoutSheet };
+
+  /* ---------- 單字 ---------- */
+  const VERB_NOTE = {
+    '動詞1類': ['1 類（五段）', 'ます形前一個字是い段：書く→書きます'],
+    '動詞2類': ['2 類（一段）', '去掉る加ます：食べる→食べます'],
+    '動詞3類': ['3 類（不規則）', 'する→します、来る→来ます'],
+  };
+  function wordRow(w) {
+    const { html, say } = wordParts(w.w, w.r);
+    const key = (w.w + ' ' + w.r + ' ' + toKata(w.r) + ' ' + w.zh).toLowerCase();
+    return `<button class="wd" data-say="${esc(say)}" data-k="${esc(key)}" title="點一下聽發音"><span class="w" lang="ja">${html}</span><span class="zh">${esc(w.zh)}</span></button>`;
+  }
+  function buildVocab() {
+    const cats = TRUNKS.flatMap((t, ti) => t.cats.map(c => ({ c, ti, t })));
+    const sorted = Object.keys(CAT).map(c => [c, (byCat[c] || []).length]).sort((a, b) => b[1] - a[1]);
+    const max = sorted[0][1];
+    const boxes = cats.map(({ c, ti, t }, ci) => {
+      const list = byCat[c] || [];
+      let inner;
+      if (c.startsWith('v_')) {
+        const groups = ['動詞1類', '動詞2類', '動詞3類'].map(p => [p, list.filter(w => w.pos === p)]);
+        const other = list.filter(w => !w.pos.startsWith('動詞'));
+        if (other.length) groups.push(['其他', other]);
+        inner = groups.filter(g => g[1].length).map(([p, ws]) => {
+          const [tt, d] = VERB_NOTE[p] || ['其他', ''];
+          return `<div class="vgrp"><p class="vsub">${tt} <small>${ws.length} 個${d ? '・' + esc(d) : ''}</small></p>${ws.map(wordRow).join('')}</div>`;
+        }).join('');
+      } else inner = list.map(wordRow).join('');
+      return `<div class="mcell"><section class="box t3 vbox" id="vc-${c}" data-cat="${c}">${ribbon(pad2(ci + 1), `${esc(CAT[c][0])} <span lang="ja" class="hint">${esc(CAT[c][1])}</span>`)}
+        <p class="box-sub">主線 ${ti + 1}・${esc(t.name)}・<span class="vcount">${list.length}</span> 字</p>${inner}</section></div>`;
+    }).join('');
+    $('#p-vocab').innerHTML = `
+      <div class="list-head">
+        <div>
+          <div class="brush"><h1>單字 ${V.length}<small>19 類・點單字聽發音</small></h1></div>
+          <p class="st-sum">依主題分成 5 條主線、19 類。不用照順序背，先挑招呼語和身邊的東西。動詞分 1、2、3 類列出。</p>
+          <label class="search">${SEARCH}<span class="sr">搜尋單字</span><input id="vsearch" type="search" placeholder="搜尋：たべる、食、吃…" autocomplete="off"></label>
+          <p class="search-count" id="vcount">共 ${V.length} 字，全部列在下面。</p>
+          <div class="chips">${cats.map(({ c }) => `<button class="chip t3" data-jump="vc-${c}">${esc(CAT[c][0])}<em>${(byCat[c] || []).length}</em></button>`).join('')}</div>
+        </div>
+        <div class="box t3 solid">${ribbon('', '每類有幾個字', 'big')}
+          <div class="bars">${sorted.map(([c, n]) => `<div class="bar t3" data-jump="vc-${c}" data-tip="<b>${esc(CAT[c][0])}</b>：${n} 字<br>例：${(byCat[c] || []).slice(0, 4).map(w => esc(w.w)).join('、')}"><span class="lb">${esc(CAT[c][0])}</span><span class="tr"><span class="fill" style="width:${(n / max * 100).toFixed(1)}%"></span></span><span class="v">${n}</span></div>`).join('')}</div>
+          <p class="hint" style="margin-top:8px">點長條跳到那一類。</p>
+        </div>
+      </div>
+      <div class="masonry" id="vgrid">${boxes}</div>
+      <p class="empty-msg" id="vempty">沒有找到，換個寫法試試（平假名、漢字或中文都可以）。</p>`;
+
+    const input = $('#vsearch');
+    const rows = $$('#vgrid .wd');
+    let tm;
+    input.addEventListener('input', () => {
+      clearTimeout(tm);
+      tm = setTimeout(() => {
+        const q = input.value.trim().toLowerCase();
+        const qk = toKata(q);
+        let n = 0;
+        rows.forEach(r => { const hit = !q || r.dataset.k.includes(q) || r.dataset.k.includes(qk); r.hidden = !hit; if (hit) n++; });
+        $$('#vgrid .vgrp').forEach(g => { g.hidden = !$$('.wd', g).some(r => !r.hidden); });
+        $$('#vgrid .vbox').forEach(b => {
+          const vis = $$('.wd', b).filter(r => !r.hidden).length;
+          b.parentElement.hidden = vis === 0; $('.vcount', b).textContent = q ? `${vis} / ${(byCat[b.dataset.cat] || []).length}` : (byCat[b.dataset.cat] || []).length;
+        });
+        $('#vcount').textContent = q ? `「${input.value.trim()}」找到 ${n} 字。` : `共 ${V.length} 字，全部列在下面。`;
+        $('#vempty').style.display = q && !n ? 'block' : 'none';
+      }, 160);
+    });
+  }
+
+  /* ---------- 漢字 ---------- */
+  function buildKanji() {
+    const card = k => {
+      const words = (k.words || []).map(w => { const p = wordParts(w.w, w.r); return `<li><span class="ja" lang="ja" data-say="${esc(p.say)}">${p.html}</span><span class="z">${esc(w.zh)}</span></li>`; }).join('');
+      const key = [k.k, k.on, k.kun, toHira(k.on || ''), k.zh, ...(k.words || []).flatMap(w => [w.w, w.r, w.zh])].join(' ').toLowerCase();
+      return `<div class="kc ${k.set}" data-k="${esc(key)}">
+        <div class="big" lang="ja" data-say="${esc((k.words && k.words[0] && k.words[0].r) || k.k)}" title="點一下聽第一個例詞">${esc(k.k)}</div>
+        <div><div class="zh">${esc(k.zh)}<span class="tag">${k.set === 'core' ? '核心' : '補充'}</span></div>
+          <div class="rd"><i>音</i><span lang="ja">${esc(k.on || '—')}</span></div><div class="rd"><i>訓</i><span lang="ja">${esc(k.kun || '—')}</span></div>
+          <ul>${words}</ul></div></div>`;
+    };
+    $('#p-kanji').innerHTML = `
+      <div class="list-head">
+        <div>
+          <div class="brush"><h1>漢字 ${K.length}<small>7 組・點大字聽第一個例詞</small></h1></div>
+          <p class="st-sum">從數字、時間開始，每週 10～15 字。每個字記音讀、訓讀和 1～2 個例詞；例詞點一下就會念。</p>
+          <label class="search">${SEARCH}<span class="sr">搜尋漢字</span><input id="ksearch" type="search" placeholder="搜尋：日、にち、太陽…" autocomplete="off"></label>
+          <p class="search-count" id="kcount">共 ${K.length} 字，全部列在下面。</p>
+          <div class="chips">${KORDER.map(g => `<button class="chip t2" data-jump="kg-${g}">${esc(KGROUP[g][0])}<em>${(kByGroup[g] || []).length}</em></button>`).join('')}</div>
+        </div>
+        <div class="box t2 solid">${ribbon('', '怎麼看這頁', 'big')}
+          <div class="legend-list">
+            <div><span class="k"><span class="kc" style="display:inline-block;padding:0 10px;font-size:13px">實線</span></span><span>核心字（${K.filter(k => k.set === 'core').length} 字）：先背</span></div>
+            <div><span class="k"><span class="kc extra" style="display:inline-block;padding:0 10px;font-size:13px">虛線</span></span><span>補充字（${K.filter(k => k.set !== 'core').length} 字）：有空再背</span></div>
+            <div><span class="k"><span class="rd" style="font-size:13px"><i style="font-style:normal;border:1px solid var(--line-strong);border-radius:3px;padding:0 3px">音</i></span></span><span>音讀（片假名），多用在兩個漢字的詞</span></div>
+            <div><span class="k"><span class="rd" style="font-size:13px"><i style="font-style:normal;border:1px solid var(--line-strong);border-radius:3px;padding:0 3px">訓</i></span></span><span>訓讀（平假名），「・」後面是送假名</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="masonry k2" id="kgrid">${KORDER.map((g, gi) => `
+        <div class="mcell"><section class="box t2 kbox" id="kg-${g}">${ribbon(gi + 1, `${esc(KGROUP[g][0])} <span lang="ja" class="hint">${esc(KGROUP[g][1])}</span>`)}
+          <p class="box-sub">${(kByGroup[g] || []).length} 字</p>
+          <div class="kcards">${(kByGroup[g] || []).map(card).join('')}</div></section></div>`).join('')}
+      </div>
+      <p class="empty-msg" id="kempty">沒有找到，換個寫法試試。</p>`;
+    const input = $('#ksearch');
+    const cards = $$('#kgrid .kc');
+    let tm;
+    input.addEventListener('input', () => {
+      clearTimeout(tm);
+      tm = setTimeout(() => {
+        const q = input.value.trim().toLowerCase();
+        const qh = toHira(q);
+        let n = 0;
+        cards.forEach(c => { const hit = !q || c.dataset.k.includes(q) || c.dataset.k.includes(qh); c.hidden = !hit; if (hit) n++; });
+        $$('#kgrid .kbox').forEach(b => { b.parentElement.hidden = !$$('.kc', b).some(c => !c.hidden); });
+        $('#kcount').textContent = q ? `「${input.value.trim()}」找到 ${n} 字。` : `共 ${K.length} 字，全部列在下面。`;
+        $('#kempty').style.display = q && !n ? 'block' : 'none';
+      }, 160);
+    });
+  }
+
+  /* ---------- 考試 ---------- */
+  function buildExam() {
+    const subj = [
+      { s: '言語知識（文字・語彙）', sh: '文字・語彙', m: 20, map: [['vocab', '單字'], ['kanji', '漢字']] },
+      { s: '言語知識（文法）・読解', sh: '文法・讀解', m: 40, map: G.map((st, i) => [st.id, `第 ${st.no} 站`]) },
+      { s: '聴解', sh: '聽解', m: 30, map: [['g1', '每站例句多聽幾次']] },
+    ];
+    const max = 40;
+    $('#p-exam').innerHTML = `
+      <div class="st-head">
+        <div class="st-title">
+          <div class="brush"><h1><span class="no">終點</span>N5 考試<small lang="ja">しけん</small></h1></div>
+          <p class="st-sum">3 科、合計 90 分鐘（2020 年 12 月起的新時間）。前面每一站的內容，最後都在這裡會合。</p>
+        </div>
+        <div>${IL.target.replace('class="illus"', 'class="illus" width="150" height="150"')}</div>
+        <div>${sticky('考試時間合計', '<span class="big-num">90<small>分鐘</small></span>')}</div>
+      </div>
+      <div class="grid12">
+        <div class="box span t4" style="--span:7">${ribbon('1', '考試科目與時間')}
+          <div class="bars exam" role="table" aria-label="N5 各科考試時間">
+            ${subj.map(x => `<div class="bar t4" role="row" data-tip="<b>${esc(x.s)}</b>：${x.m} 分鐘（占 ${Math.round(x.m / 90 * 100)}%）"><span class="lb" role="cell">${esc(x.s)}</span><span class="tr" role="cell"><span class="fill" style="width:${x.m / max * 100}%"></span></span><span class="v" role="cell">${x.m} 分</span></div>`).join('')}
+          </div>
+          <div class="axis"><span></span><span class="ticks">${[0, 10, 20, 30, 40].map(t => `<span style="left:${t / max * 100}%">${t}</span>`).join('')}</span><span>分鐘</span></div>
+          <p class="hint" style="margin-top:10px">合計 90 分鐘。文法和讀解同一節考，時間最長。</p>
+        </div>
+        <div class="box span t4" style="--span:5">${ribbon('2', '官方說 N5 要能做到 <span lang="ja" class="hint">認定の目安</span>')}
+          <p class="knote"><b>讀</b>：看得懂用平假名、片假名和基本漢字寫的固定句子與短文。</p>
+          <p class="knote"><b>聽</b>：教室和日常生活中，慢慢說的短對話，能聽出需要的資訊。</p>
+          <div style="display:flex;justify-content:flex-end;margin-top:6px">${IL.pencil.replace('class="illus"', 'class="illus" width="96" height="96"')}</div>
+        </div>
+        <div class="box span t4" style="--span:7">${ribbon('3', '對應這張地圖')}
+          <div class="map-rows">${subj.map(x => `<div class="map-row"><span class="s">${esc(x.sh)}</span><span class="arr">${ARROW}</span><span class="links">${x.map.map(([r, l]) => `<a class="btn" href="#/${r}" style="padding:3px 12px;font-size:13px">${esc(l)}</a>`).join('')}</span></div>`).join('')}</div>
+          <p class="hint" style="margin-top:12px">題型和題數見 vault 的 2-wiki/日文-JLPT考試結構.md。</p>
+        </div>
+        <div class="box span tn" style="--span:5">${ribbon('', '考前小提醒', 'big')}
+          <div class="notes">${sticky('', '先回到每站<b>朱框的主句型</b>，例句念出聲。', 'l', 'tape')}${sticky('', '做一回完整模擬題，照 20／40／30 分鐘計時。', '', 'tape')}</div>
+        </div>
+      </div>
+      <div class="box t1 sec-gap">${ribbon('', '時間軸（一眼看完）', 'big')}${timeline('exam')}</div>`;
+  }
+
+  /* ---------- 頁尾 ---------- */
+  $('#foot-cells').innerHTML = [
+    ['f1', '假名 → 文法 → N5<br>一條線走到底'],
+    ['f2', '點日文就會念<br>跟著念三遍'],
+    ['f3', `${G.reduce((a, s) => a + s.items.length, 0)} 句型・${V.length} 單字<br>${K.length} 漢字全在這裡`],
+    ['f4', '一天一小站<br>N5 不是夢'],
+  ].map(([ic, t]) => `<div class="foot-cell">${IL[ic]}<span>${t}</span></div>`).join('');
+
+  /* ---------- 全域互動：念出來、跳到分類、長條提示 ---------- */
+  document.addEventListener('click', e => {
+    const j = e.target.closest('[data-jump]');
+    if (j) { const t = document.getElementById(j.dataset.jump); if (t) t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); return; }
+    const s = e.target.closest('[data-say]');
+    if (s) { e.preventDefault(); speak(s.dataset.say); }
+  });
+  const ctip = $('#ctip');
+  document.addEventListener('mouseover', e => { const b = e.target.closest('[data-tip]'); if (!b) return; ctip.innerHTML = b.dataset.tip; ctip.classList.add('show'); });
+  document.addEventListener('mousemove', e => {
+    if (!ctip.classList.contains('show')) return;
+    const w = ctip.offsetWidth, h = ctip.offsetHeight;
+    let x = e.clientX + 14, y = e.clientY + 14;
+    if (x + w > innerWidth - 8) x = e.clientX - w - 14;
+    if (y + h > innerHeight - 8) y = e.clientY - h - 14;
+    ctip.style.left = x + 'px'; ctip.style.top = y + 'px';
+  });
+  document.addEventListener('mouseout', e => { const b = e.target.closest('[data-tip]'); if (b && !b.contains(e.relatedTarget)) ctip.classList.remove('show'); });
+
+  /* ---------- 學完的站：頂部分頁籤顯示 ✓ ---------- */
+  function refreshTabs() { $$('.tab').forEach(t => t.classList.toggle('done', DONE.has(t.dataset.r))); }
+  document.addEventListener('change', e => {
+    const cb = e.target.closest && e.target.closest('[data-done]');
+    if (!cb) return;
+    if (cb.checked) DONE.add(cb.dataset.done); else DONE.delete(cb.dataset.done);
+    saveDone(DONE); refreshTabs();
+  });
+
+  /* ---------- 路由 ---------- */
+  function route() {
+    let r = location.hash.replace(/^#\/?/, '') || 'home';
+    if (r === 'g0') r = 'kana';
+    if (r === 'grammar') { r = 'g1'; try { history.replaceState(null, '', location.search + '#/g1'); } catch (e) { /* 換不了網址也沒關係 */ } }
+    if (!ROUTES.includes(r)) r = 'home';
+    $$('.page').forEach(p => p.classList.toggle('on', p.id === 'p-' + r));
+    $$('.tab').forEach(t => t.dataset.r === r ? t.setAttribute('aria-current', 'page') : t.removeAttribute('aria-current'));
+    const tab = $('.tab[data-r="' + r + '"]');
+    document.title = (r === 'home' ? '' : ((tab ? tab.textContent.replace('✓', '').trim() : '') + '｜')) + 'N5 學習地圖・海報筆記版';
+    ctip.classList.remove('show');
+    layoutSheet();
+    scrollTo({ top: 0 });
+  }
+
+  /* ---------- 日文字型：頁尾寫目前用的字型；字型載入後重新對齊 ---------- */
+  const JF = window.JPFONT || { key: 'klee', name: 'Klee One', keys: [] };
+  $('#foot-font').textContent = `日文字型：${JF.name}（網址加 ?font= 可切換：${JF.keys.join('／')}）`;
+  const relayout = () => layoutSheet();
+  addEventListener('jpfont-load', () => { if (document.fonts) document.fonts.ready.then(relayout); relayout(); });
+  if (document.fonts) {
+    document.fonts.ready.then(relayout);
+    document.fonts.addEventListener && document.fonts.addEventListener('loadingdone', relayout);
+  }
+  let rsz;
+  addEventListener('resize', () => { clearTimeout(rsz); rsz = setTimeout(relayout, 150); });
+
+  buildHome(); buildKana(); G.forEach(buildStation); buildVocab(); buildKanji(); buildExam();
+  refreshTabs();
+  addEventListener('hashchange', route);
+  route();
+})();
+</script>
+</body>
+</html>

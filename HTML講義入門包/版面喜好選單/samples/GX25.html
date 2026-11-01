@@ -1,0 +1,81 @@
+<!doctype html><!-- 版面喜好選單範例 GX25｜底色掃入搜尋列｜來源：講師範例庫 output範例/元件庫/GX25-底色掃入搜尋列.html；原始來源 https://github.com/uiverse-io/galaxy（Inputs/LeonKohli_little-bulldog-27.html），作者 LeonKohli，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX25 底色掃入搜尋列（Search field: tint sweeps in from the left, underline grows from the centre）
+  來源：https://github.com/uiverse-io/galaxy　Inputs/LeonKohli_little-bulldog-27.html
+  原作者：LeonKohli　授權：MIT (Copyright 2023 Uiverse.io)　commit：adbd2ad
+  移植：保留原作的三個同步動作（.3s）——聚焦時淡色底由左往右掃滿整格、底線從中間往兩邊長出、放大鏡圖示變主色；
+    紫色 #6c63ff 換成 P11 --accent、淡底改 --accent-soft；原作淡底蓋在輸入框上面且會吃掉點擊（點欄位內會失焦），
+    改成墊在文字下方並 pointer-events:none；改成「筆記搜尋」：輸入即篩選下方清單、命中字加淡青底粗體、顯示筆數與找不到時的提示（少量原生 JS）；
+    補 label（視覺隱藏）、focus-visible 由掃入底色與底線表示；prefers-reduced-motion 時不掃入、不伸長，直接切換。
+  2026-10-09 由子代理移植成純 HTML／CSS（必要時加少量原生 JS）
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>底色掃入搜尋列</title>
+<style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px 16px;background:var(--bg);color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.card{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 16px 6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.meta{display:flex;justify-content:space-between;margin:8px 0 2px;font-size:12px;color:var(--ink-2)}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+li:last-child{border:0}
+li span{min-width:0}
+li small{flex:none;font-size:12px;color:var(--ink-2)}
+li[hidden]{display:none}
+mark{background:var(--accent-soft);color:var(--ink);font-weight:700;border-radius:2px}
+.empty{display:none;padding:14px 0;font-size:13px;color:var(--ink-2);text-align:center}
+.empty.on{display:block}
+
+/* 原作 .ui-input-container */
+.ui-input-container{position:relative;width:100%}
+.ui-input{position:relative;z-index:1;width:100%;padding:10px 10px 10px 40px;font:inherit;font-size:15px;color:var(--ink);border:none;border-bottom:2px solid var(--line);outline:none;background-color:transparent;transition:border-color .3s;border-radius:0;-webkit-appearance:none;appearance:none}
+.ui-input::-webkit-search-cancel-button{-webkit-appearance:none}
+.ui-input::placeholder{color:var(--ink-2);opacity:.8}
+.ui-input:hover{border-color:var(--ink-2)}
+.ui-input:focus{border-color:var(--accent)}
+.ui-input-underline{position:absolute;z-index:2;bottom:0;left:0;height:2px;width:100%;background-color:var(--accent);transform:scaleX(0);transition:transform .3s;pointer-events:none}
+.ui-input:focus+.ui-input-underline{transform:scaleX(1)}
+.ui-input-highlight{position:absolute;z-index:0;bottom:0;left:0;height:100%;width:0;background-color:var(--accent-soft);transition:width .3s;pointer-events:none}
+.ui-input:focus~.ui-input-highlight{width:100%}
+.ui-input-icon{position:absolute;z-index:2;left:10px;top:50%;transform:translateY(-50%);color:var(--ink-2);transition:color .3s;pointer-events:none;display:flex}
+.ui-input:focus~.ui-input-icon{color:var(--accent)}
+.ui-input-icon svg{width:20px;height:20px}
+@media (prefers-reduced-motion:reduce){.ui-input,.ui-input-underline,.ui-input-highlight,.ui-input-icon{transition:none}}
+</style></head><body>
+<div class="card">
+  <label class="sr" for="q">搜尋筆記</label>
+  <div class="ui-input-container">
+    <input id="q" class="ui-input" type="search" placeholder="搜尋筆記標題…" autocomplete="off">
+    <div class="ui-input-underline"></div>
+    <div class="ui-input-highlight"></div>
+    <div class="ui-input-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linejoin="round" stroke-linecap="round" stroke-width="2" stroke="currentColor" d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"/></svg></div>
+  </div>
+  <div class="meta"><span id="cnt" aria-live="polite">共 5 筆</span><span>按 Esc 清除</span></div>
+  <ul id="list">
+    <li><span>財務管理第 4 週講義</span><small>10/02</small></li>
+    <li><span>策略管理課堂逐字稿</span><small>10/01</small></li>
+    <li><span>日本旅遊－東京美食清單</span><small>09/28</small></li>
+    <li><span>組織行為第 3 週講義</span><small>09/25</small></li>
+    <li><span>面試準備筆記</span><small>09/20</small></li>
+  </ul>
+  <div class="empty" id="empty">找不到符合的筆記</div>
+</div>
+<script>
+const q=document.getElementById('q'),items=[...document.querySelectorAll('#list li')],cnt=document.getElementById('cnt'),empty=document.getElementById('empty');
+items.forEach(li=>li.dataset.t=li.firstElementChild.textContent);
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function f(){const k=q.value.trim();let n=0;
+  items.forEach(li=>{const t=li.dataset.t,i=k?t.indexOf(k):0,hit=!k||i>=0;li.hidden=!hit;if(hit)n++;
+    li.firstElementChild.innerHTML=k&&i>=0?esc(t.slice(0,i))+'<mark>'+esc(k)+'</mark>'+esc(t.slice(i+k.length)):esc(t)});
+  cnt.textContent=k?'找到 '+n+' 筆':'共 '+items.length+' 筆';empty.classList.toggle('on',n===0)}
+q.addEventListener('input',f);
+q.addEventListener('keydown',e=>{if(e.key==='Escape'){q.value='';f()}});
+</script>
+</body></html>

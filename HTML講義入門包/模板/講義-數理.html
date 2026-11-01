@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>講義：數理</title>
+<link rel="stylesheet" href="../產出/katex/katex.min.css">
+<script defer src="../產出/katex/katex.min.js"></script>
+<script defer src="../產出/katex/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<style>
+/* 講義模板：數理形式。給學生的 AI 讀，要換內容只改 main 裡的文字與公式，不用改這段。
+   公式用 KaTeX，檔案在 產出/katex/，要和講義放在一起：行內寫 \( \)，獨立一行寫 \[ \]。
+   版型規則：定理框放最上面；例題逐步對齊，每步右邊寫「這一步在做什麼」；練習留手寫空間，答案印在頁尾。 */
+@page{size:A4;margin:13mm 15mm}
+:root{--ink:#15191e;--ink-2:#4b5058;--main:#253c67;--soft:#e2e7f4;--line:#bec3c9;--key:#2254c1;--bad:#b02b27;--bad-soft:#fce1de;--ok:#296a3b;--ok-soft:#dbefde;--page:#e9e7e3;--hl:#f0e07f;
+  --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;--digit:"Bahnschrift","Segoe UI","SF Pro Display",sans-serif}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{margin:0}
+body{background:var(--page);color:var(--ink);font:400 10.6pt/1.55 var(--font)}
+h1,h2,h3,p,ul,ol{margin:0;padding:0}
+ul,ol{list-style:none}
+.katex{font-size:1.06em}
+.sheet{width:210mm;min-height:297mm;margin:8mm auto;background:#fff;padding:13mm 15mm;display:flex;flex-direction:column}
+.band{display:flex;align-items:center;gap:3mm;background:var(--main);color:#fff;padding:2.6mm 3.5mm;border-radius:1.2mm}
+.band .no{font:600 12pt var(--digit)}
+.band h1{background:#fff;color:var(--main);border-radius:1mm;padding:.2mm 4mm;font-size:19pt;font-weight:900;line-height:1.3}
+.band .meta{margin-left:auto;font-size:9pt}
+.when{margin-top:2.2mm;font-weight:500}
+.thm{margin-top:3mm;display:grid;grid-template-columns:24mm minmax(0,1fr) 62mm;border:1.2pt solid var(--main)}
+.thm h2{background:var(--main);color:#fff;font-size:11.5pt;font-weight:700;display:flex;align-items:center;justify-content:center}
+.thm .f{display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--hl) 32%,#fff);padding:1.5mm 1mm}
+.thm .f .katex-display{margin:0}
+.thm svg{display:block;width:100%;height:auto;background:#fff;border-left:.5pt solid var(--line)}
+.sec{margin-top:4mm;display:flex;align-items:baseline;gap:2mm;border-bottom:.6pt solid var(--main);padding-bottom:.6mm}
+.sec b{font:600 15pt/1 var(--digit);color:var(--main)}
+.sec h2{font-size:13pt;font-weight:700}
+.q{margin-top:1.6mm;font-weight:500}
+.steps{width:100%;border-collapse:collapse;margin-top:1.2mm}
+.steps th{font-size:9.5pt;font-weight:500;color:var(--main);background:var(--soft);padding:.5mm 2mm;text-align:left;border-bottom:.6pt solid var(--main)}
+.steps td{padding:.8mm 2mm;border-bottom:.3pt solid var(--line);vertical-align:middle}
+.steps td:first-child{width:9mm;text-align:center;font:600 10.5pt var(--digit);color:var(--main)}
+.steps td:last-child{width:62mm;font-size:9.6pt;color:var(--ink-2);line-height:1.4}
+.ans{color:var(--key);font-weight:500}
+.trap{margin-top:3mm;display:grid;grid-template-columns:1fr 1fr;gap:2mm}
+.trap div{padding:1mm 2.5mm;border-radius:1mm;font-size:10pt}
+.trap .x{background:var(--bad-soft)}
+.trap .o{background:var(--ok-soft)}
+.trap b{display:block;font-size:9.5pt}
+.trap .x b{color:var(--bad)}
+.trap .o b{color:var(--ok)}
+.prac{flex:1;display:grid;grid-template-columns:repeat(3,1fr);margin-top:1.6mm;border:.5pt solid var(--line)}
+.prac>div{padding:1mm 2mm;border-left:.5pt solid var(--line);background:repeating-linear-gradient(transparent 0 6.7mm,var(--line) 6.7mm 7mm) 0 9mm/100% 7mm repeat-y}
+.prac>div:first-child{border-left:0}
+.prac p{background:#fff}
+.foot{margin-top:2mm;font-size:9.4pt;color:var(--ink-2)}
+.foot b{color:var(--main)}
+@media print{body{background:#fff}.sheet{width:auto;min-height:268mm;margin:0;padding:0}.sheet+.sheet{break-before:page}}
+</style>
+</head>
+<body>
+<!-- 內容開始：AI 只改下面 main 裡的文字。放不下就複製一整個 main 區塊當下一頁；「我的筆記」只留在最後一頁。 -->
+<main class="sheet">
+  <header class="band">
+    <span class="no">單元 3</span><h1>連鎖律</h1>
+    <span class="meta">微積分｜合成函數的導數</span>
+  </header>
+  <p class="when">什麼時候用：函數是「外層包內層」，例如 \((3x^2+1)^5\)、\(\sin(x^2)\)。</p>
+
+  <div class="thm">
+    <h2>定理</h2>
+    <div class="f">\[\frac{dy}{dx}=\frac{dy}{du}\cdot\frac{du}{dx}\]</div>
+    <svg viewBox="0 0 240 72" role="img" aria-label="x 經內層 u 等於 g(x) 得到 u，再經外層 y 等於 f(u) 得到 y">
+      <g font-family="Microsoft JhengHei,PingFang TC,sans-serif" font-size="12" text-anchor="middle" fill="#15191e">
+        <text x="16" y="38">x</text>
+        <rect x="32" y="21" width="58" height="26" rx="3" fill="#e2e7f4" stroke="#253c67"/><text x="61" y="38">內層 g</text>
+        <text x="110" y="38">u</text>
+        <rect x="128" y="21" width="58" height="26" rx="3" fill="#e2e7f4" stroke="#253c67"/><text x="157" y="38">外層 f</text>
+        <text x="208" y="38">y</text>
+        <path d="M22 34h8M90 34h12M118 34h8M186 34h14" stroke="#253c67" fill="none"/>
+        <text x="61" y="65" fill="#2254c1">du/dx</text><text x="157" y="65" fill="#2254c1">dy/du</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="sec"><b>例題 1</b><h2>求 \(y=(3x^2+1)^5\) 的導數</h2></div>
+  <table class="steps">
+    <tr><th>步</th><th>算式</th><th>這一步在做什麼</th></tr>
+    <tr><td>1</td><td>令 \(u=3x^2+1\)，則 \(y=u^5\)</td><td>找出內層：括號裡的整塊就是 \(u\)</td></tr>
+    <tr><td>2</td><td>\(\dfrac{dy}{du}=5u^4\)，\(\dfrac{du}{dx}=6x\)</td><td>外層、內層各微一次</td></tr>
+    <tr><td>3</td><td>\(\dfrac{dy}{dx}=5u^4\cdot 6x\)</td><td>套定理：兩個導數相乘</td></tr>
+    <tr><td>4</td><td class="ans">\(\dfrac{dy}{dx}=30x(3x^2+1)^4\)</td><td>把 \(u\) 換回 \(x\)，整理成答案</td></tr>
+  </table>
+
+  <div class="trap">
+    <div class="x"><b>✗ 常見錯誤：忘了乘內層</b>\(\dfrac{d}{dx}(3x^2+1)^5=5(3x^2+1)^4\)</div>
+    <div class="o"><b>✓ 檢查法：內層還有 \(x\)，就要再乘一次</b>\(\dfrac{d}{dx}(3x^2+1)^5=5(3x^2+1)^4\cdot 6x\)</div>
+  </div>
+
+  <div class="sec"><b>例題 2</b><h2>求 \(y=\sin(x^2)\) 的導數</h2></div>
+  <table class="steps">
+    <tr><td>1</td><td>令 \(u=x^2\)，則 \(y=\sin u\)</td><td>內層是 \(x^2\)，外層是 \(\sin\)</td></tr>
+    <tr><td>2</td><td class="ans">\(\dfrac{dy}{dx}=\cos u\cdot 2x=2x\cos(x^2)\)</td><td>外層微分後，內層原樣保留，再乘內層導數</td></tr>
+  </table>
+
+  <div class="sec"><b>練習</b><h2>寫在格線上，再對頁尾答案</h2></div>
+  <div class="prac">
+    <div><p>1. \(y=e^{3x+2}\)</p></div>
+    <div><p>2. \(y=\sqrt{x^2+1}\)</p></div>
+    <div><p>3. \(y=\cos(5x)\)</p></div>
+  </div>
+  <p class="foot"><b>答案</b>　1. \(3e^{3x+2}\)　2. \(\dfrac{x}{\sqrt{x^2+1}}\)　3. \(-5\sin(5x)\)</p>
+</main>
+<!-- 內容結束 -->
+
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!doctype html>
+<!-- 版面喜好選單範例 R3｜健檢報告單｜來源：講師範例庫 output範例/設計偏好選擇/samples/R3-健檢報告單.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<!-- 範例 R3 健檢報告單：借醫院檢驗報告，最上方總評，每個指標一列（項目／本期數值／參考或七月對照／判定），黑體、表格主導、好掃讀 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code 使用習慣分析</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto+Mono:wght@500&display=swap">')</script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#eef0f2;
+  --sheet:#ffffff;
+  --ink:#16191d;
+  --ink-2:#4b525b;
+  --rule:#16191d;
+  --line:#d5d9de;
+  --head:#f3f5f7;
+  --bad:#c0261c;
+  --bad-bg:#fcebea;
+  --mid:#8a5a00;
+  --good:#1f7a3d;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --num:"Roboto Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.7 var(--sans);-webkit-font-smoothing:antialiased}
+::selection{background:#cfe0f5;color:var(--ink)}
+h1,h2,h3,p,ul,dl{margin:0}
+code{font:500 .88em/1 var(--num);overflow-wrap:anywhere}
+.sheet{max-width:1120px;margin:32px auto 56px;background:var(--sheet);padding:36px 44px 44px;box-shadow:0 1px 2px rgba(22,25,29,.08),0 10px 30px -18px rgba(22,25,29,.25)}
+
+/* 表頭 */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;padding-bottom:14px;border-bottom:3px solid var(--rule)}
+.top h1{font-size:30px;font-weight:700;line-height:1.3}
+.meta{display:grid;gap:2px;font-size:14px;line-height:1.6;color:var(--ink-2);text-align:right}
+
+/* 區塊標題：左欄標籤式 */
+.block{display:grid;grid-template-columns:132px minmax(0,1fr);gap:24px;padding:24px 0;border-bottom:1px solid var(--line)}
+.results-block{grid-template-columns:1fr}
+.block>h2{font-size:18px;font-weight:700;line-height:1.5}
+.summary .lede{font-size:18px;line-height:1.8;font-weight:500}
+.summary ul{list-style:none;padding:0;margin-top:14px;display:grid;gap:10px}
+.summary li{padding-left:22px;position:relative}
+.summary li svg{position:absolute;left:0;top:.42em}
+.summary li b{font-weight:700}
+
+/* 表格 */
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{background:var(--head);font-size:14px;font-weight:500;color:var(--ink-2);text-align:left;padding:8px 12px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}
+.results td{vertical-align:middle}
+.results .v{font:500 22px/1.2 var(--num);text-align:right}
+.results th.r{text-align:right}
+.results .ref{font:500 16px/1.2 var(--num);color:var(--ink-2);text-align:center}
+.results th.c{text-align:center}
+.results tr.bad td{background:var(--bad-bg)}
+.results tr.bad .v{color:var(--bad);font-weight:500}
+.results tr.mid .v{color:var(--mid)}
+.results tr.good .v{color:var(--good)}
+.flag{display:inline-flex;align-items:center;gap:6px;font-weight:700;white-space:nowrap}
+.flag.bad{color:var(--bad)} .flag.mid{color:var(--mid)} .flag.good{color:var(--good)} .flag.none{color:var(--ink-2);font-weight:400}
+.nums td:nth-child(2){font:500 16px/1.7 var(--num);white-space:nowrap}
+.nums td:first-child{font-weight:500;width:26%}
+
+/* 異常項目 */
+.habit{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px;padding:16px 0;border-bottom:1px solid var(--line)}
+.habit:first-of-type{padding-top:0}
+.habit:last-child{border-bottom:0;padding-bottom:0}
+.habit{grid-template-rows:auto auto;row-gap:6px}
+.habit h3{grid-column:2;grid-row:1;font-size:18px;font-weight:700;line-height:1.5}
+.habit>.flag{grid-column:1;grid-row:1 / span 2;align-self:start;margin-top:.2em}
+.habit dl{grid-column:2;grid-row:2}
+.habit dl div{display:grid;grid-template-columns:auto minmax(0,1fr);gap:0;padding:3px 0}
+.habit dt{font-weight:700;white-space:nowrap}
+.habit dd{margin:0}
+
+.warn{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start;border:1px solid var(--bad);background:var(--bad-bg);padding:16px 18px;margin-top:24px;color:var(--bad);font-weight:700;font-size:18px;line-height:1.7}
+.warn svg{margin-top:.25em}
+
+@media (max-width:760px){
+  .sheet{margin:0;padding:24px 16px 32px;box-shadow:none}
+  .top{grid-template-columns:1fr;gap:10px}
+  .top h1{font-size:26px}
+  .meta{text-align:left}
+  .block{grid-template-columns:1fr;gap:12px}
+  .habit{grid-template-columns:1fr;gap:6px}
+  .habit h3,.habit>.flag,.habit dl{grid-column:1;grid-row:auto}
+  table,thead,tbody,tr,td{display:block}
+  thead{display:none}
+  tr{border-bottom:1px solid var(--line);padding:10px 0}
+  td{border:0;padding:2px 0}
+  .results tr{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:10px 8px}
+  .results td:first-child{grid-column:1 / -1;font-weight:500}
+  .results .v{text-align:left}
+  .results .ref{grid-column:1 / -1;text-align:left;font-size:14px}
+  .results .ref::before{content:"參考或七月對照 ";font-family:var(--sans);font-weight:400}
+  .results td:last-child{grid-row:2;grid-column:2;align-self:center}
+  .results .v{grid-row:2;grid-column:1}
+  .nums td:first-child{width:auto}
+  .nums td:nth-child(2){white-space:normal}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="m-bad" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6.5" fill="currentColor"/><rect x="6.1" y="3" width="1.8" height="5.2" rx=".6" fill="#fff"/><rect x="6.1" y="9.4" width="1.8" height="1.8" rx=".6" fill="#fff"/></symbol>
+  <symbol id="m-mid" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="7" cy="7" r="2" fill="currentColor"/></symbol>
+  <symbol id="m-good" viewBox="0 0 14 14"><path d="M2.5 7.4l3 3 6-6.6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="m-dot" viewBox="0 0 14 14"><rect x="3" y="6" width="8" height="2" rx="1" fill="currentColor"/></symbol>
+  <symbol id="m-warn" viewBox="0 0 20 20"><path d="M10 2.2 18.6 17H1.4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><rect x="9" y="7.4" width="2" height="5" rx=".7" fill="currentColor"/><rect x="9" y="13.6" width="2" height="2" rx=".7" fill="currentColor"/></symbol>
+</svg>
+
+<main class="sheet">
+  <header class="top">
+    <h1>Claude Code 使用習慣分析</h1>
+    <div class="meta">
+      <span>資料：這台 Windows 的 43 個 session，2026-07-13 到 2026-09-16</span>
+      <span>另含全域 prompt 歷史 68 則，2026-06-08 起</span>
+      <span>產出日期：2026-09-17</span>
+    </div>
+  </header>
+
+  <section class="block summary">
+    <h2>總評</h2>
+    <div>
+      <p class="lede">你的使用方式很鮮明：一句話丟一個大任務，然後讓它跑幾小時到幾天。這種方式的效率取決於兩件事，第一句話有沒有把目標講清楚，以及有沒有把機械性的小事也丟給模型。資料顯示前者大致做得好，後者是最大的浪費來源。</p>
+      <ul>
+        <li><svg width="14" height="14" class="flag bad"><use href="#m-bad"/></svg><b>最大的機械浪費是把對話當 git 按鈕與 App 啟動器。</b>15 則發話只是 pull 或 push，另外 23 次用 /app-launch 啟動程式。每次都要載入約 25KB 的指令檔、跑 4 到 27 次工具呼叫，做的卻是一行終端指令就能做完的事。</li>
+        <li><svg width="14" height="14" class="flag mid"><use href="#m-mid"/></svg><b>方向錯誤已經很少，但剩下的都是同一種：先講方法、後講目標。</b>問了三輪做法，才說出真正想要的結果。改用固定開場句型就能省掉那三輪。</li>
+        <li><svg width="14" height="14" class="flag bad"><use href="#m-bad"/></svg><b>有一個可以馬上改的小習慣。</b>把個人資料放在檔案裡，不要直接貼進對話。</li>
+        <li><svg width="14" height="14" class="flag good"><use href="#m-good"/></svg><b>做得好的要保留：</b>先要提案再選、把糾正寫成規則、用計劃書接力、標注 /orchestrate 的判斷 14 次裡有 13 次是準的。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="block results-block" aria-label="關鍵數字">
+    <table class="results">
+      <thead><tr><th>項目</th><th class="r">本期數值</th><th class="c">參考或七月對照</th><th>判定</th></tr></thead>
+      <tbody>
+        <tr><td>使用者發話</td><td class="v">97</td><td class="ref">—</td><td><span class="flag none">—</span></td></tr>
+        <tr><td>每則發話換來的助手訊息</td><td class="v">40</td><td class="ref">—</td><td><span class="flag none">—</span></td></tr>
+        <tr><td>每則發話的工具呼叫</td><td class="v">21</td><td class="ref">—</td><td><span class="flag none">—</span></td></tr>
+        <tr class="mid"><td>session 只講 1 到 2 句</td><td class="v">70%</td><td class="ref">—</td><td><span class="flag mid"><svg width="14" height="14"><use href="#m-mid"/></svg>留意</span></td></tr>
+        <tr class="bad"><td>發話只是叫我 pull／push</td><td class="v">15%</td><td class="ref">—</td><td><span class="flag bad"><svg width="14" height="14"><use href="#m-bad"/></svg>異常</span></td></tr>
+        <tr class="good"><td>中斷次數（七月是 17）</td><td class="v">2</td><td class="ref">17</td><td><span class="flag good"><svg width="14" height="14"><use href="#m-good"/></svg>改善</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block">
+    <h2>數字怎麼看</h2>
+    <table class="nums">
+      <thead><tr><th>指標</th><th>數值</th><th>解讀</th></tr></thead>
+      <tbody>
+        <tr><td>session 數 ／ 發話數</td><td>43 ／ 97</td><td>平均一個 session 只講 2.3 句。19 個 session 只有 1 句，11 個只有 2 句。</td></tr>
+        <tr><td>助手訊息 ／ 工具呼叫</td><td>3,910 ／ 2,029</td><td>每句話換來 40 則回覆與 21 次工具動作。14 個 session 的助手訊息超過 100 則。</td></tr>
+        <tr><td>只做 git 同步的發話</td><td>15（15%）</td><td>筆記庫 6 則、另一個專案 9 則。其中 11 個 session 整場只有這一句、5 分鐘內結束。</td></tr>
+        <tr><td>/app-launch</td><td>23 次</td><td>prompt 歷史 19 次加上 transcript 4 次。每次 5 到 7 分鐘、20 到 45 次工具呼叫。</td></tr>
+        <tr><td>標注並行（/orchestrate 或「工作流」）</td><td>14（14%）</td><td>與七月的 12% 持平，但從口語「用工作流」轉為指令 /orchestrate。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block">
+    <h2>值得優化的 11 個習慣</h2>
+    <div>
+      <article class="habit">
+        <h3>1. 拿對話當 git 按鈕</h3>
+        <p class="flag bad"><svg width="14" height="14"><use href="#m-bad"/></svg>最大浪費</p>
+        <dl>
+            <div><dt>證據：</dt><dd>「幫我pull和push」（7/13 三次，同一個 session 跨 35 天）、「幫我push」（8/17、8/19、8/20、8/25）、「pull」「pull」（8/20 間隔 2 分鐘）、「幫我pull」（9/6）、「幫我pull檔案」（9/7）、「幫我進行pull」（9/10）。共 15 則，11 個 session 整場只有這一句。</dd></div>
+            <div><dt>成本：</dt><dd>每次要載入三份 CLAUDE.md 約 25KB 加記憶索引，再跑 4 到 27 次工具呼叫，等 1 到 3 分鐘，做的是 <code>sh .scripts/sync.sh</code> 一行的事。15 次合計約 4 萬 token 的指令檔重載，全部沒有產出。</dd></div>
+            <div><dt>改法：</dt><dd>終端直接跑 <code>sh .scripts/sync.sh "訊息"</code>，或在 Git Bash 加一個 alias（第 4 節）。只有需要「幫我判斷怎麼拆 commit」時才用 /git-auto。不要為了 pull 開一個 session，更不要用一個開了 35 天的 session 當按鈕。</dd></div>
+          </dl>
+      </article>
+      <article class="habit">
+        <h3>2. 拿 Claude 當 App 啟動器</h3>
+        <p class="flag bad"><svg width="14" height="14"><use href="#m-bad"/></svg>最大浪費</p>
+        <dl>
+            <div><dt>證據：</dt><dd>/app-launch 在 prompt 歷史出現 19 次、transcript 4 次；六月甚至問過「我可以規定說，以後啟用這個skill的話，要用haiku模型嗎」，表示你自己也覺得貴。</dd></div>
+            <div><dt>成本：</dt><dd>每次 5 到 7 分鐘、20 到 45 次工具呼叫，只為了把程式叫起來。</dd></div>
+            <div><dt>改法：</dt><dd>把啟動流程寫成 .bat 或沿用既有的 .vbs，做成桌面捷徑或開機自動啟動。skill 只留給「連不上外部服務時幫我診斷」這種需要判斷的情境。</dd></div>
+          </dl>
+      </article>
+      <article class="habit">
+        <h3>3. 先講方法、後講目標</h3>
+        <p class="flag mid"><svg width="14" height="14"><use href="#m-mid"/></svg>方向錯誤</p>
+        <dl>
+            <div><dt>證據：</dt><dd>先問做法，經過兩輪示範後才說出真正的目標；另一次也是先問能有哪些成果，再說不需要播放功能。</dd></div>
+            <div><dt>成本：</dt><dd>每次多兩到三輪來回，而且第一輪做的東西整個作廢。這是七月分析裡「做錯方向」痛點剩下的主要形態。</dd></div>
+            <div><dt>改法：</dt><dd>需求開頭固定三行：「目標：…／我以為的做法：…／驗收：看到什麼算完成」。第一行有了，我就會直接從目標推方案，不會照你猜的方法做。</dd></div>
+          </dl>
+      </article>
+      <p class="warn"><svg width="20" height="20"><use href="#m-warn"/></svg><span>本頁是版面範例，內容只是示意。</span></p>
+    </div>
+  </section>
+</main>
+</body>
+</html>

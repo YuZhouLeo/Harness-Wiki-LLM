@@ -1,0 +1,124 @@
+<!doctype html><!-- 版面喜好選單範例 GX09｜磁片儲存按鈕｜來源：講師範例庫 output範例/元件庫/GX09-磁片儲存按鈕.html；原始來源 https://github.com/uiverse-io/galaxy（Buttons/ilkhoeri_chilly-sloth-36.html），作者 ilkhoeri，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX09 磁片儲存按鈕（Save icon button: floppy disk zooms, tilts and refills on hover）
+  來源：https://github.com/uiverse-io/galaxy　Buttons/ilkhoeri_chilly-sloth-36.html
+  原作者：ilkhoeri　授權：MIT（Copyright 2023 Uiverse.io）　commit adbd2ad
+  移植：原作只有一顆圖示按鈕，懸停時磁片放大、傾斜，下半部標籤收起再長回來。改成草稿編輯卡右上角的儲存鈕，
+    點擊（或在內文按 Ctrl＋S）後狀態列顯示「已儲存 時:分」、按鈕留強調色，再改內文會回到未儲存。
+    原作的藍色換成 P11 強調色；動畫三段的形狀與路徑照原作，時長由 1 秒＋延遲（共 1.75 秒）收到約 0.95 秒；
+    鍵盤聚焦也會播放；補 focus-visible 外框與 prefers-reduced-motion（只留顏色變化）。
+  2026-10-09 由子代理移植成純 HTML／CSS（加少量原生 JS）
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>磁片儲存按鈕</title><style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--bg);color:var(--ink);font:14px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.wrap{width:min(420px,100%)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.bar{display:flex;align-items:center;gap:12px;padding:10px 12px 10px 16px;border-bottom:1px solid var(--line)}
+.ttl{flex:1;min-width:0}
+.ttl b{display:block;font-size:15px}
+.st{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--warn)}
+.st::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.st[data-s="ok"]{color:var(--ok)}
+textarea{display:block;width:100%;height:132px;margin:0;border:0;resize:none;padding:12px 16px;background:transparent;color:var(--ink);font:inherit;line-height:1.7}
+textarea:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.cap{margin-top:12px;font-size:12px;color:var(--ink-2);text-align:center}
+
+/* ── 原作按鈕（配色換成 P11 變數） ── */
+.action_has{
+  --sz:1rem;
+  flex:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  height:calc(var(--sz) * 2.5);width:calc(var(--sz) * 2.5);padding:.4rem .5rem;
+  border-radius:.375rem;border:1px solid color-mix(in srgb,var(--ink-2) 55%,var(--surface));
+  background:var(--surface);color:var(--ink-2);
+}
+.action_has:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.has_saved:hover,.has_saved:focus-visible,.has_saved[data-saved="1"]{border-color:var(--accent)}
+.has_saved:hover svg,.has_saved:focus-visible svg,.has_saved[data-saved="1"] svg{color:var(--accent)}
+.has_saved[data-saved="1"] path[data-path="box"]{fill:var(--accent-soft)}
+.has_saved svg{
+  overflow:visible;height:calc(var(--sz) * 1.75);width:calc(var(--sz) * 1.75);
+  --ease:cubic-bezier(0.5,0,0.25,1);--zoom-from:1.75;--zoom-via:0.75;--zoom-to:1;
+  --duration:.54s;
+}
+.has_saved:is(:hover,:focus-visible) path[data-path="box"]{
+  transition:all .3s var(--ease);
+  animation:has-saved var(--duration) var(--ease) forwards;
+  fill:color-mix(in srgb,var(--accent) 35%,transparent);
+}
+.has_saved:is(:hover,:focus-visible) path[data-path="line-top"]{
+  animation:has-saved-line-top var(--duration) var(--ease) forwards;
+}
+.has_saved:is(:hover,:focus-visible) path[data-path="line-bottom"]{
+  animation:has-saved-line-bottom var(--duration) var(--ease) forwards,
+    has-saved-line-bottom-2 var(--duration) var(--ease) calc(var(--duration) * .75) forwards;
+}
+@keyframes has-saved-line-top{
+  33.333%{transform:rotate(0deg) translate(1px,2px) scale(var(--zoom-from));d:path("M 3 5 L 3 8 L 3 8")}
+  66.666%{transform:rotate(20deg) translate(2px,-2px) scale(var(--zoom-via))}
+  99.999%{transform:rotate(0deg) translate(0px,0px) scale(var(--zoom-to))}
+}
+@keyframes has-saved-line-bottom{
+  33.333%{transform:rotate(0deg) translate(1px,2px) scale(var(--zoom-from));d:path("M 17 20 L 17 13 L 7 13 L 7 20")}
+  66.666%{transform:rotate(20deg) translate(2px,-2px) scale(var(--zoom-via))}
+  99.999%{transform:rotate(0deg) translate(0px,0px) scale(var(--zoom-to));d:path("M 17 21 L 17 21 L 7 21 L 7 21")}
+}
+@keyframes has-saved-line-bottom-2{
+  from{d:path("M 17 21 L 17 21 L 7 21 L 7 21")}
+  to{transform:rotate(0deg) translate(0px,0px) scale(var(--zoom-to));d:path("M 17 20 L 17 13 L 7 13 L 7 20");fill:var(--surface)}
+}
+@keyframes has-saved{
+  33.333%{transform:rotate(0deg) translate(1px,2px) scale(var(--zoom-from))}
+  66.666%{transform:rotate(20deg) translate(2px,-2px) scale(var(--zoom-via))}
+  99.999%{transform:rotate(0deg) translate(0px,0px) scale(var(--zoom-to))}
+}
+@media (prefers-reduced-motion:reduce){
+  .has_saved path{animation:none!important;transition:none!important}
+}
+</style></head><body><div class="wrap">
+<div class="card">
+  <div class="bar">
+    <div class="ttl"><b>週報草稿</b><span class="st" id="st" role="status" aria-live="polite">未儲存的修改</span></div>
+    <button class="action_has has_saved" id="save" type="button" aria-label="儲存草稿" title="儲存（Ctrl＋S）">
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+        <path d="m19,21H5c-1.1,0-2-.9-2-2V5c0-1.1.9-2,2-2h11l5,5v11c0,1.1-.9,2-2,2Z" data-path="box"></path>
+        <path d="M7 3L7 8L15 8" data-path="line-top"></path>
+        <path d="M17 20L17 13L7 13L7 20" data-path="line-bottom"></path>
+      </svg>
+    </button>
+  </div>
+  <textarea id="ta" aria-label="草稿內文">本週完成
+・知識庫健檢 14 項，13 項通過、1 項待補來源
+・策略管理第 3 堂講義補上練習題
+下週待辦
+・整理法說會逐字稿的術語表</textarea>
+</div>
+<div class="cap">滑過或聚焦：磁片放大、傾斜，下半部收起再長回；點一下存檔</div>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('save'),st=document.getElementById('st'),ta=document.getElementById('ta');
+  function two(n){return (n<10?'0':'')+n}
+  function save(){
+    var d=new Date();
+    btn.setAttribute('data-saved','1');
+    st.setAttribute('data-s','ok');
+    st.textContent='已儲存 '+two(d.getHours())+':'+two(d.getMinutes());
+  }
+  btn.addEventListener('click',save);
+  ta.addEventListener('input',function(){
+    btn.removeAttribute('data-saved');st.removeAttribute('data-s');st.textContent='未儲存的修改';
+  });
+  ta.addEventListener('keydown',function(e){
+    if((e.ctrlKey||e.metaKey)&&(e.key==='s'||e.key==='S')){e.preventDefault();save();}
+  });
+})();
+</script>
+</body></html>

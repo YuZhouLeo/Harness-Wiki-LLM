@@ -1,0 +1,341 @@
+<!doctype html>
+<!-- 版面喜好選單範例 D1｜柔光目標頁｜來源：講師範例庫 output範例/設計偏好選擇/samples/D1-柔光目標頁.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<!-- 範例 D1 柔光目標頁：暖白底加柔光暈。左邊大標題與一個環形達成率，中間一張趨勢卡（三個數字＋折線＋深色提示框），右邊一張路線地圖卡，下方整片白色抽屜放明細表與名單。文字與數字是示意內容。 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>今日步行目標</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">')</script>
+<style>
+/* 變數名與 配色/palettes.css 相同，換配色時整段蓋掉即可；--desk 與 --glow-* 是這個版式自己的 */
+:root{
+  color-scheme:light;
+  --desk:#d8d7d9;
+  --bg:#f5f2f1;
+  --surface:#ffffff;
+  --surface-2:#f3eeee;
+  --ink:#1f1b20;
+  --ink-2:#655e68;
+  --line:#e8e1e2;
+  --accent:#7d5a7b;
+  --on-accent:#ffffff;
+  --accent-soft:#eadff0;
+  --c1:#7d5a7b; --c1-soft:#e5d6ec;
+  --c2:#9a5a1c; --c2-soft:#f9dfc0;
+  --ok:#3d7a3a; --bad:#d4521d;
+  --glow-a:#fbe7d6;
+  --glow-b:#efe5f4;
+  --sans:"Manrope","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --sh:0 1px 2px rgba(60,40,60,.04),0 18px 40px -22px rgba(90,60,90,.28);
+}
+*{box-sizing:border-box}
+html{background:var(--desk)}
+body{margin:0;background:var(--desk);color:var(--ink);font:400 14px/1.6 var(--sans);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+h1,h2,h3,p,ul{margin:0;padding:0}
+h1,h2,h3{text-wrap:balance}
+ul{list-style:none}
+button{font:inherit;color:inherit;cursor:pointer}
+.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+
+.app{max-width:1184px;margin:36px auto;border-radius:28px;overflow:hidden;
+  background:radial-gradient(58% 46% at 14% 78%,var(--glow-a) 0,transparent 72%),radial-gradient(46% 40% at 92% 6%,var(--glow-b) 0,transparent 70%),var(--bg);
+  box-shadow:0 30px 70px -40px rgba(40,30,40,.45)}
+
+/* 頂列 */
+.bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:28px 40px 0}
+.logo{display:inline-flex;align-items:center;gap:8px;font-size:22px;font-weight:600;color:var(--ink);text-decoration:none}
+.seg{display:flex;gap:4px;padding:4px;border-radius:999px;background:var(--surface);box-shadow:var(--sh)}
+.seg a{display:grid;place-items:center;width:40px;height:36px;border-radius:999px;color:var(--ink)}
+.seg a.on{background:linear-gradient(135deg,var(--c1-soft),var(--c2-soft))}
+.bar-r{display:flex;justify-content:flex-end;align-items:center;gap:6px}
+.round{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;border:0;background:var(--surface);box-shadow:var(--sh)}
+.round.dark{background:var(--ink);color:#fff;box-shadow:none}
+.ava{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--c2-soft);color:var(--c2);font-weight:700}
+
+/* 上半：目標／趨勢卡／地圖 */
+.hero{display:grid;grid-template-columns:238px minmax(0,1fr) 262px;gap:30px;padding:34px 40px 0;align-items:stretch}
+.goal{display:flex;flex-direction:column;align-items:flex-start;padding-left:20px}
+.goal h1{font-size:clamp(32px,3.9vw,50px);font-weight:500;line-height:1.12}
+.ring{position:relative;width:178px;height:178px;margin:22px 0 0 -6px}
+.ring>svg{display:block;width:100%;height:100%;overflow:visible}
+.ring-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ring-c b{font-size:36px;font-weight:600;line-height:1.1}
+.ring-c b small{font-size:14px;font-weight:700;margin-left:3px}
+.ring-c span{font-size:12px;color:var(--ink-2)}
+.ring-badge{position:absolute;left:50%;top:-4px;transform:translateX(-50%);display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--surface);box-shadow:var(--sh)}
+.note{display:flex;align-items:center;gap:6px;margin-top:14px;font-size:13px;color:var(--ink-2)}
+.note .i{width:13px;height:13px;fill:currentColor;stroke:none}
+
+.card{background:var(--surface);border-radius:24px;box-shadow:var(--sh);padding:22px 24px 16px}
+.card-h{display:flex;align-items:center;gap:12px}
+.card-h h2{font-size:15px;font-weight:600;margin-right:auto}
+.card-h time{font-size:13px;color:var(--ink-2)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:12px;margin-top:20px;align-items:end}
+.stat b{display:block;font-size:30px;font-weight:600;line-height:1.15;white-space:nowrap}
+.stat b small{font-size:13px;font-weight:700;margin-left:4px}
+.stat span,.feel span{font-size:12px;color:var(--ink-2)}
+.feel{display:flex;flex-direction:column;align-items:center;gap:4px}
+.feel i{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--c2-soft);color:var(--c2)}
+
+/* 折線：SVG 只畫線，座標文字用 HTML，縮放時字不變形 */
+.chart{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:0 10px;margin-top:18px}
+.plot{position:relative;height:218px}
+.plot svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.plot path,.plot line{vector-effect:non-scaling-stroke}
+.dot{position:absolute;left:39%;top:22.5%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--c2-soft);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--c1-soft),0 4px 10px rgba(90,60,90,.3)}
+.tip{position:absolute;right:calc(61% + 16px);top:calc(22.5% - 24px);background:var(--ink);color:#fff;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;line-height:1.5;white-space:nowrap}
+.ylab{display:flex;flex-direction:column;justify-content:space-between;height:218px;font-size:12px;color:var(--ink-2);padding:0 0 4px}
+.ylab span{line-height:1;transform:translateY(-2px)}
+.xlab{grid-column:1;display:flex;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--ink-2)}
+
+.map{position:relative;border-radius:24px;overflow:hidden;min-height:340px;background:#e7e1ec;box-shadow:var(--sh)}
+.map>svg{position:absolute;inset:0;width:100%;height:100%}
+.pace{position:absolute;left:10px;right:10px;bottom:12px;display:flex;gap:4px}
+.pace span{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:4px;height:30px;border-radius:999px;background:var(--surface);font-size:13px;font-weight:600;white-space:nowrap}
+.pace span:nth-child(2){background:var(--c1-soft)}
+.pace span:nth-child(3){background:var(--c2-soft)}
+.pace .i{width:14px;height:14px}
+
+/* 下半：白色抽屜 */
+.sheet{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:52px;margin-top:44px;padding:30px 40px 26px 54px;background:var(--surface);border-radius:28px 28px 0 0}
+.sheet-h{display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.sheet-h h2{font-size:15px;font-weight:600;margin-right:auto}
+.pillbtn{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:999px;border:0;background:var(--surface-2);font-size:13px;font-weight:600}
+.pillbtn.dark{background:var(--ink);color:#fff}
+.pillbtn .i{width:14px;height:14px}
+.icon{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;border:0;background:var(--surface-2)}
+.icon.ghost{background:none;color:var(--ink-2)}
+.icon .i{width:15px;height:15px}
+.tw{position:relative;overflow-x:auto}
+table{width:100%;min-width:640px;border-collapse:collapse}
+th{padding:12px 8px 8px;font-size:12px;font-weight:500;color:var(--ink-2);text-align:left;white-space:nowrap}
+th .i{width:10px;height:10px;margin-left:2px;vertical-align:-1px}
+td{padding:9px 8px;border-top:1px dashed var(--line);font-size:14px;white-space:nowrap}
+tr:first-child td{border-top:0}
+td.n{font-size:12px;color:var(--ink-2)}
+td b{font-weight:600}
+td small{font-size:12px;color:var(--ink-2);font-weight:600}
+.place{display:flex;align-items:center;gap:12px;font-weight:600}
+.thumb{font-style:normal;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--surface-2);font-size:13px;font-weight:700;color:var(--accent)}
+.route{display:inline-block;width:78px;height:34px;border:1px dashed #cfc5cc;border-radius:8px}
+.route svg{display:block;width:100%;height:100%}
+.heart{display:grid;place-items:center;width:28px;height:28px;border:0;background:none;color:var(--ink-2)}
+.heart[aria-pressed="true"]{color:var(--bad)}
+.heart[aria-pressed="true"] .i{fill:currentColor}
+
+.mates li{display:grid;grid-template-columns:40px minmax(0,1fr) auto 10px;gap:12px;align-items:center;padding:12px 0;border-top:1px dashed var(--line)}
+.mates li:first-child{border-top:0}
+.mates .who{font-style:normal;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--c1-soft);color:var(--accent);font-weight:700}
+.mates li:nth-child(2) .who{background:var(--c2-soft);color:var(--c2)}
+.mates span{display:block;font-size:13px}
+.mates b{font-size:17px;font-weight:600;line-height:1.2}
+.mates b small{font-size:12px;font-weight:700;margin-left:3px}
+.wave{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--c2)}
+.wave .i{width:15px;height:15px}
+.state{width:8px;height:8px;border-radius:50%;background:#cfc9cc}
+.state.on{background:#8ecb6a}
+
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.round,.icon,.wave,.heart,.pillbtn{transition:transform .15s}
+.round:active,.icon:active,.wave:active,.heart:active,.pillbtn:active{transform:scale(.96)}
+
+@media (max-width:1040px){
+  .app{margin:0;border-radius:0}
+  .hero{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px}
+  .goal{grid-column:1 / -1;flex-direction:row;align-items:center;gap:28px;padding-left:0}
+  .goal .ring{margin:0}
+  .goal .note{margin:0}
+  .hero .card{grid-column:1 / -1}
+  .map{grid-column:1 / -1;min-height:300px}
+  .sheet{grid-template-columns:minmax(0,1fr);gap:26px;padding:26px 40px}
+}
+@media (max-width:620px){
+  .bar{grid-template-columns:auto 1fr;gap:12px;padding:18px 16px 0}
+  .seg{grid-column:1 / -1;grid-row:2;justify-self:start}
+  .hero{padding:22px 16px 0}
+  .goal{flex-wrap:wrap;gap:16px}
+  .goal h1{flex:1 1 100%}
+  .ring{width:150px;height:150px}
+  .card{padding:18px 16px 14px;border-radius:20px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat b{font-size:26px}
+  .feel{flex-direction:row;justify-self:start}
+  .tip{right:auto;left:calc(39% + 14px);top:calc(22.5% + 12px)}
+  .sheet{padding:22px 16px;margin-top:28px}
+  .sheet-h{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion:reduce){ *{transition:none !important} }
+@media print{
+  html,body{background:#fff}
+  .app{margin:0;box-shadow:none;border-radius:0;background:#fff}
+  .card,.map{box-shadow:none;border:1px solid var(--line)}
+  .card,.map,tr{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5" fill="currentColor" stroke="none"/><rect x="13" y="4" width="7" height="7" rx="1.5" fill="currentColor" stroke="none"/><rect x="4" y="13" width="7" height="7" rx="1.5" fill="currentColor" stroke="none"/><rect x="13" y="13" width="7" height="7" rx="1.5" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-bars" viewBox="0 0 24 24"><path d="M4 10v4M8 6v12M12 3v18M16 7v10M20 10v4"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c.6 3.4 5 5 5 10a5 5 0 0 1-10 0c0-2 .9-3.3 2-4.4.2 1.8 1 2.8 2 2.8.4-2.8-.6-5.2 1-8.4z"/></symbol>
+  <symbol id="i-nodes" viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.3"/><circle cx="6" cy="17" r="2.3"/><circle cx="18" cy="17" r="2.3"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-walk" viewBox="0 0 24 24"><circle cx="13.5" cy="4.5" r="1.9" fill="currentColor" stroke="none"/><path d="M8.5 21l2.5-6-2-3 1.2-4.2 3.3-.8 2 3.2 3 1M11 15l3 2.2.8 3.8M7 11l3.2-3.2"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.4a4.2 4.2 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20z"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/></symbol>
+  <symbol id="i-sort" viewBox="0 0 24 24"><path d="M7 10l5-5 5 5M7 14l5 5 5-5" stroke-width="2.6"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2 12c2.2-5 4.4-5 6.6 0s4.4 5 6.6 0 4.4-5 6.6 0"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4 17a8 8 0 0 1 16 0zM12 17l4-5"/></symbol>
+  <symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 14c1 1.4 2.2 2 3.5 2s2.5-.6 3.5-2M9 10h.01M15 10h.01" stroke-width="2.2"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 12V6.500a1.5 1.5 0 0 1 3 0V11m0-5.500V5a1.5 1.5 0 0 1 3 0v6m0-4.500a1.5 1.5 0 0 1 3 0V14a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.7-2.300L4 14.500a1.6 1.6 0 0 1 2.5-2z"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="bar">
+    <a class="logo" href="#">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M4 9l9-5 9 5-9 5z" fill="#e9c3d6"/><path d="M4 15l9-5 9 5-9 5z" fill="#f4c99b" opacity=".9"/><path d="M9 12l4-2.2 4 2.2-4 2.200z" fill="#b98aa9"/></svg>
+      步記
+    </a>
+    <nav class="seg" aria-label="主選單">
+      <a class="on" href="#" aria-current="page"><svg class="i"><use href="#i-grid"/></svg><span class="sr">總覽</span></a>
+      <a href="#"><svg class="i"><use href="#i-bars"/></svg><span class="sr">紀錄</span></a>
+      <a href="#"><svg class="i"><use href="#i-flame"/></svg><span class="sr">消耗</span></a>
+      <a href="#"><svg class="i"><use href="#i-nodes"/></svg><span class="sr">同行</span></a>
+    </nav>
+    <div class="bar-r">
+      <button class="round dark" type="button" aria-label="搜尋"><svg class="i"><use href="#i-search"/></svg></button>
+      <span class="ava" aria-label="目前使用者">旅</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="goal">
+        <h1>今日<br>步行目標</h1>
+        <div class="ring" role="img" aria-label="已走 14.2 公里，目標 18 公里，達成 79%">
+          <svg viewBox="0 0 180 180" aria-hidden="true">
+            <defs>
+              <linearGradient id="rg" gradientUnits="userSpaceOnUse" x1="150" y1="30" x2="40" y2="160"><stop offset="0" stop-color="#8a6688"/><stop offset=".72" stop-color="#9c7c9c"/><stop offset="1" stop-color="#f1c79c"/></linearGradient>
+              <filter id="rs" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#6b4a69" flood-opacity=".18"/></filter>
+            </defs>
+            <circle cx="90" cy="90" r="70" fill="none" stroke="#fff" stroke-width="13" filter="url(#rs)"/>
+            <!-- 79%＝284°：終點 x=90+70·sin284°、y=90−70·cos284° -->
+            <path d="M90 20A70 70 0 1 1 22.1 73.1" fill="none" stroke="url(#rg)" stroke-width="13" stroke-linecap="round"/>
+          </svg>
+          <span class="ring-badge"><svg class="i"><use href="#i-walk"/></svg></span>
+          <div class="ring-c"><b>14.2<small>公里</small></b><span>目標：18 公里</span></div>
+        </div>
+        <p class="note"><svg class="i"><use href="#i-warn"/></svg>資料更新中</p>
+      </div>
+
+      <article class="card">
+        <div class="card-h">
+          <h2>上一段行程</h2>
+          <time>今天 9:24</time>
+          <svg class="i"><use href="#i-right"/></svg>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>8.0<small>公里</small></b><span>距離</span></div>
+          <div class="stat"><b>1:36<small>小時</small></b><span>時長</span></div>
+          <div class="stat"><b>526<small>大卡</small></b><span>消耗</span></div>
+          <div class="feel"><i><svg class="i"><use href="#i-smile"/></svg></i><span>感受</span></div>
+        </div>
+        <div class="chart" role="img" aria-label="每公里配速折線，第 3.8 公里最快，每公里 11 分 48 秒">
+          <div class="plot">
+            <svg viewBox="0 0 400 178" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="lg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="400" y2="0"><stop offset="0" stop-color="#8a6688"/><stop offset=".86" stop-color="#8a6688"/><stop offset="1" stop-color="#8a6688" stop-opacity=".15"/></linearGradient></defs>
+              <g stroke="#ece6e8" stroke-width="1"><line x1="0" y1="1" x2="400" y2="1"/><line x1="0" y1="59" x2="400" y2="59"/><line x1="0" y1="118" x2="400" y2="118"/><line x1="0" y1="177" x2="400" y2="177"/></g>
+              <line x1="0" y1="104" x2="400" y2="104" stroke="#3a333b" stroke-width="1.4" stroke-dasharray="1.5 7" stroke-linecap="round"/>
+              <line x1="156" y1="0" x2="156" y2="177" stroke="#d9cfd6" stroke-width="1"/>
+              <path d="M0 118C10 118 14 132 26 130S44 110 56 114 70 134 82 126 98 104 108 108 120 146 130 146 146 66 156 40 176 16 190 22 214 52 226 76 248 108 262 104 284 74 300 74 326 80 340 64 356 34 366 30 388 30 400 22" fill="none" stroke="url(#lg)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="dot"></span>
+            <div class="tip">3.8 公里<br>11:48 分／公里</div>
+          </div>
+          <div class="ylab" aria-hidden="true"><span>11:30</span><span>12:00</span><span>12:30</span><span>13:00</span></div>
+          <div class="xlab" aria-hidden="true"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+        </div>
+      </article>
+
+      <article class="map" aria-label="路線地圖">
+        <svg viewBox="0 0 262 360" preserveAspectRatio="xMidYMid slice" role="img" aria-label="從起點向東再向北到終點的路線示意">
+          <defs>
+            <filter id="ms" x="-30%" y="-30%" width="170%" height="170%"><feDropShadow dx="5" dy="8" stdDeviation="5" flood-color="#6f5a80" flood-opacity=".22"/></filter>
+            <linearGradient id="rt" gradientUnits="userSpaceOnUse" x1="0" y1="290" x2="0" y2="40"><stop offset="0" stop-color="#c9a9dc"/><stop offset=".55" stop-color="#d8b4cf"/><stop offset="1" stop-color="#f2bd84"/></linearGradient>
+          </defs>
+          <rect width="262" height="360" fill="#e6e0eb"/>
+          <g fill="#ddd6e3"><rect x="0" y="150" width="262" height="18"/><rect x="132" y="0" width="18" height="360"/><rect x="0" y="262" width="262" height="14"/></g>
+          <g filter="url(#ms)" fill="#f7f4f9">
+            <rect x="14" y="10" width="46" height="60" rx="2"/><rect x="70" y="18" width="50" height="40" rx="2"/><rect x="158" y="8" width="38" height="54" rx="2"/><rect x="206" y="30" width="50" height="70" rx="2"/>
+            <rect x="160" y="92" width="64" height="48" rx="2"/><rect x="18" y="86" width="96" height="52" rx="2"/>
+            <rect x="20" y="180" width="92" height="68" rx="2"/><rect x="162" y="180" width="42" height="74" rx="2"/><rect x="214" y="172" width="44" height="52" rx="2"/>
+            <rect x="14" y="290" width="60" height="60" rx="2"/><rect x="160" y="288" width="88" height="58" rx="2"/>
+          </g>
+          <g fill="none" stroke="#fff" stroke-width="1.5"><rect x="170" y="100" width="44" height="32"/><rect x="30" y="190" width="72" height="48"/><rect x="216" y="40" width="30" height="50"/><rect x="170" y="298" width="68" height="38"/></g>
+          <g fill="#d2cad9"><rect x="40" y="200" width="20" height="18"/><rect x="176" y="198" width="14" height="8"/><rect x="26" y="96" width="14" height="10"/></g>
+          <path d="M76 269H127Q141 269 141 255V58Q141 44 155 44H190Q204 44 204 58V78" fill="none" stroke="url(#rt)" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="76" cy="269" r="6" fill="#fff" stroke="#c9a9dc" stroke-width="3"/>
+          <circle cx="204" cy="86" r="10" fill="#fff"/>
+          <path d="M200 91V80h8l-2 2.8 2 2.700h-8" fill="none" stroke="#1f1b20" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="pace">
+          <span><svg class="i"><use href="#i-wave"/></svg>12:18</span>
+          <span><svg class="i"><use href="#i-gauge"/></svg>11:48</span>
+          <span><svg class="i"><use href="#i-gauge"/></svg>13:38</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="sheet">
+      <div>
+        <div class="sheet-h">
+          <h2>行程明細</h2>
+          <button class="pillbtn dark" type="button"><svg class="i"><use href="#i-walk"/></svg><svg class="i"><use href="#i-down"/></svg><span class="sr">步行</span></button>
+          <button class="pillbtn" type="button">本週<svg class="i"><use href="#i-down"/></svg></button>
+          <button class="icon" type="button" aria-label="設定"><svg class="i"><use href="#i-gear"/></svg></button>
+          <button class="icon ghost" type="button" aria-label="下一頁"><svg class="i"><use href="#i-right"/></svg></button>
+        </div>
+        <div class="tw">
+          <table>
+            <thead><tr><th>#</th><th>路段</th><th>距離<svg class="i"><use href="#i-sort"/></svg></th><th>配速<svg class="i"><use href="#i-sort"/></svg></th><th>時長<svg class="i"><use href="#i-sort"/></svg></th><th>路線</th><th><span class="sr">收藏</span><svg class="i" style="width:14px;height:14px"><use href="#i-heart"/></svg></th></tr></thead>
+            <tbody>
+              <tr><td class="n">01</td><td><span class="place"><i class="thumb">淺</i>淺草寺 → 上野公園</span></td><td><b>2.4</b> <small>公里</small></td><td><b>12:40</b> <small>分／公里</small></td><td><b>00:30:24</b></td>
+                <td><span class="route"><svg viewBox="0 0 78 34" aria-hidden="true"><path d="M8 20c6-10 12-8 16-2s10 6 14-2 12-6 16 0 10 4 16-4" fill="none" stroke="#655e68" stroke-width="1.3" stroke-linecap="round"/></svg></span></td>
+                <td><button class="heart" type="button" aria-pressed="true" aria-label="已收藏"><svg class="i"><use href="#i-heart"/></svg></button></td></tr>
+              <tr><td class="n">02</td><td><span class="place"><i class="thumb">上</i>上野公園 → 谷中銀座</span></td><td><b>1.9</b> <small>公里</small></td><td><b>13:05</b> <small>分／公里</small></td><td><b>00:24:52</b></td>
+                <td><span class="route"><svg viewBox="0 0 78 34" aria-hidden="true"><path d="M8 12c8 0 10 12 20 10s8-12 18-10 8 12 24 6" fill="none" stroke="#655e68" stroke-width="1.3" stroke-linecap="round"/></svg></span></td>
+                <td><button class="heart" type="button" aria-pressed="false" aria-label="收藏"><svg class="i"><use href="#i-heart"/></svg></button></td></tr>
+              <tr><td class="n">03</td><td><span class="place"><i class="thumb">谷</i>谷中銀座 → 根津神社</span></td><td><b>1.2</b> <small>公里</small></td><td><b>11:50</b> <small>分／公里</small></td><td><b>00:14:12</b></td>
+                <td><span class="route"><svg viewBox="0 0 78 34" aria-hidden="true"><path d="M8 24c10 2 12-14 22-14s6 12 16 12 12-10 24-12" fill="none" stroke="#655e68" stroke-width="1.3" stroke-linecap="round"/></svg></span></td>
+                <td><button class="heart" type="button" aria-pressed="false" aria-label="收藏"><svg class="i"><use href="#i-heart"/></svg></button></td></tr>
+              <tr><td class="n">04</td><td><span class="place"><i class="thumb">根</i>根津神社 → 東京大學</span></td><td><b>1.1</b> <small>公里</small></td><td><b>12:10</b> <small>分／公里</small></td><td><b>00:13:23</b></td>
+                <td><span class="route"><svg viewBox="0 0 78 34" aria-hidden="true"><path d="M8 16c6 8 14 8 18 0s12-8 18 0 14 8 26-4" fill="none" stroke="#655e68" stroke-width="1.3" stroke-linecap="round"/></svg></span></td>
+                <td><button class="heart" type="button" aria-pressed="true" aria-label="已收藏"><svg class="i"><use href="#i-heart"/></svg></button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <aside>
+        <div class="sheet-h">
+          <h2>同行者</h2>
+          <button class="icon" type="button" aria-label="新增同行者"><svg class="i"><use href="#i-plus"/></svg></button>
+          <button class="icon ghost" type="button" aria-label="看全部"><svg class="i"><use href="#i-right"/></svg></button>
+        </div>
+        <ul class="mates">
+          <li><i class="who">安</i><div><span>小安</span><b>3.7<small>公里</small></b></div><button class="wave" type="button" aria-label="打招呼"><svg class="i"><use href="#i-hand"/></svg></button><i class="state on" title="行走中"></i></li>
+          <li><i class="who">哲</i><div><span>阿哲</span><b>5.8<small>公里</small></b></div><button class="wave" type="button" aria-label="打招呼"><svg class="i"><use href="#i-hand"/></svg></button><i class="state" title="休息中"></i></li>
+          <li><i class="who">穎</i><div><span>佳穎</span><b>4.1<small>公里</small></b></div><button class="wave" type="button" aria-label="打招呼"><svg class="i"><use href="#i-hand"/></svg></button><i class="state on" title="行走中"></i></li>
+        </ul>
+      </aside>
+    </section>
+  </main>
+</div>
+</body>
+</html>

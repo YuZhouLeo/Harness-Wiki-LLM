@@ -1,0 +1,573 @@
+<!doctype html>
+<!-- 版面喜好選單範例 I07｜彈簧交錯入場｜來源：講師範例庫 output範例/UI互動技巧/07-物理彈簧交錯入場.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>07 · 物理彈簧交錯入場</title>
+<script>
+  // 先於 CSS 套用 embed 模式，避免閃一下完整版面
+  try { if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed'); } catch (e) {}
+</script>
+<style>
+  :root {
+    --bg:#f4f3ef; --surface:#ffffff; --text:#1c1b19; --muted:#6b6862; --line:#e4e1da;
+    --accent:#5b4bff; --accent-2:#00b3a4;
+    --font:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Consolas,"Microsoft JhengHei",monospace;
+    --dist:32px;
+    --ico-l:92%; --ico-s:60%;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+      --accent:#8b7dff; --accent-2:#2fd6c6; --ico-l:30%; --ico-s:62%;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+    --accent:#8b7dff; --accent-2:#2fd6c6; --ico-l:30%; --ico-s:62%;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: var(--font); line-height: 1.6;
+    overflow-x: hidden;
+  }
+  main { max-width: 920px; margin: 0 auto; padding: 0 16px 64px; }
+
+  /* ---------- header ---------- */
+  header { padding: 44px 0 8px; position: relative; }
+  .kicker { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; letter-spacing: .08em; }
+  .kicker .no { font-family: var(--mono); font-size: 13px; color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 1px 10px; }
+  h1 { margin: 10px 0 6px; font-size: clamp(28px, 6vw, 44px); line-height: 1.15; letter-spacing: -.01em; font-weight: 800; }
+  h1 .n { color: var(--accent); font-family: var(--mono); font-weight: 600; margin-right: .3em; }
+  header p { margin: 0; max-width: 40em; color: var(--muted); font-size: 16px; }
+  .theme-btn {
+    position: absolute; right: 0; top: 44px; font: inherit; font-size: 13px; color: var(--muted);
+    background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; cursor: pointer;
+  }
+  .theme-btn:hover { color: var(--text); border-color: var(--muted); }
+
+  /* ---------- stage ---------- */
+  .stage {
+    margin-top: 28px; padding: 40px 0; border-radius: 28px; border: 1px solid var(--line);
+    display: flex; justify-content: center; position: relative; overflow: hidden;
+    background:
+      radial-gradient(520px 360px at 50% 40%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+      radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text) 13%, transparent) 1px, transparent 1.4px) 0 0/22px 22px,
+      var(--bg);
+  }
+  .phone {
+    width: min(390px, 100vw - 32px); height: 720px; border-radius: 44px; flex: none;
+    background: var(--surface); border: 1px solid var(--line);
+    box-shadow: 0 30px 60px -20px rgba(20,18,40,.28), 0 8px 20px -8px rgba(20,18,40,.18);
+    position: relative; overflow: hidden; display: flex; flex-direction: column;
+  }
+  .phone::before { /* 瀏海 */
+    content: ""; position: absolute; top: 10px; left: 50%; width: 104px; height: 28px; margin-left: -52px;
+    border-radius: 99px; background: #0c0c0e; z-index: 3;
+  }
+  .screen {
+    flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden;
+    background: color-mix(in srgb, var(--bg) 70%, var(--surface));
+  }
+  .status { height: 50px; flex: none; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 30px 6px; font-size: 14px; font-weight: 700; }
+  .status i { font-style: normal; font-size: 11px; letter-spacing: 2px; }
+  .appbar { flex: none; display: flex; justify-content: space-between; align-items: center; padding: 8px 22px 8px 26px; }
+  .appbar h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: .02em; line-height: 1.2; }
+  .appbar small { display: block; color: var(--muted); font-size: 12px; font-weight: 500; letter-spacing: .04em; }
+  .reload {
+    width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--text);
+    display: grid; place-items: center; cursor: pointer; padding: 0; -webkit-tap-highlight-color: transparent;
+    transition: transform .12s ease;
+  }
+  .reload:active { transform: scale(.92); }
+  .reload svg { width: 18px; height: 18px; }
+  .reload.spin svg { animation: spin .55s cubic-bezier(.3,.7,.3,1); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .seg {
+    flex: none; position: relative; display: grid; grid-template-columns: 1fr 1fr; margin: 2px 22px 10px; padding: 3px;
+    border-radius: 13px; background: color-mix(in srgb, var(--text) 7%, transparent);
+  }
+  .seg .thumb {
+    position: absolute; left: 3px; top: 3px; bottom: 3px; width: calc(50% - 3px); border-radius: 10px;
+    background: var(--surface); box-shadow: 0 1px 2px rgba(20,18,40,.14), 0 4px 10px -4px rgba(20,18,40,.2);
+    will-change: transform;
+  }
+  .seg button {
+    position: relative; z-index: 1; font: inherit; font-size: 14px; font-weight: 600; color: var(--muted); background: transparent;
+    border: 0; border-radius: 10px; padding: 7px 0; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .seg button[aria-pressed="true"] { color: var(--text); }
+
+  /* ---------- 捲動區 ---------- */
+  .scroll {
+    flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
+    touch-action: pan-y; scrollbar-width: none; position: relative; outline: none;
+  }
+  .scroll::-webkit-scrollbar { display: none; }
+  .scroll:focus-visible { box-shadow: inset 0 0 0 3px var(--accent); border-radius: 14px; }
+  .scroll.grabbing { cursor: grabbing; user-select: none; -webkit-user-select: none; }
+  .content { padding: 4px 14px 6px; }
+  .content.out { opacity: 0; transition: opacity .15s ease-out; }
+
+  /* 每個入場項目：初始狀態就是藏起來，JS 用彈簧把它推到終點 */
+  .item { opacity: 0; transform: translate3d(0, var(--dist), 0) scale(.96); }
+  .item.in { opacity: 1; transform: none; }
+
+  .list { display: grid; gap: 8px; }
+  .msg {
+    display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 18px; position: relative;
+    background: var(--surface); border: 1px solid var(--line);
+  }
+  .ico {
+    flex: none; width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center;
+    font-size: 18px; font-weight: 800; color: hsl(var(--h) 55% 28%);
+    background: linear-gradient(145deg, hsl(var(--h) 85% var(--ico-l)), hsl(calc(var(--h) + 24) 80% calc(var(--ico-l) - 8%)));
+  }
+  :root[data-theme="dark"] .ico { color: hsl(var(--h) 90% 88%); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ico { color: hsl(var(--h) 90% 88%); } }
+  .tx { flex: 1; min-width: 0; }
+  .tx .t { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .tx .t b { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tx time { flex: none; font-size: 11.5px; color: var(--muted); font-family: var(--mono); }
+  .tx p { margin: 1px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .dot { position: absolute; right: 12px; bottom: 12px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+
+  .cols { display: flex; gap: 10px; align-items: flex-start; }
+  .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+  .card { border-radius: 18px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); position: relative; }
+  .card .pic { position: relative; overflow: hidden; }
+  .card .pic em {
+    position: absolute; right: 10px; bottom: 4px; font-style: normal; font-family: var(--mono); font-weight: 700;
+    font-size: 40px; line-height: 1; color: rgba(255,255,255,.3);
+  }
+  .card .cap { height: 56px; padding: 8px 11px 0; }
+  .card .cap b { display: block; font-size: 13.5px; font-weight: 700; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card .cap span { display: block; margin-top: 2px; font-size: 11.5px; color: var(--muted); }
+  .ord {
+    position: absolute; left: 8px; top: 8px; z-index: 1; font-family: var(--mono); font-size: 11px; font-weight: 700; line-height: 1;
+    padding: 4px 7px; border-radius: 99px; background: rgba(12,10,30,.62); color: #fff; letter-spacing: .02em;
+  }
+
+  .more { height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12.5px; color: var(--muted); letter-spacing: .04em; }
+  .more .sp { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--accent); display: none; animation: spin .8s linear infinite; }
+  .more.busy .sp { display: block; }
+  .more .tip::before { content: "↓ 繼續往下捲會自動載入更多"; }
+  .more.busy .tip::before { content: "載入中…"; }
+  .more.end .tip::before { content: "— 已經到底了 —"; }
+
+  .readout {
+    flex: none; margin: 8px auto 20px; padding: 5px 14px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line);
+    font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; max-width: calc(100% - 24px); overflow: hidden; text-overflow: ellipsis;
+  }
+  .readout b { color: var(--text); font-weight: 600; }
+
+  /* ---------- knobs / prompt / notes ---------- */
+  section.knobs, section.prompt, section.notes { margin-top: 28px; }
+  h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .1em; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+  .knobs .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .knob { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+  .knob label { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 600; }
+  .knob output { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .knob small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  input[type=range] { width: 100%; margin: 10px 0 0; accent-color: var(--accent); height: 28px; }
+  input[type=range]:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+  .seg button:focus-visible { outline-offset: -2px; }
+
+  .prompt .box { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; display: flex; gap: 16px; align-items: flex-start; }
+  .prompt blockquote { margin: 0; flex: 1; font-size: 16px; line-height: 1.8; border-left: 3px solid var(--accent-2); padding-left: 14px; }
+  .copy { flex: none; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 0; border-radius: 10px; padding: 8px 16px; background: var(--accent); color: #fff; min-width: 76px; }
+  .copy.ok { background: var(--accent-2); color: #06201d; }
+
+  .notes ol { margin: 0; padding: 0; counter-reset: n; list-style: none; display: grid; gap: 10px; }
+  .notes li { counter-increment: n; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px 12px 52px; position: relative; font-size: 15px; }
+  .notes li::before { content: counter(n); position: absolute; left: 16px; top: 12px; width: 24px; height: 24px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); font-family: var(--mono); font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+  .notes code { font-family: var(--mono); font-size: 13px; background: color-mix(in srgb, var(--text) 8%, transparent); padding: 1px 6px; border-radius: 6px; }
+
+  @media (max-width: 560px) {
+    .prompt .box { flex-direction: column; }
+    .copy { align-self: stretch; }
+    .theme-btn { position: static; margin-top: 12px; }
+    .stage { border-radius: 20px; padding: 24px 0; }
+  }
+
+  /* ---------- embed ---------- */
+  html.embed, html.embed body { background: transparent; overflow: hidden; height: 100%; }
+  html.embed header, html.embed .knobs, html.embed .prompt, html.embed .notes { display: none; }
+  html.embed main { max-width: none; padding: 0; height: 100%; }
+  html.embed .stage { margin: 0; padding: 0; border: 0; background: none; height: 100%; align-items: center; border-radius: 0; overflow: visible; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="kicker"><span class="no">07</span><span>UI 互動技巧・實體質感</span></div>
+    <h1><span class="n">07 ·</span>物理彈簧交錯入場</h1>
+    <p>內容一次整塊帶入很死板。讓每一項隔一點點時間、帶著微弱的彈性依序滑進視野，列表就像被一張張輕輕放下。</p>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="切換淺色與深色">切換深淺色</button>
+  </header>
+
+  <section class="stage" aria-label="Demo 舞台">
+    <div class="phone">
+      <div class="screen">
+        <div class="status"><span>9:41</span><i>●●●● ▮</i></div>
+        <div class="appbar">
+          <div><h2 id="title">收件匣</h2><small id="sub">往下捲，新訊息會一則一則彈進來</small></div>
+          <button class="reload" id="reloadBtn" type="button" aria-label="重新載入">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v5h-5"/></svg>
+          </button>
+        </div>
+        <div class="seg" role="group" aria-label="顯示方式">
+          <div class="thumb" id="thumb" aria-hidden="true"></div>
+          <button type="button" id="bList" aria-pressed="true">列表</button>
+          <button type="button" id="bWall" aria-pressed="false">瀑布流</button>
+        </div>
+        <div class="scroll" id="scroller" tabindex="0" role="region" aria-label="內容捲動區">
+          <div class="content" id="content"></div>
+          <div class="more" id="more"><span class="sp"></span><span class="tip"></span></div>
+        </div>
+        <div class="readout" id="readout" aria-live="off"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="knobs" aria-label="可調參數">
+    <h3>可調參數</h3>
+    <div class="grid">
+      <div class="knob"><label for="kStiff">剛性 stiffness <output id="oStiff"></output></label><input id="kStiff" type="range" min="80" max="500" step="5" value="240"><small>越大滑入越快、越硬</small></div>
+      <div class="knob"><label for="kDamp">阻尼 damping <output id="oDamp"></output></label><input id="kDamp" type="range" min="6" max="40" step="1" value="14"><small>越小過衝越明顯，約 31 為臨界阻尼</small></div>
+      <div class="knob"><label for="kStag">交錯間隔 <output id="oStag"></output></label><input id="kStag" type="range" min="0" max="120" step="5" value="45"><small>相鄰兩項的延遲，第 10 項之後不再累加</small></div>
+      <div class="knob"><label for="kDist">起始位移 <output id="oDist"></output></label><input id="kDist" type="range" min="12" max="60" step="2" value="32"><small>從下方多遠的地方滑上來</small></div>
+    </div>
+  </section>
+
+  <section class="prompt" aria-label="AI 描述詞">
+    <h3>AI 描述詞</h3>
+    <div class="box">
+      <blockquote id="promptText">列表元素入場使用交錯（stagger）動畫，每個子項帶微弱彈性向上滑入。</blockquote>
+      <button class="copy" id="copyBtn" type="button">複製</button>
+    </div>
+  </section>
+
+  <section class="notes" aria-label="實作要點">
+    <h3>實作要點</h3>
+    <ol>
+      <li><b>初始狀態寫在 CSS：</b><code>.item</code> 一開始就是 <code>opacity:0</code>＋下移＋<code>scale(.96)</code>，JS 用彈簧把進度 x 從 0 推向 1，位移＝(1−x)×距離。x 會衝過 1，所以項目會往上多衝幾像素再落回，就是那點「彈性」。</li>
+      <li><b>延遲要小而且封頂：</b>每項延遲＝<code>min(i, 9) × 間隔</code>，預設 45ms。第 10 項之後不再累加，長列表一次進場也不會等到天荒地老。間隔超過約 80ms 就會從「波浪」變成「一個一個點名」。</li>
+      <li><b>順序看視覺位置，不看 DOM：</b>瀑布流的卡片是依欄高塞進較短那欄，DOM 順序是一欄接一欄。批次進場時先量每張卡的 <code>getBoundingClientRect()</code>，依 top、再依 left 排序才指派延遲。卡片左上角的 #n 就是實際入場序。</li>
+      <li><b>IntersectionObserver 只播一次：</b>以捲動容器為 root，項目第一次進入視野才排入批次，播完就 <code>unobserve</code>，往回捲不重播。同一影格內進來的項目收成一批再排序；底部哨兵進入視野時追加下一批，新項目走同一套流程。</li>
+      <li><b>套用時注意：</b>一次只對「需要被注意的新內容」做，且動畫期間才設 <code>will-change</code>。切換內容要先快速淡出舊的、取消尚在進行的彈簧，否則新舊動畫會疊在一起。<code>prefers-reduced-motion</code> 下本頁直接顯示、不位移。</li>
+    </ol>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ---------- 參數 ---------- */
+  const P = { k: 240, c: 14, stag: 45, dist: 32 };
+  const CAP = 10;                 // 延遲最多累加到第 10 項
+  const INIT = 10;                // 首批數量
+  const MORE = { list: 6, wall: 8 };
+  const MAX_BATCH = 5;            // 最多追加幾批，之後顯示「到底了」
+  [
+    ['kStiff', 'oStiff', 'k', v => String(v)],
+    ['kDamp', 'oDamp', 'c', v => String(v)],
+    ['kStag', 'oStag', 'stag', v => v + ' ms'],
+    ['kDist', 'oDist', 'dist', v => v + ' px'],
+  ].forEach(([id, oid, key, fmt]) => {
+    const el = $('#' + id), out = $('#' + oid);
+    const apply = () => {
+      const v = +el.value;
+      P[key] = v; out.textContent = fmt(v);
+      if (key === 'dist') document.documentElement.style.setProperty('--dist', v + 'px');
+    };
+    el.addEventListener('input', apply);
+    apply();
+  });
+
+  /* ---------- 彈簧引擎（半隱式 Euler，m = 1） ---------- */
+  const live = new Set();
+  let running = false, last = 0;
+  function start(a) {
+    if (reduceMQ.matches) {
+      a.x = a.target; a.v = 0; a.apply(a.x); a.done && a.done(a);
+      return;
+    }
+    live.add(a);
+    if (!running) { running = true; last = performance.now(); requestAnimationFrame(tick); }
+  }
+  function tick(now) {
+    const dt = Math.min((now - last) / 1000, 1 / 30);
+    last = now;
+    for (const a of live) {
+      if (now < a.t0) continue;                       // 還在等自己的交錯延遲
+      const k = a.k || P.k, c = a.c || P.c;
+      const n = Math.max(1, Math.ceil(dt / (1 / 120))), h = dt / n;
+      for (let i = 0; i < n; i++) {
+        const acc = -k * (a.x - a.target) - c * a.v;
+        a.v += acc * h;
+        a.x += a.v * h;
+      }
+      if (Math.abs(a.x - a.target) < .0008 && Math.abs(a.v) < .01) {
+        a.x = a.target; a.v = 0; live.delete(a); a.apply(a.x); a.done && a.done(a);
+      } else a.apply(a.x);
+    }
+    if (live.size) requestAnimationFrame(tick); else running = false;
+  }
+
+  /* ---------- 假資料 ---------- */
+  const MSGS = [
+    ['美', 340, '林小美', '週六的咖啡店我訂好了，下午兩點可以嗎？'],
+    ['銀', 215, '澄月銀行', '你的信用卡本期帳單已出，應繳金額 NT$ 3,280，繳款截止日 25 號。'],
+    ['配', 28, '宅配通', '包裹已送達社區管理室，請憑簡訊取件碼領取。'],
+    ['讀', 160, '讀書會群組', '阿凱：這週的章節我整理成筆記了，大家看一下有沒有漏掉。'],
+    ['鐵', 200, '台鐵訂票', '你預訂的 1 月 18 日 06:30 自強號即將開放取票。'],
+    ['森', 140, '森田咖啡', '集滿 10 點了，下次來店送你一杯手沖。'],
+    ['媽', 10, '媽', '明天回來吃飯嗎？我燉了排骨湯。'],
+    ['健', 265, '活力健身房', '今晚 19:00 的瑜伽課還有 2 個名額，要幫你保留嗎？'],
+    ['雲', 190, '雲端硬碟', '陳同學與你共用了「期末報告_v3」，點此開啟。'],
+    ['天', 45, '天氣提醒', '今晚北部有陣雨，出門記得帶傘。'],
+    ['房', 95, '房東', '下個月的水電費單我拍照傳給你了，麻煩確認。'],
+    ['書', 300, '市立圖書館', '你借的《設計的心理學》將於後天到期，可線上續借。'],
+    ['傑', 175, '阿傑', '那場演唱會我搶到兩張了！你那天有空嗎？'],
+    ['送', 55, '晚餐外送', '你的餐點已由外送員取餐，約 12 分鐘後送達。'],
+  ];
+  const TOPICS = [
+    '手沖咖啡入門三步驟', '週末京都小旅行', '十分鐘早餐吐司', '極簡書桌改造', '夜跑耳機推薦', '陽台香草種植',
+    '膠片相機初體驗', '台南老屋咖啡', '一人份宵夜清單', '通勤包裡的東西', '雨天散步路線', '手帳排版靈感',
+    '黑膠入坑指南', '小坪數收納術', '自己煮拉麵湯頭', '山上看星星的裝備', '舊衣改造托特包', '咖啡豆怎麼挑',
+    '租屋族的燈光佈置', '早起的一週紀錄', '手寫字練習本', '便當菜單輪替', '城市騎行地圖', '週日烘焙筆記',
+  ];
+  const HEIGHTS = [150, 192, 122, 170, 212, 140, 182, 132, 204, 160, 126, 188];
+  const timeLabel = n => {
+    if (n === 0) return '剛剛';
+    const m = n * 7;
+    return m < 60 ? m + ' 分鐘前' : m < 1440 ? Math.floor(m / 60) + ' 小時前' : Math.floor(m / 1440) + ' 天前';
+  };
+  const likes = n => ((n * 197) % 1800 + 120);
+
+  /* ---------- DOM 與狀態 ---------- */
+  const scroller = $('#scroller'), content = $('#content'), more = $('#more'), readout = $('#readout');
+  const S = { mode: 'list', total: 0, entered: 0, batch: 0, loading: false, ended: false, gen: 0, cols: [], colH: [0, 0], lastInfo: '' };
+
+  function makeMsg(n) {
+    const [g, h, t, b] = MSGS[n % MSGS.length];
+    const el = document.createElement('article');
+    el.className = 'item msg';
+    el.innerHTML = `<div class="ico" style="--h:${h}">${g}</div><div class="tx"><div class="t"><b>${t}</b><time>${timeLabel(n)}</time></div><p>${b}</p></div>` +
+      (n % 3 === 0 ? '<span class="dot" aria-label="未讀"></span>' : '');
+    return el;
+  }
+  function makeCard(n) {
+    const h = HEIGHTS[n % HEIGHTS.length] + (Math.floor(n / HEIGHTS.length) % 2) * 14;
+    const hue = (n * 37 + 12) % 360;
+    const el = document.createElement('article');
+    el.className = 'item card';
+    el.innerHTML =
+      `<span class="ord" aria-hidden="true"></span>` +
+      `<div class="pic" style="height:${h}px;background:` +
+      `radial-gradient(circle at ${20 + (n * 13) % 50}% 18%, hsl(${hue} 95% 82%) 0%, transparent 52%),` +
+      `radial-gradient(circle at 85% 95%, hsl(${(hue + 60) % 360} 85% 62%) 0%, transparent 60%),` +
+      `linear-gradient(155deg, hsl(${hue} 70% 58%), hsl(${(hue + 42) % 360} 72% 40%))"><em>${String(n % 100).padStart(2, '0')}</em></div>` +
+      `<div class="cap"><b>${TOPICS[n % TOPICS.length]}</b><span>♥ ${likes(n).toLocaleString('en-US')}</span></div>`;
+    el._h = h + 56 + 10;     // 圖高 + 說明列 + 欄內間距，用來判斷哪一欄較矮
+    return el;
+  }
+
+  /* 追加一批：瀑布流依欄高放進較短那欄（所以 DOM 順序 ≠ 視覺順序） */
+  function append(count) {
+    for (let i = 0; i < count; i++) {
+      const n = S.total++;
+      let el;
+      if (S.mode === 'list') { el = makeMsg(n); $('.list', content).appendChild(el); }
+      else {
+        el = makeCard(n);
+        const ci = S.colH[1] < S.colH[0] ? 1 : 0;
+        S.colH[ci] += el._h;
+        S.cols[ci].appendChild(el);
+      }
+      io.observe(el);
+    }
+  }
+
+  /* ---------- 進入視野 → 收成一批 → 依視覺位置排序 → 交錯彈入 ---------- */
+  let pend = [], flushQ = false;
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) {
+      const el = e.target;
+      if (!e.isIntersecting || el._seen) continue;
+      el._seen = true; io.unobserve(el); pend.push(el);
+    }
+    if (pend.length && !flushQ) { flushQ = true; requestAnimationFrame(flush); }
+  }, { root: scroller, rootMargin: '0px 0px -5% 0px', threshold: 0.04 });
+
+  function flush() {
+    flushQ = false;
+    const items = pend.splice(0).filter(el => el.isConnected);
+    if (!items.length) return;
+    const boxes = items.map(el => { const r = el.getBoundingClientRect(); return { el, top: r.top, left: r.left }; });
+    boxes.sort((a, b) => Math.abs(a.top - b.top) < 6 ? a.left - b.left : a.top - b.top);   // 由上往下、左右交替
+    const now = performance.now();
+    let maxDelay = 0;
+    boxes.forEach((o, i) => {
+      const delay = Math.min(i, CAP - 1) * P.stag;
+      maxDelay = Math.max(maxDelay, delay);
+      const el = o.el, ord = el.querySelector('.ord');
+      if (ord) ord.textContent = '#' + (i + 1);
+      const a = {
+        item: true, x: 0, v: 0, target: 1, t0: now + delay,
+        apply(x) {
+          const d = (1 - x) * P.dist;
+          el.style.opacity = clamp(x * 1.6, 0, 1).toFixed(3);
+          el.style.transform = `translate3d(0,${d.toFixed(2)}px,0) scale(${(0.96 + 0.04 * x).toFixed(4)})`;
+          if (!el._wc) { el._wc = 1; el.style.willChange = 'transform, opacity'; }
+        },
+        done() { el.classList.add('in'); el.removeAttribute('style'); },
+      };
+      if (reduceMQ.matches) { a.done(); return; }
+      start(a);
+    });
+    S.entered += boxes.length;
+    setReadout(boxes.length, maxDelay);
+  }
+  function setReadout(batch, maxDelay) {
+    readout.innerHTML = `已入場 <b>${S.entered}</b> 項 · 本批 <b>${batch}</b> · 末項 <b>+${maxDelay}ms</b>`;
+  }
+
+  /* ---------- 底部哨兵：捲到底自動追加 ---------- */
+  const sio = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) loadMore(); },
+    { root: scroller, rootMargin: '0px 0px 30px 0px' });
+  function watchSentinel() { sio.unobserve(more); sio.observe(more); }
+  function loadMore() {
+    if (S.loading || S.ended) return;
+    S.loading = true; more.classList.add('busy');
+    const g = S.gen;
+    setTimeout(() => {
+      if (g !== S.gen) return;
+      S.batch++;
+      append(MORE[S.mode]);
+      S.loading = false; more.classList.remove('busy');
+      if (S.batch >= MAX_BATCH) { S.ended = true; more.classList.add('end'); sio.unobserve(more); }
+      else watchSentinel();
+    }, 520);
+  }
+
+  /* ---------- 建立／重建內容 ---------- */
+  function build() {
+    io.disconnect(); sio.disconnect();
+    for (const a of [...live]) if (a.item) live.delete(a);
+    pend = [];
+    content.innerHTML = S.mode === 'list' ? '<div class="list"></div>' : '<div class="cols"><div class="col"></div><div class="col"></div></div>';
+    S.cols = [...content.querySelectorAll('.col')];
+    S.colH = [0, 0]; S.total = 0; S.entered = 0; S.batch = 0; S.loading = false; S.ended = false;
+    more.classList.remove('busy', 'end');
+    scroller.scrollTop = 0;
+    readout.textContent = '';
+    append(INIT);
+    watchSentinel();
+  }
+  function rebuild() {
+    const g = ++S.gen;
+    S.loading = false;
+    if (reduceMQ.matches) { content.classList.remove('out'); build(); return; }
+    content.classList.add('out');                         // 舊內容快速淡出
+    setTimeout(() => {
+      if (g !== S.gen) return;
+      build();
+      content.classList.remove('out');                    // 淡入不加 transition：瞬間恢復，新項目各自彈入
+    }, 160);
+  }
+
+  /* ---------- 分段切換（滑塊同樣用彈簧） ---------- */
+  const thumb = $('#thumb'), bList = $('#bList'), bWall = $('#bWall');
+  const thumbA = { x: 0, v: 0, target: 0, t0: 0, k: 320, c: 24, apply(x) { thumb.style.transform = `translate3d(${(x * 100).toFixed(2)}%,0,0)`; } };
+  function setMode(m) {
+    if (m === S.mode) return;
+    S.mode = m;
+    const wall = m === 'wall';
+    bList.setAttribute('aria-pressed', String(!wall));
+    bWall.setAttribute('aria-pressed', String(wall));
+    thumbA.target = wall ? 1 : 0; start(thumbA);
+    $('#title').textContent = wall ? '探索' : '收件匣';
+    $('#sub').textContent = wall ? '卡片依畫面位置由上往下、左右交替入場' : '往下捲，新訊息會一則一則彈進來';
+    rebuild();
+  }
+  bList.addEventListener('click', () => setMode('list'));
+  bWall.addEventListener('click', () => setMode('wall'));
+
+  const reloadBtn = $('#reloadBtn');
+  reloadBtn.addEventListener('click', () => {
+    reloadBtn.classList.remove('spin'); void reloadBtn.offsetWidth; reloadBtn.classList.add('spin');
+    rebuild();
+  });
+
+  /* ---------- 滑鼠拖曳捲動（Pointer Events；觸控走原生 pan-y） ---------- */
+  let drag = null;
+  scroller.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    drag = { id: e.pointerId, y: e.clientY, top: scroller.scrollTop, on: false };
+  });
+  scroller.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dy = e.clientY - drag.y;
+    if (!drag.on) {
+      if (Math.abs(dy) < 4) return;
+      drag.on = true; scroller.classList.add('grabbing');
+      try { scroller.setPointerCapture(e.pointerId); } catch (_) {}
+    }
+    scroller.scrollTop = drag.top - dy;
+  });
+  const endDrag = e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    try { scroller.releasePointerCapture(e.pointerId); } catch (_) {}
+    drag = null; scroller.classList.remove('grabbing');
+  };
+  scroller.addEventListener('pointerup', endDrag);
+  scroller.addEventListener('pointercancel', endDrag);
+  scroller.addEventListener('lostpointercapture', endDrag);
+
+  /* ---------- 啟動 ---------- */
+  build();
+
+  /* ---------- 複製 ---------- */
+  const copyBtn = $('#copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    const text = $('#promptText').textContent.trim();
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (_) {}
+    if (!ok) {
+      try {
+        const r = document.createRange(); r.selectNodeContents($('#promptText'));
+        const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        ok = document.execCommand('copy');
+      } catch (_) {}
+    }
+    copyBtn.textContent = ok ? '已複製' : '請按 Ctrl+C';
+    copyBtn.classList.toggle('ok', ok);
+    setTimeout(() => { copyBtn.textContent = '複製'; copyBtn.classList.remove('ok'); }, 1600);
+  });
+
+  /* ---------- 深淺色手動切換 ---------- */
+  $('#themeBtn').addEventListener('click', () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+  });
+})();
+</script>
+</body>
+</html>

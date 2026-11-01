@@ -1,0 +1,53 @@
+<!doctype html>
+<!-- 版面喜好選單範例 VU02｜底線連結動效｜來源：講師範例庫 output範例/元件庫/VU02-底線連結動效.html；原始來源 https://github.com/Ashutoshx7/VengeanceUI（src/components/ui/line-hover-link.tsx），作者 None，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  VU02 底線連結動效（LineHoverLink）
+  來源：https://github.com/Ashutoshx7/VengeanceUI　src/components/ui/line-hover-link.tsx
+  原作者：原檔未標　授權：MIT
+  移植：取 slide／double／strike／bounce 四種；styled-jsx 注入改一般 style；SVG 的 arc／scribble 未移植；原本的 prefers-reduced-motion 保留。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>底線連結動效</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f6f7f9;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;color:#1f2937}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+li{display:grid;grid-template-columns:70px auto;align-items:center;gap:14px;font-size:17px}
+small{font-size:12px;color:#6b7280}
+.lh{position:relative;display:inline-flex;width:fit-content;white-space:nowrap;color:inherit;text-decoration:none;cursor:pointer}
+.lh:focus-visible{outline:2px solid #2563eb;outline-offset:4px;border-radius:4px}
+.lh::before,.lh::after{position:absolute;left:0;top:100%;width:100%;height:1px;background:currentColor;pointer-events:none}
+.lh::before{content:""}
+.slide::before{transform:scaleX(0);transform-origin:100% 50%;transition:transform .3s ease}
+.slide:hover::before,.slide:focus-visible::before{transform:scaleX(1);transform-origin:0 50%}
+.dbl::before,.dbl::after{content:"";transform:scaleX(0);transition:transform .3s cubic-bezier(.7,0,.2,1)}
+.dbl::before{transform-origin:100% 50%}
+.dbl::after{top:calc(100% + 4px);transform-origin:0 50%}
+.dbl:hover::before,.dbl:focus-visible::before{transform:scaleX(1);transform-origin:0 50%}
+.dbl:hover::after,.dbl:focus-visible::after{transform:scaleX(1);transform-origin:100% 50%}
+.strike{padding-inline:10px}
+.strike::before{top:50%;height:2px;transform:scaleX(0);transform-origin:100% 50%;transition:transform .3s cubic-bezier(.4,1,.8,1)}
+.strike:hover::before,.strike:focus-visible::before{transform:scaleX(1);transform-origin:0 50%}
+.strike span{display:inline-block;transition:transform .3s cubic-bezier(.4,1,.8,1)}
+.strike:hover span{transform:scale(1.08)}
+.bounce::before{height:7px;border-radius:99px;transition:transform .2s,opacity .2s;transition-timing-function:cubic-bezier(.2,.57,.67,1.53)}
+.bounce:hover::before,.bounce:focus-visible::before{transform:scale(1.18,.1);transition:transform .4s cubic-bezier(.8,0,.1,1)}
+.bounce span{display:inline-block;transform:translateY(-4px);transition:transform .2s .05s cubic-bezier(.2,.57,.67,1.53)}
+.bounce:hover span,.bounce:focus-visible span{transform:none;transition:transform .4s cubic-bezier(.8,0,.1,1)}
+@media (prefers-reduced-motion:reduce){.lh,.lh *,.lh::before,.lh::after{transition-duration:.01ms!important;animation:none!important}}
+</style>
+</head>
+<body>
+<ul>
+<li><small>滑入</small><a class="lh slide" href="#">查看查核結果</a></li>
+<li><small>雙線</small><a class="lh dbl" href="#">下載今日講義</a></li>
+<li><small>劃掉</small><a class="lh strike" href="#"><span>已作廢的版本</span></a></li>
+<li><small>彈跳</small><a class="lh bounce" href="#"><span>回到目錄</span></a></li>
+</ul>
+<script>document.querySelectorAll('a').forEach(a=>a.addEventListener('click',e=>e.preventDefault()))</script>
+</body>
+</html>

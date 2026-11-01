@@ -1,0 +1,22 @@
+<!doctype html><!-- 版面喜好選單範例 GX05｜浮動標籤底線輸入框｜來源：講師範例庫 output範例/元件庫/GX05-浮動標籤底線輸入框.html；原始來源 https://github.com/uiverse-io/galaxy（Inputs/Satwinder04_ancient-sloth-30.html），作者 Satwinder04，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX05 浮動標籤底線輸入框（Floating-label underline input）
+  來源：https://github.com/uiverse-io/galaxy　Inputs/Satwinder04_ancient-sloth-30.html
+  原作者：Satwinder04　授權：MIT
+  移植：原作 label 在未聚焦時透明（用 placeholder 當提示）；補上 :not(:placeholder-shown) 讓已填內容時標籤保持浮起，字距與色彩簡化，加 reduced-motion；原作 label 的 for 與 input 沒有 id 對應，已修正。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>demo</title><style>*{box-sizing:border-box}html,body{margin:0;height:100%}body{background:#f5f6f8;color:#1f2937;font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;display:flex;align-items:center;justify-content:center}.cap{font-size:12px;color:#6b7280;margin-top:14px;text-align:center}
+.f{width:320px;display:flex;flex-direction:column;gap:30px}
+.ic{position:relative}
+.if{display:block;width:100%;padding:10px 2px;font:inherit;font-size:16px;border:0;border-bottom:2px solid #9ca3af;outline:0;background:transparent;color:#1f2937}
+.il{position:absolute;top:0;left:2px;font-size:12px;color:transparent;pointer-events:none;transition:all .3s ease}
+.ih{position:absolute;bottom:0;left:0;height:2px;width:0;background:#1d4ed8;transition:width .3s ease}
+.if:focus+.il{top:-18px;color:#1d4ed8;font-weight:700}
+.if:focus+.il+.ih{width:100%}
+.if:not(:placeholder-shown)+.il{top:-18px;color:#4b5563}
+@media (prefers-reduced-motion:reduce){.il,.ih{transition:none}}
+</style></head><body><div class="f">
+<div class="ic"><input class="if" id="a" placeholder="股票代號（例：2330）"><label class="il" for="a">股票代號</label><span class="ih"></span></div>
+<div class="ic"><input class="if" id="b" placeholder="查核人姓名"><label class="il" for="b">查核人</label><span class="ih"></span></div>
+<div class="cap">點進欄位：藍線從左掃到右，標籤浮到上方</div></div></body></html>

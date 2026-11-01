@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>版面喜好選單</title>
+<meta name="sources" content="2-wiki/output範例-catalog.js;1-raw/output範例/index.html">
+<!-- 由 .scripts/html_course_taste/build.py 產生。卡片資料直接寫在標記裡：每張 article.card 有 data-id、data-name、data-file。 -->
+<script type="application/json" id="d-taste">{"meta": {"rev": 0, "saved": null}, "showTeacher": true, "picks": {}, "answers": {}}</script>
+<style>
+:root{
+  color-scheme:light;
+  /* P14 石墨鈷藍：鈷藍是唯一強調色，紅色只留給失敗 */
+  --bg:#eaedf0;--surface:#f8f9fb;--surface-2:#dce0e5;--ink:#15191e;--ink-2:#4b5058;--line:#bec3c9;--line-strong:#32363c;
+  --accent:#2254c1;--on-accent:#fdfdfd;--accent-soft:#dde8fd;
+  --ok:#296a3b;--warn:#875d04;--bad:#b02b27;--ok-soft:#dbefde;--warn-soft:#f8e7c3;--bad-soft:#fce1de;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --bar:60px;--nav:46px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.65 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;padding-bottom:calc(var(--bar) + 24px)}
+h1,h2,h3,p,ul,ol{margin:0}
+code{font-family:var(--mono)}
+a{color:inherit}
+.wrap{max-width:1400px;margin:0 auto;padding:0 24px}
+
+/* 頁首 */
+.top{padding:28px 0 20px;display:grid;grid-template-columns:minmax(300px,4fr) 7fr;gap:40px;align-items:start;border-bottom:2px solid var(--line-strong)}
+.top h1{font-size:34px;line-height:1.2;font-weight:900}
+.top .lead{margin-top:8px;color:var(--ink-2);font-size:15px}
+.steps{list-style:none;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:0;counter-reset:s;border:1px solid var(--line);background:var(--surface);border-radius:6px}
+.steps li{counter-increment:s;padding:12px 16px;border-left:1px solid var(--line);font-size:13.5px;line-height:1.6}
+.steps li:first-child{border-left:0}
+.steps li::before{content:counter(s);display:block;font:700 22px/1.2 var(--mono);color:var(--accent);margin-bottom:4px}
+.steps b{display:block;font-size:15px}
+
+/* 導覽（黏在頂端） */
+.nav{position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:4px;min-height:var(--nav)}
+.nav a{display:inline-flex;align-items:baseline;gap:5px;padding:6px 9px;text-decoration:none;font-weight:700;font-size:14px;border-radius:4px;white-space:nowrap}
+.nav a:hover{background:var(--surface-2)}
+.nav a span{font:400 12px var(--mono);color:var(--ink-2)}
+.nav a.has span{color:var(--accent);font-weight:700}
+.nav .nav-card{color:var(--accent)}
+.nav .sp{flex:1}
+.total{font-size:13px;color:var(--ink-2);white-space:nowrap;margin-right:10px}
+.total b{color:var(--ink);font:700 15px var(--mono)}
+
+/* 講師開關（改自 VU03：動作收斂，只走 18px） */
+.sw{display:inline-flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;white-space:nowrap}
+.sw input{appearance:none;-webkit-appearance:none;width:40px;height:22px;margin:0;border-radius:99px;background:var(--line);position:relative;cursor:pointer;transition:background .18s}
+.sw input::after{content:"";position:absolute;left:2px;top:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:transform .18s}
+.sw input:checked{background:var(--accent)}
+.sw input:checked::after{transform:translateX(18px)}
+.sw input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* 分類 */
+.cat{padding-top:36px;scroll-margin-top:var(--nav)}
+.cat-h{display:grid;grid-template-columns:auto auto 1fr;align-items:baseline;gap:12px;border-bottom:1px solid var(--line-strong);padding-bottom:8px;margin-bottom:16px}
+.cat-h h2{font-size:24px;line-height:1.2;font-weight:900}
+.cat-n{font:700 13px var(--mono);color:var(--ink-2)}
+.cat-h p{color:var(--ink-2);font-size:13.5px}
+.sub{font-size:15px;font-weight:700;margin:20px 0 10px;color:var(--ink-2)}
+.sub:first-of-type{margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.grid-pal{grid-template-columns:repeat(4,minmax(0,1fr))}
+#cat-interact .grid{align-items:start}
+
+/* 卡片 */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;display:flex;flex-direction:column;overflow:hidden;scroll-margin-top:calc(var(--nav) + 12px);transition:border-color .15s,box-shadow .15s}
+.card[data-choice="like"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.card[data-choice="keep"]{border-color:var(--line-strong)}
+.card[data-choice="no"] .pv img,.card[data-choice="no"] .live,.card[data-choice="no"] .pal{opacity:.45;filter:saturate(.3)}
+.pv{display:block;position:relative;aspect-ratio:16/10;background:var(--surface-2);border-bottom:1px solid var(--line);overflow:hidden}
+.pv img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;transition:opacity .15s,filter .15s}
+.pv iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+.try{position:absolute;right:10px;bottom:10px;font:inherit;font-size:13px;font-weight:700;padding:4px 12px;border:1px solid var(--line-strong);border-radius:4px;background:var(--surface);color:var(--ink);cursor:pointer}
+.try:hover{background:var(--ink);color:var(--surface)}
+.try:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pv-try.on{aspect-ratio:auto;height:560px}
+.live{display:block;width:100%;height:340px;border:0;border-bottom:1px solid var(--line);background:#fff;transition:opacity .15s,filter .15s}
+.card-b{padding:12px 14px 14px;display:flex;flex-direction:column;gap:7px;flex:1}
+.card-t{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.card-t h3{font-size:16px;line-height:1.35;font-weight:700}
+.sid{font-size:12px;color:var(--ink-2)}
+.fit{font-size:13px;line-height:1.55;color:var(--ink-2);flex:1}
+.meta{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:24px}
+.meta .ul{margin-left:auto}
+
+/* 底線連結（VU02 的滑入底線） */
+.ul{font-size:13px;color:var(--accent);text-decoration:none;background:linear-gradient(currentColor,currentColor) left bottom/0 1px no-repeat;transition:background-size .2s;white-space:nowrap}
+.ul:hover{background-size:100% 1px}
+.ul:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* VU04 狀態徽章 */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:1px 9px;border-radius:99px;border:1px solid transparent;font-size:12px;font-weight:500;white-space:nowrap}
+.badge svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2}
+.is-like{background:var(--accent-soft);color:var(--accent)}
+.is-keep{background:var(--surface-2);color:var(--ink-2)}
+.is-no{background:#fff;border-color:var(--line);color:var(--ink-2)}
+.is-ok{background:var(--ok-soft);color:var(--ok)}
+.is-warn{background:var(--warn-soft);color:var(--warn)}
+.hide-teacher .t-badge{display:none}
+
+/* GX16 上浮單選圓點 */
+.pick{border:0;margin:0;padding:6px 0 0;display:flex;gap:16px;border-top:1px solid var(--surface-2)}
+.pick legend{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.opt{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;cursor:pointer;position:relative;transition:transform .2s ease-in-out}
+.opt:hover{transform:translateY(-2px)}
+.opt input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.dot{display:inline-block;position:relative;flex:none;width:16px;height:16px;border:2px solid var(--ink-2);border-radius:50%;transition:border-color .2s ease-in-out}
+.dot::before{content:"";position:absolute;top:50%;left:50%;width:8px;height:8px;border-radius:50%;background:var(--accent);transform:translate(-50%,-50%) scale(0);transition:transform .2s ease-in-out}
+.opt input:checked ~ .dot{border-color:var(--accent)}
+.opt input:checked ~ .dot::before{transform:translate(-50%,-50%) scale(1)}
+.opt input:focus-visible ~ .dot{outline:2px solid var(--accent);outline-offset:3px}
+
+.note,.ans{width:100%;font:inherit;font-size:13px;line-height:1.5;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink);resize:vertical}
+.note::placeholder,.ans::placeholder{color:#6f757d}
+.note:focus,.ans:focus{outline:none;border-color:var(--accent);box-shadow:0 2px 0 0 var(--accent)}
+
+/* 配色卡 */
+.pal{padding:12px;border-bottom:1px solid var(--line);transition:opacity .15s,filter .15s}
+.pal-sheet{padding:10px 12px 12px;border-radius:3px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.pal-bar{height:6px;width:48px;margin-bottom:8px}
+.pal-h{font-weight:700;font-size:14px}
+.pal-t{font-size:12px;line-height:1.6;margin-top:2px}
+.chips{list-style:none;padding:8px 12px;border-bottom:1px solid var(--surface-2);display:grid;gap:2px}
+.chips li{display:grid;grid-template-columns:16px 34px 1fr;align-items:center;gap:6px;font-size:12px}
+.chips i{display:block;width:16px;height:16px;border-radius:3px;border:1px solid rgba(0,0,0,.18)}
+.chips b{font-weight:500}
+.chips code{color:var(--ink-2);text-align:right}
+
+/* 喜好卡 */
+.taste{padding-top:44px;scroll-margin-top:var(--nav)}
+.taste>h2{font-size:24px;font-weight:900;line-height:1.2}
+.taste>p{color:var(--ink-2);font-size:13.5px;margin:4px 0 14px}
+.taste-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;border-top:1px solid var(--line-strong);padding-top:16px}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 18px}
+.sheet h3{font-size:18px;font-weight:900;line-height:1.3;padding-bottom:8px;border-bottom:2px solid var(--line-strong);margin-bottom:10px}
+.sheet h4{margin:14px 0 4px;font-size:14px;font-weight:700}
+.sheet table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55}
+.sheet th{text-align:left;font-weight:700;padding:4px 8px 4px 0;border-bottom:2px solid var(--line-strong);background:none}
+.sheet td{vertical-align:top;padding:5px 8px 5px 0;border-bottom:1px solid var(--surface-2)}
+.sheet td:first-child{white-space:nowrap;font-weight:700}
+.sheet ul,.sheet ol{padding-left:18px;font-size:13px;line-height:1.6}
+.sheet ol li,.sheet ul li{margin:2px 0}
+.tc-hidden{display:none;color:var(--ink-2);font-size:13.5px}
+.hide-teacher .tc-body{display:none}
+.hide-teacher .tc-hidden{display:block}
+.mine-empty{color:var(--ink-2);font-size:13px}
+.mine-cat{margin:10px 0 4px;font-weight:700;font-size:14px}
+.mine-list{list-style:none;padding:0!important}
+.mine-list li{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:baseline;margin:3px 0!important}
+.mine-list .n{grid-column:2;color:var(--ink-2);font-size:12.5px}
+.mine-list a{text-decoration:none}
+.mine-list a:hover{text-decoration:underline}
+.qs{list-style:none;padding:0!important;display:grid;gap:10px;margin-top:6px}
+.qs>li{margin:0!important}
+.q-l{display:block;font-weight:700;font-size:13.5px;margin-bottom:3px}
+.q-opts{display:flex;flex-wrap:wrap;gap:6px 16px}
+.q-opts .opt{font-size:13.5px;font-weight:500}
+
+/* 產出卡 */
+.prod{margin-top:40px;padding-top:10px;border-top:1px solid var(--line);color:var(--ink-2);font-size:12px;line-height:1.7}
+.prod b{font-weight:700}
+
+/* 底部固定列 */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:2px solid var(--line-strong);min-height:var(--bar)}
+.bar .wrap{display:flex;align-items:center;gap:12px;min-height:var(--bar)}
+.bar .cnt{font-size:14px;white-space:nowrap}
+.bar .cnt b{font:700 18px var(--mono)}
+.status{flex:1;min-width:0;font-size:12.5px;line-height:1.45;color:var(--ink-2)}
+
+/* I08 彈性微縮按鈕：--p 由 attachPress 依縮放量算出 */
+.press{position:relative;isolation:isolate;will-change:transform;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer;font:inherit;font-size:14px;font-weight:700;padding:7px 16px;border-radius:6px;background:var(--surface);border:1px solid var(--line-strong);color:var(--ink);white-space:nowrap;outline:none;
+  --raise:0 1px 2px rgba(21,25,30,.22);--sink:inset 0 2px 5px rgba(21,25,30,.32)}
+.press::before,.press::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
+.press::before{z-index:-1;box-shadow:var(--raise);opacity:calc(1 - var(--p,0))}
+.press::after{z-index:2;box-shadow:var(--sink);opacity:var(--p,0)}
+.press:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.press.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent);--sink:inset 0 2px 6px rgba(5,15,50,.55)}
+.press[hidden]{display:none}
+
+/* AC10 已複製泡泡（fadeOutUp） */
+.bub{position:absolute;bottom:calc(100% + 8px);left:50%;margin-left:-40px;width:80px;padding:3px 0;border-radius:4px;background:var(--ink);color:var(--surface);font-size:12px;font-weight:500;line-height:1.4;text-align:center;pointer-events:none;z-index:5;animation:fadeOutUp .7s ease-in both}
+.bub::after{content:"";position:absolute;top:100%;left:50%;margin-left:-4px;border:4px solid transparent;border-top-color:var(--ink)}
+@keyframes fadeOutUp{from{opacity:1}to{opacity:0;transform:translate3d(0,-100%,0)}}
+@keyframes rmFade{from{opacity:1}to{opacity:0}}
+
+/* 版次衝突 */
+.conflict{position:fixed;left:50%;bottom:calc(var(--bar) + 12px);transform:translateX(-50%);z-index:41;width:min(720px,calc(100% - 48px));background:var(--bad-soft);border:1px solid var(--bad);border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:12px;font-size:13.5px}
+.conflict[hidden]{display:none}
+.conflict p{flex:1;color:var(--ink)}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .opt,.dot,.dot::before,.sw input,.sw input::after,.card,.ul{transition:none}
+  .opt:hover{transform:none}
+  .bub{animation-name:rmFade}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="top">
+  <div>
+    <h1>版面喜好選單</h1>
+    <p class="lead">不用會形容。看到喜歡的就點，AI 會把你選的東西變成規則。講師的喜好也是這樣一張一張選出來的。</p>
+  </div>
+  <ol class="steps">
+    <li><b>逛</b>往下看 8 個分類，共 114 項。點縮圖開新分頁看整頁。</li>
+    <li><b>選 3 個以上</b>每項點喜歡、留或不要。覺得哪裡好、哪裡不好，就寫在想法欄。</li>
+    <li><b>下載喜好卡</b>按底部的「下載」，把 <code>我的喜好.md</code> 放進 <code>範例/</code> 資料夾。</li>
+  </ol>
+</header>
+</div>
+
+<nav class="nav" aria-label="跳到分類">
+  <div class="wrap">
+    <a href="#cat-handout">講義<span data-nav-count="handout">0／13</span></a><a href="#cat-report">報告<span data-nav-count="report">0／6</span></a><a href="#cat-slides">簡報<span data-nav-count="slides">0／5</span></a><a href="#cat-dash">儀表板<span data-nav-count="dash">0／5</span></a><a href="#cat-palette">配色<span data-nav-count="palette">0／23</span></a><a href="#cat-component">元件<span data-nav-count="component">0／44</span></a><a href="#cat-interact">互動<span data-nav-count="interact">0／14</span></a><a href="#cat-web">網頁風格<span data-nav-count="web">0／4</span></a><a href="#taste-card" class="nav-card">喜好卡</a>
+    <span class="sp"></span>
+    <span class="total">已選 <b data-total>0</b> 個</span>
+    <label class="sw"><input type="checkbox" id="showTeacher" checked>顯示講師的選擇</label>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section class="cat" id="cat-handout" data-cat="handout"><header class="cat-h"><h2>講義</h2><span class="cat-n" data-cat-count="handout">0／13</span><p>要印出來、要手寫的看這區。</p></header>
+<div class="grid">
+<article class="card" id="i-L0" data-id="L0" data-cat="handout" data-name="暖紙課堂筆記" data-file="samples/L0.html"><a class="pv" href="samples/L0.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/L0.jpg" alt="暖紙課堂筆記 的畫面"></a><div class="card-b"><div class="card-t"><h3>暖紙課堂筆記</h3><code class="sid">L0</code></div><p class="fit">整堂課的完整筆記，可以從頭讀到尾。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/L0.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「暖紙課堂筆記」如何</legend><label class="opt"><input type="radio" name="c-L0" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-L0" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-L0" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：標題色塊很清楚，但顏色太多" aria-label="你對「暖紙課堂筆記」的想法"></textarea></div></article>
+<article class="card" id="i-L1" data-id="L1" data-cat="handout" data-name="參考書重點框" data-file="samples/L1.html"><a class="pv" href="samples/L1.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/L1.jpg" alt="參考書重點框 的畫面"></a><div class="card-b"><div class="card-t"><h3>參考書重點框</h3><code class="sid">L1</code></div><p class="fit">考前快速複習，一眼找到考點。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/L1.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「參考書重點框」如何</legend><label class="opt"><input type="radio" name="c-L1" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-L1" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-L1" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：標題色塊很清楚，但顏色太多" aria-label="你對「參考書重點框」的想法"></textarea></div></article>
+<article class="card" id="i-L2" data-id="L2" data-cat="handout" data-name="康乃爾筆記" data-file="samples/L2.html"><a class="pv" href="samples/L2.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/L2.jpg" alt="康乃爾筆記 的畫面"></a><div class="card-b"><div class="card-t"><h3>康乃爾筆記</h3><code class="sid">L2</code></div><p class="fit">自己整理筆記，遮住一欄就能自我測驗。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/L2.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「康乃爾筆記」如何</legend><label class="opt"><input type="radio" name="c-L2" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-L2" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-L2" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：標題色塊很清楚，但顏色太多" aria-label="你對「康乃爾筆記」的想法"></textarea></div></article>
+<article class="card" id="i-L3" data-id="L3" data-cat="handout" data-name="博物館展板" data-file="samples/L3.html"><a class="pv" href="samples/L3.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/L3.jpg" alt="博物館展板 的畫面"></a><div class="card-b"><div class="card-t"><h3>博物館展板</h3><code class="sid">L3</code></div><p class="fit">課前先看整個時代的全景。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/L3.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「博物館展板」如何</legend><label class="opt"><input type="radio" name="c-L3" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-L3" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-L3" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：標題色塊很清楚，但顏色太多" aria-label="你對「博物館展板」的想法"></textarea></div></article>
+<article class="card" id="i-L6" data-id="L6" data-cat="handout" data-name="重點框加便當盒" data-file="samples/L6.html"><a class="pv" href="samples/L6.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/L6.jpg" alt="重點框加便當盒 的畫面"></a><div class="card-b"><div class="card-t"><h3>重點框加便當盒</h3><code class="sid">L6</code></div><p class="fit">考前用一頁看完一週重點。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/L6.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「重點框加便當盒」如何</legend><label class="opt"><input type="radio" name="c-L6" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-L6" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-L6" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：標題色塊很清楚，但顏色太多" aria-label="你對「重點框加便當盒」的想法"></textarea></div></article>
+<article class="card" id="i-L7" data-id="L7" data-cat="handout" data-name="康乃爾加練習題" data-file="samples/L7.html"><a class="pv" href="samples/L7.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/L7.jpg" alt="康乃爾加練習題 的畫面"></a><div class="card-b"><div class="card-t"><h3>康乃爾加練習題</h3><code class="sid">L7</code></div><p class="fit">複習完直接自我測驗，答案倒印在折線下方。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/L7.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「康乃爾加練習題」如何</legend><label class="opt"><input type="radio" name="c-L7" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-L7" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-L7" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：標題色塊很清楚，但顏色太多" aria-label="你對「康乃爾加練習題」的想法"></textarea></div></article>
+<article class="card" id="i-L8" data-id="L8" data-cat="handout" data-name="年表加拼貼" data-file="samples/L8.html"><a class="pv" href="samples/L8.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/L8.jpg" alt="年表加拼貼 的畫面"></a><div class="card-b"><div class="card-t"><h3>年表加拼貼</h3><code class="sid">L8</code></div><p class="fit">歷史課：年代當主軸，引文像剪報。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/L8.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「年表加拼貼」如何</legend><label class="opt"><input type="radio" name="c-L8" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-L8" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-L8" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：標題色塊很清楚，但顏色太多" aria-label="你對「年表加拼貼」的想法"></textarea></div></article>
+<article class="card" id="i-L9" data-id="L9" data-cat="handout" data-name="原稿用紙加手繪標記" data-file="samples/L9.html"><a class="pv" href="samples/L9.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/L9.jpg" alt="原稿用紙加手繪標記 的畫面"></a><div class="card-b"><div class="card-t"><h3>原稿用紙加手繪標記</h3><code class="sid">L9</code></div><p class="fit">語言課：要默寫、要練字的內容。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/L9.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「原稿用紙加手繪標記」如何</legend><label class="opt"><input type="radio" name="c-L9" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-L9" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-L9" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：標題色塊很清楚，但顏色太多" aria-label="你對「原稿用紙加手繪標記」的想法"></textarea></div></article>
+<article class="card" id="i-L10" data-id="L10" data-cat="handout" data-name="海報學習地圖" data-file="samples/L10.html"><a class="pv" href="samples/L10.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/L10.jpg" alt="海報學習地圖 的畫面"></a><div class="card-b"><div class="card-t"><h3>海報學習地圖</h3><code class="sid">L10</code></div><p class="fit">分站打勾追進度的自學工具，有很多分頁。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/L10.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「海報學習地圖」如何</legend><label class="opt"><input type="radio" name="c-L10" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-L10" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-L10" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：標題色塊很清楚，但顏色太多" aria-label="你對「海報學習地圖」的想法"></textarea></div></article>
+<article class="card" id="i-F1" data-id="F1" data-cat="handout" data-name="毛玻璃便當盒" data-file="samples/F1.html"><a class="pv" href="samples/F1.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/F1.jpg" alt="毛玻璃便當盒 的畫面"></a><div class="card-b"><div class="card-t"><h3>毛玻璃便當盒</h3><code class="sid">F1</code></div><p class="fit">學期或每週總覽，每門課一個顏色。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/F1.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「毛玻璃便當盒」如何</legend><label class="opt"><input type="radio" name="c-F1" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-F1" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-F1" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：標題色塊很清楚，但顏色太多" aria-label="你對「毛玻璃便當盒」的想法"></textarea></div></article>
+<article class="card" id="i-F3" data-id="F3" data-cat="handout" data-name="雜誌拼貼講義" data-file="samples/F3.html"><a class="pv" href="samples/F3.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/F3.jpg" alt="雜誌拼貼講義 的畫面"></a><div class="card-b"><div class="card-t"><h3>雜誌拼貼講義</h3><code class="sid">F3</code></div><p class="fit">故事性強、有年表和史料的課。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/F3.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「雜誌拼貼講義」如何</legend><label class="opt"><input type="radio" name="c-F3" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-F3" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-F3" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：標題色塊很清楚，但顏色太多" aria-label="你對「雜誌拼貼講義」的想法"></textarea></div></article>
+<article class="card" id="i-F4" data-id="F4" data-cat="handout" data-name="原稿用紙極簡版" data-file="samples/F4.html"><a class="pv" href="samples/F4.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/F4.jpg" alt="原稿用紙極簡版 的畫面"></a><div class="card-b"><div class="card-t"><h3>原稿用紙極簡版</h3><code class="sid">F4</code></div><p class="fit">語言課的格式規則與抄寫練習，只有紅筆是彩色。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/F4.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「原稿用紙極簡版」如何</legend><label class="opt"><input type="radio" name="c-F4" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-F4" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-F4" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：標題色塊很清楚，但顏色太多" aria-label="你對「原稿用紙極簡版」的想法"></textarea></div></article>
+<article class="card" id="i-F6" data-id="F6" data-cat="handout" data-name="粗黑框重點卡" data-file="samples/F6.html"><a class="pv" href="samples/F6.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/F6.jpg" alt="粗黑框重點卡 的畫面"></a><div class="card-b"><div class="card-t"><h3>粗黑框重點卡</h3><code class="sid">F6</code></div><p class="fit">考前複習：每種框一種意思，附填空測驗。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/F6.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「粗黑框重點卡」如何</legend><label class="opt"><input type="radio" name="c-F6" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-F6" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-F6" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：標題色塊很清楚，但顏色太多" aria-label="你對「粗黑框重點卡」的想法"></textarea></div></article>
+</div>
+</section>
+
+<section class="cat" id="cat-report" data-cat="report"><header class="cat-h"><h2>報告</h2><span class="cat-n" data-cat-count="report">0／6</span><p>要讓人讀懂一份分析的看這區。</p></header>
+<div class="grid">
+<article class="card" id="i-R1" data-id="R1" data-cat="report" data-name="報紙頭版" data-file="samples/R1.html"><a class="pv" href="samples/R1.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/R1.jpg" alt="報紙頭版 的畫面"></a><div class="card-b"><div class="card-t"><h3>報紙頭版</h3><code class="sid">R1</code></div><p class="fit">要讓人三秒看到最大問題的診斷或週報。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/R1.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「報紙頭版」如何</legend><label class="opt"><input type="radio" name="c-R1" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-R1" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-R1" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：第一眼就看到結論，但字太小" aria-label="你對「報紙頭版」的想法"></textarea></div></article>
+<article class="card" id="i-R3" data-id="R3" data-cat="report" data-name="健檢報告單" data-file="samples/R3.html"><a class="pv" href="samples/R3.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/R3.jpg" alt="健檢報告單 的畫面"></a><div class="card-b"><div class="card-t"><h3>健檢報告單</h3><code class="sid">R3</code></div><p class="fit">一批指標逐列判定，一眼看出哪裡異常。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/R3.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「健檢報告單」如何</legend><label class="opt"><input type="radio" name="c-R3" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-R3" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-R3" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：第一眼就看到結論，但字太小" aria-label="你對「健檢報告單」的想法"></textarea></div></article>
+<article class="card" id="i-R4" data-id="R4" data-cat="report" data-name="瑞士網格" data-file="samples/R4.html"><a class="pv" href="samples/R4.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/R4.jpg" alt="瑞士網格 的畫面"></a><div class="card-b"><div class="card-t"><h3>瑞士網格</h3><code class="sid">R4</code></div><p class="fit">全頁只要讓人記住一個數字的提案。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/R4.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「瑞士網格」如何</legend><label class="opt"><input type="radio" name="c-R4" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-R4" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-R4" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：第一眼就看到結論，但字太小" aria-label="你對「瑞士網格」的想法"></textarea></div></article>
+<article class="card" id="i-R6" data-id="R6" data-cat="report" data-name="雜誌專題" data-file="samples/R6.html"><a class="pv" href="samples/R6.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/R6.jpg" alt="雜誌專題 的畫面"></a><div class="card-b"><div class="card-t"><h3>雜誌專題</h3><code class="sid">R6</code></div><p class="fit">要讓人從頭讀完的回顧文章。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/R6.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「雜誌專題」如何</legend><label class="opt"><input type="radio" name="c-R6" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-R6" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-R6" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：第一眼就看到結論，但字太小" aria-label="你對「雜誌專題」的想法"></textarea></div></article>
+<article class="card" id="i-R7" data-id="R7" data-cat="report" data-name="工程圖紙總覽" data-file="samples/R7.html"><a class="pv" href="samples/R7.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/R7.jpg" alt="工程圖紙總覽 的畫面"></a><div class="card-b"><div class="card-t"><h3>工程圖紙總覽</h3><code class="sid">R7</code></div><p class="fit">一頁看完一個系統或流程的全貌，切成 4 到 6 格。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/R7.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「工程圖紙總覽」如何</legend><label class="opt"><input type="radio" name="c-R7" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-R7" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-R7" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：第一眼就看到結論，但字太小" aria-label="你對「工程圖紙總覽」的想法"></textarea></div></article>
+<article class="card" id="i-R0" data-id="R0" data-cat="report" data-name="暖紙卡片報告" data-file="samples/R0.html"><a class="pv" href="samples/R0.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/R0.jpg" alt="暖紙卡片報告 的畫面"></a><div class="card-b"><div class="card-t"><h3>暖紙卡片報告</h3><code class="sid">R0</code></div><p class="fit">敘述為主的一般分析報告。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/R0.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「暖紙卡片報告」如何</legend><label class="opt"><input type="radio" name="c-R0" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-R0" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-R0" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：第一眼就看到結論，但字太小" aria-label="你對「暖紙卡片報告」的想法"></textarea></div></article>
+</div>
+</section>
+
+<section class="cat" id="cat-slides" data-cat="slides"><header class="cat-h"><h2>簡報</h2><span class="cat-n" data-cat-count="slides">0／5</span><p>要上台講的看這區。開新分頁後按方向鍵翻頁。</p></header>
+<div class="grid">
+<article class="card" id="i-S7" data-id="S7" data-cat="slides" data-name="復古未來簡報" data-file="samples/S7.html"><a class="pv" href="samples/S7.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/S7.jpg" alt="復古未來簡報 的畫面"></a><div class="card-b"><div class="card-t"><h3>復古未來簡報</h3><code class="sid">S7</code></div><p class="fit">海報紙板的質感，想讓人記住的提案。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/S7.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「復古未來簡報」如何</legend><label class="opt"><input type="radio" name="c-S7" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-S7" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-S7" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：轉場很帥，但投影時可能太暗" aria-label="你對「復古未來簡報」的想法"></textarea></div></article>
+<article class="card" id="i-S8b" data-id="S8b" data-cat="slides" data-name="滾動敘事簡報" data-file="samples/S8b.html"><a class="pv" href="samples/S8b.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/S8b.jpg" alt="滾動敘事簡報 的畫面"></a><div class="card-b"><div class="card-t"><h3>滾動敘事簡報</h3><code class="sid">S8b</code></div><p class="fit">要講故事的研究或提案，一步一個場景。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/S8b.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「滾動敘事簡報」如何</legend><label class="opt"><input type="radio" name="c-S8b" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-S8b" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-S8b" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：轉場很帥，但投影時可能太暗" aria-label="你對「滾動敘事簡報」的想法"></textarea></div></article>
+<article class="card" id="i-S9b" data-id="S9b" data-cat="slides" data-name="動效主導簡報" data-file="samples/S9b.html"><a class="pv" href="samples/S9b.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/S9b.jpg" alt="動效主導簡報 的畫面"></a><div class="card-b"><div class="card-t"><h3>動效主導簡報</h3><code class="sid">S9b</code></div><p class="fit">數字當主角、要有衝勁的簡報。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/S9b.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「動效主導簡報」如何</legend><label class="opt"><input type="radio" name="c-S9b" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-S9b" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-S9b" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：轉場很帥，但投影時可能太暗" aria-label="你對「動效主導簡報」的想法"></textarea></div></article>
+<article class="card" id="i-S10" data-id="S10" data-cat="slides" data-name="立體模型導覽簡報" data-file="samples/S10.html"><a class="pv" href="samples/S10.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/S10.jpg" alt="立體模型導覽簡報 的畫面"></a><div class="card-b"><div class="card-t"><h3>立體模型導覽簡報</h3><code class="sid">S10</code></div><p class="fit">介紹校園、場地或系統結構，鏡頭繞著模型走。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/S10.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「立體模型導覽簡報」如何</legend><label class="opt"><input type="radio" name="c-S10" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-S10" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-S10" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：轉場很帥，但投影時可能太暗" aria-label="你對「立體模型導覽簡報」的想法"></textarea></div></article>
+<article class="card" id="i-VF8" data-id="VF8" data-cat="slides" data-name="粉彩封面流簡報" data-file="samples/VF8.html"><a class="pv" href="samples/VF8.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/VF8.jpg" alt="粉彩封面流簡報 的畫面"></a><div class="card-b"><div class="card-t"><h3>粉彩封面流簡報</h3><code class="sid">VF8</code></div><p class="fit">輕鬆的活動或產品介紹，卡片像封面一樣疊著翻。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/VF8.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「粉彩封面流簡報」如何</legend><label class="opt"><input type="radio" name="c-VF8" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-VF8" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-VF8" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：轉場很帥，但投影時可能太暗" aria-label="你對「粉彩封面流簡報」的想法"></textarea></div></article>
+</div>
+</section>
+
+<section class="cat" id="cat-dash" data-cat="dash"><header class="cat-h"><h2>儀表板</h2><span class="cat-n" data-cat-count="dash">0／5</span><p>要反覆看數字的看這區。</p></header>
+<div class="grid">
+<article class="card" id="i-D1" data-id="D1" data-cat="dash" data-name="柔光目標頁" data-file="samples/D1.html"><a class="pv" href="samples/D1.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/D1.jpg" alt="柔光目標頁 的畫面"></a><div class="card-b"><div class="card-t"><h3>柔光目標頁</h3><code class="sid">D1</code></div><p class="fit">追一個目標的達成率，例如學習或運動進度。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/D1.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「柔光目標頁」如何</legend><label class="opt"><input type="radio" name="c-D1" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-D1" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-D1" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：指標卡好讀，但我不需要側欄" aria-label="你對「柔光目標頁」的想法"></textarea></div></article>
+<article class="card" id="i-D2" data-id="D2" data-cat="dash" data-name="側欄追蹤頁" data-file="samples/D2.html"><a class="pv" href="samples/D2.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/D2.jpg" alt="側欄追蹤頁 的畫面"></a><div class="card-b"><div class="card-t"><h3>側欄追蹤頁</h3><code class="sid">D2</code></div><p class="fit">同時看幾個指標和逐項狀態，例如課程作業。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/D2.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「側欄追蹤頁」如何</legend><label class="opt"><input type="radio" name="c-D2" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-D2" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-D2" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：指標卡好讀，但我不需要側欄" aria-label="你對「側欄追蹤頁」的想法"></textarea></div></article>
+<article class="card" id="i-D3" data-id="D3" data-cat="dash" data-name="新擬態帳務頁" data-file="samples/D3.html"><a class="pv" href="samples/D3.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/D3.jpg" alt="新擬態帳務頁 的畫面"></a><div class="card-b"><div class="card-t"><h3>新擬態帳務頁</h3><code class="sid">D3</code></div><p class="fit">記帳、預算這類數字多、類別少的頁面。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/D3.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「新擬態帳務頁」如何</legend><label class="opt"><input type="radio" name="c-D3" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-D3" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-D3" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：指標卡好讀，但我不需要側欄" aria-label="你對「新擬態帳務頁」的想法"></textarea></div></article>
+<article class="card" id="i-D4" data-id="D4" data-cat="dash" data-name="流程畫布頁" data-file="samples/D4.html"><a class="pv" href="samples/D4.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/D4.jpg" alt="流程畫布頁 的畫面"></a><div class="card-b"><div class="card-t"><h3>流程畫布頁</h3><code class="sid">D4</code></div><p class="fit">流程本身是主角，要一眼看出哪一段卡住。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/D4.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「流程畫布頁」如何</legend><label class="opt"><input type="radio" name="c-D4" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-D4" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-D4" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：指標卡好讀，但我不需要側欄" aria-label="你對「流程畫布頁」的想法"></textarea></div></article>
+<article class="card" id="i-D6b" data-id="D6b" data-cat="dash" data-name="看盤工作台" data-file="samples/D6b.html"><a class="pv" href="samples/D6b.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/D6b.jpg" alt="看盤工作台 的畫面"></a><div class="card-b"><div class="card-t"><h3>看盤工作台</h3><code class="sid">D6b</code></div><p class="fit">追價格走勢與多個標的的工作台。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/D6b.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「看盤工作台」如何</legend><label class="opt"><input type="radio" name="c-D6b" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-D6b" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-D6b" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：指標卡好讀，但我不需要側欄" aria-label="你對「看盤工作台」的想法"></textarea></div></article>
+</div>
+</section>
+
+<section class="cat" id="cat-palette" data-cat="palette"><header class="cat-h"><h2>配色</h2><span class="cat-n" data-cat-count="palette">0／23</span><p>每張色票卡有 5 個角色：底、面、主字、主色、強調。</p></header>
+<div class="grid grid-pal">
+<article class="card" id="i-P1" data-id="P1" data-cat="palette" data-name="報紙墨朱" data-file="" data-colors="底 #eee8d7、面 #f8f4e8、主字 #16140f、主色 #16140f、強調 #b0121b"><div class="pal" style="background:#eee8d7;color:#16140f"><div class="pal-sheet" style="background:#f8f4e8"><div class="pal-bar" style="background:#16140f"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#b0121b;border-bottom:2px solid #b0121b;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#eee8d7"></i><b>底</b><code>#eee8d7</code></li><li><i style="background:#f8f4e8"></i><b>面</b><code>#f8f4e8</code></li><li><i style="background:#16140f"></i><b>主字</b><code>#16140f</code></li><li><i style="background:#16140f"></i><b>主色</b><code>#16140f</code></li><li><i style="background:#b0121b"></i><b>強調</b><code>#b0121b</code></li></ul><div class="card-b"><div class="card-t"><h3>報紙墨朱</h3><code class="sid">P1</code></div><p class="fit">診斷、週報這類新聞感的報告</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span></div><fieldset class="pick"><legend>你覺得「報紙墨朱」如何</legend><label class="opt"><input type="radio" name="c-P1" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P1" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P1" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「報紙墨朱」的想法"></textarea></div></article>
+<article class="card" id="i-P2" data-id="P2" data-cat="palette" data-name="醫療檢驗" data-file="" data-colors="底 #eef1f4、面 #ffffff、主字 #16191d、主色 #0b5cad、強調 #c0261c"><div class="pal" style="background:#eef1f4;color:#16191d"><div class="pal-sheet" style="background:#ffffff"><div class="pal-bar" style="background:#0b5cad"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#c0261c;border-bottom:2px solid #c0261c;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#eef1f4"></i><b>底</b><code>#eef1f4</code></li><li><i style="background:#ffffff"></i><b>面</b><code>#ffffff</code></li><li><i style="background:#16191d"></i><b>主字</b><code>#16191d</code></li><li><i style="background:#0b5cad"></i><b>主色</b><code>#0b5cad</code></li><li><i style="background:#c0261c"></i><b>強調</b><code>#c0261c</code></li></ul><div class="card-b"><div class="card-t"><h3>醫療檢驗</h3><code class="sid">P2</code></div><p class="fit">指標、健檢、稽核報告；需要紅黃綠判定時</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span></div><fieldset class="pick"><legend>你覺得「醫療檢驗」如何</legend><label class="opt"><input type="radio" name="c-P2" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P2" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P2" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「醫療檢驗」的想法"></textarea></div></article>
+<article class="card" id="i-P3" data-id="P3" data-cat="palette" data-name="瑞士橘紅" data-file="" data-colors="底 #ffffff、面 #ffffff、主字 #000000、主色 #000000、強調 #cc3008"><div class="pal" style="background:#ffffff;color:#000000"><div class="pal-sheet" style="background:#ffffff"><div class="pal-bar" style="background:#000000"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#cc3008;border-bottom:2px solid #cc3008;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#ffffff"></i><b>底</b><code>#ffffff</code></li><li><i style="background:#ffffff"></i><b>面</b><code>#ffffff</code></li><li><i style="background:#000000"></i><b>主字</b><code>#000000</code></li><li><i style="background:#000000"></i><b>主色</b><code>#000000</code></li><li><i style="background:#cc3008"></i><b>強調</b><code>#cc3008</code></li></ul><div class="card-b"><div class="card-t"><h3>瑞士橘紅</h3><code class="sid">P3</code></div><p class="fit">只有一個重點數字的提案；極簡版面</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span></div><fieldset class="pick"><legend>你覺得「瑞士橘紅」如何</legend><label class="opt"><input type="radio" name="c-P3" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P3" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P3" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「瑞士橘紅」的想法"></textarea></div></article>
+<article class="card" id="i-P4" data-id="P4" data-cat="palette" data-name="參考書原色" data-file="" data-colors="底 #ffffff、面 #ffffff、主字 #1b1d22、主色 #1f3a68、強調 #d0161b"><div class="pal" style="background:#ffffff;color:#1b1d22"><div class="pal-sheet" style="background:#ffffff"><div class="pal-bar" style="background:#1f3a68"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#d0161b;border-bottom:2px solid #d0161b;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#ffffff"></i><b>底</b><code>#ffffff</code></li><li><i style="background:#ffffff"></i><b>面</b><code>#ffffff</code></li><li><i style="background:#1b1d22"></i><b>主字</b><code>#1b1d22</code></li><li><i style="background:#1f3a68"></i><b>主色</b><code>#1f3a68</code></li><li><i style="background:#d0161b"></i><b>強調</b><code>#d0161b</code></li></ul><div class="card-b"><div class="card-t"><h3>參考書原色</h3><code class="sid">P4</code></div><p class="fit">講義、考前複習；資訊類型多、每個顏色綁一種語意</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span></div><fieldset class="pick"><legend>你覺得「參考書原色」如何</legend><label class="opt"><input type="radio" name="c-P4" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P4" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P4" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「參考書原色」的想法"></textarea></div></article>
+<article class="card" id="i-P5" data-id="P5" data-cat="palette" data-name="原版暖紙" data-file="" data-colors="底 #f6efe7、面 #fffbf6、主字 #1f1c18、主色 #7a4a1e、強調 #b8331a"><div class="pal" style="background:#f6efe7;color:#1f1c18"><div class="pal-sheet" style="background:#fffbf6"><div class="pal-bar" style="background:#7a4a1e"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#b8331a;border-bottom:2px solid #b8331a;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#f6efe7"></i><b>底</b><code>#f6efe7</code></li><li><i style="background:#fffbf6"></i><b>面</b><code>#fffbf6</code></li><li><i style="background:#1f1c18"></i><b>主字</b><code>#1f1c18</code></li><li><i style="background:#7a4a1e"></i><b>主色</b><code>#7a4a1e</code></li><li><i style="background:#b8331a"></i><b>強調</b><code>#b8331a</code></li></ul><div class="card-b"><div class="card-t"><h3>原版暖紙</h3><code class="sid">P5</code></div><p class="fit">敘述為主的分析頁、現行課堂講義</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span></div><fieldset class="pick"><legend>你覺得「原版暖紙」如何</legend><label class="opt"><input type="radio" name="c-P5" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P5" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P5" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「原版暖紙」的想法"></textarea></div></article>
+<article class="card" id="i-P6" data-id="P6" data-cat="palette" data-name="莫蘭迪柔和" data-file="" data-colors="底 #f3f0eb、面 #faf8f5、主字 #2b2a28、主色 #4f6477、強調 #954a4a"><div class="pal" style="background:#f3f0eb;color:#2b2a28"><div class="pal-sheet" style="background:#faf8f5"><div class="pal-bar" style="background:#4f6477"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#954a4a;border-bottom:2px solid #954a4a;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#f3f0eb"></i><b>底</b><code>#f3f0eb</code></li><li><i style="background:#faf8f5"></i><b>面</b><code>#faf8f5</code></li><li><i style="background:#2b2a28"></i><b>主字</b><code>#2b2a28</code></li><li><i style="background:#4f6477"></i><b>主色</b><code>#4f6477</code></li><li><i style="background:#954a4a"></i><b>強調</b><code>#954a4a</code></li></ul><div class="card-b"><div class="card-t"><h3>莫蘭迪柔和</h3><code class="sid">P6</code></div><p class="fit">長時間閱讀的筆記與心得，不想刺眼時</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span></div><fieldset class="pick"><legend>你覺得「莫蘭迪柔和」如何</legend><label class="opt"><input type="radio" name="c-P6" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P6" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P6" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「莫蘭迪柔和」的想法"></textarea></div></article>
+<article class="card" id="i-P7" data-id="P7" data-cat="palette" data-name="高彩度流行" data-file="" data-colors="底 #ffffff、面 #ffffff、主字 #0d0d1a、主色 #1f3fd1、強調 #b0106e"><div class="pal" style="background:#ffffff;color:#0d0d1a"><div class="pal-sheet" style="background:#ffffff"><div class="pal-bar" style="background:#1f3fd1"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#b0106e;border-bottom:2px solid #b0106e;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#ffffff"></i><b>底</b><code>#ffffff</code></li><li><i style="background:#ffffff"></i><b>面</b><code>#ffffff</code></li><li><i style="background:#0d0d1a"></i><b>主字</b><code>#0d0d1a</code></li><li><i style="background:#1f3fd1"></i><b>主色</b><code>#1f3fd1</code></li><li><i style="background:#b0106e"></i><b>強調</b><code>#b0106e</code></li></ul><div class="card-b"><div class="card-t"><h3>高彩度流行</h3><code class="sid">P7</code></div><p class="fit">給年輕受眾的提案、活動頁</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span></div><fieldset class="pick"><legend>你覺得「高彩度流行」如何</legend><label class="opt"><input type="radio" name="c-P7" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P7" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P7" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「高彩度流行」的想法"></textarea></div></article>
+<article class="card" id="i-P8" data-id="P8" data-cat="palette" data-name="森林墨綠" data-file="" data-colors="底 #f5f2e8、面 #fbf9f2、主字 #1a2419、主色 #1f4d34、強調 #a33b22"><div class="pal" style="background:#f5f2e8;color:#1a2419"><div class="pal-sheet" style="background:#fbf9f2"><div class="pal-bar" style="background:#1f4d34"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#a33b22;border-bottom:2px solid #a33b22;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#f5f2e8"></i><b>底</b><code>#f5f2e8</code></li><li><i style="background:#fbf9f2"></i><b>面</b><code>#fbf9f2</code></li><li><i style="background:#1a2419"></i><b>主字</b><code>#1a2419</code></li><li><i style="background:#1f4d34"></i><b>主色</b><code>#1f4d34</code></li><li><i style="background:#a33b22"></i><b>強調</b><code>#a33b22</code></li></ul><div class="card-b"><div class="card-t"><h3>森林墨綠</h3><code class="sid">P8</code></div><p class="fit">旅遊、戶外、自然主題</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span></div><fieldset class="pick"><legend>你覺得「森林墨綠」如何</legend><label class="opt"><input type="radio" name="c-P8" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P8" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P8" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「森林墨綠」的想法"></textarea></div></article>
+<article class="card" id="i-P9" data-id="P9" data-cat="palette" data-name="海軍金" data-file="" data-colors="底 #eef1f5、面 #fafbfc、主字 #0f1a2e、主色 #14264a、強調 #7a580b"><div class="pal" style="background:#eef1f5;color:#0f1a2e"><div class="pal-sheet" style="background:#fafbfc"><div class="pal-bar" style="background:#14264a"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#7a580b;border-bottom:2px solid #7a580b;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#eef1f5"></i><b>底</b><code>#eef1f5</code></li><li><i style="background:#fafbfc"></i><b>面</b><code>#fafbfc</code></li><li><i style="background:#0f1a2e"></i><b>主字</b><code>#0f1a2e</code></li><li><i style="background:#14264a"></i><b>主色</b><code>#14264a</code></li><li><i style="background:#7a580b"></i><b>強調</b><code>#7a580b</code></li></ul><div class="card-b"><div class="card-t"><h3>海軍金</h3><code class="sid">P9</code></div><p class="fit">正式提案、金融或面試簡報</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span></div><fieldset class="pick"><legend>你覺得「海軍金」如何</legend><label class="opt"><input type="radio" name="c-P9" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P9" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P9" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「海軍金」的想法"></textarea></div></article>
+<article class="card" id="i-P10" data-id="P10" data-cat="palette" data-name="日本傳統色" data-file="" data-colors="底 #fbfaf5、面 #fffffb、主字 #1f1b17、主色 #b8401d、強調 #b8401d"><div class="pal" style="background:#fbfaf5;color:#1f1b17"><div class="pal-sheet" style="background:#fffffb"><div class="pal-bar" style="background:#b8401d"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#b8401d;border-bottom:2px solid #b8401d;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#fbfaf5"></i><b>底</b><code>#fbfaf5</code></li><li><i style="background:#fffffb"></i><b>面</b><code>#fffffb</code></li><li><i style="background:#1f1b17"></i><b>主字</b><code>#1f1b17</code></li><li><i style="background:#b8401d"></i><b>主色</b><code>#b8401d</code></li><li><i style="background:#b8401d"></i><b>強調</b><code>#b8401d</code></li></ul><div class="card-b"><div class="card-t"><h3>日本傳統色</h3><code class="sid">P10</code></div><p class="fit">日本旅遊、日文、日本史主題</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span></div><fieldset class="pick"><legend>你覺得「日本傳統色」如何</legend><label class="opt"><input type="radio" name="c-P10" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P10" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P10" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「日本傳統色」的想法"></textarea></div></article>
+<article class="card" id="i-P11" data-id="P11" data-cat="palette" data-name="淺色主控台" data-file="" data-colors="底 #e8ecef、面 #f6f8f9、主字 #11181f、主色 #006666、強調 #b3261e"><div class="pal" style="background:#e8ecef;color:#11181f"><div class="pal-sheet" style="background:#f6f8f9"><div class="pal-bar" style="background:#006666"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#b3261e;border-bottom:2px solid #b3261e;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#e8ecef"></i><b>底</b><code>#e8ecef</code></li><li><i style="background:#f6f8f9"></i><b>面</b><code>#f6f8f9</code></li><li><i style="background:#11181f"></i><b>主字</b><code>#11181f</code></li><li><i style="background:#006666"></i><b>主色</b><code>#006666</code></li><li><i style="background:#b3261e"></i><b>強調</b><code>#b3261e</code></li></ul><div class="card-b"><div class="card-t"><h3>淺色主控台</h3><code class="sid">P11</code></div><p class="fit">系統狀態、工具頁、儀表板</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span></div><fieldset class="pick"><legend>你覺得「淺色主控台」如何</legend><label class="opt"><input type="radio" name="c-P11" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P11" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P11" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「淺色主控台」的想法"></textarea></div></article>
+<article class="card" id="i-P12" data-id="P12" data-cat="palette" data-name="藍色單色階" data-file="" data-colors="底 #f4f7fb、面 #ffffff、主字 #0e1a2b、主色 #1b4f9c、強調 #0b4bb3"><div class="pal" style="background:#f4f7fb;color:#0e1a2b"><div class="pal-sheet" style="background:#ffffff"><div class="pal-bar" style="background:#1b4f9c"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#0b4bb3;border-bottom:2px solid #0b4bb3;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#f4f7fb"></i><b>底</b><code>#f4f7fb</code></li><li><i style="background:#ffffff"></i><b>面</b><code>#ffffff</code></li><li><i style="background:#0e1a2b"></i><b>主字</b><code>#0e1a2b</code></li><li><i style="background:#1b4f9c"></i><b>主色</b><code>#1b4f9c</code></li><li><i style="background:#0b4bb3"></i><b>強調</b><code>#0b4bb3</code></li></ul><div class="card-b"><div class="card-t"><h3>藍色單色階</h3><code class="sid">P12</code></div><p class="fit">類別少、想要克制的工具頁或報告</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span></div><fieldset class="pick"><legend>你覺得「藍色單色階」如何</legend><label class="opt"><input type="radio" name="c-P12" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P12" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P12" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「藍色單色階」的想法"></textarea></div></article>
+<article class="card" id="i-P13" data-id="P13" data-cat="palette" data-name="暖紙青綠朱" data-file="" data-colors="底 #f4ede1、面 #fcf9f2、主字 #1f1b16、主色 #12585b、強調 #b2361a"><div class="pal" style="background:#f4ede1;color:#1f1b16"><div class="pal-sheet" style="background:#fcf9f2"><div class="pal-bar" style="background:#12585b"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#b2361a;border-bottom:2px solid #b2361a;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#f4ede1"></i><b>底</b><code>#f4ede1</code></li><li><i style="background:#fcf9f2"></i><b>面</b><code>#fcf9f2</code></li><li><i style="background:#1f1b16"></i><b>主字</b><code>#1f1b16</code></li><li><i style="background:#12585b"></i><b>主色</b><code>#12585b</code></li><li><i style="background:#b2361a"></i><b>強調</b><code>#b2361a</code></li></ul><div class="card-b"><div class="card-t"><h3>暖紙青綠朱</h3><code class="sid">P13</code></div><p class="fit">分析報告、週報、提案頁；想要比墨朱多一點顏色但仍安靜時</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span></div><fieldset class="pick"><legend>你覺得「暖紙青綠朱」如何</legend><label class="opt"><input type="radio" name="c-P13" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P13" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P13" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「暖紙青綠朱」的想法"></textarea></div></article>
+<article class="card" id="i-P14" data-id="P14" data-cat="palette" data-name="石墨鈷藍" data-file="" data-colors="底 #eaedf0、面 #f8f9fb、主字 #15191e、主色 #15191e、強調 #2254c1"><div class="pal" style="background:#eaedf0;color:#15191e"><div class="pal-sheet" style="background:#f8f9fb"><div class="pal-bar" style="background:#15191e"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#2254c1;border-bottom:2px solid #2254c1;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#eaedf0"></i><b>底</b><code>#eaedf0</code></li><li><i style="background:#f8f9fb"></i><b>面</b><code>#f8f9fb</code></li><li><i style="background:#15191e"></i><b>主字</b><code>#15191e</code></li><li><i style="background:#15191e"></i><b>主色</b><code>#15191e</code></li><li><i style="background:#2254c1"></i><b>強調</b><code>#2254c1</code></li></ul><div class="card-b"><div class="card-t"><h3>石墨鈷藍</h3><code class="sid">P14</code></div><p class="fit">工具頁、規格說明、檢查清單；判定多、需要紅色專門表示失敗時</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span></div><fieldset class="pick"><legend>你覺得「石墨鈷藍」如何</legend><label class="opt"><input type="radio" name="c-P14" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P14" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P14" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「石墨鈷藍」的想法"></textarea></div></article>
+<article class="card" id="i-P15" data-id="P15" data-cat="palette" data-name="灰藍朱砂" data-file="" data-colors="底 #f2efe9、面 #faf8f5、主字 #272522、主色 #435b70、強調 #af371c"><div class="pal" style="background:#f2efe9;color:#272522"><div class="pal-sheet" style="background:#faf8f5"><div class="pal-bar" style="background:#435b70"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#af371c;border-bottom:2px solid #af371c;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#f2efe9"></i><b>底</b><code>#f2efe9</code></li><li><i style="background:#faf8f5"></i><b>面</b><code>#faf8f5</code></li><li><i style="background:#272522"></i><b>主字</b><code>#272522</code></li><li><i style="background:#435b70"></i><b>主色</b><code>#435b70</code></li><li><i style="background:#af371c"></i><b>強調</b><code>#af371c</code></li></ul><div class="card-b"><div class="card-t"><h3>灰藍朱砂</h3><code class="sid">P15</code></div><p class="fit">長時間閱讀的筆記、心得、講義；想安靜但重點要看得到</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span></div><fieldset class="pick"><legend>你覺得「灰藍朱砂」如何</legend><label class="opt"><input type="radio" name="c-P15" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P15" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P15" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「灰藍朱砂」的想法"></textarea></div></article>
+<article class="card" id="i-P16" data-id="P16" data-cat="palette" data-name="奶茶靛藍" data-file="" data-colors="底 #f6ede2、面 #fdf8f2、主字 #201b16、主色 #523928、強調 #304aac"><div class="pal" style="background:#f6ede2;color:#201b16"><div class="pal-sheet" style="background:#fdf8f2"><div class="pal-bar" style="background:#523928"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#304aac;border-bottom:2px solid #304aac;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#f6ede2"></i><b>底</b><code>#f6ede2</code></li><li><i style="background:#fdf8f2"></i><b>面</b><code>#fdf8f2</code></li><li><i style="background:#201b16"></i><b>主字</b><code>#201b16</code></li><li><i style="background:#523928"></i><b>主色</b><code>#523928</code></li><li><i style="background:#304aac"></i><b>強調</b><code>#304aac</code></li></ul><div class="card-b"><div class="card-t"><h3>奶茶靛藍</h3><code class="sid">P16</code></div><p class="fit">敘述型分析頁、讀書筆記、旅遊或生活主題</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span></div><fieldset class="pick"><legend>你覺得「奶茶靛藍」如何</legend><label class="opt"><input type="radio" name="c-P16" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P16" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P16" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「奶茶靛藍」的想法"></textarea></div></article>
+<article class="card" id="i-P17" data-id="P17" data-cat="palette" data-name="藏青朱紅" data-file="" data-colors="底 #e9edf1、面 #f7f9fb、主字 #13181e、主色 #1d3559、強調 #b43315"><div class="pal" style="background:#e9edf1;color:#13181e"><div class="pal-sheet" style="background:#f7f9fb"><div class="pal-bar" style="background:#1d3559"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#b43315;border-bottom:2px solid #b43315;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#e9edf1"></i><b>底</b><code>#e9edf1</code></li><li><i style="background:#f7f9fb"></i><b>面</b><code>#f7f9fb</code></li><li><i style="background:#13181e"></i><b>主字</b><code>#13181e</code></li><li><i style="background:#1d3559"></i><b>主色</b><code>#1d3559</code></li><li><i style="background:#b43315"></i><b>強調</b><code>#b43315</code></li></ul><div class="card-b"><div class="card-t"><h3>藏青朱紅</h3><code class="sid">P17</code></div><p class="fit">正式報告、提案、面試或金融主題；要穩重又要一個亮點</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span></div><fieldset class="pick"><legend>你覺得「藏青朱紅」如何</legend><label class="opt"><input type="radio" name="c-P17" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P17" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P17" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「藏青朱紅」的想法"></textarea></div></article>
+<article class="card" id="i-P19" data-id="P19" data-cat="palette" data-name="夜藍琥珀" data-file="" data-colors="底 #0c1326、面 #151d33、主字 #f2eee6、主色 #f2eee6、強調 #f3b94c"><div class="pal" style="background:#0c1326;color:#f2eee6"><div class="pal-sheet" style="background:#151d33"><div class="pal-bar" style="background:#f2eee6"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#f3b94c;border-bottom:2px solid #f3b94c;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#0c1326"></i><b>底</b><code>#0c1326</code></li><li><i style="background:#151d33"></i><b>面</b><code>#151d33</code></li><li><i style="background:#f2eee6"></i><b>主字</b><code>#f2eee6</code></li><li><i style="background:#f2eee6"></i><b>主色</b><code>#f2eee6</code></li><li><i style="background:#f3b94c"></i><b>強調</b><code>#f3b94c</code></li></ul><div class="card-b"><div class="card-t"><h3>夜藍琥珀</h3><code class="sid">P19</code></div><p class="fit">正式提案、研究分析、要講故事的簡報；展示頁的大數字</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span></div><fieldset class="pick"><legend>你覺得「夜藍琥珀」如何</legend><label class="opt"><input type="radio" name="c-P19" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P19" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P19" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「夜藍琥珀」的想法"></textarea></div></article>
+<article class="card" id="i-P20" data-id="P20" data-cat="palette" data-name="夜幕藤紫" data-file="" data-colors="底 #110c1a、面 #1c1626、主字 #f3f0f8、主色 #f3f0f8、強調 #c6a0f2"><div class="pal" style="background:#110c1a;color:#f3f0f8"><div class="pal-sheet" style="background:#1c1626"><div class="pal-bar" style="background:#f3f0f8"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#c6a0f2;border-bottom:2px solid #c6a0f2;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#110c1a"></i><b>底</b><code>#110c1a</code></li><li><i style="background:#1c1626"></i><b>面</b><code>#1c1626</code></li><li><i style="background:#f3f0f8"></i><b>主字</b><code>#f3f0f8</code></li><li><i style="background:#f3f0f8"></i><b>主色</b><code>#f3f0f8</code></li><li><i style="background:#c6a0f2"></i><b>強調</b><code>#c6a0f2</code></li></ul><div class="card-b"><div class="card-t"><h3>夜幕藤紫</h3><code class="sid">P20</code></div><p class="fit">數字當主角的簡報、產品發表、展示頁</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span></div><fieldset class="pick"><legend>你覺得「夜幕藤紫」如何</legend><label class="opt"><input type="radio" name="c-P20" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P20" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P20" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「夜幕藤紫」的想法"></textarea></div></article>
+<article class="card" id="i-P21" data-id="P21" data-cat="palette" data-name="炭黑電藍" data-file="" data-colors="底 #0f1112、面 #191b1d、主字 #f2f3f5、主色 #f2f3f5、強調 #60a7ff"><div class="pal" style="background:#0f1112;color:#f2f3f5"><div class="pal-sheet" style="background:#191b1d"><div class="pal-bar" style="background:#f2f3f5"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#60a7ff;border-bottom:2px solid #60a7ff;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#0f1112"></i><b>底</b><code>#0f1112</code></li><li><i style="background:#191b1d"></i><b>面</b><code>#191b1d</code></li><li><i style="background:#f2f3f5"></i><b>主字</b><code>#f2f3f5</code></li><li><i style="background:#f2f3f5"></i><b>主色</b><code>#f2f3f5</code></li><li><i style="background:#60a7ff"></i><b>強調</b><code>#60a7ff</code></li></ul><div class="card-b"><div class="card-t"><h3>炭黑電藍</h3><code class="sid">P21</code></div><p class="fit">技術簡報、工具或平台的展示頁、產品規格發表</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span></div><fieldset class="pick"><legend>你覺得「炭黑電藍」如何</legend><label class="opt"><input type="radio" name="c-P21" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P21" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P21" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「炭黑電藍」的想法"></textarea></div></article>
+<article class="card" id="i-P1b" data-id="P1b" data-cat="palette" data-name="報紙墨朱修正" data-file="" data-colors="底 #eee8d7、面 #f8f4e8、主字 #16140f、主色 #16140f、強調 #b0121b"><div class="pal" style="background:#eee8d7;color:#16140f"><div class="pal-sheet" style="background:#f8f4e8"><div class="pal-bar" style="background:#16140f"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#b0121b;border-bottom:2px solid #b0121b;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#eee8d7"></i><b>底</b><code>#eee8d7</code></li><li><i style="background:#f8f4e8"></i><b>面</b><code>#f8f4e8</code></li><li><i style="background:#16140f"></i><b>主字</b><code>#16140f</code></li><li><i style="background:#16140f"></i><b>主色</b><code>#16140f</code></li><li><i style="background:#b0121b"></i><b>強調</b><code>#b0121b</code></li></ul><div class="card-b"><div class="card-t"><h3>報紙墨朱修正</h3><code class="sid">P1b</code></div><p class="fit">診斷、週報這類新聞感的報告；要判定表又要朱紅頭條時</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span></div><fieldset class="pick"><legend>你覺得「報紙墨朱修正」如何</legend><label class="opt"><input type="radio" name="c-P1b" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P1b" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P1b" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「報紙墨朱修正」的想法"></textarea></div></article>
+<article class="card" id="i-P2b" data-id="P2b" data-cat="palette" data-name="醫療藍修正" data-file="" data-colors="底 #eef1f4、面 #ffffff、主字 #16191d、主色 #0b5cad、強調 #b10b69"><div class="pal" style="background:#eef1f4;color:#16191d"><div class="pal-sheet" style="background:#ffffff"><div class="pal-bar" style="background:#0b5cad"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#b10b69;border-bottom:2px solid #b10b69;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#eef1f4"></i><b>底</b><code>#eef1f4</code></li><li><i style="background:#ffffff"></i><b>面</b><code>#ffffff</code></li><li><i style="background:#16191d"></i><b>主字</b><code>#16191d</code></li><li><i style="background:#0b5cad"></i><b>主色</b><code>#0b5cad</code></li><li><i style="background:#b10b69"></i><b>強調</b><code>#b10b69</code></li></ul><div class="card-b"><div class="card-t"><h3>醫療藍修正</h3><code class="sid">P2b</code></div><p class="fit">指標、健檢、稽核報告；需要紅黃綠判定時</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span></div><fieldset class="pick"><legend>你覺得「醫療藍修正」如何</legend><label class="opt"><input type="radio" name="c-P2b" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P2b" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P2b" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「醫療藍修正」的想法"></textarea></div></article>
+<article class="card" id="i-P10b" data-id="P10b" data-cat="palette" data-name="和色墨朱修正" data-file="" data-colors="底 #fbfaf5、面 #fffffb、主字 #1f1b17、主色 #1f1b17、強調 #b8401d"><div class="pal" style="background:#fbfaf5;color:#1f1b17"><div class="pal-sheet" style="background:#fffffb"><div class="pal-bar" style="background:#1f1b17"></div><div class="pal-h">第三章　重點整理</div><div class="pal-t">這一行是主字。<span style="color:#b8401d;border-bottom:2px solid #b8401d;font-weight:700">這個詞是強調。</span></div></div></div><ul class="chips"><li><i style="background:#fbfaf5"></i><b>底</b><code>#fbfaf5</code></li><li><i style="background:#fffffb"></i><b>面</b><code>#fffffb</code></li><li><i style="background:#1f1b17"></i><b>主字</b><code>#1f1b17</code></li><li><i style="background:#1f1b17"></i><b>主色</b><code>#1f1b17</code></li><li><i style="background:#b8401d"></i><b>強調</b><code>#b8401d</code></li></ul><div class="card-b"><div class="card-t"><h3>和色墨朱修正</h3><code class="sid">P10b</code></div><p class="fit">日本旅遊、日文、日本史主題</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span></div><fieldset class="pick"><legend>你覺得「和色墨朱修正」如何</legend><label class="opt"><input type="radio" name="c-P10b" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-P10b" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-P10b" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：底色舒服，強調色太跳" aria-label="你對「和色墨朱修正」的想法"></textarea></div></article>
+</div>
+</section>
+
+<section class="cat" id="cat-component" data-cat="component"><header class="cat-h"><h2>元件</h2><span class="cat-n" data-cat-count="component">0／44</span><p>這些小零件是活的，直接按按看。</p></header>
+<h3 class="sub">按鈕</h3><div class="grid">
+<article class="card" id="i-GX02" data-id="GX02" data-cat="component" data-name="掃色外框按鈕" data-file="samples/GX02.html"><iframe class="live" loading="lazy" src="samples/GX02.html" title="掃色外框按鈕 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>掃色外框按鈕</h3><code class="sid">GX02</code></div><p class="fit">一般按鈕：滑過時底色從角落掃滿。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX02.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「掃色外框按鈕」如何</legend><label class="opt"><input type="radio" name="c-GX02" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX02" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX02" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「掃色外框按鈕」的想法"></textarea></div></article>
+<article class="card" id="i-CX04" data-id="CX04" data-cat="component" data-name="傾斜按鈕" data-file="samples/CX04.html"><iframe class="live" loading="lazy" src="samples/CX04.html" title="傾斜按鈕 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>傾斜按鈕</h3><code class="sid">CX04</code></div><p class="fit">展示用按鈕：滑鼠移動時傾斜，只有一個青綠色。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/CX04.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「傾斜按鈕」如何</legend><label class="opt"><input type="radio" name="c-CX04" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-CX04" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-CX04" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「傾斜按鈕」的想法"></textarea></div></article>
+<article class="card" id="i-GX12" data-id="GX12" data-cat="component" data-name="毛玻璃回到頂端鈕" data-file="samples/GX12.html"><iframe class="live" loading="lazy" src="samples/GX12.html" title="毛玻璃回到頂端鈕 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>毛玻璃回到頂端鈕</h3><code class="sid">GX12</code></div><p class="fit">長頁面：捲下去之後，右下角出現回到頂端的鈕。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX12.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「毛玻璃回到頂端鈕」如何</legend><label class="opt"><input type="radio" name="c-GX12" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX12" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX12" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「毛玻璃回到頂端鈕」的想法"></textarea></div></article>
+<article class="card" id="i-GX03" data-id="GX03" data-cat="component" data-name="翻板按鈕" data-file="samples/GX03.html"><iframe class="live" loading="lazy" src="samples/GX03.html" title="翻板按鈕 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>翻板按鈕</h3><code class="sid">GX03</code></div><p class="fit">一般按鈕：滑過時像翻頁一樣翻出淺色面。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/GX03.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「翻板按鈕」如何</legend><label class="opt"><input type="radio" name="c-GX03" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX03" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX03" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「翻板按鈕」的想法"></textarea></div></article>
+<article class="card" id="i-GX08" data-id="GX08" data-cat="component" data-name="彩虹字深色傾斜按鈕" data-file="samples/GX08.html"><iframe class="live" loading="lazy" src="samples/GX08.html" title="彩虹字深色傾斜按鈕 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>彩虹字深色傾斜按鈕</h3><code class="sid">GX08</code></div><p class="fit">展示用按鈕：彩虹字，滑鼠移動時會傾斜。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/GX08.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「彩虹字深色傾斜按鈕」如何</legend><label class="opt"><input type="radio" name="c-GX08" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX08" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX08" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「彩虹字深色傾斜按鈕」的想法"></textarea></div></article>
+<article class="card" id="i-AC04" data-id="AC04" data-cat="component" data-name="按鈕回饋脹縮" data-file="samples/AC04.html"><iframe class="live" loading="lazy" src="samples/AC04.html" title="按鈕回饋脹縮 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>按鈕回饋脹縮</h3><code class="sid">AC04</code></div><p class="fit">按鈕放大一點再縮回，提醒你按到了。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/AC04.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「按鈕回饋脹縮」如何</legend><label class="opt"><input type="radio" name="c-AC04" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-AC04" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-AC04" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「按鈕回饋脹縮」的想法"></textarea></div></article>
+<article class="card" id="i-VU01" data-id="VU01" data-cat="component" data-name="立體按壓按鈕" data-file="samples/VU01.html"><iframe class="live" loading="lazy" src="samples/VU01.html" title="立體按壓按鈕 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>立體按壓按鈕</h3><code class="sid">VU01</code></div><p class="fit">想要按下去有厚度的按鈕。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/VU01.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「立體按壓按鈕」如何</legend><label class="opt"><input type="radio" name="c-VU01" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-VU01" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-VU01" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「立體按壓按鈕」的想法"></textarea></div></article>
+<article class="card" id="i-GX09" data-id="GX09" data-cat="component" data-name="磁片儲存按鈕" data-file="samples/GX09.html"><iframe class="live" loading="lazy" src="samples/GX09.html" title="磁片儲存按鈕 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>磁片儲存按鈕</h3><code class="sid">GX09</code></div><p class="fit">儲存按鈕：滑過時磁片圖示放大、傾斜。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/GX09.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「磁片儲存按鈕」如何</legend><label class="opt"><input type="radio" name="c-GX09" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX09" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX09" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「磁片儲存按鈕」的想法"></textarea></div></article>
+<article class="card" id="i-GX10" data-id="GX10" data-cat="component" data-name="轉圈重新整理按鈕" data-file="samples/GX10.html"><iframe class="live" loading="lazy" src="samples/GX10.html" title="轉圈重新整理按鈕 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>轉圈重新整理按鈕</h3><code class="sid">GX10</code></div><p class="fit">重新整理按鈕：每按一次箭頭轉一圈。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/GX10.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「轉圈重新整理按鈕」如何</legend><label class="opt"><input type="radio" name="c-GX10" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX10" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX10" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「轉圈重新整理按鈕」的想法"></textarea></div></article>
+<article class="card" id="i-GX11" data-id="GX11" data-cat="component" data-name="拇指按讚按鈕" data-file="samples/GX11.html"><iframe class="live" loading="lazy" src="samples/GX11.html" title="拇指按讚按鈕 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>拇指按讚按鈕</h3><code class="sid">GX11</code></div><p class="fit">按讚按鈕：滑過時拇指擺動，點了人數加 1。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/GX11.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「拇指按讚按鈕」如何</legend><label class="opt"><input type="radio" name="c-GX11" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX11" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX11" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「拇指按讚按鈕」的想法"></textarea></div></article>
+</div>
+<h3 class="sub">開關</h3><div class="grid">
+<article class="card" id="i-GX01" data-id="GX01" data-cat="component" data-name="紅綠狀態開關" data-file="samples/GX01.html"><iframe class="live" loading="lazy" src="samples/GX01.html" title="紅綠狀態開關 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>紅綠狀態開關</h3><code class="sid">GX01</code></div><p class="fit">開或關一眼看得出來：關是紅底、開是綠底。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX01.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「紅綠狀態開關」如何</legend><label class="opt"><input type="radio" name="c-GX01" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX01" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX01" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「紅綠狀態開關」的想法"></textarea></div></article>
+<article class="card" id="i-VU03" data-id="VU03" data-cat="component" data-name="開關" data-file="samples/VU03.html"><iframe class="live" loading="lazy" src="samples/VU03.html" title="開關 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>開關</h3><code class="sid">VU03</code></div><p class="fit">安靜的開關：圓鈕滑動，開啟後底色改變。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/VU03.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「開關」如何</legend><label class="opt"><input type="radio" name="c-VU03" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-VU03" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-VU03" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「開關」的想法"></textarea></div></article>
+<article class="card" id="i-GX16" data-id="GX16" data-cat="component" data-name="上浮單選圓點" data-file="samples/GX16.html"><iframe class="live" loading="lazy" src="samples/GX16.html" title="上浮單選圓點 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>上浮單選圓點</h3><code class="sid">GX16</code></div><p class="fit">多選一：選中時圓心的點放大。本頁的三選一就是這個。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX16.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「上浮單選圓點」如何</legend><label class="opt"><input type="radio" name="c-GX16" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX16" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX16" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「上浮單選圓點」的想法"></textarea></div></article>
+<article class="card" id="i-GX19" data-id="GX19" data-cat="component" data-name="搖鈴訂閱勾選" data-file="samples/GX19.html"><iframe class="live" loading="lazy" src="samples/GX19.html" title="搖鈴訂閱勾選 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>搖鈴訂閱勾選</h3><code class="sid">GX19</code></div><p class="fit">訂閱或提醒：鈴鐺勾選時會搖一下。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX19.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「搖鈴訂閱勾選」如何</legend><label class="opt"><input type="radio" name="c-GX19" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX19" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX19" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「搖鈴訂閱勾選」的想法"></textarea></div></article>
+<article class="card" id="i-GX14" data-id="GX14" data-cat="component" data-name="描邊膠囊開關" data-file="samples/GX14.html"><iframe class="live" loading="lazy" src="samples/GX14.html" title="描邊膠囊開關 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>描邊膠囊開關</h3><code class="sid">GX14</code></div><p class="fit">粗框開關：開啟時外框和圓鈕一起變色。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/GX14.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「描邊膠囊開關」如何</legend><label class="opt"><input type="radio" name="c-GX14" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX14" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX14" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「描邊膠囊開關」的想法"></textarea></div></article>
+<article class="card" id="i-GX15" data-id="GX15" data-cat="component" data-name="圓點縮放開關" data-file="samples/GX15.html"><iframe class="live" loading="lazy" src="samples/GX15.html" title="圓點縮放開關 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>圓點縮放開關</h3><code class="sid">GX15</code></div><p class="fit">小開關：開啟時圓鈕縮小、變成強調色。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/GX15.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「圓點縮放開關」如何</legend><label class="opt"><input type="radio" name="c-GX15" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX15" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX15" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「圓點縮放開關」的想法"></textarea></div></article>
+<article class="card" id="i-GX18" data-id="GX18" data-cat="component" data-name="放射線圓形勾選" data-file="samples/GX18.html"><iframe class="live" loading="lazy" src="samples/GX18.html" title="放射線圓形勾選 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>放射線圓形勾選</h3><code class="sid">GX18</code></div><p class="fit">勾選框：勾下時外圈放射六條短線。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/GX18.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「放射線圓形勾選」如何</legend><label class="opt"><input type="radio" name="c-GX18" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX18" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX18" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「放射線圓形勾選」的想法"></textarea></div></article>
+<article class="card" id="i-GX20" data-id="GX20" data-cat="component" data-name="出框手寫勾選" data-file="samples/GX20.html"><iframe class="live" loading="lazy" src="samples/GX20.html" title="出框手寫勾選 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>出框手寫勾選</h3><code class="sid">GX20</code></div><p class="fit">勾選框：勾號衝出框外，像用筆打勾。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/GX20.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「出框手寫勾選」如何</legend><label class="opt"><input type="radio" name="c-GX20" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX20" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX20" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「出框手寫勾選」的想法"></textarea></div></article>
+</div>
+<h3 class="sub">輸入框</h3><div class="grid">
+<article class="card" id="i-GX05" data-id="GX05" data-cat="component" data-name="浮動標籤底線輸入框" data-file="samples/GX05.html"><iframe class="live" loading="lazy" src="samples/GX05.html" title="浮動標籤底線輸入框 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>浮動標籤底線輸入框</h3><code class="sid">GX05</code></div><p class="fit">表單輸入：標籤會浮到欄位上方。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX05.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「浮動標籤底線輸入框」如何</legend><label class="opt"><input type="radio" name="c-GX05" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX05" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX05" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「浮動標籤底線輸入框」的想法"></textarea></div></article>
+<article class="card" id="i-AC01" data-id="AC01" data-cat="component" data-name="輸入錯誤時搖頭" data-file="samples/AC01.html"><iframe class="live" loading="lazy" src="samples/AC01.html" title="輸入錯誤時搖頭 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>輸入錯誤時搖頭</h3><code class="sid">AC01</code></div><p class="fit">表單填錯時，欄位左右搖一下說不對。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/AC01.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「輸入錯誤時搖頭」如何</legend><label class="opt"><input type="radio" name="c-AC01" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-AC01" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-AC01" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「輸入錯誤時搖頭」的想法"></textarea></div></article>
+<article class="card" id="i-GX24" data-id="GX24" data-cat="component" data-name="加粗底線輸入框" data-file="samples/GX24.html"><iframe class="live" loading="lazy" src="samples/GX24.html" title="加粗底線輸入框 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>加粗底線輸入框</h3><code class="sid">GX24</code></div><p class="fit">表單輸入：點進去時底邊變粗。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX24.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「加粗底線輸入框」如何</legend><label class="opt"><input type="radio" name="c-GX24" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX24" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX24" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「加粗底線輸入框」的想法"></textarea></div></article>
+<article class="card" id="i-GX25" data-id="GX25" data-cat="component" data-name="底色掃入搜尋列" data-file="samples/GX25.html"><iframe class="live" loading="lazy" src="samples/GX25.html" title="底色掃入搜尋列 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>底色掃入搜尋列</h3><code class="sid">GX25</code></div><p class="fit">搜尋列：點進去底色掃滿，打字就篩選。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX25.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「底色掃入搜尋列」如何</legend><label class="opt"><input type="radio" name="c-GX25" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX25" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX25" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「底色掃入搜尋列」的想法"></textarea></div></article>
+</div>
+<h3 class="sub">狀態標記</h3><div class="grid">
+<article class="card" id="i-GX04" data-id="GX04" data-cat="component" data-name="可還原的已讀標記" data-file="samples/GX04.html"><iframe class="live" loading="lazy" src="samples/GX04.html" title="可還原的已讀標記 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>可還原的已讀標記</h3><code class="sid">GX04</code></div><p class="fit">標記讀過了沒，按錯可以按回來。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX04.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「可還原的已讀標記」如何</legend><label class="opt"><input type="radio" name="c-GX04" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX04" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX04" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「可還原的已讀標記」的想法"></textarea></div></article>
+<article class="card" id="i-AC03" data-id="AC03" data-cat="component" data-name="頂端通知條滑入" data-file="samples/AC03.html"><iframe class="live" loading="lazy" src="samples/AC03.html" title="頂端通知條滑入 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>頂端通知條滑入</h3><code class="sid">AC03</code></div><p class="fit">告訴你存好了或出錯了，通知條從頂端滑進來。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/AC03.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「頂端通知條滑入」如何</legend><label class="opt"><input type="radio" name="c-AC03" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-AC03" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-AC03" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「頂端通知條滑入」的想法"></textarea></div></article>
+<article class="card" id="i-VU04" data-id="VU04" data-cat="component" data-name="狀態徽章" data-file="samples/VU04.html"><iframe class="live" loading="lazy" src="samples/VU04.html" title="狀態徽章 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>狀態徽章</h3><code class="sid">VU04</code></div><p class="fit">標出通過、待查核、未通過這類狀態。本頁的講師標記就是這個。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/VU04.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「狀態徽章」如何</legend><label class="opt"><input type="radio" name="c-VU04" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-VU04" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-VU04" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「狀態徽章」的想法"></textarea></div></article>
+<article class="card" id="i-GX17" data-id="GX17" data-cat="component" data-name="熱度格提示" data-file="samples/GX17.html"><iframe class="live" loading="lazy" src="samples/GX17.html" title="熱度格提示 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>熱度格提示</h3><code class="sid">GX17</code></div><p class="fit">看每天有沒有做：像 GitHub 的方格，滑過顯示日期和次數。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX17.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「熱度格提示」如何</legend><label class="opt"><input type="radio" name="c-GX17" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX17" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX17" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「熱度格提示」的想法"></textarea></div></article>
+<article class="card" id="i-GX28" data-id="GX28" data-cat="component" data-name="可關閉行內提示" data-file="samples/GX28.html"><iframe class="live" loading="lazy" src="samples/GX28.html" title="可關閉行內提示 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>可關閉行內提示</h3><code class="sid">GX28</code></div><p class="fit">行內提示：完成、注意、失敗三種，可以按 × 關掉。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX28.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「可關閉行內提示」如何</legend><label class="opt"><input type="radio" name="c-GX28" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX28" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX28" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「可關閉行內提示」的想法"></textarea></div></article>
+<article class="card" id="i-AC10" data-id="AC10" data-cat="component" data-name="已複製泡泡上浮" data-file="samples/AC10.html"><iframe class="live" loading="lazy" src="samples/AC10.html" title="已複製泡泡上浮 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>已複製泡泡上浮</h3><code class="sid">AC10</code></div><p class="fit">複製按鈕：冒出「已複製」泡泡。本頁底部的複製就是這個。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/AC10.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「已複製泡泡上浮」如何</legend><label class="opt"><input type="radio" name="c-AC10" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-AC10" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-AC10" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「已複製泡泡上浮」的想法"></textarea></div></article>
+<article class="card" id="i-AC07" data-id="AC07" data-cat="component" data-name="完成章搖擺" data-file="samples/AC07.html"><iframe class="live" loading="lazy" src="samples/AC07.html" title="完成章搖擺 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>完成章搖擺</h3><code class="sid">AC07</code></div><p class="fit">任務完成時，標章左右擺一下慶祝。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/AC07.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「完成章搖擺」如何</legend><label class="opt"><input type="radio" name="c-AC07" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-AC07" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-AC07" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「完成章搖擺」的想法"></textarea></div></article>
+<article class="card" id="i-GX26" data-id="GX26" data-cat="component" data-name="分層掃入通知" data-file="samples/GX26.html"><iframe class="live" loading="lazy" src="samples/GX26.html" title="分層掃入通知 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>分層掃入通知</h3><code class="sid">GX26</code></div><p class="fit">完成通知：三層色帶依序掃入。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/GX26.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「分層掃入通知」如何</legend><label class="opt"><input type="radio" name="c-GX26" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX26" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX26" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「分層掃入通知」的想法"></textarea></div></article>
+</div>
+<h3 class="sub">載入動畫</h3><div class="grid">
+<article class="card" id="i-GX06" data-id="GX06" data-cat="component" data-name="時鐘載入指示" data-file="samples/GX06.html"><iframe class="live" loading="lazy" src="samples/GX06.html" title="時鐘載入指示 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>時鐘載入指示</h3><code class="sid">GX06</code></div><p class="fit">等待時顯示：兩根指針像時鐘一樣轉。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX06.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「時鐘載入指示」如何</legend><label class="opt"><input type="radio" name="c-GX06" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX06" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX06" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「時鐘載入指示」的想法"></textarea></div></article>
+<article class="card" id="i-VU05" data-id="VU05" data-cat="component" data-name="進度條" data-file="samples/VU05.html"><iframe class="live" loading="lazy" src="samples/VU05.html" title="進度條 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>進度條</h3><code class="sid">VU05</code></div><p class="fit">顯示進度：細長條平滑推進，右上寫百分比。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/VU05.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「進度條」如何</legend><label class="opt"><input type="radio" name="c-VU05" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-VU05" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-VU05" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「進度條」的想法"></textarea></div></article>
+<article class="card" id="i-GX22" data-id="GX22" data-cat="component" data-name="連線狀態載入" data-file="samples/GX22.html"><iframe class="live" loading="lazy" src="samples/GX22.html" title="連線狀態載入 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>連線狀態載入</h3><code class="sid">GX22</code></div><p class="fit">顯示連線中、已連線、離線三種狀態。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX22.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「連線狀態載入」如何</legend><label class="opt"><input type="radio" name="c-GX22" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX22" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX22" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「連線狀態載入」的想法"></textarea></div></article>
+<article class="card" id="i-VU08" data-id="VU08" data-cat="component" data-name="彈跳文字載入" data-file="samples/VU08.html"><iframe class="live" loading="lazy" src="samples/VU08.html" title="彈跳文字載入 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>彈跳文字載入</h3><code class="sid">VU08</code></div><p class="fit">等待時顯示：Loading 字樣會彈跳。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/VU08.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「彈跳文字載入」如何</legend><label class="opt"><input type="radio" name="c-VU08" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-VU08" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-VU08" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「彈跳文字載入」的想法"></textarea></div></article>
+<article class="card" id="i-GX23" data-id="GX23" data-cat="component" data-name="雙弧對轉載入" data-file="samples/GX23.html"><iframe class="live" loading="lazy" src="samples/GX23.html" title="雙弧對轉載入 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>雙弧對轉載入</h3><code class="sid">GX23</code></div><p class="fit">等待時顯示：內外兩圈弧線對轉。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/GX23.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「雙弧對轉載入」如何</legend><label class="opt"><input type="radio" name="c-GX23" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX23" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX23" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「雙弧對轉載入」的想法"></textarea></div></article>
+</div>
+<h3 class="sub">卡片</h3><div class="grid">
+<article class="card" id="i-AC02" data-id="AC02" data-cat="component" data-name="新項目由下浮入" data-file="samples/AC02.html"><iframe class="live" loading="lazy" src="samples/AC02.html" title="新項目由下浮入 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>新項目由下浮入</h3><code class="sid">AC02</code></div><p class="fit">清單新增一項時，新項目從下方滑上來。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/AC02.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「新項目由下浮入」如何</legend><label class="opt"><input type="radio" name="c-AC02" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-AC02" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-AC02" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「新項目由下浮入」的想法"></textarea></div></article>
+<article class="card" id="i-AC06" data-id="AC06" data-cat="component" data-name="結果卡片翻入" data-file="samples/AC06.html"><iframe class="live" loading="lazy" src="samples/AC06.html" title="結果卡片翻入 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>結果卡片翻入</h3><code class="sid">AC06</code></div><p class="fit">顯示結果時，卡片翻起來站穩。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/AC06.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「結果卡片翻入」如何</legend><label class="opt"><input type="radio" name="c-AC06" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-AC06" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-AC06" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「結果卡片翻入」的想法"></textarea></div></article>
+<article class="card" id="i-GX27" data-id="GX27" data-cat="component" data-name="滑出說明作品卡" data-file="samples/GX27.html"><iframe class="live" loading="lazy" src="samples/GX27.html" title="滑出說明作品卡 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>滑出說明作品卡</h3><code class="sid">GX27</code></div><p class="fit">作品卡：滑過時說明條從底部長出來。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX27.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「滑出說明作品卡」如何</legend><label class="opt"><input type="radio" name="c-GX27" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX27" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX27" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「滑出說明作品卡」的想法"></textarea></div></article>
+<article class="card" id="i-VU07" data-id="VU07" data-cat="component" data-name="邊框光束卡片" data-file="samples/VU07.html"><iframe class="live" loading="lazy" src="samples/VU07.html" title="邊框光束卡片 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>邊框光束卡片</h3><code class="sid">VU07</code></div><p class="fit">要吸引注意的卡片：一道光沿著外框繞圈。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/VU07.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「邊框光束卡片」如何</legend><label class="opt"><input type="radio" name="c-VU07" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-VU07" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-VU07" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「邊框光束卡片」的想法"></textarea></div></article>
+</div>
+<h3 class="sub">其他</h3><div class="grid">
+<article class="card" id="i-GX07" data-id="GX07" data-cat="component" data-name="筆記紙橫格底紋" data-file="samples/GX07.html"><iframe class="live" loading="lazy" src="samples/GX07.html" title="筆記紙橫格底紋 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>筆記紙橫格底紋</h3><code class="sid">GX07</code></div><p class="fit">講義背景：灰紙底加橫線，像筆記紙。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/GX07.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「筆記紙橫格底紋」如何</legend><label class="opt"><input type="radio" name="c-GX07" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-GX07" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-GX07" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「筆記紙橫格底紋」的想法"></textarea></div></article>
+<article class="card" id="i-AC05" data-id="AC05" data-cat="component" data-name="數字閃一下" data-file="samples/AC05.html"><iframe class="live" loading="lazy" src="samples/AC05.html" title="數字閃一下 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>數字閃一下</h3><code class="sid">AC05</code></div><p class="fit">標出剛更新的數字：閃兩下就停。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/AC05.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「數字閃一下」如何</legend><label class="opt"><input type="radio" name="c-AC05" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-AC05" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-AC05" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「數字閃一下」的想法"></textarea></div></article>
+<article class="card" id="i-VU02" data-id="VU02" data-cat="component" data-name="底線連結動效" data-file="samples/VU02.html"><iframe class="live" loading="lazy" src="samples/VU02.html" title="底線連結動效 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>底線連結動效</h3><code class="sid">VU02</code></div><p class="fit">文字連結：滑過時底線滑入，有 4 種動作。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/VU02.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「底線連結動效」如何</legend><label class="opt"><input type="radio" name="c-VU02" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-VU02" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-VU02" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「底線連結動效」的想法"></textarea></div></article>
+<article class="card" id="i-VU06" data-id="VU06" data-cat="component" data-name="數字計數器" data-file="samples/VU06.html"><iframe class="live" loading="lazy" src="samples/VU06.html" title="數字計數器 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>數字計數器</h3><code class="sid">VU06</code></div><p class="fit">大數字從 0 數到目標值，適合統計數字。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/VU06.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「數字計數器」如何</legend><label class="opt"><input type="radio" name="c-VU06" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-VU06" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-VU06" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「數字計數器」的想法"></textarea></div></article>
+<article class="card" id="i-AC09" data-id="AC09" data-cat="component" data-name="刪除列向左滑出" data-file="samples/AC09.html"><iframe class="live" loading="lazy" src="samples/AC09.html" title="刪除列向左滑出 的活範例"></iframe><div class="card-b"><div class="card-t"><h3>刪除列向左滑出</h3><code class="sid">AC09</code></div><p class="fit">刪除清單項目：該列向左滑走，可以復原。</p><div class="meta"><span class="badge t-badge is-keep" data-pref="留">講師：留</span><a class="ul" href="samples/AC09.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「刪除列向左滑出」如何</legend><label class="opt"><input type="radio" name="c-AC09" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-AC09" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-AC09" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：按下去的感覺很好，可以用在下載按鈕" aria-label="你對「刪除列向左滑出」的想法"></textarea></div></article>
+</div>
+</section>
+
+<section class="cat" id="cat-interact" data-cat="interact"><header class="cat-h"><h2>互動</h2><span class="cat-n" data-cat-count="interact">0／14</span><p>動作比較大，適合簡報和作品集，不適合要印的講義。</p></header>
+<div class="grid">
+<article class="card" id="i-I01" data-id="I01" data-cat="interact" data-name="3D 傾斜光影面板" data-file="samples/I01.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I01.jpg" alt="3D 傾斜光影面板 的畫面"><button type="button" class="try" data-try="samples/I01.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>3D 傾斜光影面板</h3><code class="sid">I01</code></div><p class="fit">卡片或封面：按下去會跟著手指傾斜。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I01.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「3D 傾斜光影面板」如何</legend><label class="opt"><input type="radio" name="c-I01" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I01" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I01" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「3D 傾斜光影面板」的想法"></textarea></div></article>
+<article class="card" id="i-I02" data-id="I02" data-cat="interact" data-name="膠囊形變按鈕" data-file="samples/I02.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I02.jpg" alt="膠囊形變按鈕 的畫面"><button type="button" class="try" data-try="samples/I02.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>膠囊形變按鈕</h3><code class="sid">I02</code></div><p class="fit">主要按鈕：按下後像水滴一樣展開成面板。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I02.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「膠囊形變按鈕」如何</legend><label class="opt"><input type="radio" name="c-I02" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I02" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I02" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「膠囊形變按鈕」的想法"></textarea></div></article>
+<article class="card" id="i-I03" data-id="I03" data-cat="interact" data-name="清單原地展開" data-file="samples/I03.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I03.jpg" alt="清單原地展開 的畫面"><button type="button" class="try" data-try="samples/I03.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>清單原地展開</h3><code class="sid">I03</code></div><p class="fit">圖鑑、相簿：點條目，它原地放大成詳情。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I03.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「清單原地展開」如何</legend><label class="opt"><input type="radio" name="c-I03" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I03" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I03" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「清單原地展開」的想法"></textarea></div></article>
+<article class="card" id="i-I04" data-id="I04" data-cat="interact" data-name="磁吸游標與碼表" data-file="samples/I04.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I04.jpg" alt="磁吸游標與碼表 的畫面"><button type="button" class="try" data-try="samples/I04.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>磁吸游標與碼表</h3><code class="sid">I04</code></div><p class="fit">圖表：游標吸到資料點，上方數字跟著翻動。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I04.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「磁吸游標與碼表」如何</legend><label class="opt"><input type="radio" name="c-I04" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I04" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I04" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「磁吸游標與碼表」的想法"></textarea></div></article>
+<article class="card" id="i-I07" data-id="I07" data-cat="interact" data-name="彈簧交錯入場" data-file="samples/I07.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I07.jpg" alt="彈簧交錯入場 的畫面"><button type="button" class="try" data-try="samples/I07.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>彈簧交錯入場</h3><code class="sid">I07</code></div><p class="fit">清單或卡片牆：一項一項彈進來。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I07.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「彈簧交錯入場」如何</legend><label class="opt"><input type="radio" name="c-I07" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I07" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I07" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「彈簧交錯入場」的想法"></textarea></div></article>
+<article class="card" id="i-I08" data-id="I08" data-cat="interact" data-name="彈性微縮按鈕" data-file="samples/I08.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I08.jpg" alt="彈性微縮按鈕 的畫面"><button type="button" class="try" data-try="samples/I08.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>彈性微縮按鈕</h3><code class="sid">I08</code></div><p class="fit">所有按鈕：按下縮一點，放開回彈。本頁底部的按鈕就是這個。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I08.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「彈性微縮按鈕」如何</legend><label class="opt"><input type="radio" name="c-I08" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I08" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I08" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「彈性微縮按鈕」的想法"></textarea></div></article>
+<article class="card" id="i-I10" data-id="I10" data-cat="interact" data-name="滾動換場景" data-file="samples/I10.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I10.jpg" alt="滾動換場景 的畫面"><button type="button" class="try" data-try="samples/I10.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>滾動換場景</h3><code class="sid">I10</code></div><p class="fit">分章講故事：滾輪一動，畫面原地換下一幕。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I10.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「滾動換場景」如何</legend><label class="opt"><input type="radio" name="c-I10" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I10" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I10" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「滾動換場景」的想法"></textarea></div></article>
+<article class="card" id="i-I19" data-id="I19" data-cat="interact" data-name="滑過就播放" data-file="samples/I19.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I19.jpg" alt="滑過就播放 的畫面"><button type="button" class="try" data-try="samples/I19.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>滑過就播放</h3><code class="sid">I19</code></div><p class="fit">影片或作品列表：滑鼠停在哪格，哪格就播放。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I19.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「滑過就播放」如何</legend><label class="opt"><input type="radio" name="c-I19" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I19" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I19" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「滑過就播放」的想法"></textarea></div></article>
+<article class="card" id="i-I20" data-id="I20" data-cat="interact" data-name="捲動速度形變" data-file="samples/I20.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I20.jpg" alt="捲動速度形變 的畫面"><button type="button" class="try" data-try="samples/I20.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>捲動速度形變</h3><code class="sid">I20</code></div><p class="fit">圖片牆：快速捲動時圖片被壓窄，手一停就彈回。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I20.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「捲動速度形變」如何</legend><label class="opt"><input type="radio" name="c-I20" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I20" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I20" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「捲動速度形變」的想法"></textarea></div></article>
+<article class="card" id="i-I21" data-id="I21" data-cat="interact" data-name="手風琴面板" data-file="samples/I21.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I21.jpg" alt="手風琴面板 的畫面"><button type="button" class="try" data-try="samples/I21.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>手風琴面板</h3><code class="sid">I21</code></div><p class="fit">分類入口：滑鼠移到哪格，哪格變寬露出說明。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I21.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「手風琴面板」如何</legend><label class="opt"><input type="radio" name="c-I21" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I21" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I21" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「手風琴面板」的想法"></textarea></div></article>
+<article class="card" id="i-I22" data-id="I22" data-cat="interact" data-name="層疊滑走" data-file="samples/I22.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I22.jpg" alt="層疊滑走 的畫面"><button type="button" class="try" data-try="samples/I22.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>層疊滑走</h3><code class="sid">I22</code></div><p class="fit">快速挑選：一疊卡片，把最上面一張拖走。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I22.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「層疊滑走」如何</legend><label class="opt"><input type="radio" name="c-I22" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I22" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I22" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「層疊滑走」的想法"></textarea></div></article>
+<article class="card" id="i-I24" data-id="I24" data-cat="interact" data-name="橫向吸附" data-file="samples/I24.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I24.jpg" alt="橫向吸附 的畫面"><button type="button" class="try" data-try="samples/I24.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>橫向吸附</h3><code class="sid">I24</code></div><p class="fit">精選作品：一排卡片橫向滑，放手後自動對齊中間。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I24.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「橫向吸附」如何</legend><label class="opt"><input type="radio" name="c-I24" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I24" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I24" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「橫向吸附」的想法"></textarea></div></article>
+<article class="card" id="i-I25" data-id="I25" data-cat="interact" data-name="扇形展開" data-file="samples/I25.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I25.jpg" alt="扇形展開 的畫面"><button type="button" class="try" data-try="samples/I25.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>扇形展開</h3><code class="sid">I25</code></div><p class="fit">卡夾、相簿：一疊卡片點一下像摺扇轉開。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I25.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「扇形展開」如何</legend><label class="opt"><input type="radio" name="c-I25" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I25" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I25" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「扇形展開」的想法"></textarea></div></article>
+<article class="card" id="i-I26" data-id="I26" data-cat="interact" data-name="翻牌翻轉" data-file="samples/I26.html"><div class="pv pv-try"><img loading="lazy" width="640" height="400" src="thumbs/I26.jpg" alt="翻牌翻轉 的畫面"><button type="button" class="try" data-try="samples/I26.html?embed=1">在這裡試玩</button></div><div class="card-b"><div class="card-t"><h3>翻牌翻轉</h3><code class="sid">I26</code></div><p class="fit">作品卡、記憶遊戲：點一下翻到背面。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/I26.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「翻牌翻轉」如何</legend><label class="opt"><input type="radio" name="c-I26" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-I26" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-I26" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：好玩，但不適合放在講義裡" aria-label="你對「翻牌翻轉」的想法"></textarea></div></article>
+</div>
+</section>
+
+<section class="cat" id="cat-web" data-cat="web"><header class="cat-h"><h2>網頁風格</h2><span class="cat-n" data-cat-count="web">0／4</span><p>想做作品集或活動頁的看這區。</p></header>
+<div class="grid">
+<article class="card" id="i-W04" data-id="W04" data-cat="web" data-name="玻璃擬態" data-file="samples/W04.html"><a class="pv" href="samples/W04.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/W04.jpg" alt="玻璃擬態 的畫面"></a><div class="card-b"><div class="card-t"><h3>玻璃擬態</h3><code class="sid">W04</code></div><p class="fit">課程總覽：每格一件事，背景有漸層和霧面。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/W04.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「玻璃擬態」如何</legend><label class="opt"><input type="radio" name="c-W04" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-W04" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-W04" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：格子很整齊，適合放每週總覽" aria-label="你對「玻璃擬態」的想法"></textarea></div></article>
+<article class="card" id="i-W05" data-id="W05" data-cat="web" data-name="便當盒格子" data-file="samples/W05.html"><a class="pv" href="samples/W05.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/W05.jpg" alt="便當盒格子 的畫面"></a><div class="card-b"><div class="card-t"><h3>便當盒格子</h3><code class="sid">W05</code></div><p class="fit">學期總覽、社團活動說明：每格只放一件事。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/W05.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「便當盒格子」如何</legend><label class="opt"><input type="radio" name="c-W05" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-W05" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-W05" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：格子很整齊，適合放每週總覽" aria-label="你對「便當盒格子」的想法"></textarea></div></article>
+<article class="card" id="i-W06" data-id="W06" data-cat="web" data-name="新擬態" data-file="samples/W06.html"><a class="pv" href="samples/W06.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/W06.jpg" alt="新擬態 的畫面"></a><div class="card-b"><div class="card-t"><h3>新擬態</h3><code class="sid">W06</code></div><p class="fit">計時器、打卡、習慣追蹤這類小工具。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/W06.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「新擬態」如何</legend><label class="opt"><input type="radio" name="c-W06" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-W06" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-W06" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：格子很整齊，適合放每週總覽" aria-label="你對「新擬態」的想法"></textarea></div></article>
+<article class="card" id="i-W16" data-id="W16" data-cat="web" data-name="動效主導" data-file="samples/W16.html"><a class="pv" href="samples/W16.html" target="_blank" rel="noopener"><img loading="lazy" width="640" height="400" src="thumbs/W16.jpg" alt="動效主導 的畫面"></a><div class="card-b"><div class="card-t"><h3>動效主導</h3><code class="sid">W16</code></div><p class="fit">現場投影的開場、作品展示：字和卡片都會動。</p><div class="meta"><span class="badge t-badge is-like" data-pref="喜歡"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>講師：喜歡</span><a class="ul" href="samples/W16.html" target="_blank" rel="noopener">開新分頁看</a></div><fieldset class="pick"><legend>你覺得「動效主導」如何</legend><label class="opt"><input type="radio" name="c-W16" value="like"><span class="dot"></span><span>喜歡</span></label><label class="opt"><input type="radio" name="c-W16" value="keep"><span class="dot"></span><span>留</span></label><label class="opt"><input type="radio" name="c-W16" value="no"><span class="dot"></span><span>不要</span></label></fieldset><textarea class="note" rows="2" placeholder="例：格子很整齊，適合放每週總覽" aria-label="你對「動效主導」的想法"></textarea></div></article>
+</div>
+</section>
+
+<section class="taste" id="taste-card">
+  <h2>喜好卡</h2>
+  <p>左邊是講師填好的範例，右邊是你的。右邊會跟著你上面的選擇長出來，再自己填 6 題。</p>
+  <div class="taste-grid">
+
+    <div class="sheet teacher-sheet">
+      <h3>講師的喜好卡（範例）</h3>
+      <p class="tc-hidden">你關掉了講師的選擇。打開上方的開關就看得到這份範例。</p>
+      <div class="tc-body">
+        <h4>先記住 3 件事</h4>
+        <ol>
+          <li>先看用途，再套喜好。講義要的和簡報要的不一樣。</li>
+          <li>我最常嫌的是配色，其次是版面。很少是風格本身。</li>
+          <li>拿不準就選「留」。留的意思是：適合時 AI 可以用，不必等我點名。</li>
+        </ol>
+        <h4>每種用途喜歡什麼、不要什麼</h4>
+        <table>
+          <thead><tr><th>用途</th><th>喜歡</th><th>不要</th></tr></thead>
+          <tbody>
+            <tr><td>講義</td><td>參考書重點框、康乃爾筆記、粗黑框重點卡、雜誌拼貼。淺底，留手寫空間，答案直接印出來。</td><td>翻面才看得到答案、電子書閱讀器式版面。</td></tr>
+            <tr><td>報告</td><td>報紙頭版、健檢報告單、工程圖紙總覽。淺底、資訊密、黑體，每個顏色綁一個固定意思。</td><td>窄正文加側註欄、深色主控台風。</td></tr>
+            <tr><td>簡報</td><td>滾動敘事、動效主導、復古未來。深色可以，每頁一個重點，字分 3 層。</td><td>白底大標題加條列的模板。</td></tr>
+            <tr><td>儀表板</td><td>全部都喜歡，看盤式版面最好。數字用等寬字。</td><td>黑底綠字塞滿螢幕。</td></tr>
+            <tr><td>小工具</td><td>狀態徽章、彈性按鈕、上浮圓點。動作要帶著意思：選中了、存好了、複製了。</td><td>按鈕放大過頭、跳得很高的開關、只是裝飾的動作。</td></tr>
+            <tr><td>作品集</td><td>玻璃擬態、便當盒格子、新擬態。深色、大動效、大留白都可以。</td><td>內容被動效擋住讀不到。</td></tr>
+          </tbody>
+        </table>
+        <h4>配色規則</h4>
+        <ul>
+          <li>底約 60%、面約 25%、主色約 10%、強調 5% 以下。主字用近黑。</li>
+          <li>只有 1 個強調色。強調色不和「失敗」用同一個紅。</li>
+          <li>底色不用純白，用米色或冷灰的紙色。不用彩虹字。</li>
+        </ul>
+        <h4>動效規則</h4>
+        <table>
+          <thead><tr><th>用途</th><th>可以</th><th>不要</th></tr></thead>
+          <tbody>
+            <tr><td>講義</td><td>沒有動畫，因為要列印。</td><td>任何動畫。</td></tr>
+            <tr><td>報告</td><td>載入時淡入一次、滑過時的回饋。</td><td>一直動的動畫、捲動才出現的內容。</td></tr>
+            <tr><td>簡報</td><td>場景切換、速度形變、彈簧入場。</td><td>轉場拖到 1 秒以上。</td></tr>
+            <tr><td>儀表板</td><td>數字計數、圖表入場。</td><td>一直閃的裝飾。</td></tr>
+            <tr><td>小工具</td><td>彈簧勾選、按壓縮放、進度條。</td><td>超過 1 秒的吸睛動畫。</td></tr>
+            <tr><td>作品集</td><td>大動效、滾動敘事、翻牌。</td><td>讓內容讀不到的動效。</td></tr>
+          </tbody>
+        </table>
+        <h4>6 題回答</h4>
+        <ol>
+          <li>常做的科目：歷史、語言、管理。</li>
+          <li>要印，也要寫 GoodNotes。</li>
+          <li>單欄為主；故事性強的課可以用雜誌分欄。</li>
+          <li>要留手寫空間，練習題旁一定要留。</li>
+          <li>字不小於 12px，資訊可以密。</li>
+          <li>最不要：內容藏在翻面或點擊後面。</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="sheet mine-sheet">
+      <h3>你的喜好卡</h3>
+      <div id="mine"><p class="mine-empty">還沒選。回到上面，點喜歡、留或不要。</p></div>
+      <h4>6 題自己填</h4>
+      <ol class="qs">
+        <li><label class="q-l" for="q1">① 常做什麼科目？</label><input class="ans" id="q1" data-q="q1" placeholder="例：日本史、統計學"></li>
+        <li><span class="q-l" id="q2l">② 要不要印出來或寫 GoodNotes？</span>
+          <div class="q-opts" role="radiogroup" aria-labelledby="q2l">
+            <label class="opt"><input type="radio" name="q2" data-q="q2" value="要印出來"><span class="dot"></span><span>要印出來</span></label>
+            <label class="opt"><input type="radio" name="q2" data-q="q2" value="要寫 GoodNotes"><span class="dot"></span><span>要寫 GoodNotes</span></label>
+            <label class="opt"><input type="radio" name="q2" data-q="q2" value="兩個都要"><span class="dot"></span><span>兩個都要</span></label>
+            <label class="opt"><input type="radio" name="q2" data-q="q2" value="只在螢幕上看"><span class="dot"></span><span>只在螢幕上看</span></label>
+          </div></li>
+        <li><span class="q-l" id="q3l">③ 單欄或雙欄？</span>
+          <div class="q-opts" role="radiogroup" aria-labelledby="q3l">
+            <label class="opt"><input type="radio" name="q3" data-q="q3" value="單欄"><span class="dot"></span><span>單欄</span></label>
+            <label class="opt"><input type="radio" name="q3" data-q="q3" value="雙欄"><span class="dot"></span><span>雙欄</span></label>
+            <label class="opt"><input type="radio" name="q3" data-q="q3" value="看科目"><span class="dot"></span><span>看科目</span></label>
+          </div></li>
+        <li><span class="q-l" id="q4l">④ 要不要留手寫空間？</span>
+          <div class="q-opts" role="radiogroup" aria-labelledby="q4l">
+            <label class="opt"><input type="radio" name="q4" data-q="q4" value="要留"><span class="dot"></span><span>要留</span></label>
+            <label class="opt"><input type="radio" name="q4" data-q="q4" value="只有練習題留"><span class="dot"></span><span>只有練習題留</span></label>
+            <label class="opt"><input type="radio" name="q4" data-q="q4" value="不用留"><span class="dot"></span><span>不用留</span></label>
+          </div></li>
+        <li><label class="q-l" for="q5">⑤ 字要多大、多密？</label><input class="ans" id="q5" data-q="q5" placeholder="例：字大一點，一頁只放一個重點"></li>
+        <li><label class="q-l" for="q6">⑥ 最不要什麼？</label><input class="ans" id="q6" data-q="q6" placeholder="例：顏色太多、整頁都是字"></li>
+      </ol>
+    </div>
+
+  </div>
+</section>
+
+<footer class="prod">
+  <b>產出卡</b>　<b>受眾：</b>沒有 HTML 概念的大學生，第一次看這些版面。
+  <b>目的：</b>逛完選 3 個以上，下載 <code>我的喜好.md</code> 交給 AI。
+  <b>使用情境：</b>課堂上用電腦瀏覽器，一邊看一邊點，約 10 分鐘。
+  <b>限制：</b>離線能開、不放授權不能再散布的元件、不放個資，Safari 與 Firefox 不能寫回檔案。
+  <b>語調：</b>教學、白話、不用內部代號解釋。
+  <b>證據：</b>講師標記取自範例庫的選用紀錄，示意內容裡的私人資料已換掉。
+</footer>
+</main>
+
+<div class="conflict" id="conflict" role="alert" hidden>
+  <p id="conflictMsg"></p>
+  <button type="button" class="press" id="useDisk">用檔案裡的</button>
+  <button type="button" class="press" id="useMine">用我的蓋過去</button>
+</div>
+
+<div class="bar">
+  <div class="wrap">
+    <span class="cnt">已選 <b data-total>0</b> 個</span>
+    <span class="badge is-warn" id="need">還差 3 個</span>
+    <a class="ul" href="#taste-card">看喜好卡</a>
+    <span class="status" id="status" aria-live="polite"></span>
+    <button type="button" class="press" id="link" hidden>選資料夾來寫回</button>
+    <button type="button" class="press pri" id="dl">下載 我的喜好.md</button>
+    <button type="button" class="press" id="cp">複製文字</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var CHOICE = { like: '喜歡', keep: '留', no: '不要' };
+  var QUESTIONS = [['q1', '常做什麼科目'], ['q2', '要不要印出來或寫 GoodNotes'], ['q3', '單欄或雙欄'], ['q4', '要不要留手寫空間'], ['q5', '字要多大、多密'], ['q6', '最不要什麼']];
+  var FSA = 'showDirectoryPicker' in window;
+
+  /* ── 狀態：權威在 #d-taste；localStorage 只放還沒寫回的草稿 ── */
+  var state = JSON.parse($('#d-taste').textContent);
+  var draftKey = 'taste-draft:' + location.pathname;
+  function readDraft() { try { return JSON.parse(localStorage.getItem(draftKey) || 'null'); } catch (err) { return null; } }
+  function writeDraft() { try { localStorage.setItem(draftKey, JSON.stringify(state)); } catch (err) { /* 沒有儲存空間就只留在頁面上 */ } }
+  function clearDraft() { try { localStorage.removeItem(draftKey); } catch (err) { /* 同上 */ } }
+  var draft = readDraft();
+  if (draft && draft.meta) {
+    if (draft.meta.rev >= state.meta.rev) state = draft;
+    else clearDraft();   // 檔案比草稿新，以檔案為準
+  }
+
+  /* ── 把狀態畫到頁面 ── */
+  function paint() {
+    $$('.card').forEach(function (card) {
+      var p = state.picks[card.dataset.id] || {};
+      $$('input[type=radio]', card).forEach(function (r) { r.checked = r.value === p.choice; });
+      $('.note', card).value = p.note || '';
+      if (p.choice) card.dataset.choice = p.choice; else delete card.dataset.choice;
+    });
+    $$('[data-q]').forEach(function (el) {
+      var v = state.answers[el.dataset.q] || '';
+      if (el.type === 'radio') el.checked = el.value === v; else el.value = v;
+    });
+    var show = state.showTeacher !== false;
+    $('#showTeacher').checked = show;
+    document.documentElement.classList.toggle('hide-teacher', !show);
+    tally();
+  }
+  function tally() {
+    var cards = $$('.card');
+    var n = cards.filter(function (c) { return (state.picks[c.dataset.id] || {}).choice; }).length;
+    $$('[data-total]').forEach(function (el) { el.textContent = n; });
+    var need = $('#need');
+    need.className = 'badge ' + (n >= 3 ? 'is-ok' : 'is-warn');
+    need.textContent = n >= 3 ? '✓ 夠了，可以下載' : '還差 ' + (3 - n) + ' 個';
+    $$('.cat').forEach(function (sec) {
+      var key = sec.dataset.cat, inCat = cards.filter(function (c) { return c.dataset.cat === key; });
+      var got = inCat.filter(function (c) { return (state.picks[c.dataset.id] || {}).choice; }).length;
+      var label = got + '／' + inCat.length;
+      $('[data-cat-count="' + key + '"]').textContent = label;
+      var nav = $('[data-nav-count="' + key + '"]');
+      nav.textContent = label;
+      nav.parentNode.classList.toggle('has', got > 0);
+    });
+    renderMine();
+  }
+  function groups() {   // 依頁面順序列出有選或有寫想法的項目
+    return $$('.cat').map(function (sec) {
+      return {
+        label: $('h2', sec).textContent,
+        items: $$('.card', sec).map(function (c) {
+          var p = state.picks[c.dataset.id];
+          if (!p) return null;
+          return { id: c.dataset.id, name: c.dataset.name, file: c.dataset.file, colors: c.dataset.colors, choice: p.choice, note: p.note || '' };
+        }).filter(Boolean)
+      };
+    }).filter(function (g) { return g.items.length; });
+  }
+  function renderMine() {
+    var box = $('#mine');
+    box.textContent = '';
+    var gs = groups();
+    if (!gs.length) {
+      var e = document.createElement('p');
+      e.className = 'mine-empty';
+      e.textContent = '還沒選。回到上面，點喜歡、留或不要。';
+      box.appendChild(e);
+      return;
+    }
+    gs.forEach(function (g) {
+      var h = document.createElement('div');
+      h.className = 'mine-cat';
+      h.textContent = g.label;
+      box.appendChild(h);
+      var ul = document.createElement('ul');
+      ul.className = 'mine-list';
+      ['like', 'keep', 'no', undefined].forEach(function (want) {
+        g.items.filter(function (i) { return i.choice === want; }).forEach(function (i) {
+          var li = document.createElement('li');
+          var b = document.createElement('span');
+          b.className = 'badge ' + (i.choice === 'like' ? 'is-like' : i.choice === 'keep' ? 'is-keep' : 'is-no');
+          b.textContent = i.choice ? CHOICE[i.choice] : '只寫想法';
+          var a = document.createElement('a');
+          a.href = '#i-' + i.id;
+          a.textContent = i.name;
+          li.appendChild(b);
+          li.appendChild(a);
+          if (i.note) {
+            var n = document.createElement('span');
+            n.className = 'n';
+            n.textContent = i.note;
+            li.appendChild(n);
+          }
+          ul.appendChild(li);
+        });
+      });
+      box.appendChild(ul);
+    });
+  }
+
+  /* ── 我的喜好.md ── */
+  function buildMd() {
+    var L = ['給 AI：把這份交給 find-style 分析', '', '# 我的喜好', '', '## 我選的項目', ''];
+    var gs = groups();
+    if (!gs.length) L.push('（還沒選）', '');
+    gs.forEach(function (g) {
+      L.push('### ' + g.label);
+      g.items.forEach(function (i) {
+        var where = i.file ? '檔案：版面喜好選單/' + i.file : '色票：' + i.colors;
+        L.push('- ' + i.id + '｜' + i.name + '｜' + (i.choice ? CHOICE[i.choice] : '只寫想法') + '｜想法：' + (i.note ? i.note.replace(/\s*\n\s*/g, ' ') : '（沒寫）') + '｜' + where);
+      });
+      L.push('');
+    });
+    L.push('## 6 題回答', '');
+    QUESTIONS.forEach(function (q, n) {
+      L.push((n + 1) + '. ' + q[1] + '：' + (state.answers[q[0]] || '（沒填）'));
+    });
+    L.push('');
+    return L.join('\n');
+  }
+
+  /* ── 改了就存草稿，有連結就排程寫回 ── */
+  var timer = null;
+  function changed() {
+    writeDraft();
+    if (handle) { clearTimeout(timer); timer = setTimeout(function () { writeBack(false); }, 500); }
+    else showStatus();
+  }
+  function setPick(id, patch) {
+    var p = state.picks[id] || {};
+    Object.keys(patch).forEach(function (k) { if (patch[k]) p[k] = patch[k]; else delete p[k]; });
+    if (p.choice || p.note) state.picks[id] = p; else delete state.picks[id];
+  }
+
+  /* 再點一次已選的選項＝取消，回到未選 */
+  var wasOn = null;
+  document.addEventListener('mousedown', function (ev) {
+    var lab = ev.target.closest && ev.target.closest('.opt');
+    wasOn = lab ? $('input', lab) : null;
+    if (wasOn && !wasOn.checked) wasOn = null;
+  }, true);
+  document.addEventListener('click', function (ev) {
+    var el = ev.target;
+    if (!(el instanceof HTMLInputElement) || el.type !== 'radio') return;
+    if (wasOn === el) { el.checked = false; }
+    wasOn = null;
+    if (el.dataset.q) {
+      var on = $$('input[name="' + el.name + '"]').filter(function (r) { return r.checked; })[0];
+      if (on) state.answers[el.dataset.q] = on.value; else delete state.answers[el.dataset.q];
+    } else {
+      var card = el.closest('.card');
+      setPick(card.dataset.id, { choice: el.checked ? el.value : '' });
+      if (el.checked) card.dataset.choice = el.value; else delete card.dataset.choice;
+    }
+    tally();
+    changed();
+  });
+  document.addEventListener('input', function (ev) {
+    var el = ev.target;
+    if (el.classList.contains('note')) {
+      setPick(el.closest('.card').dataset.id, { note: el.value });
+      tally();
+      changed();
+    } else if (el.classList.contains('ans')) {
+      if (el.value) state.answers[el.dataset.q] = el.value; else delete state.answers[el.dataset.q];
+      changed();
+    }
+  });
+  $('#showTeacher').addEventListener('change', function (ev) {
+    state.showTeacher = ev.target.checked;
+    document.documentElement.classList.toggle('hide-teacher', !ev.target.checked);
+    changed();
+  });
+  $$('[data-try]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var f = document.createElement('iframe');
+      f.src = b.dataset.try;
+      f.title = b.closest('.card').dataset.name + ' 的活範例';
+      var box = b.parentNode;
+      box.classList.add('on');   // 試玩要高一點，手機外框才放得下
+      box.replaceChild(f, b);
+    });
+  });
+
+  /* ── 按鈕：I08 彈簧（Spring＋attachPress，只留這頁用到的部分） ── */
+  var reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+  var live = new Set(), running = false, last = 0;
+  function Spring(x, cb) { this.x = x; this.v = 0; this.t = x; this.k = 300; this.c = 20; this.tol = 1e-4; this.cb = cb; }
+  Spring.prototype.go = function (t, k, c) {
+    this.t = t; this.k = k; this.c = c;
+    if (reduceMQ.matches) { this.x = t; this.v = 0; live.delete(this); this.cb(t); return; }
+    live.add(this);
+    if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
+  };
+  function frame(now) {
+    var dt = Math.min((now - last) / 1000, 1 / 20); last = now;
+    var n = Math.max(1, Math.ceil(dt / (1 / 240))), h = dt / n;
+    live.forEach(function (s) {
+      for (var i = 0; i < n; i++) { s.v += (-s.k * (s.x - s.t) - s.c * s.v) * h; s.x += s.v * h; }
+      if (Math.abs(s.x - s.t) < s.tol && Math.abs(s.v) < s.tol * 10) { s.x = s.t; s.v = 0; live.delete(s); }
+      s.cb(s.x);
+    });
+    if (live.size) requestAnimationFrame(frame); else running = false;
+  }
+  function attachPress(el, onTap) {
+    var pid = null, kbd = null, inside = false, D = 0.96;
+    var sp = new Spring(1, function (s) {
+      el.style.setProperty('--p', Math.min(1.15, Math.max(0, (1 - s) / (1 - D))).toFixed(3));
+      el.style.transform = s === 1 ? '' : 'scale(' + s.toFixed(4) + ')';
+    });
+    function down() { sp.go(D, 900, 54); }
+    function up() { sp.go(1, 380, 11); }
+    el.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (pid !== null || kbd) return;
+      pid = e.pointerId; inside = true;
+      try { el.setPointerCapture(pid); } catch (err) { /* 拿不到就照常 */ }
+      down();
+    });
+    el.addEventListener('pointermove', function (e) {
+      if (e.pointerId !== pid) return;
+      var r = el.getBoundingClientRect(), m = 4;
+      var now = e.clientX >= r.left - m && e.clientX <= r.right + m && e.clientY >= r.top - m && e.clientY <= r.bottom + m;
+      if (now !== inside) { inside = now; if (now) down(); else up(); }
+    });
+    el.addEventListener('pointerup', function (e) {
+      if (e.pointerId !== pid) return;
+      var ok = inside; pid = null;
+      try { el.releasePointerCapture(e.pointerId); } catch (err) { /* 已放開 */ }
+      up();
+      if (ok) onTap();
+    });
+    el.addEventListener('pointercancel', function (e) { if (e.pointerId === pid) { pid = null; up(); } });
+    el.addEventListener('keydown', function (e) {
+      if (e.key !== ' ' && e.key !== 'Enter') return;
+      e.preventDefault();
+      if (e.repeat || pid !== null || kbd) return;
+      kbd = e.key; down();
+    });
+    el.addEventListener('keyup', function (e) {
+      if (e.key !== kbd) return;
+      e.preventDefault(); kbd = null; up(); onTap();
+    });
+    el.addEventListener('blur', function () { if (kbd) { kbd = null; up(); } });
+    el.addEventListener('click', function (e) { if (e.detail === 0 && !kbd) onTap(); });
+  }
+
+  /* ── AC10 泡泡與複製 ── */
+  function pop(btn, text) {
+    var old = $('.bub', btn);
+    if (old) old.remove();
+    var b = document.createElement('span');
+    b.className = 'bub';
+    b.textContent = text;
+    b.setAttribute('aria-hidden', 'true');
+    btn.appendChild(b);
+    b.addEventListener('animationend', function () { b.remove(); });
+    $('#status').textContent = text;
+  }
+  function legacyCopy(text) {
+    var t = document.createElement('textarea');
+    t.value = text; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+    document.body.appendChild(t); t.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+    t.remove();
+    return ok;
+  }
+  attachPress($('#cp'), function () {
+    var text = buildMd(), btn = $('#cp');
+    var p = null;
+    try { p = navigator.clipboard && navigator.clipboard.writeText(text); } catch (err) { p = null; }
+    if (p && p.then) p.then(function () { pop(btn, '已複製'); }, function () { pop(btn, legacyCopy(text) ? '已複製' : '請手動複製'); });
+    else pop(btn, legacyCopy(text) ? '已複製' : '請手動複製');
+  });
+  attachPress($('#dl'), function () {
+    var url = URL.createObjectURL(new Blob([buildMd()], { type: 'text/markdown;charset=utf-8' }));
+    var a = document.createElement('a');
+    a.href = url; a.download = '我的喜好.md';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+    $('#status').textContent = '已下載。把 我的喜好.md 放進 範例/ 資料夾，再跟 AI 說「分析我的喜好」。';
+  });
+
+  /* ── 寫回本檔：資料夾授權（Chrome／Edge）。全域規則：控制代碼存 IndexedDB，鍵帶路徑。 ── */
+  var handle = null, pendingDir = null, linking = false, writing = false, conflictRev = null;
+  var fileName = function () { return decodeURIComponent(location.pathname.split('/').pop() || 'index.html'); };
+  var pathParts = (function () {
+    var p = location.pathname;
+    try { p = decodeURIComponent(p); } catch (err) { /* 保留原字串 */ }
+    var a = p.normalize('NFC').split('/').filter(Boolean);
+    a.pop();
+    return a;
+  })();
+  var hereName = pathParts[pathParts.length - 1] || '本檔所在';
+  function dirKey(i) { return 'dir:' + pathParts.slice(0, i + 1).join('/'); }
+  function fhStore() {
+    return new Promise(function (res, rej) {
+      var r = indexedDB.open('fh-store', 1);
+      r.onupgradeneeded = function () { r.result.createObjectStore('h'); };
+      r.onsuccess = function () { res(r.result); };
+      r.onerror = function () { rej(r.error); };
+    });
+  }
+  function saveDir(i, h) {
+    return fhStore().then(function (d) { d.transaction('h', 'readwrite').objectStore('h').put(h, dirKey(i)); }).catch(function () { /* 只是下次要再選一次 */ });
+  }
+  function loadDir(i) {
+    return fhStore().then(function (d) {
+      return new Promise(function (res) {
+        var q = d.transaction('h').objectStore('h').get(dirKey(i));
+        q.onsuccess = function () { res(q.result || null); };
+        q.onerror = function () { res(null); };
+      });
+    }).catch(function () { return null; });
+  }
+  async function child(d, name, kind) {
+    try { return await (kind === 'file' ? d.getFileHandle(name) : d.getDirectoryHandle(name)); } catch (err) { /* NFC／NFD 不同時改用逐項比對 */ }
+    try { for await (var ent of d.entries()) { if (ent[1].kind === kind && ent[0].normalize('NFC') === name) return ent[1]; } } catch (err) { /* 走不到就回 null */ }
+    return null;
+  }
+  async function fileFromDir(d, i) {
+    for (var j = i + 1; d && j < pathParts.length; j++) d = await child(d, pathParts[j], 'directory');
+    return d ? child(d, fileName().normalize('NFC'), 'file') : null;
+  }
+  async function tryLink() {   // 開頁與切回分頁時跑：有授權就連結，不開對話框
+    if (!FSA || handle || linking || !window.indexedDB) return;
+    var pend = null;
+    for (var i = pathParts.length - 1; i >= 0; i--) {
+      var d = await loadDir(i);
+      if (!d) continue;
+      try {
+        if ((await d.queryPermission({ mode: 'readwrite' })) === 'granted') {
+          var h = await fileFromDir(d, i);
+          if (h) { handle = h; pendingDir = null; showStatus(); writeBack(false); return; }
+        } else if (!pend) pend = { d: d, i: i };
+      } catch (err) { /* 這一層不能用就看上一層 */ }
+    }
+    pendingDir = pend;
+    showStatus();
+  }
+  async function link() {
+    linking = true;
+    try {
+      if (pendingDir) {
+        var p = pendingDir;
+        if ((await p.d.requestPermission({ mode: 'readwrite' })) !== 'granted') { $('#status').textContent = '沒有授權，這次不會寫回。'; return; }
+        var kept = await fileFromDir(p.d, p.i);
+        pendingDir = null;
+        if (kept) { handle = kept; showStatus(); writeBack(false); return; }
+        $('#status').textContent = '記住的資料夾裡找不到本檔，可能搬走了。請再按一次，重新選資料夾。';
+        showStatus(true);
+        return;
+      }
+      var picked = await window.showDirectoryPicker({ id: 'html-writeback', mode: 'readwrite' });
+      var name = picked.name.normalize('NFC');
+      for (var i = pathParts.length - 1; i >= 0; i--) {
+        if (pathParts[i] !== name) continue;
+        var h = await fileFromDir(picked, i);
+        if (h) { await saveDir(i, picked); handle = h; showStatus(); writeBack(false); return; }
+      }
+      $('#status').textContent = '你選的「' + picked.name + '」裡找不到本檔。請選「' + hereName + '」或它的上層資料夾。';
+    } catch (err) {
+      if (err && err.name !== 'AbortError') $('#status').textContent = '連結失敗：' + err.message;
+    } finally { linking = false; }
+  }
+  var NODE = /(<script type="application\/json" id="d-taste">)([\s\S]*?)(<\/script>)/;
+  function body(s) {   // 比內容，不比版次
+    var picks = {};
+    Object.keys(s.picks || {}).sort().forEach(function (k) { picks[k] = { choice: s.picks[k].choice || '', note: s.picks[k].note || '' }; });
+    var answers = {};
+    Object.keys(s.answers || {}).sort().forEach(function (k) { answers[k] = s.answers[k]; });
+    return JSON.stringify({ t: s.showTeacher !== false, p: picks, a: answers });
+  }
+  var again = false;
+  async function writeBack(force) {
+    if (!handle) return;
+    if (writing) { again = true; return; }   // 寫到一半又有新變更，寫完再跑一次
+    writing = true;
+    try {
+      if ((await handle.queryPermission({ mode: 'readwrite' })) !== 'granted' && (await handle.requestPermission({ mode: 'readwrite' })) !== 'granted') {
+        $('#status').textContent = '沒有寫入權限，內容先留在草稿。';
+        return;
+      }
+      var text = await (await handle.getFile()).text();
+      var m = text.match(NODE);
+      if (!m) { $('#status').textContent = '檔案裡找不到資料節點，不寫回。'; return; }
+      var disk = JSON.parse(m[2]);
+      if (body(disk) === body(state)) {   // 內容相同就不寫，版次也不動
+        state.meta = disk.meta;
+        clearDraft();
+        hideConflict();
+        showStatus();
+        return;
+      }
+      if (!force && disk.meta.rev !== state.meta.rev) { showConflict(disk.meta.rev); return; }
+      var next = JSON.parse(JSON.stringify(state));
+      next.meta = { rev: disk.meta.rev + 1, saved: new Date().toISOString() };
+      var json = JSON.stringify(next).replace(/</g, '\\u003c');
+      var out = text.slice(0, m.index) + m[1] + json + m[3] + text.slice(m.index + m[0].length);
+      var w = await handle.createWritable();
+      await w.write(out);
+      await w.close();
+      state.meta = next.meta;
+      clearDraft();
+      hideConflict();
+      showStatus();
+    } catch (err) {
+      $('#status').textContent = '寫回失敗：' + err.message + '。內容還在草稿。';
+    } finally {
+      writing = false;
+      if (again) { again = false; writeBack(false); }
+    }
+  }
+  function showConflict(rev) {
+    conflictRev = rev;
+    $('#conflictMsg').textContent = '檔案已經是第 ' + rev + ' 版，這一頁是從第 ' + state.meta.rev + ' 版改的。這次沒有寫入，請選要留哪一份。';
+    $('#conflict').hidden = false;
+    $('#status').textContent = '版次對不上，已停止寫回。';
+  }
+  function hideConflict() { conflictRev = null; $('#conflict').hidden = true; }
+  function showStatus(keep) {
+    var btn = $('#link');
+    if (!FSA) { btn.hidden = true; return; }
+    btn.hidden = !!handle;
+    btn.textContent = pendingDir ? '重新授權寫回' : '選資料夾來寫回';
+    if (keep) return;
+    var st = $('#status');
+    if (handle) st.textContent = '已連結本檔，勾選會自動存回（第 ' + state.meta.rev + ' 版）。';
+    else if (pendingDir) st.textContent = '按「重新授權寫回」，再在 Chrome 視窗按「允許」。';
+    else st.textContent = '想讓勾選存回這個檔：選「' + hereName + '」資料夾或它的上層。對話框裡看不到檔案是正常的。';
+  }
+  attachPress($('#link'), link);
+  attachPress($('#useDisk'), function () { clearDraft(); hideConflict(); location.reload(); });
+  attachPress($('#useMine'), function () { writeBack(true); });
+
+  paint();
+  showStatus();
+  tryLink();
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) tryLink(); });
+})();
+</script>
+</body>
+</html>

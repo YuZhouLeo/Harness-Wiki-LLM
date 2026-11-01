@@ -1,0 +1,34 @@
+<!doctype html><!-- 版面喜好選單範例 AC03｜頂端通知條滑入｜來源：講師範例庫 output範例/元件庫/AC03-頂端通知條滑入.html；原始來源 https://github.com/animate-css/animate.css（source/sliding_entrances/slideInDown.css），作者 Daniel Eden，授權 Hippocratic-2.1。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  AC03 頂端通知條滑入（slideInDown）
+  來源：https://github.com/animate-css/animate.css　source/sliding_entrances/slideInDown.css
+  原作者：Daniel Eden　授權：Hippocratic-2.1
+  移植：抄 slideInDown 的 @keyframes；通知條顏色為自訂的淺橘色，原作無配色；面板固定高度並 overflow:hidden 以裁切進場軌跡。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>slideInDown</title><style>
+:root{--ink:#1f2937;--mut:#6b7280;--line:#cbd5e1;--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--warn:#b45309;--warnbg:#fef3c7;--info:#1d4ed8;--infobg:#dbeafe}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8fafc;color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.panel{width:430px;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.hd{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-bottom:1px solid var(--line);background:#f1f5f9;font-weight:700}
+button{font:inherit;font-size:12px;padding:3px 10px;border:1px solid #94a3b8;background:#fff;border-radius:4px;cursor:pointer;color:var(--ink)}
+.tag{display:inline-block;padding:0 8px;border-radius:3px;font-size:12px;font-weight:700}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.warn{background:var(--warnbg);color:var(--warn)}.info{background:var(--infobg);color:var(--info)}
+.row{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid #e2e8f0}
+.row b{width:76px;font-weight:700}
+.a{animation-duration:1s;animation-fill-mode:both}
+@keyframes slideInDown{from{transform:translate3d(0,-100%,0);visibility:visible}to{transform:translate3d(0,0,0)}}
+.slideInDown{animation-name:slideInDown}
+.bar{padding:8px 12px;background:var(--warnbg);color:var(--warn);font-weight:700;border-bottom:1px solid #f5d98b}
+.row{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.a{animation:none!important}}
+</style></head><body>
+<div class="panel" style="height:210px"><div class="bar a slideInDown" id="n">查核完成：3 項通過，1 項待補資料</div>
+<div class="row"><b>統一編號</b><span class="tag ok">通過</span></div>
+<div class="row"><b>發票號碼</b><span class="tag ok">通過</span></div>
+<div class="row"><b>金額</b><span class="tag ok">通過</span></div>
+<div class="row"><b>來源附件</b><span class="tag warn">待補</span></div>
+<div class="row" style="border:0"><button id="r">重播通知</button></div></div>
+<script>function play(e,c){e.classList.remove(c);void e.offsetWidth;e.classList.add(c)}
+var n=document.getElementById('n');document.getElementById('r').onclick=function(){play(n,'slideInDown')}</script></body></html>

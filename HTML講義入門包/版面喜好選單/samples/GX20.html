@@ -1,0 +1,69 @@
+<!doctype html><!-- 版面喜好選單範例 GX20｜出框手寫勾選｜來源：講師範例庫 output範例/元件庫/GX20-出框手寫勾選.html；原始來源 https://github.com/uiverse-io/galaxy（Checkboxes/Shoh2008_good-bat-75.html），作者 Shoh2008，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX20 出框手寫勾選（Checkbox whose tick is drawn in two strokes and overshoots the box）
+  來源：https://github.com/uiverse-io/galaxy　Checkboxes/Shoh2008_good-bat-75.html
+  原作者：Shoh2008　授權：MIT (Copyright 2023 Uiverse.io)　commit：adbd2ad
+  移植：保留原作的兩筆畫勾——先畫短筆（dothabottomcheck .2s），再畫長筆衝出方框右上（dothatopcheck .4s，前半段等待），
+    長筆用與底色同色的 box-shadow 在壓過框線處切出缺口，像用筆在紙上打勾；尺寸、角度、比例照原作（框 24px）；
+    綠色 #34b93d 換成 P11 --accent、黑框換成 --line-strong，缺口色跟著列的底色（滑過變色時也對得上）；
+    原作 input 用 display:none、鍵盤無法操作，改成視覺隱藏的原生 checkbox，整列可點，補 focus-visible；
+    改成「離校申請・送出前確認」三項清單，三項都勾完送出鈕才可按（少量原生 JS）；去掉 -moz-／-webkit- 前綴；
+    prefers-reduced-motion 時不跑畫線動畫，勾號直接出現。
+  2026-10-09 由子代理移植成純 HTML／CSS（必要時加少量原生 JS）
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>出框手寫勾選</title>
+<style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px 16px;background:var(--bg);color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+form{width:100%;max-width:360px;margin:0;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.hd{padding:12px 16px 10px;border-bottom:1px solid var(--line)}
+.hd h1{margin:0;font-size:15px;font-weight:700}
+.hd p{margin:2px 0 0;font-size:12px;color:var(--ink-2)}
+.row{--bgc:var(--surface);position:relative;display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--bgc);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.row:hover{--bgc:var(--surface-2)}
+.row input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.ft{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px}
+.cnt{font-size:12px;color:var(--ink-2)}
+.cnt.ok{color:var(--ok);font-weight:700}
+button{font:inherit;font-weight:700;padding:6px 16px;border:0;border-radius:4px;background:var(--accent);color:var(--on-accent);cursor:pointer}
+button:disabled{background:var(--surface-2);color:var(--ink-2);cursor:not-allowed}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* 原作 .checkbox-wrapper-19 */
+.check-box{--h:24px;flex:none;height:var(--h);width:var(--h);background:transparent;border:calc(var(--h)*.1) solid var(--line-strong);border-radius:5px;position:relative;display:inline-block;transition:border-color .2s ease}
+.check-box::before,.check-box::after{position:absolute;height:0;width:calc(var(--h)*.2);background:var(--accent);display:inline-block;transform-origin:left top;border-radius:5px;content:""}
+.check-box::before{top:calc(var(--h)*.72);left:calc(var(--h)*.41);box-shadow:0 0 0 calc(var(--h)*.05) var(--bgc);transform:rotate(-135deg)}
+.check-box::after{top:calc(var(--h)*.37);left:calc(var(--h)*.05);transform:rotate(-45deg)}
+.row input:checked+.check-box{border-color:var(--accent)}
+.row input:checked+.check-box::after{height:calc(var(--h)/2);animation:dothabottomcheck-19 .2s ease 0s forwards}
+.row input:checked+.check-box::before{height:calc(var(--h)*1.2);animation:dothatopcheck-19 .4s ease 0s forwards}
+.row input:focus-visible+.check-box{outline:2px solid var(--accent);outline-offset:4px}
+@keyframes dothabottomcheck-19{0%{height:0}100%{height:calc(var(--h)/2)}}
+@keyframes dothatopcheck-19{0%{height:0}50%{height:0}100%{height:calc(var(--h)*1.2)}}
+@media (prefers-reduced-motion:reduce){
+  .row input:checked+.check-box::after,.row input:checked+.check-box::before{animation:none}
+  .check-box{transition:none}
+}
+</style></head><body>
+<form id="f">
+  <div class="hd"><h1>離校申請・送出前確認</h1><p>三項都打勾才能送出</p></div>
+  <label class="row"><input type="checkbox" checked><span class="check-box"></span><span>已歸還圖書館所有借書</span></label>
+  <label class="row"><input type="checkbox"><span class="check-box"></span><span>已繳清宿舍與網路費用</span></label>
+  <label class="row"><input type="checkbox"><span class="check-box"></span><span>已確認學位證書寄送地址</span></label>
+  <div class="ft"><span class="cnt" id="cnt" aria-live="polite"></span><button type="submit" disabled>送出申請</button></div>
+</form>
+<script>
+const f=document.getElementById('f'),b=f.querySelector('button'),cnt=document.getElementById('cnt'),cs=[...f.querySelectorAll('input[type=checkbox]')];
+function u(){const n=cs.filter(c=>c.checked).length;b.disabled=n<cs.length;cnt.className='cnt';cnt.textContent='已確認 '+n+'／'+cs.length}
+f.addEventListener('change',u);
+f.addEventListener('submit',e=>{e.preventDefault();cnt.className='cnt ok';cnt.textContent='✓ 申請已送出';b.disabled=true});
+u();
+</script>
+</body></html>

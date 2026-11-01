@@ -1,0 +1,1746 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="sources" content="2-wiki/日本史/日本史-平安時代（攝關政治）.md;1-raw/output範例/設計偏好選擇/samples/S8b-滾動敘事簡報.html">
+<title>簡報模板示範：攝關政治</title>
+<style>html, body { margin: 0; background: #04080f; } #deck { visibility: hidden; }</style>
+</head>
+<body>
+<!-- 給 AI：這是簡報模板。只改「投影片開始」和「投影片結束」兩個標記之間，以及上面的 title。
+     版式寫法看「簡報-內容格式.md」。標記之後是翻頁引擎、編輯器、樣式，都不要動，也不必往下讀。 -->
+<section class="deck" id="deck" aria-label="簡報">
+<div class="stage-fitter" id="fitter">
+<div class="stage-frame" id="frame">
+<!-- 投影片開始：AI 只改這段 -->
+<!--
+  版式共 5 種，用 section 的 class 指定：
+  layout-cover 封面｜layout-points 重點條列｜layout-compare 左右對照｜layout-big 大數字或一句話｜layout-image 圖文。最後一張 layout-card 是模板說明，做學生的簡報時刪掉。
+  id 規則：第 3 張的 section 是 id="s3"，裡面的元素是 data-edit-id="s3-title"。整份不重複。
+  要逐步出現：在元素加 data-at="1"、data-at="2"…（沒寫就是一進來就出現）。
+-->
+
+<!-- 版式：封面 -->
+<section class="slide layout-cover" id="s1" aria-label="封面">
+  <p class="kicker" data-edit-id="s1-kicker">日本史｜古代律令制國家的轉型</p>
+  <h1 class="title" data-edit-id="s1-title">攝關政治</h1>
+  <p class="sub" data-edit-id="s1-sub">從遷都平安京，到外戚藤原氏掌握實權。</p>
+  <p class="meta" data-edit-id="s1-meta"><b>平安時代</b>　794 桓武天皇遷都平安京－1192 源賴朝創鎌倉幕府　<b>攝關政治</b>　10～11 世紀</p>
+</section>
+
+<!-- 版式：重點條列（3～5 點；這張示範逐步出現） -->
+<section class="slide layout-points" id="s2" aria-label="為什麼遷都">
+  <p class="kicker" data-edit-id="s2-kicker">【平安京】為什麼要遷都</p>
+  <h2 class="title" data-edit-id="s2-title">桓武天皇遷了兩次都</h2>
+  <ol class="points">
+    <li data-edit-id="s2-p1" data-at="0"><b>784 長岡京</b>　遠離奈良的佛教勢力，又靠淀川水系運輸。</li>
+    <li data-edit-id="s2-p2" data-at="1"><b>只用了十年</b>　負責遷都的藤原種繼遇刺，早良親王流放途中絕食而死。</li>
+    <li data-edit-id="s2-p3" data-at="2"><b>794 平安京</b>　陰陽師占卜說是早良親王的怨靈作祟，桓武天皇再次遷都。</li>
+  </ol>
+  <p class="source" data-edit-id="s2-source">出處：日本史課堂筆記（2026-10-05）</p>
+</section>
+
+<!-- 版式：左右對照（col 是可整塊拖曳的框，裡面的字各自可改；要強調的那欄加 hot） -->
+<section class="slide layout-compare" id="s3" aria-label="攝政與關白">
+  <p class="kicker" data-edit-id="s3-kicker">【貴族政治】攝關政治</p>
+  <h2 class="title" data-edit-id="s3-title">攝政和關白，差在有沒有理由</h2>
+  <div class="cols">
+    <div class="col" data-edit-id="s3-left" data-edit="box">
+      <h3 data-edit-id="s3-left-head">攝政</h3>
+      <p class="lead" data-edit-id="s3-left-lead">有理由的代理</p>
+      <p data-edit-id="s3-left-text">天皇年紀太小、是女性或生病不能理政時，由攝政代行天皇的職務。</p>
+    </div>
+    <div class="col hot" data-edit-id="s3-right" data-edit="box">
+      <h3 data-edit-id="s3-right-head">關白</h3>
+      <p class="lead" data-edit-id="s3-right-lead">無理由的輔佐</p>
+      <p data-edit-id="s3-right-text">天皇已經成年、身體也好，關白照樣在旁輔佐，所有奏章都要先經過他。</p>
+    </div>
+  </div>
+  <p class="source" data-edit-id="s3-source">日文俗語「亭主関白」由此而來：家裡什麼都由丈夫說了算。</p>
+</section>
+
+<!-- 版式：大數字（一句話版：把 bigbox 整塊換成 <p class="line" data-edit-id="s4-line">一句 30 字內的話</p>） -->
+<section class="slide layout-big" id="s4" aria-label="遣唐使廢止">
+  <p class="kicker" data-edit-id="s4-kicker">【遣唐使廢止】</p>
+  <h2 class="title" data-edit-id="s4-title">這一年，遣唐使停派</h2>
+  <div class="bigbox">
+    <p class="big" data-edit-id="s4-big">894</p>
+    <div>
+      <p class="label" data-edit-id="s4-label">年，菅原道真建議廢止遣唐使</p>
+      <p class="note" data-edit-id="s4-note">理由有四：財政危機、海難、唐朝衰落、日本的文化達一定水準。</p>
+    </div>
+  </div>
+  <p class="source" data-edit-id="s4-source">出處：日本史課堂筆記（2026-10-05）</p>
+</section>
+
+<!-- 版式：圖文（pic 裡放 inline svg 或 <img src="圖片路徑" alt="說明">；圖要放右邊就在 imgrow 加 flip） -->
+<section class="slide layout-image" id="s5" aria-label="平安京格局">
+  <p class="kicker" data-edit-id="s5-kicker">【平安京】都城格局</p>
+  <h2 class="title" data-edit-id="s5-title">仿長安的棋盤狀都城</h2>
+  <div class="imgrow">
+    <figure class="pic" data-edit-id="s5-pic" data-edit="box">
+      <svg viewBox="0 0 820 500" role="img" aria-label="平安京示意圖：北端大內裏，朱雀大路往南通到羅城門，東邊左京、西邊右京，一條到九條由北往南">
+        <path class="grid" d="M230 50H590M230 95H590M230 140H590M230 185H590M230 230H590M230 275H590M230 320H590M230 365H590M230 410H590M230 50V410M590 50V410"/>
+        <rect class="palace" x="350" y="50" width="120" height="90"/>
+        <path class="road" d="M410 140V410"/>
+        <rect class="temple" x="340" y="350" width="34" height="34"/><rect class="temple" x="446" y="350" width="34" height="34"/>
+        <text x="410" y="104">大內裏</text><text x="410" y="36">北</text><text x="410" y="452">羅城門</text>
+        <text x="298" y="378">西寺</text><text x="522" y="378">東寺</text>
+        <text x="110" y="240">右京（西）</text><text x="710" y="240">左京（東）</text>
+        <text x="182" y="60">一條</text><text x="182" y="420">九條</text>
+      </svg>
+      <figcaption data-edit-id="s5-caption">平安京示意圖，依課堂筆記繪製，不按比例</figcaption>
+    </figure>
+    <ul class="notes">
+      <li data-edit-id="s5-n1"><b>條</b>　東西向的大路，一條到九條；數字越小越往北。</li>
+      <li data-edit-id="s5-n2"><b>朱雀大路</b>　從大內裏往南直通羅城門，分出左京、右京。</li>
+      <li data-edit-id="s5-n3"><b>大內裏</b>　又叫平安宮，天皇住所兼中央官廳。</li>
+      <li data-edit-id="s5-n4"><b>寺廟甚少</b>　城內只蓋東寺、西寺兩座官寺。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 產出卡：模板自己的說明。做學生的簡報時整張刪掉 -->
+<section class="slide layout-card" id="s6" aria-label="產出卡">
+  <p class="kicker" data-edit-id="s6-kicker">產出卡</p>
+  <h2 class="title" data-edit-id="s6-title">做這份簡報之前先定的六項</h2>
+  <ul class="pcard">
+    <li data-edit-id="s6-c1"><b>受眾</b>大學生和他的 AI；學生沒有 HTML 基礎。</li>
+    <li data-edit-id="s6-c2"><b>目的</b>AI 只換投影片段，就做出能翻頁、能按 E 編輯的簡報。</li>
+    <li data-edit-id="s6-c3"><b>使用情境</b>電腦上用 Chrome 或 Edge 開本機檔，投影或自己看。</li>
+    <li data-edit-id="s6-c4"><b>限制</b>單檔、離線能開；Safari 與 Firefox 不能寫回，改用下載 HTML。</li>
+    <li data-edit-id="s6-c5"><b>語調</b>夜景滾動敘事，只用提燈黃一個強調色，適合講給別人聽。</li>
+    <li data-edit-id="s6-c6"><b>證據</b>示範內容都出自日本史課堂筆記〈平安時代（攝關政治）〉。</li>
+  </ul>
+</section>
+<!-- 投影片結束 -->
+<div class="lantern" id="lantern" aria-hidden="true"><i class="glow"></i>
+<svg viewBox="0 0 60 96"><path class="lp-ring" d="M22 10 Q30 -4 38 10"/><rect class="lp-metal" x="17" y="9" width="26" height="8" rx="2"/>
+<path class="lp-glass" d="M18 17 H42 L46 70 Q46 78 38 78 H22 Q14 78 14 70 Z"/><ellipse class="lp-flame" cx="30" cy="52" rx="7" ry="13"/>
+<ellipse class="lp-core" cx="30" cy="56" rx="3" ry="6"/><rect class="lp-metal" x="15" y="78" width="30" height="7" rx="2"/></svg></div>
+<nav class="idx" id="idx" aria-label="場景"><p class="num"><b id="idxNo">01</b><span id="idxTotal"></span></p><ol id="idxList"></ol></nav>
+<div class="cap" id="cap" aria-live="polite"></div>
+</div>
+</div>
+<div class="pb-hover" data-no-advance><nav class="pb" id="pb" aria-label="簡報進度"></nav></div>
+</section>
+<!-- 按 E 編輯後存的內容在下面這個節點；重做整份投影片時才清空，做法見簡報-內容格式.md -->
+<script type="application/json" id="d-slides">{"meta":{"rev":0,"saved_at":null,"schema":1},"edits":{},"assets":{}}</script>
+<style id="deck-css">
+/* 滾動敘事配色：底 night #0E1A2B、面 tide #1D4C5A、主字 paper #F5EBDA、次字 mist、唯一強調色 lantern #FFC14D */
+:root {
+  --shell: #04080f; --surface: #0E1A2B; --surface-2: #12313f; --surface-3: #1D4C5A;
+  --text: #F5EBDA; --text-2: #d8d7cf; --text-mute: #8EA4B2; --text-faint: #4f6b78; --rule: #4f6b78;
+  --accent: #FFC14D;
+  --font-display-cn: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-mono: ui-monospace, Consolas, Menlo, monospace;
+  --dur-base: 800ms; --dur-slow: 1200ms; --r-stage: 0; --shadow-stage: 0 40px 120px rgba(0, 0, 0, .6);
+  --surface-pattern: none; --surface-pattern-size: 1px 1px; --surface-pattern-blend: normal; --surface-pattern-opacity: 0;
+  --ease-quart: cubic-bezier(0.22, 1, 0.36, 1); --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ink: #F5EBDA; --ink-2: #d8d7cf; --mute: #9db1bd; --kick: #a9bcc7;
+  --lantern: #FFC14D; --paper: #F5EBDA;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* ═════════ STAGE ENGINE · CSS（VF 系列共用，整段可直接複製） ═════════ */
+.deck { position: relative; height: 100vh; height: 100svh; min-height: 240px; background: var(--shell);
+  display: flex; align-items: center; justify-content: center; overflow: hidden; }
+@media (max-aspect-ratio: 1/1) { .deck { height: calc(100vw * 9 / 16 + 48px); min-height: 0; } }
+.stage-fitter { position: relative; flex: none; }
+.stage-frame { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0;
+  background: var(--surface); overflow: hidden; cursor: pointer; box-shadow: var(--shadow-stage);
+  border-radius: var(--r-stage); user-select: none; -webkit-user-select: none; }
+.stage-frame::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background-image: var(--surface-pattern); background-size: var(--surface-pattern-size);
+  mix-blend-mode: var(--surface-pattern-blend); opacity: var(--surface-pattern-opacity); }
+.slide { position: absolute; inset: 0; z-index: 2; opacity: 0; visibility: hidden;
+  transition: opacity var(--dur-base) var(--ease-soft), visibility 0s linear var(--dur-base); }
+.slide.is-active { opacity: 1; visibility: visible;
+  transition: opacity var(--dur-slow) var(--ease-soft) 120ms, visibility 0s; }
+/* 宣告式逐步揭示：data-at="n" 的元素在 step ≥ n 時得到 .on（= n 時另有 .now，> n 時 .past） */
+.rv { opacity: 0; transform: translateY(18px);
+  transition: opacity var(--dur-base) var(--ease-soft), transform var(--dur-slow) var(--ease-quart); }
+.rv.on { opacity: 1; transform: none; }
+.wipe { clip-path: inset(0 100% 0 0); transition: clip-path var(--dur-slow) var(--ease-quart); }
+.wipe.on { clip-path: inset(0 0 0 0); }
+.stage-frame.instant .slide, .stage-frame.instant .slide * { transition: none !important; }
+/* 旁白字幕（N 切換，預設關；畫在舞台內，錄影抓得到） */
+.cap { position: absolute; left: 50%; bottom: 150px; transform: translateX(-50%); z-index: 30; width: max-content;
+  max-width: 1500px; padding: 14px 30px; background: var(--text); color: var(--surface-2);
+  font-family: var(--font-display-cn); font-size: 32px; line-height: 1.5; text-align: center;
+  pointer-events: none; opacity: 0; transition: opacity 300ms linear; }
+.stage-frame.show-cap .cap { opacity: 1; }
+.cap:empty { display: none; }
+/* 底部進度列：平常完全隱藏，滑鼠移到底部 56px 才出現 */
+.pb-hover { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; z-index: 40;
+  display: flex; justify-content: center; align-items: flex-end; }
+.pb { display: flex; align-items: center; gap: 2px; max-width: calc(100% - 24px); overflow-x: auto; scrollbar-width: none;
+  padding: 8px 12px; background: var(--text); color: var(--surface);
+  opacity: 0; transform: translateY(100%);
+  transition: opacity var(--dur-base) var(--ease-quart), transform var(--dur-base) var(--ease-quart); }
+.pb-hover:hover .pb, .pb:focus-within { opacity: 1; transform: none; }
+.pb button { font: inherit; font-size: 13px; line-height: 1.4; color: var(--text-faint); background: none;
+  border: 1px solid transparent; padding: 4px 10px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.pb button:hover { color: var(--surface); }
+.pb button.act { color: var(--surface); border-color: var(--accent); }
+.pb .no { font-family: var(--font-mono); color: var(--accent); }
+.pb .pips { display: flex; gap: 4px; }
+.pb .pip { width: 7px; height: 7px; border-radius: 50%; background: var(--text-mute); }
+.pb .pip.on { background: var(--accent); }
+.pb .cnt { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); padding: 0 6px 0 10px; white-space: nowrap; }
+/* ═════════ STAGE ENGINE · CSS 結束 ═════════ */
+/* ═════════ 版式（1920×1080 舞台）：字級三層 標題 88／重點 42～340／說明 26～38；內容下緣留在 y=860 以內，提燈走在下面 ═════════ */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--shell); color: var(--ink); overflow-x: hidden;
+  font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+  -webkit-font-smoothing: antialiased; letter-spacing: normal; }
+h1, h2, h3, p, ul, ol, li, figure, figcaption { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+#deck { visibility: visible; }
+
+.slide { --fit: 1; display: flex; flex-direction: column; overflow: hidden; padding: 72px 170px 46px 120px; color: var(--ink); }
+.kicker { font-size: 30px; line-height: 1.3; font-weight: 700; color: var(--kick); }
+.title { margin-top: 12px; font-size: max(56px, calc(88px * var(--fit))); line-height: 1.18; font-weight: 900; color: var(--paper); text-shadow: 0 4px 40px rgba(4, 8, 15, .55); }
+.source { margin-top: auto; font-size: 26px; line-height: 1.4; color: #c4d2da; text-shadow: 0 1px 12px rgba(4, 8, 15, .8); }
+b { font-weight: 700; }
+
+/* 封面 */
+.layout-cover { padding-top: 212px; }
+.layout-cover .kicker { font-size: 36px; color: var(--lantern); }
+.layout-cover .title { margin-top: 16px; font-size: max(96px, calc(176px * var(--fit))); line-height: 1.1; font-weight: 800; }
+.layout-cover .sub { margin-top: 36px; max-width: 1280px; font-size: 44px; line-height: 1.55; color: var(--ink-2); }
+.layout-cover .meta { margin-top: auto; margin-bottom: 18px; font-size: 30px; line-height: 1.45; color: #b8c8d1; }
+.layout-cover .meta b { color: var(--paper); }
+
+/* 面板：半透明暗玻璃，圓潤無陰影 */
+.points li, .col, .pic, .pcard li { background: rgba(7, 13, 22, .52); border: 1px solid rgba(245, 235, 218, .2);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+
+/* 重點條列：自動編號，目前這一步亮框 */
+.points { counter-reset: pt; display: grid; gap: 24px; margin-top: 52px; }
+.points li { counter-increment: pt; position: relative; padding: 26px 44px 26px 112px; border-radius: 26px;
+  font-size: max(28px, calc(42px * var(--fit))); line-height: 1.45; transition: opacity 1.1s var(--ease), transform 1.3s var(--ease), filter 1.1s var(--ease), border-color .6s; }
+.points li::before { content: counter(pt); position: absolute; left: 44px; top: 22px; font-size: max(36px, calc(54px * var(--fit))); line-height: 1.2; font-weight: 900; color: var(--lantern); font-variant-numeric: tabular-nums; }
+.points li b { color: var(--paper); }
+.points li.now { border-color: rgba(255, 193, 77, .6); }
+
+/* 左右對照 */
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 52px; }
+.col { padding: 36px 48px 44px; border-radius: 30px; }
+.col.hot { border-color: rgba(255, 193, 77, .6); }
+.col h3 { font-size: max(48px, calc(84px * var(--fit))); line-height: 1.15; font-weight: 900; color: var(--paper); }
+.col.hot h3 { color: var(--lantern); }
+.col .lead { margin-top: 10px; font-size: max(32px, calc(46px * var(--fit))); line-height: 1.3; font-weight: 700; color: var(--paper); }
+.col p:not(.lead) { margin-top: 22px; font-size: max(28px, calc(38px * var(--fit))); line-height: 1.55; color: var(--ink-2); }
+
+/* 大數字或一句話 */
+.bigbox { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 80px; align-items: center; margin-top: 56px; }
+.big { font-size: max(120px, calc(340px * var(--fit))); line-height: .96; font-weight: 900; color: var(--lantern); font-variant-numeric: tabular-nums; white-space: nowrap; text-shadow: 0 0 80px rgba(255, 193, 77, .35); }
+.big small { margin-left: .08em; font-size: .3em; font-weight: 700; color: var(--ink-2); }
+.label { font-size: max(36px, calc(56px * var(--fit))); line-height: 1.35; font-weight: 700; color: var(--paper); }
+.note { margin-top: 24px; font-size: max(28px, calc(38px * var(--fit))); line-height: 1.55; color: var(--ink-2); }
+.line { margin-top: 84px; max-width: 1500px; font-size: max(56px, calc(104px * var(--fit))); line-height: 1.32; font-weight: 900; color: var(--lantern); text-shadow: 0 0 80px rgba(255, 193, 77, .3); }
+
+/* 圖文 */
+.imgrow { display: grid; grid-template-columns: 860px minmax(0, 1fr); column-gap: 64px; align-items: start; margin-top: 44px; }
+.imgrow.flip { grid-template-columns: minmax(0, 1fr) 860px; }
+.imgrow.flip .pic { order: 2; }
+.pic { padding: 20px 20px 14px; border-radius: 26px; }
+.pic svg, .pic img { display: block; width: 100%; height: auto; max-height: 500px; object-fit: contain; border-radius: 12px; -webkit-user-drag: none; }
+.pic svg text { font-size: 28px; font-weight: 700; fill: var(--paper); text-anchor: middle; font-family: inherit; paint-order: stroke; stroke: #0f2230; stroke-width: 8px; stroke-linejoin: round; }
+.pic svg .grid { fill: none; stroke: rgba(245, 235, 218, .4); stroke-width: 2; }
+.pic svg .road { fill: none; stroke: var(--lantern); stroke-width: 10; }
+.pic svg .palace { fill: rgba(245, 235, 218, .16); stroke: var(--paper); stroke-width: 3; }
+.pic svg .temple { fill: var(--paper); }
+.pic figcaption { margin-top: 8px; font-size: 26px; line-height: 1.4; color: #b8c8d1; }
+.notes { display: grid; gap: 32px; }
+.notes li { padding-left: 30px; border-left: 4px solid rgba(245, 235, 218, .28); font-size: max(28px, calc(38px * var(--fit))); line-height: 1.5; color: var(--ink-2); }
+.notes li b { color: var(--paper); }
+
+/* 產出卡：小字六格 */
+.layout-card .title { font-size: 56px; }
+.pcard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 44px; }
+.pcard li { padding: 24px 30px 28px; border-radius: 22px; font-size: 28px; line-height: 1.5; color: var(--ink-2); }
+.pcard li b { display: block; margin-bottom: 8px; font-size: 26px; line-height: 1.3; color: var(--kick); }
+
+/* ═════════ 場景切換（圓形展開）＋視差圖層＋提燈 ═════════ */
+.stage-frame { background: #070d16; }
+.slide { opacity: 1; visibility: hidden; z-index: 2; background: #0E1A2B;
+  clip-path: circle(0% at var(--cx, 50%) var(--cy, 86%)); transition: none; }
+.slide.is-active { visibility: visible; z-index: 3; clip-path: circle(150% at var(--cx, 50%) var(--cy, 86%));
+  transition: clip-path .95s cubic-bezier(.6, 0, .2, 1), visibility 0s; }
+.slide.leaving { visibility: visible; z-index: 2; clip-path: circle(150% at var(--cx, 50%) var(--cy, 86%)); transition: none; }
+.stage-frame.instant .slide, .stage-frame.instant .slide * { transition: none !important; }
+.stage-frame.instant .lantern, .stage-frame.instant .lantern * { transition: none !important; }
+
+/* 場景底圖：由 deck-effects 依張數自動產生，z-index -1 讓內容不用定位就在上面 */
+.scenebg { position: absolute; inset: 0; z-index: -1; transform: scale(1.14); transition: transform 1.8s var(--ease); pointer-events: none; }
+.slide.is-active .scenebg { transform: none; }
+.layer { position: absolute; left: -10%; top: 0; width: 120%; height: 100%; display: block; transition: transform 2s var(--ease); }
+.layer.far { transform: translateX(-3%); } .layer.mid { transform: translateX(-6%); } .layer.near { transform: translateX(-11%); }
+.slide.is-active .layer { transform: none; }
+.far path { fill: var(--far); } .mid path { fill: var(--midc); } .near path { fill: var(--near); }
+.win { fill: var(--lantern); }
+.moon { fill: var(--paper); } .moonhalo { fill: rgba(245, 235, 218, .08); }
+.star { fill: var(--paper); opacity: .7; animation: tw 3.4s ease-in-out infinite alternate; }
+@keyframes tw { from { opacity: .25; } to { opacity: .9; } }
+.sun { fill: var(--lantern); opacity: .92; }
+.fogband { animation: fog 20s ease-in-out infinite alternate; } .fogband.b2 { animation-duration: 28s; opacity: .7; }
+@keyframes fog { from { transform: translateX(-60px); } to { transform: translateX(60px); } }
+
+/* 文字落在場景的留白處：模糊淡入，依序出現；data-i 由 deck-effects 標（不用 inline style，編輯器復原時才不會洗掉） */
+.rv { opacity: 0; transform: translateY(22px); filter: blur(7px);
+  transition: opacity .8s var(--ease) calc(320ms + var(--i, 0) * 90ms), transform .9s var(--ease) calc(320ms + var(--i, 0) * 90ms), filter .8s var(--ease) calc(320ms + var(--i, 0) * 90ms); }
+.rv.on { opacity: 1; transform: none; filter: none; }
+[data-i="1"] { --i: 1; } [data-i="2"] { --i: 2; } [data-i="3"] { --i: 3; } [data-i="4"] { --i: 4; }
+[data-i="5"] { --i: 5; } [data-i="6"] { --i: 6; } [data-i="7"] { --i: 7; } [data-i="8"] { --i: 8; } [data-i="9"] { --i: 9; }
+.rv:not([data-at="0"]) { transition-delay: 0s; }
+
+/* 提燈：跟著步數走 */
+.lantern { position: absolute; left: 0; top: 0; width: 64px; height: 96px; z-index: 12; pointer-events: none;
+  transform: translate(calc(var(--lx, 80) * 19.2px), calc(var(--ly, 82) * 10.8px)); transition: transform .95s cubic-bezier(.5, 0, .2, 1); }
+.lantern svg { position: relative; width: 100%; height: 100%; display: block; overflow: visible; animation: bob 4.6s ease-in-out infinite alternate; }
+.lantern .glow { position: absolute; left: 50%; top: 52%; width: 460px; height: 460px; margin: -230px 0 0 -230px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 193, 77, .55) 0, rgba(255, 193, 77, .14) 28%, transparent 64%); mix-blend-mode: screen;
+  transition: transform .95s var(--ease), opacity .8s; }
+.lantern.burst .glow { transform: scale(2.4); }
+.lp-metal { fill: #F5EBDA; } .lp-ring { fill: none; stroke: #F5EBDA; stroke-width: 2.6; }
+.lp-glass { fill: rgba(255, 193, 77, .3); stroke: #F5EBDA; stroke-width: 2.6; }
+.lp-flame { fill: #FFC14D; transform-origin: 30px 54px; transform-box: view-box; animation: flick 1.6s ease-in-out infinite alternate; }
+.lp-core { fill: #F5EBDA; transform-origin: 30px 54px; transform-box: view-box; animation: flick 1.1s ease-in-out infinite alternate-reverse; }
+@keyframes flick { from { transform: scale(.9, .94); } to { transform: scale(1.04, 1.08); } }
+@keyframes bob { from { transform: translateY(-5px) rotate(-1.5deg); } to { transform: translateY(6px) rotate(1.5deg); } }
+
+/* 場景指示：右緣直條，一格一張，走過的填滿；張數多時自動變短 */
+.idx { --n: 8; position: absolute; right: 38px; top: 50%; transform: translateY(-50%); z-index: 20; display: grid; justify-items: center; gap: 16px; color: #F5EBDA; }
+.idx .num { margin: 0; font-size: 26px; line-height: 1.25; text-align: center; font-variant-numeric: tabular-nums; color: #b8c8d1; }
+.idx .num b { display: block; font-size: 40px; color: #F5EBDA; }
+.idx ol { display: grid; gap: 8px; }
+.idx button { position: relative; display: block; width: 32px; height: min(52px, calc(760px / var(--n) - 8px)); padding: 0; border: 0; background: none; cursor: pointer; color: inherit; }
+.idx button::before, .idx button i { content: ""; position: absolute; left: 14px; top: 0; bottom: 0; width: 4px; border-radius: 4px; background: #F5EBDA; }
+.idx button::before { opacity: .26; }
+.idx button i { transform-origin: 50% 0; transform: scaleY(0); transition: transform .9s var(--ease); background: #FFC14D; }
+.idx button.done i, .idx button.cur i { transform: scaleY(1); }
+.idx button.cur i { background: #F5EBDA; }
+.idx button:focus-visible { outline: 3px solid #FFC14D; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide, .slide.is-active, .slide.leaving { clip-path: none !important; opacity: 0; transition: opacity 240ms linear, visibility 0s !important; }
+  .slide.is-active { opacity: 1; }
+  .slide.leaving { opacity: 0; visibility: hidden; }
+  .scenebg, .layer, .layer.far, .layer.mid, .layer.near { transform: none !important; transition: none !important; }
+  .rv { transform: none !important; filter: none !important; transition: opacity 240ms linear !important; }
+  .lantern, .lantern .glow, .idx button i { transition: none !important; }
+  .lantern svg, .lp-flame, .lp-core, .star, .fogband { animation: none !important; }
+}
+</style>
+<style id="slide-editor-css">
+/* ═════════ SLIDE EDITOR · CSS v2（和 <script id="slide-editor"> 成對，整段原樣複製） ═════════
+   只在 html.se-on（編輯模式）時生效；播放模式下這段除了 .se-del 以外都不起作用。
+   配色：--se-accent 預設接簡報自己的 --accent（唯一強調色），沒有就用藍。 */
+:root { --se-accent: var(--accent, #2254c1); --se-on-accent: #0E1A2B; --se-bar: #F5EBDA; --se-ink: #17191c;
+  --se-ink-2: #565a60; --se-line: #d6cdbd; --se-bar-h: 56px; --se-panel-w: 360px; }
+.se-del { display: none !important; }
+
+/* 編輯模式：舞台讓出上方工具列的高度，外框加強調色描邊當狀態提示 */
+html.se-on .deck { height: calc(100vh - var(--se-bar-h)); height: calc(100svh - var(--se-bar-h)); margin-top: var(--se-bar-h); }
+html.se-on .stage-fitter { box-shadow: 0 0 0 3px var(--se-accent); }
+html.se-on .stage-frame { cursor: default; }
+/* 編輯時整張的步驟揭示全部顯示，不等翻步 */
+html.se-on .stage-frame [data-at] { opacity: 1 !important; transform: none !important; filter: none !important;
+  clip-path: none !important; visibility: visible !important; transition: none !important; }
+/* 只限目前這張：沒顯示的投影片若也強制可見，透明元素會蓋住目前這張，點不到也拖不動 */
+html.se-on .stage-frame .slide:not(.is-active) [data-at] { visibility: hidden !important; }
+html.se-on .slide.is-active [data-edit-id] { cursor: move; }
+html.se-on .slide.is-active [data-edit-id]:hover { outline: 3px dashed rgba(255, 255, 255, .5); outline-offset: 6px; }
+html.se-on .slide.is-active [data-edit-id][contenteditable="true"] { cursor: text; outline: none;
+  user-select: text; -webkit-user-select: text; caret-color: var(--se-accent); }
+
+/* 新增的元素：以投影片左上角為原點，位置全靠 translate */
+.se-add { position: absolute; left: 0; top: 0; z-index: 6; transform-origin: 0 0; }
+.se-add-text { min-width: 40px; font-size: 48px; line-height: 1.45; font-weight: 500; white-space: pre-wrap; overflow-wrap: anywhere; }
+.se-add-image { display: block; height: auto; max-width: none; user-select: none; -webkit-user-drag: none; }
+
+/* 選取框：放在舞台內（跟著舞台縮放），--k = 1／縮放比，讓把手在螢幕上維持固定大小 */
+.se-sel { position: absolute; z-index: 50; pointer-events: none; box-shadow: 0 0 0 calc(2px * var(--k, 1)) var(--se-accent); }
+.se-sel[hidden] { display: none; }
+.se-sel i { position: absolute; width: calc(14px * var(--k, 1)); height: calc(14px * var(--k, 1)); background: #fff;
+  border: calc(2px * var(--k, 1)) solid var(--se-accent); border-radius: calc(3px * var(--k, 1)); pointer-events: auto; }
+.se-sel [data-h="nw"] { left: calc(-7px * var(--k, 1)); top: calc(-7px * var(--k, 1)); cursor: nwse-resize; }
+.se-sel [data-h="ne"] { right: calc(-7px * var(--k, 1)); top: calc(-7px * var(--k, 1)); cursor: nesw-resize; }
+.se-sel [data-h="sw"] { left: calc(-7px * var(--k, 1)); bottom: calc(-7px * var(--k, 1)); cursor: nesw-resize; }
+.se-sel [data-h="se"] { right: calc(-7px * var(--k, 1)); bottom: calc(-7px * var(--k, 1)); cursor: nwse-resize; }
+.se-sel [data-h="w"], .se-sel [data-h="e"] { top: 50%; height: calc(28px * var(--k, 1)); width: calc(10px * var(--k, 1));
+  margin-top: calc(-14px * var(--k, 1)); cursor: ew-resize; }
+.se-sel [data-h="w"] { left: calc(-5px * var(--k, 1)); } .se-sel [data-h="e"] { right: calc(-5px * var(--k, 1)); }
+.se-sel[data-kind="image"] [data-h="w"], .se-sel[data-kind="image"] [data-h="e"] { display: none; }
+.se-sel .se-grip { position: absolute; left: 50%; top: calc(-38px * var(--k, 1)); transform: translateX(-50%); display: none;
+  padding: calc(3px * var(--k, 1)) calc(10px * var(--k, 1)); border-radius: calc(6px * var(--k, 1));
+  font: 700 calc(13px * var(--k, 1)) / 1.4 "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  background: var(--se-accent); color: var(--se-on-accent); white-space: nowrap; pointer-events: auto; cursor: move; }
+.se-sel.typing .se-grip { display: block; }
+
+/* 工具列（舞台外、固定在視窗頂端） */
+.se-bar { position: fixed; left: 0; right: 0; top: 0; height: var(--se-bar-h); z-index: 1000; display: none; align-items: center; gap: 8px;
+  padding: 0 16px; background: var(--se-bar); color: var(--se-ink); border-bottom: 3px solid var(--se-accent);
+  font: 500 14px/1.4 "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
+html.se-on .se-bar { display: flex; }
+.se-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; font-weight: 700;
+  background: var(--se-ink); color: var(--se-bar); white-space: nowrap; }
+.se-badge::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--se-accent); }
+.se-bar button { font: inherit; color: var(--se-ink); background: #fff; border: 1px solid var(--se-line); border-radius: 8px;
+  padding: 6px 12px; cursor: pointer; white-space: nowrap; transition: transform 120ms ease, background 120ms ease; }
+.se-bar button:hover { background: #fffaf2; border-color: var(--se-ink-2); }
+.se-bar button:active { transform: scale(.96); }
+.se-bar button:disabled { opacity: .4; cursor: default; transform: none; }
+.se-bar button.se-primary { background: var(--se-ink); color: var(--se-bar); border-color: var(--se-ink); font-weight: 700; }
+.se-bar button[aria-pressed="true"] { background: var(--se-ink); color: var(--se-bar); border-color: var(--se-ink); }
+.se-bar button[aria-pressed="true"] kbd { color: inherit; opacity: .7; }
+.se-bar button[data-a="list"][aria-pressed="true"] { background: #fffaf2; color: var(--se-ink); border-color: var(--se-ink-2); box-shadow: inset 0 -3px 0 var(--se-accent); }
+.se-bar kbd { font: 13px/1 ui-monospace, Menlo, monospace; color: var(--se-ink-2); margin-left: 4px; }
+.se-bar .se-primary kbd { color: inherit; opacity: .7; }
+.se-sep { width: 1px; height: 26px; background: var(--se-line); margin: 0 4px; }
+.se-status { margin-left: auto; color: var(--se-ink-2); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.se-status b { color: var(--se-ink); }
+
+/* 提示泡泡與對話框 */
+.se-toast { position: fixed; left: 50%; bottom: 28px; z-index: 1001; transform: translateX(-50%); max-width: min(720px, calc(100vw - 32px));
+  padding: 10px 18px; border-radius: 10px; background: var(--se-ink); color: var(--se-bar);
+  font: 500 14px/1.5 "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif; box-shadow: 0 8px 30px rgba(0, 0, 0, .35);
+  opacity: 0; transition: opacity 200ms ease; pointer-events: none; }
+.se-toast.show { opacity: 1; }
+.se-dlg { position: fixed; inset: 0; z-index: 1002; display: flex; align-items: center; justify-content: center; background: rgba(4, 8, 15, .55); }
+.se-dlg > div { width: min(560px, calc(100vw - 32px)); padding: 24px 26px 20px; border-radius: 14px; background: var(--se-bar); color: var(--se-ink);
+  font: 400 15px/1.6 "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif; box-shadow: 0 20px 60px rgba(0, 0, 0, .45); }
+.se-dlg h3 { margin: 0 0 8px; font-size: 18px; }
+.se-dlg p { margin: 0 0 18px; color: var(--se-ink-2); }
+.se-dlg nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.se-dlg button { font: inherit; font-size: 14px; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--se-line); background: #fff; color: var(--se-ink); cursor: pointer; }
+.se-dlg button:first-child { background: var(--se-ink); color: var(--se-bar); border-color: var(--se-ink); font-weight: 700; }
+
+/* 標註給 AI：圖釘、懸停框、小視窗、側欄都在舞台外（position:fixed、視窗座標），字級不跟著舞台縮放 */
+html.se-on.se-panel-on .deck { width: calc(100% - var(--se-panel-w)); }
+html.se-noting .stage-frame, html.se-noting .stage-frame * { cursor: crosshair !important; }
+html.se-noting .slide.is-active [data-edit-id]:hover { outline: none; }
+.se-layer { position: fixed; inset: 0; z-index: 990; display: none; pointer-events: none; }
+html.se-on .se-layer { display: block; }
+.se-hov, .se-tgt { position: fixed; border-radius: 4px; pointer-events: none; }
+.se-hov[hidden], .se-tgt[hidden], .se-pop[hidden], .se-md[hidden] { display: none; }
+.se-hov { border: 2px solid var(--se-accent); background: rgba(255, 255, 255, .08); }
+.se-hov em { position: absolute; left: -2px; bottom: 100%; margin-bottom: 4px; padding: 2px 8px; border-radius: 6px; max-width: 320px; overflow: hidden; text-overflow: ellipsis;
+  font: 700 13px/1.5 ui-monospace, Menlo, Consolas, "Microsoft JhengHei", monospace; font-style: normal; white-space: nowrap; background: var(--se-ink); color: var(--se-bar); }
+.se-hov.se-in em { bottom: auto; top: 2px; left: 2px; margin: 0; }
+.se-tgt { box-shadow: 0 0 0 3px var(--se-accent), 0 0 0 7px rgba(0, 0, 0, .28); }
+.se-pin { position: fixed; width: 26px; height: 26px; margin: -13px 0 0 -13px; padding: 0; border-radius: 50%; pointer-events: auto; cursor: pointer;
+  border: 2px solid var(--se-accent); background: var(--se-ink); color: var(--se-bar); box-shadow: 0 2px 8px rgba(0, 0, 0, .45);
+  font: 700 13px/1 "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif; animation: se-pin-in 240ms cubic-bezier(.34, 1.56, .64, 1); }
+.se-pin:hover { background: var(--se-accent); color: var(--se-on-accent); }
+@keyframes se-pin-in { from { transform: scale(0); } to { transform: scale(1); } }
+
+.se-pop, .se-panel { font: 400 14px/1.55 "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif; color: var(--se-ink); }
+.se-pop button, .se-panel button { font: inherit; font-size: 14px; color: var(--se-ink); background: #fff; border: 1px solid var(--se-line); border-radius: 8px;
+  padding: 6px 12px; cursor: pointer; white-space: nowrap; transition: transform 120ms ease, background 120ms ease; }
+.se-pop button:hover, .se-panel button:hover { background: #fffaf2; border-color: var(--se-ink-2); }
+.se-pop button:active, .se-panel button:active { transform: scale(.96); }
+.se-pop button:disabled { opacity: .4; cursor: default; transform: none; }
+.se-pop button.se-primary, .se-panel button.se-primary { background: var(--se-ink); color: var(--se-bar); border-color: var(--se-ink); font-weight: 700; }
+.se-pop kbd { font: 13px/1 ui-monospace, Menlo, monospace; margin-left: 6px; opacity: .7; }
+.se-pop textarea, .se-panel textarea { display: block; width: 100%; box-sizing: border-box; padding: 8px 10px; resize: vertical; border: 1px solid var(--se-line); border-radius: 8px;
+  background: #fff; color: var(--se-ink); font: inherit; }
+.se-pop textarea:focus, .se-panel textarea:focus { outline: 2px solid var(--se-ink); outline-offset: -1px; border-color: var(--se-ink); }
+.se-pop textarea::placeholder, .se-panel textarea::placeholder { color: var(--se-ink-2); }
+
+.se-pop { position: fixed; z-index: 996; width: 340px; box-sizing: border-box; padding: 14px 16px; border-radius: 12px; background: var(--se-bar); border: 2px solid var(--se-ink);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, .45); animation: se-pop-in 160ms ease-out; }
+@keyframes se-pop-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.se-pop p { margin: 0 0 8px; }
+.se-pop-where { display: flex; align-items: center; gap: 8px; }
+.se-pop-where b { white-space: nowrap; }
+.se-pop-where code { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 13px/1.4 ui-monospace, Menlo, Consolas, monospace; color: var(--se-ink-2); }
+.se-pop-where button { padding: 3px 10px; font-size: 13px; }
+.se-pop-snip { max-height: 64px; overflow: hidden; color: var(--se-ink-2); font-size: 13px; }
+.se-pop nav { display: flex; gap: 8px; margin-top: 10px; }
+
+.se-panel { position: fixed; right: 0; top: var(--se-bar-h); bottom: 0; width: var(--se-panel-w); z-index: 995; display: none; flex-direction: column; box-sizing: border-box;
+  background: var(--se-bar); border-left: 3px solid var(--se-accent); animation: se-panel-in 180ms ease-out; }
+html.se-on.se-panel-on .se-panel { display: flex; }
+@keyframes se-panel-in { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+.se-panel > header { display: flex; align-items: center; gap: 8px; padding: 12px 14px 10px; border-bottom: 1px solid var(--se-line); }
+.se-panel > header b { font-size: 16px; }
+.se-panel-n { color: var(--se-ink-2); font-size: 13px; }
+.se-panel > header button { margin-left: auto; padding: 3px 10px; font-size: 13px; }
+.se-list { flex: 1; min-height: 0; margin: 0; padding: 10px 14px; overflow-y: auto; list-style: none; }
+.se-item { position: relative; margin-bottom: 10px; padding: 10px; border-radius: 10px; background: #fffaf2; border: 1px solid var(--se-line); transition: opacity 160ms ease, transform 160ms ease; }
+.se-item.se-cur { border-color: var(--se-ink); }
+.se-item.se-out { opacity: 0; transform: translateX(-24px); }
+.se-item.se-hot { animation: se-hot 1200ms ease-out; }
+@keyframes se-hot { 0%, 40% { box-shadow: 0 0 0 3px var(--se-accent); } 100% { box-shadow: 0 0 0 0 transparent; } }
+.se-panel button.se-item-go { display: flex; align-items: center; gap: 8px; width: 100%; padding: 2px 4px 2px 2px; margin-bottom: 6px; border: 0; background: transparent; text-align: left; white-space: normal; }
+.se-panel button.se-item-go:hover { background: var(--se-bar); }
+.se-panel button.se-item-go:active { transform: none; }
+.se-num { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--se-ink); color: var(--se-bar); font-size: 13px; font-weight: 700; }
+.se-where { min-width: 0; font-weight: 700; font-size: 13px; overflow-wrap: anywhere; }
+.se-snip, .se-lost { margin: 0 0 6px; font-size: 13px; color: var(--se-ink-2); overflow-wrap: anywhere; }
+.se-lost { color: #8f2d1f; font-weight: 700; }
+.se-panel button.se-item-del { margin-top: 6px; padding: 3px 10px; font-size: 13px; }
+.se-empty { padding: 18px 6px; color: var(--se-ink-2); }
+.se-empty kbd { font: 13px/1 ui-monospace, Menlo, monospace; padding: 1px 6px; border: 1px solid var(--se-line); border-radius: 4px; background: #fff; }
+.se-overall { display: block; padding: 10px 14px 0; font-weight: 700; border-top: 1px solid var(--se-line); }
+.se-overall textarea { margin-top: 4px; font-weight: 400; }
+.se-panel-edits { margin: 6px 14px 0; font-size: 13px; color: var(--se-ink-2); }
+.se-panel-edits:empty { display: none; }
+.se-md { margin: 8px 14px 0; width: calc(100% - 28px) !important; font: 13px/1.4 ui-monospace, Menlo, Consolas, monospace !important; }
+.se-panel > footer { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px 14px; }
+.se-panel > footer button { position: relative; }
+.se-bubble { position: absolute; left: 50%; top: -6px; padding: 2px 10px; border-radius: 999px; background: var(--se-ink); color: var(--se-bar); font-size: 13px; font-weight: 700; white-space: nowrap;
+  pointer-events: none; transform: translate(-50%, -100%); animation: se-bubble 1000ms ease-out forwards; }
+@keyframes se-bubble { 0% { opacity: 0; transform: translate(-50%, -60%); } 18% { opacity: 1; transform: translate(-50%, -100%); } 72% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -160%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .se-bar button, .se-toast, .se-pop button, .se-panel button, .se-item { transition: none; }
+  .se-pin, .se-pop, .se-panel, .se-item.se-hot { animation: none; }
+  .se-bubble { animation: none; transform: translate(-50%, -100%); }
+  .se-pop button:active, .se-panel button:active, .se-bar button:active { transform: none; }
+}
+/* ═════════ SLIDE EDITOR · CSS 結束 ═════════ */
+</style>
+<script id="slide-editor">
+/* ═════════ SLIDE EDITOR v2（簡報編輯模式，整段原樣複製；和 id 為 slide-editor-css 的 style 成對） ═════════
+ * 放的位置：body 的直接子節點，所有投影片標記與存檔節點（id 為 d-slides 的 JSON script）之後、翻頁引擎的 script 之前。
+ *   原因：這段一執行就先複製一份「還沒被引擎動過」的 DOM，給「下載 HTML」用；也趕在第一張出現前套用存檔內容。
+ * 需要的 DOM：#frame（1920×1080 舞台）> .slide（目前那張有 .is-active）。設定在下面 CFG，別的引擎改這裡就好。
+ * 元件要能編輯：加 data-edit-id="唯一且固定的 id"（存檔靠它對回元件，改版時不要改名）。
+ *   data-edit="text"（預設）：可改字、拖曳、縮放、刪除。裡面不要再包別的 data-edit-id。
+ *   data-edit="box"：只拖曳、縮放、刪除，不改字（例如裡面有圖表或子元件的卡片；子元件可以各自是 text）。
+ * 存檔節點：type 為 application/json、id 為 d-slides 的 script，空白內容是 {"meta":{"rev":0,"saved_at":null,"schema":2},"edits":{},"assets":{},"notes":[],"overall":""}
+ *   舊檔（schema 1，沒有 notes、overall）照樣能開能存，下次存檔升成 schema 2。
+ *   edits[id] = { html, dx, dy, s, w, del }；新增的元件另有 add:"text"|"image"、slide:"<投影片 id>"、asset:"<assets 的鍵>"。
+ *   dx/dy＝位移（舞台 px，用 CSS translate）；s＝縮放（CSS scale，原點左上）；w＝寬（px）；del＝刪除。
+ *   notes[i] = { id, slide:"<投影片 id>", editId, path, label, snippet, text, at }；overall＝整體想法。AI 改完把處理過的 notes 刪掉、meta.rev +1。
+ *   path＝投影片 id 底下的 nth-of-type 路徑，只數原始碼裡的元件（引擎執行時才加的不算），所以能直接對回原始 HTML。
+ * 操作：E 進入／離開。點文字直接改；拖曳搬移；四角把手縮放、左右把手改寬；Delete 刪除；Esc 結束打字／取消選取；
+ *   方向鍵微調 1px（Shift 10px）；⌘/Ctrl+Z 復原、Shift+⌘/Ctrl+Z 重做；⌘/Ctrl+S 存檔。
+ * 標註給 AI：編輯模式按 M 或工具列「＋標註給 AI」。滑過元件顯示框與名稱，點元件寫想法（可選上一層，⌘/Ctrl+Enter 存），
+ *   畫面出現編號圖釘，側欄列出全部標註（點了跳到那張，可改可刪），另有整體想法欄。Esc 依序關小視窗、結束標註模式。
+ *   出口：「複製給 AI」「下載修改清單（.md）」，兩者內容相同；複製失敗時退回選取文字。標註和改動走同一條復原記錄，也跟著存檔。
+ * 存檔：Chrome／Edge 用 File System Access 的資料夾授權（第一次選本檔所在資料夾或上層），存檔＝讀磁碟那份、只換 d-slides 節點、rev +1；
+ *   磁碟 rev 和本頁載入時不同就停手，讓使用者選。Safari／Firefox 用「下載 HTML」，再用下載檔取代原檔。
+ *   localStorage 只放還沒寫回的草稿（鍵：slide-editor:<路徑>）。
+ * 播放模式不攔任何事件（只聽 E），翻頁、轉場照引擎原樣。 */
+(() => {
+  'use strict';
+  const CFG = { frame: '#frame', slide: '.slide', active: 'is-active', dataId: 'd-slides', stageW: 1920, stageH: 1080 };
+  const me = document.currentScript;
+  const pristine = document.documentElement.cloneNode(true);   // 引擎還沒執行：這份是乾淨的原始標記
+  const frame = document.querySelector(CFG.frame);
+  const dataNode = document.getElementById(CFG.dataId);
+  if (!frame || !dataNode) { console.warn('slide-editor：找不到 ' + CFG.frame + ' 或 #' + CFG.dataId); return; }
+  const FSA = typeof window.showDirectoryPicker === 'function';
+  const DRAFT_KEY = 'slide-editor:' + location.pathname;
+  const NODE_RE = new RegExp('(<script\\b[^>]*\\bid=["\']' + CFG.dataId + '["\'][^>]*>)([\\s\\S]*?)(<\\/script>)');
+  const SEL_ACTIVE = CFG.slide + '.' + CFG.active;
+
+  const file = readData();
+  let edits = file.edits, assets = file.assets, notes = file.notes, overall = file.overall, loadedRev = file.meta.rev, savedAt = file.meta.saved_at;
+  const snap = () => JSON.stringify({ edits, notes, overall });
+  let savedSnap = snap(), hist = [savedSnap], hi = 0;
+  let pendingDir = null, linking = false;
+  let on = false, selId = null, textId = null, handle = null, ui = null, tail = null, draftAsked = false, quotaWarned = false;
+  let inputTimer = 0, toastTimer = 0, noteTimer = 0, seq = 0;
+  let noting = false, panelOpen = false, noteDown = null, hovEl = null, popEl = null, flashEl = null, flashUntil = 0, curSlide = null;
+  const orig = {};
+  frame.querySelectorAll('[data-edit-id]').forEach(el => {
+    orig[el.dataset.editId] = { html: el.innerHTML, style: el.getAttribute('style') };
+  });
+  const known = new WeakSet();   // 引擎還沒動過的原始元件。標註路徑只數這些，引擎之後才加的（例：場景背景）不算，路徑才對得回原始碼
+  frame.querySelectorAll(CFG.slide + ', ' + CFG.slide + ' *').forEach(n => known.add(n));
+
+  /* ── 資料 ── */
+  function readData() {
+    let d = {};
+    try { d = JSON.parse(dataNode.textContent || '{}') || {}; } catch (err) { console.warn('slide-editor：存檔節點不是合法 JSON', err); }
+    return {
+      meta: Object.assign({ rev: 0, saved_at: null }, d.meta), edits: d.edits || {}, assets: d.assets || {},
+      notes: Array.isArray(d.notes) ? d.notes : [], overall: typeof d.overall === 'string' ? d.overall : ''   // 舊檔沒有這兩個鍵
+    };
+  }
+  function usedAssets() {
+    const out = {};
+    for (const id in edits) { const a = edits[id].asset; if (a && assets[a]) out[a] = assets[a]; }
+    return out;
+  }
+  function serialize(rev) {
+    const d = { meta: { rev, saved_at: new Date().toISOString(), schema: 2 }, edits, assets: usedAssets(), notes, overall };
+    return JSON.stringify(d, null, 1).replace(/</g, '\\u003c');   // 防止內容裡的 </ 加 script 提早結束節點
+  }
+  const find = id => frame.querySelector('[data-edit-id="' + CSS.escape(id) + '"]');
+  const kind = el => el.dataset.edit || 'text';
+  const scale = () => frame.getBoundingClientRect().width / CFG.stageW || 1;
+  const activeSlide = () => frame.querySelector(SEL_ACTIVE);
+  const r1 = v => Math.round(v * 10) / 10;
+  function setEdit(id, e) {
+    e = Object.assign({}, e);
+    ['dx', 'dy', 'w'].forEach(k => { if (!e[k]) delete e[k]; });
+    if (!e.s || Math.abs(e.s - 1) < 0.001) delete e.s;
+    if (!e.del) delete e.del;
+    if (e.html == null) delete e.html;
+    if (Object.keys(e).length) edits[id] = e; else delete edits[id];
+  }
+
+  /* ── 把 edits 套到畫面（載入、復原、重做都走這裡） ── */
+  function geo(el, e) {
+    const st = el.style;
+    st.translate = (e.dx || e.dy) ? (e.dx || 0) + 'px ' + (e.dy || 0) + 'px' : '';
+    st.scale = e.s ? String(e.s) : '';
+    if (!e.add) st.transformOrigin = e.s ? '0 0' : '';
+    st.width = e.w ? e.w + 'px' : '';
+    st.maxWidth = e.w ? 'none' : '';
+    if (e.w && getComputedStyle(el).display === 'inline') st.display = 'inline-block';
+  }
+  function apply() {
+    dropText();
+    frame.querySelectorAll('[data-se-added]').forEach(n => n.remove());
+    for (const id in orig) {
+      const el = find(id); if (!el) continue;
+      const o = orig[id], e = edits[id] || {};
+      if (kind(el) === 'text') { const html = e.html != null ? e.html : o.html; if (el.innerHTML !== html) el.innerHTML = html; }
+      if (o.style == null) el.removeAttribute('style'); else el.setAttribute('style', o.style);
+      geo(el, e);
+      el.classList.toggle('se-del', !!e.del);
+    }
+    for (const id in edits) if (edits[id].add) build(id, edits[id]);
+    if (selId && !find(selId)) selId = null;
+    drawSel(); status(); renderPanel();
+  }
+  function build(id, e) {
+    const sl = document.getElementById(e.slide); if (!sl) return;
+    let el;
+    if (e.add === 'image') {
+      el = document.createElement('img'); el.src = assets[e.asset] || ''; el.alt = ''; el.draggable = false; el.dataset.edit = 'image';
+    } else { el = document.createElement('div'); el.innerHTML = e.html || ''; el.dataset.edit = 'text'; }
+    el.className = 'se-add se-add-' + e.add;
+    el.dataset.editId = id; el.setAttribute('data-se-added', '');
+    sl.appendChild(el); geo(el, e);
+  }
+
+  /* ── 復原／重做與草稿 ── */
+  function commit() {
+    const s = snap();
+    if (s === hist[hi]) return;
+    hist = hist.slice(0, hi + 1); hist.push(s);
+    if (hist.length > 300) hist.shift(); hi = hist.length - 1;
+    saveDraft(); status();
+  }
+  function restore(s) { const h = JSON.parse(s); edits = h.edits; notes = h.notes; overall = h.overall; apply(); saveDraft(); }
+  function undo() { if (hi <= 0) return toast('沒有可以復原的步驟'); hi--; restore(hist[hi]); }
+  function redo() { if (hi >= hist.length - 1) return toast('沒有可以重做的步驟'); hi++; restore(hist[hi]); }
+  const dirty = () => snap() !== savedSnap;
+  function readDraft() { try { return JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (err) { return null; } }
+  function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch (err) { /* 無痕視窗等情況 */ } }
+  function saveDraft() {
+    if (!dirty()) { clearDraft(); return; }
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ base_rev: loadedRev, at: new Date().toISOString(), edits, assets: usedAssets(), notes, overall }));
+    } catch (err) {
+      if (!quotaWarned) { quotaWarned = true; toast('草稿太大（多半是圖片），瀏覽器存不下；請記得存檔'); }
+    }
+  }
+  function checkDraft() {
+    if (draftAsked) return; draftAsked = true;
+    const d = readDraft();
+    if (!d || !d.edits) return;
+    const dNotes = Array.isArray(d.notes) ? d.notes : notes, dOverall = typeof d.overall === 'string' ? d.overall : overall;   // 舊草稿沒有這兩個鍵
+    if (JSON.stringify({ edits: d.edits, notes: dNotes, overall: dOverall }) === snap()) return;
+    const when = new Date(d.at).toLocaleString('zh-TW', { hour12: false });
+    const old = d.base_rev !== loadedRev ? '這份草稿是從版次 ' + d.base_rev + ' 改起，檔案現在是版次 ' + loadedRev + '；套用會蓋掉檔案裡較新的改動。' : '';
+    ask('有一份還沒寫回檔案的草稿', '草稿時間 ' + when + '。' + old, [['套用草稿', 'use'], ['丟棄草稿', 'drop']]).then(c => {
+      if (c === 'use') { edits = d.edits; notes = dNotes; overall = dOverall; Object.assign(assets, d.assets || {}); apply(); commit(); toast('已套用草稿，記得存檔'); }
+      else if (c === 'drop') clearDraft();
+    });
+  }
+
+  /* ── 選取框 ── */
+  function select(id) {
+    if (id !== selId && textId && textId !== id) endText(true);
+    selId = id; drawSel();
+  }
+  function drawSel() {
+    if (!ui) return;
+    const box = ui.sel, el = selId && find(selId);
+    ui.del.disabled = !el;
+    if (!on || !el || el.classList.contains('se-del') || !el.closest(SEL_ACTIVE)) { box.hidden = true; return; }
+    const k = scale(), fr = frame.getBoundingClientRect(), r = el.getBoundingClientRect();
+    box.hidden = false;
+    box.style.left = (r.left - fr.left) / k + 'px'; box.style.top = (r.top - fr.top) / k + 'px';
+    box.style.width = r.width / k + 'px'; box.style.height = r.height / k + 'px';
+    box.style.setProperty('--k', 1 / k);
+    box.dataset.kind = kind(el);
+    box.classList.toggle('typing', textId === selId);
+  }
+  function tick() {
+    if (!on) return;
+    const el = selId && find(selId);
+    if (selId && (!el || !el.closest(SEL_ACTIVE))) { endText(true); selId = null; }   // 換張了
+    drawSel();
+    paintNotes();
+    requestAnimationFrame(tick);
+  }
+
+  /* ── 改字 ── */
+  function beginText(el, x, y) {
+    if (kind(el) !== 'text') return;
+    textId = el.dataset.editId; selId = textId;
+    el.setAttribute('contenteditable', 'true'); el.spellcheck = false;
+    el.focus({ preventScroll: true });
+    const s = getSelection(); let rg = null;
+    if (x != null) {
+      if (document.caretRangeFromPoint) rg = document.caretRangeFromPoint(x, y);
+      else if (document.caretPositionFromPoint) { const p = document.caretPositionFromPoint(x, y); if (p) { rg = document.createRange(); rg.setStart(p.offsetNode, p.offset); } }
+    }
+    if (!rg || !el.contains(rg.startContainer)) { rg = document.createRange(); rg.selectNodeContents(el); if (x != null) rg.collapse(false); }
+    s.removeAllRanges(); s.addRange(rg);
+    drawSel();
+  }
+  function syncText() {
+    const el = textId && find(textId); if (!el) return;
+    const id = textId, e = Object.assign({}, edits[id]), html = el.innerHTML;
+    if (e.add || html !== (orig[id] && orig[id].html)) e.html = html; else delete e.html;
+    setEdit(id, e);
+  }
+  function endText(doCommit) {
+    if (!textId) return;
+    clearTimeout(inputTimer);
+    syncText();
+    const el = find(textId); textId = null;
+    if (el) { el.blur(); el.removeAttribute('contenteditable'); }
+    getSelection().removeAllRanges();
+    if (doCommit) commit();
+    drawSel();
+  }
+  function dropText() {   // 不記錄，直接收掉（apply 前用）
+    if (!textId) return;
+    const el = find(textId); textId = null;
+    if (el) { el.blur(); el.removeAttribute('contenteditable'); }
+  }
+  frame.addEventListener('input', () => {
+    if (!textId) return;
+    clearTimeout(inputTimer);
+    inputTimer = setTimeout(() => { syncText(); saveDraft(); status(); }, 500);
+  });
+  frame.addEventListener('paste', ev => {   // 只貼純文字，不帶外部樣式
+    if (!textId) return;
+    ev.preventDefault();
+    document.execCommand('insertText', false, (ev.clipboardData || window.clipboardData).getData('text/plain'));
+  });
+
+  /* ── 拖曳、縮放 ── */
+  function gesture(ev, mode, el, clickToType) {
+    const id = el.dataset.editId, k = scale(), e0 = Object.assign({}, edits[id]);
+    const W = el.offsetWidth || 1, H = el.offsetHeight || 1, s0 = e0.s || 1, dx0 = e0.dx || 0, dy0 = e0.dy || 0;
+    const isImg = kind(el) === 'image';
+    const vw = isImg ? W : W * s0, vh = isImg ? H : H * s0;
+    const x0 = ev.clientX, y0 = ev.clientY;
+    let moved = false, live = e0;
+    const mv = m => {
+      if (!moved && Math.hypot(m.clientX - x0, m.clientY - y0) < 4) return;
+      moved = true;
+      const ddx = (m.clientX - x0) / k, ddy = (m.clientY - y0) / k, e = Object.assign({}, e0);
+      if (mode === 'move') { e.dx = r1(dx0 + ddx); e.dy = r1(dy0 + ddy); }
+      else if (mode === 'e' || mode === 'w') {
+        const sx = mode === 'e' ? 1 : -1, nw = Math.max(40, W + sx * ddx / s0);
+        e.w = r1(nw); if (sx < 0) e.dx = r1(dx0 + (W - nw) * s0);
+      } else {
+        const sx = mode[1] === 'e' ? 1 : -1, sy = mode[0] === 's' ? 1 : -1;
+        const cx = vw + sx * ddx, cy = vh + sy * ddy;                  // 拖動角相對於對角（固定點）的向量
+        let f = (cx * vw + cy * vh) / (vw * vw + vh * vh);             // 投影到對角線：等比例
+        f = Math.max(0.1, f);
+        const nvw = vw * f, nvh = vh * f;
+        if (isImg) e.w = r1(nvw); else e.s = Math.round(s0 * f * 1000) / 1000;
+        if (sx < 0) e.dx = r1(dx0 + vw - nvw);
+        if (sy < 0) e.dy = r1(dy0 + vh - nvh);
+      }
+      live = e; geo(el, e); drawSel();
+    };
+    const up = u => {
+      removeEventListener('pointermove', mv); removeEventListener('pointerup', up); removeEventListener('pointercancel', up);
+      if (moved) { setEdit(id, live); geo(el, edits[id] || {}); commit(); drawSel(); }
+      else if (clickToType && kind(el) === 'text') beginText(el, u.clientX, u.clientY);
+    };
+    addEventListener('pointermove', mv); addEventListener('pointerup', up); addEventListener('pointercancel', up);
+  }
+  document.addEventListener('pointerdown', ev => {
+    if (noting) {                                             // 標註模式：一律先攔下，不拖曳也不改字
+      if (frame.contains(ev.target) && !ev.target.closest('#pb')) { ev.preventDefault(); ev.stopPropagation(); noteDown = [ev.clientX, ev.clientY]; }
+      return;
+    }
+    if (!on || ev.button !== 0 || !frame.contains(ev.target)) return;
+    const h = ev.target.closest('[data-h]');
+    if (h && ui && ui.sel.contains(h)) { ev.preventDefault(); ev.stopPropagation(); gesture(ev, h.dataset.h, find(selId), false); return; }
+    if (ev.target.closest('button, a, input')) return;        // 場景指示等引擎按鈕照常
+    const el = ev.target.closest('[data-edit-id]');
+    if (el && textId && el.dataset.editId === textId) return; // 打字中：點自己＝移游標、選字
+    endText(true);
+    if (!el || !el.closest(SEL_ACTIVE)) { select(null); return; }
+    ev.preventDefault();
+    select(el.dataset.editId);
+    gesture(ev, 'move', el, true);
+  }, true);
+  document.addEventListener('mousedown', ev => {   // 不讓瀏覽器在非打字元件上開始選字
+    if (on && frame.contains(ev.target) && !(textId && ev.target.closest('[contenteditable="true"]'))) ev.preventDefault();
+  }, true);
+  addEventListener('click', ev => {                // 編輯模式：點投影片不翻頁
+    if (noting && frame.contains(ev.target) && !ev.target.closest('#pb')) {   // 標註模式：連連結、按鈕都不觸發，只開小視窗
+      ev.preventDefault(); ev.stopPropagation();
+      if (noteDown && Math.hypot(ev.clientX - noteDown[0], ev.clientY - noteDown[1]) > 6) return;   // 拖過去的不算點
+      const el = pickAt(ev.clientX, ev.clientY);
+      if (el) openPop(el);
+      return;
+    }
+    if (!on || !frame.contains(ev.target) || ev.target.closest('button, a, input, [data-no-advance]')) return;
+    ev.stopPropagation();
+  }, true);
+  addEventListener('pointermove', ev => {
+    if (!noting) return;
+    hovEl = frame.contains(ev.target) && !ev.target.closest('#pb') ? pickAt(ev.clientX, ev.clientY) : null;
+  }, { capture: true, passive: true });
+  addEventListener('wheel', ev => { if (on) ev.stopPropagation(); }, { capture: true, passive: true });
+
+  /* ── 新增、刪除、微調 ── */
+  const newId = p => p + '-' + Date.now().toString(36) + (seq++).toString(36);
+  function addText() {
+    endText(true);
+    const sl = activeSlide(); if (!sl) return;
+    const id = newId('add'), n = Object.values(edits).filter(e => e.add && e.slide === sl.id).length % 6;
+    edits[id] = { add: 'text', slide: sl.id, html: '新文字', dx: 760 + n * 30, dy: 470 + n * 30, w: 400 };
+    apply(); commit(); select(id); beginText(find(id));
+  }
+  function addImage(f) {
+    if (!f || !/^image\//.test(f.type)) return toast('請選圖片檔');
+    const rd = new FileReader();
+    rd.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let url = rd.result, w = img.naturalWidth, h = img.naturalHeight;
+        const big = Math.max(w, h);
+        if (big > 1920 || f.size > 1.5e6) {                   // 大圖先縮到長邊 1920，檔案才不會太肥
+          const r = Math.min(1, 1920 / big), c = document.createElement('canvas');
+          c.width = Math.round(w * r); c.height = Math.round(h * r);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          url = c.toDataURL(f.type === 'image/png' ? 'image/png' : 'image/jpeg', 0.88); w = c.width; h = c.height;
+        }
+        const sl = activeSlide(); if (!sl) return;
+        const aid = newId('img'), id = newId('add'), dw = Math.min(w, 800), dh = h * dw / w;
+        assets[aid] = url;
+        edits[id] = { add: 'image', slide: sl.id, asset: aid, dx: r1((CFG.stageW - dw) / 2), dy: r1((CFG.stageH - dh) / 2), w: r1(dw) };
+        apply(); commit(); select(id);
+        toast('已加入圖片（' + Math.round(url.length / 1024) + ' KB，內嵌在檔案裡）');
+      };
+      img.src = rd.result;
+    };
+    rd.readAsDataURL(f);
+  }
+  function del() {
+    if (!selId) return;
+    endText(false);
+    const id = selId; selId = null;
+    if (edits[id] && edits[id].add) delete edits[id]; else setEdit(id, Object.assign({}, edits[id], { del: 1 }));
+    apply(); commit();
+  }
+  function nudge(dx, dy) {
+    const e = Object.assign({}, edits[selId]);
+    e.dx = r1((e.dx || 0) + dx); e.dy = r1((e.dy || 0) + dy);
+    setEdit(selId, e); apply(); commit();
+  }
+
+  /* ── 標註給 AI：找元件。路徑只數原始元件（known），和原始碼對得上；文字元件被 edits 換過內容後，裡面的子元件照樣算 ── */
+  const slideList = () => [...frame.querySelectorAll(CFG.slide)];
+  const clip = (s, n) => { s = String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n) + '…' : s; };
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function inTextEl(el) { const o = el.parentElement && el.parentElement.closest('[data-edit-id]'); return !!o && frame.contains(o) && kind(o) === 'text' && !o.hasAttribute('data-se-added'); }
+  const counted = c => !c.hasAttribute('data-se-added') && !c.hasAttribute('data-se-ui') && (known.has(c) || inTextEl(c));
+  function climb(n, sl) {   // 引擎加的元件（場景背景等）不在原始碼裡：往上找到原始元件，最多到整張投影片
+    while (n && n !== sl && !n.hasAttribute('data-se-added') && !counted(n)) n = n.parentElement;
+    return n && sl.contains(n) ? n : sl;
+  }
+  function pickAt(x, y) {
+    const sl = activeSlide(); if (!sl) return null;
+    const hit = document.elementsFromPoint(x, y).find(n => sl.contains(n));
+    return climb(hit || sl, sl);
+  }
+  function pathOf(el) {
+    const sl = el.closest(CFG.slide);
+    if (!sl || el.closest('[data-se-added]')) return '';
+    const seg = [];
+    for (let n = el; n !== sl; n = n.parentElement) {
+      const same = [...n.parentElement.children].filter(c => c.localName === n.localName && counted(c));
+      seg.unshift(n.localName + ':nth-of-type(' + (same.indexOf(n) + 1) + ')');
+    }
+    return [sl.id ? '#' + sl.id : CFG.slide + ':nth-of-type(' + (slideList().indexOf(sl) + 1) + ')', ...seg].join(' > ');
+  }
+  function fromPath(path) {
+    const seg = path ? path.split(' > ') : [];
+    if (!seg.length) return null;
+    const m0 = /nth-of-type\((\d+)\)$/.exec(seg[0]);
+    let n = seg[0][0] === '#' ? document.getElementById(seg[0].slice(1)) : m0 ? slideList()[m0[1] - 1] : null;
+    for (let i = 1; n && i < seg.length; i++) {
+      const m = /^(.+):nth-of-type\((\d+)\)$/.exec(seg[i]);
+      n = m ? [...n.children].filter(c => c.localName === m[1] && counted(c))[m[2] - 1] : null;
+    }
+    return n && frame.contains(n) ? n : null;
+  }
+  const noteEl = n => (n.editId && find(n.editId)) || fromPath(n.path);
+  const noteSlide = n => { const el = noteEl(n); return (el && el.closest(CFG.slide)) || (n.slide && document.getElementById(n.slide)) || null; };
+  const slideNoOf = sl => slideList().indexOf(sl) + 1;
+  function labelOf(el) {
+    if (el.dataset && el.dataset.editId) return el.dataset.editId;
+    if (el.matches(CFG.slide)) return '整張投影片';
+    const c = [...el.classList].find(x => !/^(on|now|past|rv|is-active)$/.test(x));
+    return el.localName + (c ? '.' + c : '');
+  }
+  function textOf(el) {
+    const s = (el.textContent || '').replace(/\s+/g, ' ').trim();
+    return s || (el.getAttribute && el.getAttribute('alt')) || '';
+  }
+  function hexOf(c) {
+    const m = /^rgba?\((\d+), (\d+), (\d+)(, [\d.]+)?\)$/.exec(c);
+    if (!m) return c;
+    const h = '#' + [m[1], m[2], m[3]].map(v => (+v).toString(16).padStart(2, '0')).join('');
+    return m[4] ? h + '（透明度 ' + m[4].slice(2) + '）' : h;
+  }
+  const lookOf = el => { const cs = getComputedStyle(el); return r1(parseFloat(cs.fontSize)) + 'px、' + hexOf(cs.color) + '（粗細 ' + cs.fontWeight + '）'; };
+
+  /* ── 標註模式與小視窗 ── */
+  function setNoting(v) {
+    if (v === noting || (v && !on)) return;
+    if (v) { endText(true); select(null); noting = true; setPanel(true); toast('標註模式：點要改的元件，寫下想法；按 Esc 結束'); }
+    else { closePop(); noting = false; hovEl = null; }
+    document.documentElement.classList.toggle('se-noting', noting);
+    if (ui) {
+      ui.badge.textContent = noting ? '標註模式' : '編輯模式';
+      ui.bar.querySelector('[data-a="note"]').setAttribute('aria-pressed', String(noting));
+    }
+  }
+  function setPanel(v) {
+    panelOpen = v;
+    document.documentElement.classList.toggle('se-panel-on', on && v);
+    if (ui) ui.bar.querySelector('[data-a="list"]').setAttribute('aria-pressed', String(v));
+    if (v) renderPanel(true);
+  }
+  function fillPop(el) {
+    popEl = el;
+    const sl = el.closest(CFG.slide), txt = textOf(el);
+    ui.popNo.textContent = '第 ' + slideNoOf(sl) + ' 張';
+    ui.popId.textContent = labelOf(el);
+    ui.popSnip.textContent = clip(txt, 80) || '（沒有文字）';
+    ui.popUp.disabled = el === sl;
+    ui.pop.hidden = false;
+    placePop();
+  }
+  function openPop(el) { fillPop(el); ui.popText.focus({ preventScroll: true }); }
+  function closePop() { if (!ui) return; popEl = null; ui.popText.blur(); ui.pop.hidden = true; ui.popText.value = ''; ui.popKey = ''; }
+  function placePop() {
+    const r = popEl.getBoundingClientRect(), key = [r.left, r.top, r.width, r.height, innerWidth, innerHeight, panelOpen].join();
+    if (key === ui.popKey) return;
+    ui.popKey = key;
+    const p = ui.pop, w = p.offsetWidth || 340, h = p.offsetHeight || 260, top0 = ui.bar.offsetHeight + 8;
+    const maxX = innerWidth - (panelOpen ? ui.panel.offsetWidth : 0) - w - 12;
+    p.style.left = Math.max(12, Math.min(r.left, maxX)) + 'px';
+    p.style.top = (r.bottom + 10 + h < innerHeight - 8 ? r.bottom + 10 : Math.max(top0, r.top - h - 10 > top0 ? r.top - h - 10 : innerHeight - h - 8)) + 'px';
+  }
+  function saveNote() {
+    if (!popEl) return;
+    const text = ui.popText.value.trim();
+    if (!text) { ui.popText.focus(); return toast('先寫想法，AI 才知道要怎麼改'); }
+    const el = popEl, sl = el.closest(CFG.slide);
+    notes.push({
+      id: newId('n'), slide: sl.id || '', editId: (el.dataset && el.dataset.editId) || null, path: pathOf(el),
+      label: labelOf(el), snippet: clip(textOf(el), 60), text, at: new Date().toISOString()
+    });
+    commit(); closePop(); setPanel(true);
+    ui.list.scrollTop = ui.list.scrollHeight;
+  }
+  function jumpTo(n) {
+    const sl = noteSlide(n), i = slideList().indexOf(sl);
+    if (i < 0) return toast('找不到這張投影片，可能已經刪掉了');
+    if (sl !== activeSlide()) {   // 不改翻頁引擎：按引擎自己的進度列按鈕
+      const b = document.querySelector('#pb button[data-s="' + i + '"]');
+      if (b) b.click(); else toast('請自己翻到第 ' + (i + 1) + ' 張');
+    }
+    const el = noteEl(n);
+    if (el) { flashEl = el; flashUntil = performance.now() + 1400; } else toast('這張找不到這個元件，可能已經刪掉或搬走');
+  }
+  function delNote(id, item) {
+    const n = notes.findIndex(x => x.id === id);
+    if (n < 0) return;
+    notes.splice(n, 1); commit();
+    toast('已刪除標註；⌘/Ctrl+Z 可以復原');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (item && !reduce) { item.classList.add('se-out'); setTimeout(() => renderPanel(true), 170); } else renderPanel(true);
+  }
+
+  /* ── 圖釘與懸停框：舞台外、視窗座標，字級不受舞台縮放影響；每一畫格跟著元件走，只畫目前這張 ── */
+  function placeBox(box, r) {
+    box.hidden = false;
+    box.style.left = (r.left - 3) + 'px'; box.style.top = (r.top - 3) + 'px';
+    box.style.width = (r.width + 6) + 'px'; box.style.height = (r.height + 6) + 'px';
+  }
+  function paintNotes() {
+    if (!ui) return;
+    const sl = activeSlide(), now = performance.now();
+    if (popEl && !popEl.closest(SEL_ACTIVE)) closePop();          // 換張了
+    if (hovEl && !hovEl.closest(SEL_ACTIVE)) hovEl = null;
+    if (popEl) placePop();
+    if (noting && hovEl && !popEl) {
+      const r = hovEl.getBoundingClientRect();
+      placeBox(ui.hov, r); ui.hovName.textContent = labelOf(hovEl);
+      ui.hov.classList.toggle('se-in', r.top < ui.bar.offsetHeight + 34);   // 元件貼近頂端：名稱改放框內，不被工具列蓋住
+    } else ui.hov.hidden = true;
+    const tgt = popEl || (flashEl && now < flashUntil && flashEl.closest(SEL_ACTIVE) ? flashEl : null);
+    if (tgt) placeBox(ui.tgt, tgt.getBoundingClientRect()); else ui.tgt.hidden = true;
+    const maxX = innerWidth - (panelOpen ? ui.panel.offsetWidth : 0) - 16, minY = ui.bar.offsetHeight + 16, stack = new Map(), live = new Set();
+    notes.forEach((n, i) => {
+      const el = noteEl(n);
+      if (!el || !sl || !sl.contains(el)) return;
+      const r = el.getBoundingClientRect();
+      if (!r.width && !r.height) return;
+      let pin = ui.pins.get(n.id);
+      if (!pin) {
+        pin = document.createElement('button');
+        pin.type = 'button'; pin.className = 'se-pin'; pin.dataset.pin = n.id;
+        ui.pinLayer.appendChild(pin); ui.pins.set(n.id, pin);
+      }
+      const c = stack.get(el) || 0; stack.set(el, c + 1);      // 同一個元件有多則：往左排開
+      pin.style.left = (Math.min(r.right, maxX) - c * 28) + 'px';
+      pin.style.top = Math.max(r.top, minY) + 'px';
+      const no = String(i + 1);
+      if (pin.textContent !== no) pin.textContent = no;
+      const tip = '標註 ' + no + '：' + clip(n.text, 80);
+      if (pin.title !== tip) { pin.title = tip; pin.setAttribute('aria-label', tip); }
+      live.add(n.id);
+    });
+    ui.pins.forEach((pin, id) => { if (!live.has(id)) { pin.remove(); ui.pins.delete(id); } });
+    if (sl !== curSlide) { curSlide = sl; markCurrent(); }
+  }
+  function markCurrent() {
+    if (!ui) return;
+    ui.list.querySelectorAll('[data-note]').forEach(li => {
+      const n = notes.find(x => x.id === li.dataset.note);
+      li.classList.toggle('se-cur', !!n && noteSlide(n) === curSlide);
+    });
+  }
+
+  /* ── 側欄 ── */
+  function renderPanel(force) {
+    if (!ui) return;
+    const a = document.activeElement, focusInside = a && a.tagName === 'TEXTAREA' && ui.panel.contains(a);
+    ui.noteCount.textContent = notes.length;
+    ui.panelCount.textContent = notes.length ? notes.length + ' 則' : '';
+    const nEdits = Object.keys(edits).length;
+    ui.panelEdits.textContent = nEdits ? '另有 ' + nEdits + ' 個元件按 E 改過，清單會一起列出。' : '';
+    if (a !== ui.overall) ui.overall.value = overall;
+    if (focusInside && !force) return;
+    const top = ui.list.scrollTop;
+    ui.list.innerHTML = notes.length ? notes.map((n, i) => {
+      const sl = noteSlide(n), found = !!noteEl(n);
+      return '<li class="se-item" data-note="' + esc(n.id) + '"><button type="button" class="se-item-go" data-go="' + esc(n.id) + '" title="跳到這一張">' +
+        '<span class="se-num">' + (i + 1) + '</span><span class="se-where">第 ' + (sl ? slideNoOf(sl) : '?') + ' 張・' + esc(found ? labelOf(noteEl(n)) : n.label) + '</span></button>' +
+        (found ? '' : '<p class="se-lost">找不到這個元件，可能已經刪掉或搬走</p>') +
+        (n.snippet ? '<p class="se-snip">' + esc(n.snippet) + '</p>' : '') +
+        '<textarea rows="2" data-text="' + esc(n.id) + '" aria-label="標註 ' + (i + 1) + ' 的想法">' + esc(n.text) + '</textarea>' +
+        '<button type="button" class="se-item-del" data-del="' + esc(n.id) + '">刪除</button></li>';
+    }).join('') : '<li class="se-empty">還沒有標註。按 <kbd>M</kbd>，再點投影片上要改的元件。</li>';
+    ui.list.scrollTop = top;
+    curSlide = activeSlide(); markCurrent();
+  }
+  function hotItem(id) {
+    const li = ui.list.querySelector('[data-note="' + CSS.escape(id) + '"]');
+    if (!li) return;
+    li.scrollIntoView({ block: 'nearest' });
+    li.classList.remove('se-hot'); void li.offsetWidth; li.classList.add('se-hot');
+    const ta = li.querySelector('textarea'); if (ta) ta.focus({ preventScroll: true });
+  }
+
+  /* ── 修改清單（.md）：複製給 AI 和下載用同一份文字 ── */
+  const stamp = () => { const d = new Date(), p = v => String(v).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()); };
+  const oneLine = s => String(s == null ? '' : s).replace(/\s*\n+\s*/g, ' ／ ').trim();
+  function plainHtml(h) { const t = document.createElement('template'); t.innerHTML = h; return t.content.textContent; }
+  function editWhat(e) {
+    const p = [];
+    if (e.add) p.push('新增的' + (e.add === 'image' ? '圖片' : '文字框'));
+    if (e.del) p.push('刪除');
+    if (e.html != null) p.push('文字是「' + clip(plainHtml(e.html), 80) + '」');
+    if (e.dx || e.dy) p.push('位移 (' + (e.dx || 0) + ', ' + (e.dy || 0) + ')');
+    if (e.s) p.push('縮放 ' + e.s + ' 倍');
+    if (e.w) p.push('寬 ' + e.w + 'px');
+    return p.join('、');
+  }
+  function editsOf(el) {   // 這個元件相關的 edits：自己、包住它的文字元件、它裡面的元件
+    const out = [], add = id => { if (edits[id] && !out.includes(id)) out.push(id); };
+    const own = el.closest('[data-edit-id]');
+    if (own && (own === el || kind(own) === 'text')) add(own.dataset.editId);
+    el.querySelectorAll('[data-edit-id]').forEach(c => add(c.dataset.editId));
+    return out;
+  }
+  function notesMd() {
+    const nEdits = Object.keys(edits).length, L = [];
+    L.push('# 簡報修改清單', '',
+      '- 檔案：`' + fileName() + '`',
+      '- 簡報標題：' + document.title,
+      '- 版次：`meta.rev` = ' + loadedRev + (savedAt ? '（存檔時間 ' + savedAt + '）' : '') + (dirty() ? '；頁面上還有改動沒存回檔案' : ''),
+      '- 產生時間：' + stamp(),
+      '- 標註 ' + notes.length + ' 則；按 E 已直接改 ' + nEdits + ' 個元件', '',
+      '## 給 AI 的指示', '',
+      '1. 只改下面標到的元件。沒標到的元件、翻頁引擎、編輯器、共用 CSS 都不動；要改外觀就加在那個元件的 `style`。',
+      '2. 找元件：有 `data-edit-id` 就用它找；沒有就走「路徑」，從投影片 id 開始照 `nth-of-type` 往下，數的是原始 HTML 裡的元件。',
+      '3. `#d-slides` 的 `edits` 會蓋過原始 HTML。「edits 紀錄」寫了有的元件，要一併改那筆（`html`、`dx`／`dy`／`s`／`w`）或刪掉那筆，不然畫面不會變。',
+      '4. 改完：把處理過的標註從 `#d-slides` 的 `notes` 刪掉；整體想法處理過，就把 `overall` 清成空字串；最後把 `meta.rev` 加 1。',
+      '5. 檔案的 `notes` 裡沒有這幾則時，先請使用者按存檔（⌘/Ctrl+S）再改。想法看不懂就問使用者，不要猜。', '',
+      '## 標註', '');
+    if (!notes.length) L.push('（沒有）', '');
+    notes.forEach((n, i) => {
+      const el = noteEl(n), sl = noteSlide(n), rel = el ? editsOf(el) : (n.editId && edits[n.editId] ? [n.editId] : []);
+      L.push('### ' + (i + 1) + '. 第 ' + (sl ? slideNoOf(sl) : '?') + ' 張' + (sl && sl.id ? '（`#' + sl.id + '`）' : ''), '',
+        '- `data-edit-id`：' + ((el ? el.dataset && el.dataset.editId : n.editId) ? '`' + (el ? el.dataset.editId : n.editId) + '`' : '無'),
+        '- 路徑：' + ((el ? pathOf(el) : n.path) ? '`' + (el ? pathOf(el) : n.path) + '`' : '無（按 E 新增的元件，內容在 `edits`）'));
+      if (el) L.push('- 目前文字：' + (clip(textOf(el), 120) || '（沒有文字）'), '- 目前字級與顏色：' + lookOf(el));
+      else L.push('- 目前文字：' + (n.snippet || '（沒有文字）'), '- 目前字級與顏色：找不到元件，可能已經刪掉或搬走');
+      L.push('- edits 紀錄：' + (rel.length ? rel.map(id => '`' + id + '`（' + editWhat(edits[id]) + '）').join('；') : '無'),
+        '- 想法：' + oneLine(n.text), '');
+    });
+    L.push('## 整體想法', '', overall.trim() || '（沒有）', '',
+      '## 按 E 已直接改的項目', '', nEdits ? '這些改動在 `edits` 裡，畫面已經生效。標註沒提到的就不要動。' : '（沒有）');
+    if (nEdits) {
+      L.push('');
+      for (const id in edits) {
+        const e = edits[id], el = find(id), sl = (el && el.closest(CFG.slide)) || (e.slide && document.getElementById(e.slide));
+        L.push('- 第 ' + (sl ? slideNoOf(sl) : '?') + ' 張 `' + id + '`：' + (editWhat(e) || '有改動'));
+      }
+    }
+    L.push('');
+    return L.join('\n');
+  }
+  function bubble(btn, msg) {   // 「已複製」泡泡上浮
+    const b = document.createElement('span');
+    b.className = 'se-bubble'; b.textContent = msg; b.setAttribute('aria-hidden', 'true');
+    btn.appendChild(b);
+    setTimeout(() => b.remove(), 1000);
+  }
+  function selectCopy(text) {   // file:// 有時拿不到 navigator.clipboard：退回選取 textarea
+    const ta = ui.md;
+    ta.value = text; ta.hidden = false; ta.focus({ preventScroll: true }); ta.select();
+    let done = false;
+    try { done = document.execCommand('copy'); } catch (err) { /* 瀏覽器不讓複製 */ }
+    if (done) ta.hidden = true;
+    return done;
+  }
+  async function copyMd(btn) {
+    commit();
+    const text = notesMd();
+    let done = false;
+    ui.md.hidden = true;
+    try { await navigator.clipboard.writeText(text); done = true; } catch (err) { done = selectCopy(text); }
+    if (!done) return toast('瀏覽器不讓程式複製：文字已經選好，請按 ⌘/Ctrl+C；或改按「下載修改清單」');
+    bubble(btn, '已複製');
+    toast(dirty() ? '已複製。AI 改檔案前，先按存檔把標註寫回檔案' : '已複製，貼給 AI 就好');
+  }
+  function downloadMd() {
+    commit();
+    const name = fileName().replace(/\.html?$/i, '') + '-修改清單.md';
+    const url = URL.createObjectURL(new Blob([notesMd()], { type: 'text/markdown;charset=utf-8' }));
+    const a = document.createElement('a'); a.href = url; a.download = name; a.setAttribute('data-se-ui', '');
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    toast('已下載「' + name + '」：放進專案資料夾或貼給 AI');
+  }
+
+  /* ── 鍵盤：播放模式只聽 E；編輯模式攔下會誤翻頁的鍵 ── */
+  addEventListener('keydown', ev => {
+    const t = ev.target, typing = !!t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
+    const inNote = typing && !!t.closest('.se-pop, .se-panel');   // 標註欄位打字：⌘Z 留給瀏覽器復原打的字
+    const mod = ev.metaKey || ev.ctrlKey, k = ev.key;
+    const stop = () => { ev.preventDefault(); ev.stopPropagation(); };
+    if (!on) {
+      if (!typing && !mod && !ev.altKey && (k === 'e' || k === 'E')) { stop(); setMode(true); }
+      return;
+    }
+    if (ui && ui.dlgOpen) { ev.stopPropagation(); if (k === 'Escape') { ev.preventDefault(); ui.dlgOpen('cancel'); } return; }
+    if (!inNote && mod && !ev.altKey && (k === 'z' || k === 'Z')) { stop(); endText(true); if (ev.shiftKey) redo(); else undo(); return; }
+    if (!inNote && mod && (k === 'y' || k === 'Y')) { stop(); endText(true); redo(); return; }
+    if (mod && (k === 's' || k === 'S')) { stop(); endText(true); save(); return; }
+    if (k === 'Escape' && popEl) { stop(); closePop(); return; }      // Esc 順序：先關小視窗，再結束標註模式
+    if (typing) { if (k === 'Escape') { stop(); if (inNote) t.blur(); else endText(true); } return; }   // 其餘按鍵交給打字
+    if (mod || ev.altKey) return;
+    if (k === 'e' || k === 'E') { stop(); setMode(false); return; }
+    if (k === 'm' || k === 'M') { stop(); setNoting(!noting); return; }
+    if (k === 'Escape') { stop(); if (noting) setNoting(false); else if (selId) select(null); else if (panelOpen) setPanel(false); return; }
+    if (!selId) return;                                               // 沒選東西：方向鍵、數字鍵照常翻頁
+    if (k === 'Delete' || k === 'Backspace') { stop(); del(); return; }
+    if (k === 'Enter') { stop(); const el = find(selId); if (el) beginText(el); return; }
+    const step = ev.shiftKey ? 10 : 1;
+    const mv = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[k];
+    if (mv) { stop(); nudge(mv[0], mv[1]); }
+  }, true);
+
+  /* ── 存檔 ── */
+  const fileName = () => decodeURIComponent(location.pathname.split('/').pop() || 'slides.html');
+  /* 資料夾授權（全域規則 2026-10-31）：選一次本檔所在的資料夾或它的上層，往下走得到本檔才存。
+     控制代碼存 IndexedDB（庫名 fh-store、鍵 dir:<資料夾路徑>）：file:// 頁面共用同一個庫，鍵不帶路徑會互相覆蓋。 */
+  const pathParts = (() => {
+    let p = location.pathname;
+    try { p = decodeURIComponent(p); } catch (err) { /* 保留原字串 */ }
+    const a = p.normalize('NFC').split('/').filter(Boolean);
+    a.pop();
+    return a;
+  })();
+  const hereName = pathParts[pathParts.length - 1] || '本檔所在';
+  const dirKey = i => 'dir:' + pathParts.slice(0, i + 1).join('/');
+  function fhStore() {
+    return new Promise((res, rej) => {
+      const r = indexedDB.open('fh-store', 1);
+      r.onupgradeneeded = () => { r.result.createObjectStore('h'); };
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+  }
+  async function saveDir(i, h) { try { (await fhStore()).transaction('h', 'readwrite').objectStore('h').put(h, dirKey(i)); } catch (err) { /* 只是下次要再選一次 */ } }
+  async function loadDir(i) {
+    try {
+      const d = await fhStore();
+      return await new Promise(res => {
+        const q = d.transaction('h').objectStore('h').get(dirKey(i));
+        q.onsuccess = () => res(q.result || null);
+        q.onerror = () => res(null);
+      });
+    } catch (err) { return null; }
+  }
+  async function child(d, name, kind) {
+    try { return await (kind === 'file' ? d.getFileHandle(name) : d.getDirectoryHandle(name)); } catch (err) { /* NFC／NFD 不同時改用逐項比對 */ }
+    try { for await (const ent of d.entries()) { if (ent[1].kind === kind && ent[0].normalize('NFC') === name) return ent[1]; } } catch (err) { /* 走不到就回 null */ }
+    return null;
+  }
+  async function fileFromDir(d, i) {
+    for (let j = i + 1; d && j < pathParts.length; j++) d = await child(d, pathParts[j], 'directory');
+    return d ? child(d, fileName().normalize('NFC'), 'file') : null;
+  }
+  async function tryLink() {   // 開頁與切回分頁時跑：有授權就連結，不開任何對話框，也不寫檔
+    if (handle || linking || !window.indexedDB) return;
+    let pend = null;
+    for (let i = pathParts.length - 1; i >= 0; i--) {
+      const d = await loadDir(i);
+      if (!d) continue;
+      try {
+        if ((await d.queryPermission({ mode: 'readwrite' })) === 'granted') {
+          const h = await fileFromDir(d, i);
+          if (h) { if (!handle && !linking) { handle = h; pendingDir = null; status(); } return; }
+        } else if (!pend) pend = { d, i };
+      } catch (err) { /* 這一層不能用就看上一層 */ }
+    }
+    if (!handle && !linking) { pendingDir = pend; status(); }
+  }
+  async function link() {
+    linking = true;
+    try {
+      if (pendingDir) {
+        const p = pendingDir;
+        if ((await p.d.requestPermission({ mode: 'readwrite' })) !== 'granted') { toast('沒有授權，這次不會寫回'); return false; }
+        const kept = await fileFromDir(p.d, p.i);
+        pendingDir = null;
+        if (kept) { handle = kept; status(); return true; }
+        toast('記住的資料夾裡找不到本檔，可能搬走了；請再按一次「存檔」重新選資料夾'); status(); return false;
+      }
+      const picked = await window.showDirectoryPicker({ id: 'html-writeback', mode: 'readwrite' });
+      const name = picked.name.normalize('NFC');
+      for (let i = pathParts.length - 1; i >= 0; i--) {
+        if (pathParts[i] !== name) continue;
+        const h = await fileFromDir(picked, i);
+        if (h) { await saveDir(i, picked); handle = h; status(); return true; }
+      }
+      toast('你選的「' + picked.name + '」裡找不到本檔；請選「' + hereName + '」或它的上層資料夾');
+      return false;
+    } finally { linking = false; }
+  }
+  async function ensureWrite() {   // 選檔可能拖過使用者操作的有效時間，要權限失敗就請使用者再按一次
+    if ((await handle.queryPermission({ mode: 'readwrite' })) === 'granted') return true;
+    try { return (await handle.requestPermission({ mode: 'readwrite' })) === 'granted'; }
+    catch (err) { toast('已連結「' + handle.name + '」；請再按一次「存檔」完成寫入'); return null; }
+  }
+  async function save() {
+    endText(true); commit();
+    if (!FSA) { download(); return; }
+    try {
+      if (!handle && !(await link())) return;
+      const ok = await ensureWrite();
+      if (ok === null) return;
+      if (!ok) { toast('沒有寫入權限，沒有存檔'); return; }
+      const text = await (await handle.getFile()).text();
+      const m = NODE_RE.exec(text);
+      if (!m) { toast('選到的檔案裡沒有 #' + CFG.dataId + ' 節點，沒有存檔'); return; }
+      let disk = {}; try { disk = JSON.parse(m[2]) || {}; } catch (err) { /* 壞掉當版次 0 */ }
+      const diskRev = (disk.meta && disk.meta.rev) || 0;
+      if (diskRev !== loadedRev) {
+        const c = await ask('磁碟上的檔案已經被改過', '磁碟是版次 ' + diskRev + '，本頁是從版次 ' + loadedRev + ' 改起（可能另一個分頁或另一台機器存過）。',
+          [['用本頁內容覆蓋', 'over'], ['重新載入磁碟版（本頁改動留成草稿）', 'reload'], ['取消', 'cancel']]);
+        if (c === 'reload') { saveDraft(); location.reload(); return; }
+        if (c !== 'over') return;
+      }
+      const rev = diskRev + 1, data = serialize(rev);
+      const out = text.slice(0, m.index) + m[1] + data + m[3] + text.slice(m.index + m[0].length);
+      const w = await handle.createWritable(); await w.write(out); await w.close();
+      loadedRev = rev; savedAt = JSON.parse(data).meta.saved_at; dataNode.textContent = data; savedSnap = snap();
+      clearDraft(); status(); toast('已寫回檔案（版次 ' + rev + '）');
+    } catch (err) {
+      if (err && err.name === 'AbortError') return;
+      toast('存檔失敗：' + (err && err.message || err));
+    }
+  }
+  if (FSA) { tryLink(); window.addEventListener('focus', () => { if (!handle) tryLink(); }); }
+  function buildHTML(rev) {
+    const doc = pristine.cloneNode(true), body = doc.querySelector('body');
+    let after = doc.querySelector('#slide-editor');
+    while (after && after.nextSibling) after.nextSibling.remove();   // 複製當下還沒解析到的部分，由 tail 補
+    (tail || []).forEach(n => body.appendChild(n.cloneNode(true)));
+    doc.querySelector('#' + CFG.dataId).textContent = serialize(rev);
+    return '<!doctype html>\n' + doc.outerHTML;
+  }
+  function download() {
+    endText(true); commit();
+    const rev = loadedRev + 1, url = URL.createObjectURL(new Blob([buildHTML(rev)], { type: 'text/html' }));
+    const a = document.createElement('a'); a.href = url; a.download = fileName(); a.setAttribute('data-se-ui', '');
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    toast('已下載「' + fileName() + '」（版次 ' + rev + '）：用它取代原檔才算存檔；草稿會留到寫回為止');
+  }
+
+  /* ── 介面（第一次按 E 才建立） ── */
+  function buildUI() {
+    const bar = document.createElement('div');
+    bar.className = 'se-bar'; bar.setAttribute('data-se-ui', ''); bar.setAttribute('role', 'toolbar'); bar.setAttribute('aria-label', '簡報編輯工具');
+    bar.innerHTML =
+      '<span class="se-badge">編輯模式</span>' +
+      '<button type="button" data-a="text">＋文字框</button>' +
+      '<button type="button" data-a="image">＋圖片</button><input type="file" accept="image/*" hidden>' +
+      '<button type="button" data-a="del" disabled>刪除<kbd>Del</kbd></button><span class="se-sep"></span>' +
+      '<button type="button" data-a="note" aria-pressed="false">＋標註給 AI<kbd>M</kbd></button>' +
+      '<button type="button" data-a="list" aria-pressed="false" title="打開或收起標註清單">清單 <b class="se-count">0</b></button><span class="se-sep"></span>' +
+      '<button type="button" data-a="undo">復原<kbd>⌘Z</kbd></button><button type="button" data-a="redo">重做<kbd>⇧⌘Z</kbd></button><span class="se-sep"></span>' +
+      (FSA ? '<button type="button" data-a="save" class="se-primary">存檔<kbd>⌘S</kbd></button>' : '') +
+      '<button type="button" data-a="download">下載 HTML</button>' +
+      '<span class="se-status" aria-live="polite"></span>' +
+      '<button type="button" data-a="exit">離開編輯<kbd>E</kbd></button>';
+    document.body.appendChild(bar);
+    const file = bar.querySelector('input');
+    file.addEventListener('change', () => { addImage(file.files[0]); file.value = ''; });
+    bar.addEventListener('click', ev => {
+      const b = ev.target.closest('button[data-a]'); if (!b) return;
+      const a = b.dataset.a;
+      if (a === 'text') { setNoting(false); addText(); }
+      else if (a === 'image') { setNoting(false); endText(true); file.click(); }
+      else if (a === 'del') del();
+      else if (a === 'note') setNoting(!noting);
+      else if (a === 'list') setPanel(!panelOpen);
+      else if (a === 'undo') { endText(true); undo(); }
+      else if (a === 'redo') { endText(true); redo(); }
+      else if (a === 'save') save();
+      else if (a === 'download') download();
+      else if (a === 'exit') setMode(false);
+    });
+    bar.addEventListener('pointerdown', ev => { if (ev.target.closest('button')) ev.preventDefault(); });   // 按工具列不搶走打字焦點
+    const sel = document.createElement('div');
+    sel.className = 'se-sel'; sel.hidden = true; sel.setAttribute('data-se-ui', '');
+    sel.innerHTML = '<b class="se-grip" data-h="move">拖這裡移動</b><i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i><i data-h="w"></i><i data-h="e"></i>';
+    frame.appendChild(sel);
+    const tst = document.createElement('div');
+    tst.className = 'se-toast'; tst.setAttribute('data-se-ui', ''); tst.setAttribute('role', 'status');
+    document.body.appendChild(tst);
+    ui = { bar, sel, tst, del: bar.querySelector('[data-a="del"]'), status: bar.querySelector('.se-status'), dlgOpen: null,
+      badge: bar.querySelector('.se-badge'), noteCount: bar.querySelector('.se-count') };
+    buildNoteUI();
+  }
+  function buildNoteUI() {   // 標註介面全部放舞台外（position:fixed），不跟著舞台縮放；下載 HTML 時靠 data-se-ui 排除
+    const layer = document.createElement('div');
+    layer.className = 'se-layer'; layer.setAttribute('data-se-ui', '');
+    layer.innerHTML = '<div class="se-hov" hidden><em></em></div><div class="se-tgt" hidden></div>';
+    document.body.appendChild(layer);
+    const pop = document.createElement('div');
+    pop.className = 'se-pop'; pop.hidden = true; pop.setAttribute('data-se-ui', ''); pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', '新增標註');
+    pop.innerHTML =
+      '<p class="se-pop-where"><b></b><code></code><button type="button" data-p="up">選上一層</button></p>' +
+      '<p class="se-pop-snip"></p>' +
+      '<textarea rows="3" aria-label="你的想法" placeholder="想怎麼改？例：這句太長，縮成 12 字內，字再大一點"></textarea>' +
+      '<nav><button type="button" data-p="ok" class="se-primary">存標註<kbd>⌘/Ctrl+Enter</kbd></button><button type="button" data-p="cancel">取消<kbd>Esc</kbd></button></nav>';
+    document.body.appendChild(pop);
+    const panel = document.createElement('aside');
+    panel.className = 'se-panel'; panel.setAttribute('data-se-ui', ''); panel.setAttribute('aria-label', '標註清單');
+    panel.innerHTML =
+      '<header><b>標註給 AI</b><span class="se-panel-n"></span><button type="button" data-n="close" aria-label="收起清單" title="收起清單">收起</button></header>' +
+      '<ol class="se-list"></ol>' +
+      '<label class="se-overall">整體想法<textarea rows="3" placeholder="整份的想法。例：字太多，每張只留一個重點"></textarea></label>' +
+      '<p class="se-panel-edits"></p>' +
+      '<textarea class="se-md" rows="5" readonly hidden aria-label="修改清單全文"></textarea>' +
+      '<footer><button type="button" data-n="copy" class="se-primary">複製給 AI</button><button type="button" data-n="md">下載修改清單（.md）</button></footer>';
+    document.body.appendChild(panel);
+    Object.assign(ui, {
+      pinLayer: layer, pins: new Map(), hov: layer.querySelector('.se-hov'), hovName: layer.querySelector('em'), tgt: layer.querySelector('.se-tgt'),
+      pop, popNo: pop.querySelector('.se-pop-where b'), popId: pop.querySelector('code'), popUp: pop.querySelector('[data-p="up"]'),
+      popSnip: pop.querySelector('.se-pop-snip'), popText: pop.querySelector('textarea'), popKey: '',
+      panel, list: panel.querySelector('.se-list'), overall: panel.querySelector('.se-overall textarea'), panelCount: panel.querySelector('.se-panel-n'),
+      panelEdits: panel.querySelector('.se-panel-edits'), md: panel.querySelector('.se-md')
+    });
+    pop.addEventListener('pointerdown', ev => { if (ev.target.closest('button')) ev.preventDefault(); });   // 按鈕不搶走打字焦點
+    pop.addEventListener('click', ev => {
+      const b = ev.target.closest('button[data-p]'); if (!b) return;
+      if (b.dataset.p === 'ok') saveNote();
+      else if (b.dataset.p === 'cancel') closePop();
+      else if (b.dataset.p === 'up' && popEl) { const sl = popEl.closest(CFG.slide); if (popEl !== sl) fillPop(climb(popEl.parentElement, sl)); }
+    });
+    ui.popText.addEventListener('keydown', ev => { if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) { ev.preventDefault(); saveNote(); } });
+    panel.addEventListener('click', ev => {
+      const b = ev.target.closest('button'); if (!b) return;
+      if (b.dataset.n === 'close') setPanel(false);
+      else if (b.dataset.n === 'copy') copyMd(b);
+      else if (b.dataset.n === 'md') downloadMd();
+      else if (b.dataset.go) { const n = notes.find(x => x.id === b.dataset.go); if (n) jumpTo(n); }
+      else if (b.dataset.del) delNote(b.dataset.del, b.closest('li'));
+    });
+    panel.addEventListener('input', ev => {
+      const t = ev.target;
+      if (t === ui.overall) overall = t.value;
+      else if (t.dataset.text) { const n = notes.find(x => x.id === t.dataset.text); if (n) n.text = t.value; }
+      else return;
+      clearTimeout(noteTimer);
+      noteTimer = setTimeout(() => { saveDraft(); status(); }, 400);
+    });
+    panel.addEventListener('change', ev => { if (ev.target === ui.overall || ev.target.dataset.text) commit(); });
+    layer.addEventListener('click', ev => {
+      const p = ev.target.closest('[data-pin]'); if (!p) return;
+      if (!panelOpen) setPanel(true);
+      hotItem(p.dataset.pin);
+    });
+    renderPanel(true);
+  }
+  function status() {
+    if (!ui) return;
+    const n = Object.keys(edits).length;
+    const where = !FSA ? '這個瀏覽器不能直接寫回，請用「下載 HTML」'
+      : handle ? '已連結「' + handle.name + '」'
+      : pendingDir ? '按「存檔」重新授權寫回，在彈窗按「允許」'
+      : '還沒連結：按「存檔」，選「' + hereName + '」或它的上層資料夾（對話框裡的檔案選不到是正常的）';
+    ui.status.innerHTML = '版次 <b>' + loadedRev + '</b>　' + (dirty() ? '<b>有改動還沒寫回</b>' : '已寫回') +
+      '　共 ' + n + ' 個元件有改動、' + notes.length + ' 則標註　' + where;
+    ui.bar.querySelector('[data-a="undo"]').disabled = hi <= 0;
+    ui.bar.querySelector('[data-a="redo"]').disabled = hi >= hist.length - 1;
+  }
+  function toast(msg) {
+    if (!ui) { console.info(msg); return; }
+    ui.tst.textContent = msg; ui.tst.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => ui.tst.classList.remove('show'), 3600);
+  }
+  function ask(title, msg, choices) {
+    return new Promise(res => {
+      const d = document.createElement('div');
+      d.className = 'se-dlg'; d.setAttribute('data-se-ui', ''); d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true');
+      const box = document.createElement('div'), h = document.createElement('h3'), p = document.createElement('p'), nav = document.createElement('nav');
+      h.textContent = title; p.textContent = msg;
+      const done = v => { d.remove(); if (ui) ui.dlgOpen = null; res(v); };
+      choices.forEach(([label, v]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.onclick = () => done(v); nav.appendChild(b); });
+      box.append(h, p, nav); d.appendChild(box); document.body.appendChild(d);
+      if (ui) ui.dlgOpen = done;
+      nav.querySelector('button').focus();
+    });
+  }
+  function setMode(v) {
+    if (v === on) return;
+    if (v) {
+      if (!ui) buildUI();
+      on = true; document.documentElement.classList.add('se-on');
+      document.documentElement.classList.toggle('se-panel-on', panelOpen);
+      status(); requestAnimationFrame(tick);
+      toast('編輯模式：點文字直接改，拖曳搬移，四角縮放，Delete 刪除；按 M 標註給 AI；按 E 回到播放');
+      checkDraft();
+    } else {
+      setNoting(false); endText(true); select(null); commit();
+      on = false; document.documentElement.classList.remove('se-on', 'se-panel-on');
+      if (dirty()) toast(FSA ? '還有改動沒寫回檔案（草稿已暫存）；按 E 回編輯模式存檔' : '還有改動沒寫回（草稿已暫存）；用「下載 HTML」取代原檔');
+    }
+  }
+
+  /* ── 啟動：先套用存檔內容（趕在引擎顯示第一張之前） ── */
+  apply();
+  document.addEventListener('DOMContentLoaded', () => {   // 引擎腳本等「編輯程式之後」的節點，下載 HTML 時接回去
+    tail = [];
+    for (let n = me.nextSibling; n; n = n.nextSibling) if (!(n.nodeType === 1 && n.hasAttribute('data-se-ui'))) tail.push(n.cloneNode(true));
+  });
+
+  window.SlideEditor = {
+    get on() { return on; }, get edits() { return JSON.parse(JSON.stringify(edits)); }, get rev() { return loadedRev; },
+    get selected() { return selId; }, setMode, undo, redo, serialize, buildHTML, save, download,
+    canUndo: () => hi > 0, canRedo: () => hi < hist.length - 1,
+    get noting() { return noting; }, get notes() { return JSON.parse(JSON.stringify(notes)); }, get overall() { return overall; }, setNoting, notesMd
+  };
+})();
+/* ═════════ SLIDE EDITOR v2 結束 ═════════ */
+</script>
+<script id="stage-engine">
+/* ═════════ STAGE ENGINE v1（VF 系列共用，整段原樣複製，只在下方另寫 Stage.init 設定） ═════════
+ * 需要的 DOM：#deck > #fitter > #frame > section.slide…、#frame 內的 #cap、#deck 內的 #pb。
+ * Stage.init({ slides: [{ el: '#id', title: '封面', narr: ['旁白…', …], onStep(k, ctx) {} }] })
+ *   ctx = { step, prevStep(同張上一步，換張時為 -1), fresh(剛換張), instant(不播動畫), dir, reduce, el }
+ * 宣告式揭示：slide 內 [data-at="n"] 在 step ≥ n 時加 .on；= n 加 .now；> n 加 .past；
+ *   [data-until="m"] 讓它在 step > m 時再拿掉 .on。
+ * 操作：→／空白／PageDown／點擊＝下一步；←／PageUp＝上一步；Home／End；1–9 跳張；N 切換字幕。
+ * #s=<1 起算的全域步數> 直接開到該步（instant），翻頁時 replaceState 更新。 */
+const Stage = (() => {
+  const W = 1920, H = 1080;
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  let deck, fitter, frame, cap, pb, slides = [], offsets = [], total = 0, g = -1, visible = true;
+
+  function locate(gi) {
+    let s = 0;
+    while (s < slides.length - 1 && gi >= offsets[s] + slides[s].narr.length) s++;
+    return { s, k: gi - offsets[s] };
+  }
+  function fit() {
+    const r = deck.getBoundingClientRect();
+    const sc = Math.min(r.width / W, r.height / H);
+    fitter.style.width = (W * sc) + 'px';
+    fitter.style.height = (H * sc) + 'px';
+    frame.style.transform = 'scale(' + sc + ')';
+  }
+  function markSteps(sl, k) {
+    sl.el.dataset.step = k;
+    sl.el.querySelectorAll('[data-at]').forEach(el => {
+      const n = +el.dataset.at, u = el.dataset.until != null ? +el.dataset.until : Infinity;
+      el.classList.toggle('on', k >= n && k <= u);
+      el.classList.toggle('now', k === n);
+      el.classList.toggle('past', k > n);
+    });
+  }
+  function go(target, opts = {}) {
+    target = clamp(target | 0, 0, total - 1);
+    if (target === g && !opts.force) return;
+    const prev = g, from = prev < 0 ? { s: -1, k: -1 } : locate(prev), to = locate(target);
+    const fresh = from.s !== to.s;
+    const instant = !!opts.instant;
+    g = target;
+    frame.classList.toggle('instant', instant);
+    const sl = slides[to.s];
+    if (fresh) {                                   // 剛進這張：先清掉上次留下的狀態，讓揭示重新播
+      sl.el.querySelectorAll('[data-at]').forEach(el => el.classList.remove('on', 'now', 'past'));
+      void sl.el.offsetWidth;
+    }
+    slides.forEach((s, i) => {
+      s.el.classList.toggle('is-active', i === to.s);
+      s.el.setAttribute('aria-hidden', i === to.s ? 'false' : 'true');
+    });
+    markSteps(sl, to.k);
+    const ctx = { step: to.k, prevStep: fresh ? -1 : from.k, fresh, instant, dir: Math.sign(target - prev),
+                  reduce: reduceMQ.matches, el: sl.el };
+    if (fresh && from.s >= 0 && slides[from.s].onLeave) slides[from.s].onLeave();
+    if (sl.onStep) sl.onStep(to.k, ctx);
+    cap.textContent = sl.narr[to.k] || '';
+    renderPB();
+    frame.dataset.g = g + 1;
+    if (instant) requestAnimationFrame(() => requestAnimationFrame(() => frame.classList.remove('instant')));
+    const h = '#s=' + (g + 1);
+    if (location.hash !== h) history.replaceState(null, '', h);
+  }
+  function buildPB() {
+    pb.innerHTML = slides.map((s, i) =>
+      '<button type="button" data-s="' + i + '"><span class="no">' + String(i + 1).padStart(2, '0') + '</span>' +
+      '<span>' + s.title + '</span><span class="pips"></span></button>').join('') + '<span class="cnt"></span>';
+    pb.addEventListener('click', e => {
+      e.stopPropagation();
+      const pip = e.target.closest('.pip');
+      if (pip) { go(+pip.dataset.g); return; }
+      const b = e.target.closest('button');
+      if (b) go(offsets[+b.dataset.s]);
+    });
+  }
+  function renderPB() {
+    const { s: cs, k } = locate(g);
+    pb.querySelectorAll('button').forEach((b, i) => {
+      b.classList.toggle('act', i === cs);
+      const pips = b.querySelector('.pips');
+      pips.innerHTML = i === cs ? slides[i].narr.map((_, j) =>
+        '<span class="pip' + (j <= k ? ' on' : '') + '" data-g="' + (offsets[i] + j) + '"></span>').join('') : '';
+    });
+    pb.querySelector('.cnt').textContent = String(g + 1).padStart(2, '0') + ' / ' + total;
+  }
+  function fromHash() {
+    const m = /(?:^#|&)s=(\d+)/.exec(location.hash);
+    return m ? clamp(+m[1] - 1, 0, total - 1) : null;
+  }
+  function init(cfg) {
+    deck = document.getElementById('deck'); fitter = document.getElementById('fitter');
+    frame = document.getElementById('frame'); cap = document.getElementById('cap'); pb = document.getElementById('pb');
+    slides = cfg.slides.map(s => Object.assign({}, s, { el: typeof s.el === 'string' ? document.querySelector(s.el) : s.el }));
+    let acc = 0;
+    offsets = slides.map(s => { const o = acc; acc += s.narr.length; return o; });
+    total = acc;
+    buildPB(); fit();
+    addEventListener('resize', fit);
+    if (typeof ResizeObserver === 'function') new ResizeObserver(fit).observe(deck);
+    if (typeof IntersectionObserver === 'function')
+      new IntersectionObserver(es => { visible = es[0].intersectionRatio >= 0.5; }, { threshold: [0, 0.5, 1] }).observe(deck);
+    frame.addEventListener('click', e => {
+      if (e.target.closest('a, button, input, [data-no-advance]')) return;
+      go(g + 1);
+    });
+    addEventListener('keydown', e => {
+      if (!visible || e.ctrlKey || e.metaKey || e.altKey) return;
+      const t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      const k = e.key;
+      if (k === 'ArrowRight' || k === ' ' || k === 'PageDown') { e.preventDefault(); go(g + 1); }
+      else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); go(g - 1); }
+      else if (k === 'Home') { e.preventDefault(); go(0); }
+      else if (k === 'End') { e.preventDefault(); go(total - 1); }
+      else if (/^[1-9]$/.test(k)) { const i = +k - 1; if (i < slides.length) go(offsets[i]); }
+      else if (k === 'n' || k === 'N') frame.classList.toggle('show-cap');
+    });
+    addEventListener('hashchange', () => { const h = fromHash(); if (h != null && h !== g) go(h, { instant: true }); });
+    const h = fromHash();
+    go(h == null ? 0 : h, { instant: h != null, force: true });
+    return api;
+  }
+  const api = { init, go, get index() { return g; }, get total() { return total; }, reduceMQ };
+  return api;
+})();
+/* ═════════ STAGE ENGINE v1 結束 ═════════ */
+</script>
+<script id="deck-effects">
+/* 依 DOM 裡的 .slide 自動算張數、步數、場景、提燈路線、右側指示；不寫死張數。AI 不用改這段。 */
+(() => {
+  'use strict';
+  const frame = document.getElementById('frame');
+  const lantern = document.getElementById('lantern');
+  const idx = document.getElementById('idx');
+  const idxList = document.getElementById('idxList');
+  const idxNo = document.getElementById('idxNo');
+  const els = [...frame.querySelectorAll(':scope > .slide')];
+  const pad = n => String(n).padStart(2, '0');
+  const timers = [];
+  const LX = [80, 66, 50, 20, 50, 80, 72, 40, 60, 84];   // 提燈的橫向路線（%），依步數循環
+
+  /* ── 場景：8 組配方（底色漸層、遠中近三層稜線 [基準高, 起伏, 取樣間距, 鋸齒]、點綴），依張數循環 ── */
+  const SCENES = {
+    1: { bg: '#0E1A2B 0%, #12313f 52%, #46605a 84%, #1d4c5a 100%', c: ['#1a3b49', '#12313f', '#070d16'], r: [[720, 100, 24], [880, 62, 24], [975, 26, 24]], x: 'win' },
+    2: { bg: '#070d16 0%, #12313f 60%, #1d4c5a 100%', c: ['#25505c', '#12313f', '#070d16'], r: [[720, 52, 30, 1], [880, 44, 34, 1], [965, 36, 44, 1]] },
+    3: { bg: '#0E1A2B 0%, #12313f 64%, #1a3b49 100%', c: ['#1d4452', '#14303d', '#070d16'], r: [[865, 36, 20], [925, 30, 20], [980, 22, 20]], x: 'moon' },
+    4: { bg: '#0E1A2B 0%, #173f4d 80%, #1d4c5a 100%', c: ['#2f5864', '#1d4c5a', '#070d16'], r: [[690, 140, 30], [860, 54, 30], [985, 18, 28]] },
+    5: { bg: '#0E1A2B 0%, #1d4c5a 50%, #8a6a35 100%', c: ['#1a3b49', '#12313f', '#070d16'], r: [[730, 62, 28], [930, 24, 26], [992, 10, 26]], x: 'burst' },
+    6: { bg: '#12313f 0%, #24495a 55%, #4f6f7f 100%', c: ['#3f6070', '#2d4d5c', '#14303d'], r: [[730, 100, 26], [905, 36, 26], [965, 22, 26]], x: 'fog' },
+    7: { bg: '#070d16 0%, #0E1A2B 60%, #12313f 100%', c: ['#12313f', '#0e2530', '#070d16'], r: [[765, 62, 28], [900, 28, 28], [962, 22, 26]], x: 'star' },
+    8: { bg: '#12313f 0%, #1d4c5a 62%, #8a6f3c 100%', c: ['#2b5560', '#1d4c5a', '#0E1A2B'], r: [[790, 100, 28], [875, 46, 28], [985, 10, 26]], x: 'sun' }
+  };
+  const CYCLE = [3, 2, 4, 6, 8, 1, 7];
+  function rng(seed) { let s = seed * 7919 % 2147483646 + 1; return () => (s = s * 16807 % 2147483647) / 2147483647; }
+  function ridge(r, [base, amp, step, spiky]) {
+    const a = r() * 6.28, b = r() * 6.28, f1 = .0024 + r() * .002, f2 = .007 + r() * .005, pts = [];
+    let n = 0;
+    for (let x = -200; x <= 2120; x += step, n++) {
+      let y = base + amp * (Math.sin(x * f1 + a) * .65 + Math.sin(x * f2 + b) * .35);
+      if (spiky) y += (n % 2 ? 1 : -1) * amp;
+      pts.push([x, Math.round(y)]);
+    }
+    return pts;
+  }
+  const toD = pts => 'M-200,1080 ' + pts.map(p => 'L' + p[0] + ',' + p[1]).join(' ') + ' L2120,1080 Z';
+  function layer(cls, d, extra) {
+    return '<svg class="layer ' + cls + '" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="' + d + '"/>' + (extra || '') + '</svg>';
+  }
+  function scene(el, i) {
+    const b = el.classList.contains('layout-cover') ? 1 : el.classList.contains('layout-big') ? 5 : el.classList.contains('layout-card') ? 7 : CYCLE[i % CYCLE.length];
+    const no = +el.dataset.scene || b, sc = SCENES[no] || SCENES[1], r = rng(i * 13 + no + 1);
+    const far = ridge(r, sc.r[0]), mid = ridge(r, sc.r[1]), near = ridge(r, sc.r[2]);
+    let fx = '', mx = '';
+    if (sc.x === 'moon') fx = '<circle class="moon" cx="1500" cy="250" r="56"/><circle class="moonhalo" cx="1500" cy="250" r="150"/>';
+    if (sc.x === 'sun') fx = '<circle class="sun" cx="1380" cy="1000" r="170"/>';
+    if (sc.x === 'burst') fx = '<defs><radialGradient id="bst' + i + '"><stop offset="0" stop-color="#FFC14D" stop-opacity=".5"/><stop offset=".55" stop-color="#FFC14D" stop-opacity=".14"/><stop offset="1" stop-color="#FFC14D" stop-opacity="0"/></radialGradient></defs><circle cx="1000" cy="940" r="900" fill="url(#bst' + i + ')"/>';
+    if (sc.x === 'star') for (let k = 0; k < 24; k++) fx += '<circle class="star" cx="' + Math.round(r() * 2304 - 192) + '" cy="' + Math.round(r() * 420 + 30) + '" r="' + (1.5 + (k % 3) * .5) + '" style="animation-delay:' + (-k * .7) + 's"/>';
+    if (sc.x === 'win') for (let k = 6; k < mid.length; k += 7) mx += '<rect class="win" x="' + mid[k][0] + '" y="' + (mid[k][1] + 38) + '" width="9" height="13" opacity="' + (.4 + (k % 4) * .15) + '"/>';
+    if (sc.x === 'fog') mx = '<defs><linearGradient id="fg' + i + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8EA4B2" stop-opacity="0"/><stop offset=".5" stop-color="#8EA4B2" stop-opacity=".3"/><stop offset="1" stop-color="#8EA4B2" stop-opacity="0"/></linearGradient></defs><rect class="fogband" x="-192" y="700" width="2304" height="170" fill="url(#fg' + i + ')"/><rect class="fogband b2" x="-192" y="840" width="2304" height="140" fill="url(#fg' + i + ')"/>';
+    const bg = document.createElement('div');
+    bg.className = 'scenebg';
+    bg.style.cssText = 'background:linear-gradient(180deg,' + sc.bg + ');--far:' + sc.c[0] + ';--midc:' + sc.c[1] + ';--near:' + sc.c[2];
+    bg.innerHTML = layer('far', toD(far), fx) + layer('mid', toD(mid), mx) + layer('near', toD(near));
+    return bg;
+  }
+
+  /* ── 字太多時整張縮字（內容下緣超過 y=860，或大數字太寬）；縮到最小還放不下就在 console 提醒。
+        只看 offset 系列：學生拖曳、縮放（CSS translate、scale）不會影響判斷。 ── */
+  function fits(el) {
+    return [...el.children].every(c => c.matches('.scenebg, .source, .meta, .se-add') || c.offsetTop + c.offsetHeight <= 860) &&
+      [...el.querySelectorAll('.big')].every(b => b.offsetWidth <= 1100);
+  }
+  function fitText(el, i) {
+    for (const v of [1, .88, .76, .66]) { el.style.setProperty('--fit', v); if (fits(el)) return; }
+    console.warn('第 ' + (i + 1) + ' 張內容太多，放不下：請拆成兩張');
+  }
+
+  /* ── 逐張準備：步數、揭示、場景、提燈 ── */
+  const seen = new Set();
+  let acc = 0;
+  const slides = els.map((el, i) => {
+    if (!el.id) el.id = 's' + (i + 1);
+    let n = 0;
+    el.querySelectorAll('[data-edit-id]').forEach(t => {
+      if (seen.has(t.dataset.editId)) console.warn('data-edit-id 重複：' + t.dataset.editId);
+      seen.add(t.dataset.editId);
+      if (t.hasAttribute('data-se-added') || t.parentElement.closest('[data-edit-id]')) return;
+      if (!t.hasAttribute('data-at')) t.setAttribute('data-at', '0');
+      t.classList.add('rv');
+      if (t.dataset.at === '0') t.dataset.i = Math.min(n++, 9);
+    });
+    const steps = Math.max(0, ...[...el.querySelectorAll('[data-at]')].map(t => +t.dataset.at || 0)) + 1;
+    el.insertBefore(scene(el, i), el.firstChild);
+    fitText(el, i);
+    const off = acc; acc += steps;
+    el.style.setProperty('--cx', LX[off % LX.length] + '%');
+    return {
+      el, title: el.getAttribute('aria-label') || '第 ' + (i + 1) + ' 張', narr: Array(steps).fill(''),
+      onStep(k, ctx) {
+        if (ctx.fresh) { clearTimeout(timers[i]); el.classList.remove('leaving'); }
+        lantern.style.setProperty('--lx', LX[(off + k) % LX.length]);
+        lantern.classList.toggle('burst', el.classList.contains('layout-big'));
+        idxNo.textContent = pad(i + 1);
+        btns.forEach((b, j) => {
+          b.classList.toggle('done', j < i);
+          b.classList.toggle('cur', j === i);
+          if (j === i) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+        });
+      },
+      onLeave() {
+        el.classList.add('leaving');
+        clearTimeout(timers[i]);
+        timers[i] = setTimeout(() => el.classList.remove('leaving'), 1100);
+      },
+      off
+    };
+  });
+
+  /* ── 右側場景指示 ── */
+  idx.style.setProperty('--n', els.length);
+  document.getElementById('idxTotal').textContent = '/ ' + pad(els.length);
+  idxList.innerHTML = slides.map((s, i) => '<li><button type="button" aria-label="跳到第 ' + (i + 1) + ' 張：' + s.title.replace(/[<>&"]/g, '') + '"><i></i></button></li>').join('');
+  const btns = [...idxList.querySelectorAll('button')];
+  btns.forEach((b, i) => b.addEventListener('click', () => Stage.go(slides[i].off)));
+
+  Stage.init({ slides });
+
+  /* 滾輪也能翻頁：一次一步，600ms 內不重複觸發 */
+  let lock = 0;
+  document.getElementById('deck').addEventListener('wheel', e => {
+    if (Math.abs(e.deltaY) < 8) return;
+    e.preventDefault();
+    const now = performance.now();
+    if (now < lock) return;
+    lock = now + 600;
+    Stage.go(Stage.index + (e.deltaY > 0 ? 1 : -1));
+  }, { passive: false });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!doctype html><!-- 版面喜好選單範例 GX01｜紅綠狀態開關｜來源：講師範例庫 output範例/元件庫/GX01-紅綠狀態開關.html；原始來源 https://github.com/uiverse-io/galaxy（Toggle-switches/misaraadel_tough-termite-75.html），作者 misaraadel，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX01 紅綠狀態開關（Toggle switch (red/green two-circle slide)）
+  來源：https://github.com/uiverse-io/galaxy　Toggle-switches/misaraadel_tough-termite-75.html
+  原作者：misaraadel　授權：MIT
+  移植：原作只有單一開關、無文字；改為三列查核清單並加上「未通過／通過」文字（用 :has 切換），加 focus-visible 外框、補 prefers-reduced-motion、aria-label；原 CSS 幾乎照用，紅色略調成 #e03a3a。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>demo</title><style>*{box-sizing:border-box}html,body{margin:0;height:100%}body{background:#f5f6f8;color:#1f2937;font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;display:flex;align-items:center;justify-content:center}.cap{font-size:12px;color:#6b7280;margin-top:14px;text-align:center}
+.card{background:#fff;border:1px solid #d1d5db;border-radius:6px;width:380px}
+.row{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid #e5e7eb}.row:last-child{border:0}
+.nm{flex:1;font-weight:500}
+.st{width:64px;font-size:13px;font-weight:700}
+.st .y{display:none;color:#2f7d46}.st .n{color:#c62828}
+.row:has(input:checked) .st .y{display:inline}.row:has(input:checked) .st .n{display:none}
+.switch{position:relative;cursor:pointer}
+.switch input{-webkit-appearance:none;appearance:none;opacity:0;position:absolute;inset:0;width:100%;height:100%;margin:0;z-index:2;cursor:pointer}
+.check{width:51px;height:30px;position:relative;display:block;background:#e03a3a;border-radius:15px;overflow:hidden;transition:background .5s ease-in}
+.check::before,.check::after{content:"";position:absolute;top:0;width:30px;height:30px;background:#fff;border-radius:50%;transition:transform .5s ease-in}
+.check::before{right:0}.check::after{left:0;transform:translateX(-60px)}
+.switch input:checked~.check{background:#549b60}
+.switch input:checked~.check::after{transform:translateX(0)}
+.switch input:checked~.check::before{transform:translateX(50px)}
+.switch input:focus-visible~.check{outline:2px solid #1d4ed8;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.check,.check::before,.check::after{transition:none}}
+</style></head><body><div><div class="card">
+<div class="row"><span class="nm">數字已核對原文</span><span class="st"><span class="n">未通過</span><span class="y">通過</span></span><label class="switch"><input type="checkbox" checked aria-label="數字已核對原文"><span class="check"></span></label></div>
+<div class="row"><span class="nm">來源連結可開啟</span><span class="st"><span class="n">未通過</span><span class="y">通過</span></span><label class="switch"><input type="checkbox" aria-label="來源連結可開啟"><span class="check"></span></label></div>
+<div class="row"><span class="nm">用語已改台灣慣用</span><span class="st"><span class="n">未通過</span><span class="y">通過</span></span><label class="switch"><input type="checkbox" aria-label="用語已改台灣慣用"><span class="check"></span></label></div>
+</div><div class="cap">紅＝未通過、綠＝通過，點開關切換</div></div></body></html>

@@ -1,0 +1,189 @@
+<!doctype html>
+<!-- 版面喜好選單範例 R1｜報紙頭版｜來源：講師範例庫 output範例/設計偏好選擇/samples/R1-報紙頭版.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<!-- 範例 R1 報紙頭版：報頭＋日期線、頭條就是最關鍵那句結論、多欄與欄線、襯線、黑＋一個報紙紅，數字集中成行情欄 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code 使用習慣分析</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;900&display=swap">')</script>
+<style>
+:root{
+  color-scheme:light;
+  --paper:#f4f0e6;
+  --ink:#16140f;
+  --ink-2:#3d392f;
+  --rule:#16140f;
+  --hair:#b7ae9c;
+  --red:#b0121b;
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.8 var(--serif);-webkit-font-smoothing:antialiased;font-variant-numeric:lining-nums tabular-nums}
+::selection{background:var(--ink);color:var(--paper)}
+code{font:.86em/1 var(--mono);white-space:normal;overflow-wrap:anywhere}
+h1,h2,h3,p{margin:0}
+.page{max-width:1240px;margin:0 auto;padding:28px 32px 56px}
+
+/* 報頭 */
+.mast{text-align:center;border-top:4px solid var(--rule);padding-top:14px}
+.mast h1{font-weight:900;font-size:clamp(34px,5.2vw,64px);line-height:1.1;padding:4px 0 12px}
+.dateline{display:flex;justify-content:center;flex-wrap:wrap;border-top:1px solid var(--rule);border-bottom:3px double var(--rule);padding:7px 0;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.dateline span{padding:0 18px}
+.dateline span+span{border-left:1px solid var(--hair)}
+
+/* 頭版上半 */
+.front{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:0;border-bottom:1px solid var(--rule);margin-top:22px}
+.lead{padding:0 28px 26px 0;border-right:1px solid var(--hair)}
+.headline{font-weight:900;font-size:clamp(34px,4.6vw,62px);line-height:1.16;text-wrap:balance}
+.deck{font-size:21px;line-height:1.7;font-weight:600;margin-top:18px;padding-bottom:18px;border-bottom:1px solid var(--hair)}
+.lede{margin-top:16px;font-size:18px;columns:2;column-gap:28px;column-rule:1px solid var(--hair);text-align:justify;hyphens:auto}
+.lede p::first-letter{float:left;font-weight:900;font-size:3.1em;line-height:1;margin:.08em .12em 0 0}
+
+.side{padding:0 0 26px 26px}
+.quotes{border-top:3px solid var(--rule);border-bottom:1px solid var(--rule)}
+.quotes div{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:12px;padding:7px 0;border-top:1px dotted var(--hair)}
+.quotes div:first-child{border-top:0}
+.quotes dt{font-size:16px;line-height:1.45}
+.quotes dd{margin:0;font-weight:900;font-size:30px;line-height:1.1}
+.briefs{margin-top:22px;padding-top:14px;border-top:1px solid var(--rule);display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.brief{padding:0 18px;border-left:1px solid var(--hair)}
+.brief:first-child{border-left:0;padding-left:0}
+.brief:last-child{padding-right:0}
+.brief h3{font-size:19px;font-weight:900;line-height:1.45;margin-bottom:6px}
+.brief p{font-size:16px;line-height:1.75}
+/* 習慣 */
+.band{font-weight:900;font-size:26px;line-height:1.3;padding:10px 0 8px;border-bottom:1px solid var(--rule)}
+.habits{margin-top:26px;border-top:4px solid var(--rule)}
+.habit-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.habit{padding:16px 22px 22px;border-left:1px solid var(--hair)}
+.habit:first-child{border-left:0;padding-left:0}
+.habit:last-child{padding-right:0}
+.habit h3{font-size:26px;font-weight:900;line-height:1.3}
+.habit .tag{color:var(--red);font-weight:600;font-size:16px;margin:6px 0 10px}
+.habit p{text-align:justify;hyphens:auto}
+.habit p+p{margin-top:10px}
+.habit p b{font-weight:900}
+
+/* 下方：數字表與公告 */
+.lower{margin-top:26px;border-top:4px solid var(--rule)}
+
+table{width:100%;border-collapse:collapse;margin-top:6px;font-size:16px;line-height:1.6}
+th{text-align:left;font-weight:900;font-size:15px;padding:8px 10px 6px 0;border-bottom:1px solid var(--rule)}
+td{padding:9px 10px 9px 0;border-bottom:1px dotted var(--hair);vertical-align:top;overflow-wrap:anywhere}
+td:nth-child(2){font-weight:900;white-space:nowrap}
+td:first-child{width:24%}td:nth-child(2){width:14%}
+.notice-wrap{padding-top:22px}
+.notice{border:2px solid var(--red);padding:18px 20px;color:var(--red);font-weight:900;font-size:20px;line-height:1.65}
+
+@media (max-width:900px){
+  .page{padding:20px 16px 40px}
+  .front,.lower{grid-template-columns:1fr}
+  .lead{padding:0 0 22px;border-right:0}
+  .side{padding:20px 0 22px;border-top:1px solid var(--rule)}
+  .lede{columns:1}
+  .habit-cols{grid-template-columns:1fr}
+  .habit,.habit:first-child,.habit:last-child{border-left:0;padding:16px 0 20px;border-top:1px solid var(--hair)}
+  .habit:first-child{border-top:0}
+  .briefs{grid-template-columns:1fr}
+  .brief,.brief:first-child,.brief:last-child{border-left:0;padding:12px 0;border-top:1px solid var(--hair)}
+  .brief:first-child{border-top:0}
+  td:first-child,td:nth-child(2){width:auto}
+  .dateline{flex-direction:column;align-items:center}
+  .dateline span+span{border-left:0}
+  table,thead,tbody,tr,th,td{display:block}
+  thead{display:none}
+  tr{padding:10px 0;border-bottom:1px dotted var(--hair)}
+  td{border:0;padding:0}
+  td:first-child{font-weight:900}
+  td:nth-child(2){white-space:normal}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="mast">
+  <h1>Claude Code 使用習慣分析</h1>
+  <div class="dateline">
+    <span>資料：這台 Windows 的 43 個 session，2026-07-13 到 2026-09-16</span>
+    <span>另含全域 prompt 歷史 68 則，2026-06-08 起</span>
+    <span>產出日期：2026-09-17</span>
+  </div>
+</header>
+
+<div class="front">
+  <article class="lead">
+    <h2 class="headline">最大的機械浪費是把對話當 git 按鈕與 App 啟動器。</h2>
+    <p class="deck">15 則發話只是 pull 或 push，另外 23 次用 /app-launch 啟動程式。每次都要載入約 25KB 的指令檔、跑 4 到 27 次工具呼叫，做的卻是一行終端指令就能做完的事。</p>
+    <div class="lede"><p>你的使用方式很鮮明：一句話丟一個大任務，然後讓它跑幾小時到幾天。這種方式的效率取決於兩件事，第一句話有沒有把目標講清楚，以及有沒有把機械性的小事也丟給模型。資料顯示前者大致做得好，後者是最大的浪費來源。</p></div>
+    <div class="briefs">
+      <div class="brief"><h3>方向錯誤已經很少，但剩下的都是同一種：先講方法、後講目標。</h3><p>問了三輪做法，才說出真正想要的結果。改用固定開場句型就能省掉那三輪。</p></div>
+      <div class="brief"><h3>有一個可以馬上改的小習慣。</h3><p>把個人資料放在檔案裡，不要直接貼進對話。</p></div>
+      <div class="brief"><h3>做得好的要保留：</h3><p>先要提案再選、把糾正寫成規則、用計劃書接力、標注 /orchestrate 的判斷 14 次裡有 13 次是準的。</p></div>
+    </div>
+  </article>
+
+  <aside class="side">
+    <dl class="quotes">
+      <div><dt>使用者發話</dt><dd>97</dd></div>
+      <div><dt>每則發話換來的助手訊息</dt><dd>40</dd></div>
+      <div><dt>每則發話的工具呼叫</dt><dd>21</dd></div>
+      <div><dt>session 只講 1 到 2 句</dt><dd>70%</dd></div>
+      <div><dt>發話只是叫我 pull／push</dt><dd>15%</dd></div>
+      <div><dt>中斷次數（七月是 17）</dt><dd>2</dd></div>
+    </dl>
+    <div class="notice-wrap">
+      <p class="notice">本頁是版面範例，內容只是示意。</p>
+    </div>
+  </aside>
+</div>
+
+<section class="habits">
+  <h2 class="band">值得優化的 11 個習慣</h2>
+  <div class="habit-cols">
+    <article class="habit">
+      <h3>1. 拿對話當 git 按鈕</h3>
+      <p class="tag">最大浪費</p>
+      <p>證據：「幫我pull和push」（7/13 三次，同一個 session 跨 35 天）、「幫我push」（8/17、8/19、8/20、8/25）、「pull」「pull」（8/20 間隔 2 分鐘）、「幫我pull」（9/6）、「幫我pull檔案」（9/7）、「幫我進行pull」（9/10）。共 15 則，11 個 session 整場只有這一句。</p>
+      <p><b>成本：</b>每次要載入三份 CLAUDE.md 約 25KB 加記憶索引，再跑 4 到 27 次工具呼叫，等 1 到 3 分鐘，做的是 <code>sh .scripts/sync.sh</code> 一行的事。15 次合計約 4 萬 token 的指令檔重載，全部沒有產出。</p>
+      <p><b>改法：</b>終端直接跑 <code>sh .scripts/sync.sh "訊息"</code>，或在 Git Bash 加一個 alias（第 4 節）。只有需要「幫我判斷怎麼拆 commit」時才用 /git-auto。不要為了 pull 開一個 session，更不要用一個開了 35 天的 session 當按鈕。</p>
+    </article>
+    <article class="habit">
+      <h3>2. 拿 Claude 當 App 啟動器</h3>
+      <p class="tag">最大浪費</p>
+      <p>證據：/app-launch 在 prompt 歷史出現 19 次、transcript 4 次；六月甚至問過「我可以規定說，以後啟用這個skill的話，要用haiku模型嗎」，表示你自己也覺得貴。</p>
+      <p><b>成本：</b>每次 5 到 7 分鐘、20 到 45 次工具呼叫，只為了把程式叫起來。</p>
+      <p><b>改法：</b>把啟動流程寫成 .bat 或沿用既有的 .vbs，做成桌面捷徑或開機自動啟動。skill 只留給「連不上外部服務時幫我診斷」這種需要判斷的情境。</p>
+    </article>
+    <article class="habit">
+      <h3>3. 先講方法、後講目標</h3>
+      <p class="tag">方向錯誤</p>
+      <p>證據：先問做法，經過兩輪示範後才說出真正的目標；另一次也是先問能有哪些成果，再說不需要播放功能。</p>
+      <p><b>成本：</b>每次多兩到三輪來回，而且第一輪做的東西整個作廢。這是七月分析裡「做錯方向」痛點剩下的主要形態。</p>
+      <p><b>改法：</b>需求開頭固定三行：「目標：…／我以為的做法：…／驗收：看到什麼算完成」。第一行有了，我就會直接從目標推方案，不會照你猜的方法做。</p>
+    </article>
+  </div>
+</section>
+
+<div class="lower">
+  <section class="numbers">
+    <h2 class="band">數字怎麼看</h2>
+    <table>
+      <thead><tr><th>指標</th><th>數值</th><th>解讀</th></tr></thead>
+      <tbody>
+        <tr><td>session 數 ／ 發話數</td><td>43 ／ 97</td><td>平均一個 session 只講 2.3 句。19 個 session 只有 1 句，11 個只有 2 句。</td></tr>
+        <tr><td>助手訊息 ／ 工具呼叫</td><td>3,910 ／ 2,029</td><td>每句話換來 40 則回覆與 21 次工具動作。14 個 session 的助手訊息超過 100 則。</td></tr>
+        <tr><td>只做 git 同步的發話</td><td>15（15%）</td><td>筆記庫 6 則、另一個專案 9 則。其中 11 個 session 整場只有這一句、5 分鐘內結束。</td></tr>
+        <tr><td>/app-launch</td><td>23 次</td><td>prompt 歷史 19 次加上 transcript 4 次。每次 5 到 7 分鐘、20 到 45 次工具呼叫。</td></tr>
+        <tr><td>標注並行（/orchestrate 或「工作流」）</td><td>14（14%）</td><td>與七月的 12% 持平，但從口語「用工作流」轉為指令 /orchestrate。</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+</div>
+</body>
+</html>

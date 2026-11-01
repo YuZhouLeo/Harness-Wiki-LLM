@@ -1,0 +1,34 @@
+<!doctype html><!-- 版面喜好選單範例 AC05｜數字閃一下｜來源：講師範例庫 output範例/元件庫/AC05-數字更新閃爍.html；原始來源 https://github.com/animate-css/animate.css（source/attention_seekers/flash.css），作者 Daniel Eden，授權 Hippocratic-2.1。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  AC05 數字更新閃爍（flash）
+  來源：https://github.com/animate-css/animate.css　source/attention_seekers/flash.css
+  原作者：Daniel Eden　授權：Hippocratic-2.1
+  移植：抄 flash 的 @keyframes；儀表格為淺色版，四種顏色各綁一種狀態；減少動態時直接顯示新數字不閃。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>flash</title><style>
+:root{--ink:#1f2937;--mut:#6b7280;--line:#cbd5e1;--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--warn:#b45309;--warnbg:#fef3c7;--info:#1d4ed8;--infobg:#dbeafe}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8fafc;color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.panel{width:430px;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.hd{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-bottom:1px solid var(--line);background:#f1f5f9;font-weight:700}
+button{font:inherit;font-size:12px;padding:3px 10px;border:1px solid #94a3b8;background:#fff;border-radius:4px;cursor:pointer;color:var(--ink)}
+.tag{display:inline-block;padding:0 8px;border-radius:3px;font-size:12px;font-weight:700}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.warn{background:var(--warnbg);color:var(--warn)}.info{background:var(--infobg);color:var(--info)}
+.row{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid #e2e8f0}
+.row b{width:76px;font-weight:700}
+.a{animation-duration:1s;animation-fill-mode:both}
+@keyframes flash{from,50%,to{opacity:1}25%,75%{opacity:0}}
+.flash{animation-name:flash}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.k{padding:12px;border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0}
+.k small{display:block;color:var(--mut)}.k strong{font-size:26px;line-height:1.2}
+@media (prefers-reduced-motion:reduce){.a{animation:none!important}}
+</style></head><body>
+<div class="panel"><div class="hd">查核儀表<button id="r">更新數據</button></div><div class="kpi">
+<div class="k"><small>已通過</small><strong style="color:var(--ok)" id="a">128</strong></div>
+<div class="k"><small>待補資料</small><strong style="color:var(--warn)">14</strong></div>
+<div class="k"><small>格式錯誤</small><strong style="color:var(--bad)">3</strong></div>
+<div class="k"><small>總筆數</small><strong style="color:var(--info)" id="t">145</strong></div></div></div>
+<script>function play(e,c){e.classList.remove(c);void e.offsetWidth;e.classList.add(c)}
+var a=document.getElementById('a'),t=document.getElementById('t'),v=128;document.getElementById('r').onclick=function(){v++;a.textContent=v;t.textContent=v+17;a.classList.add('a');t.classList.add('a');play(a,'flash');play(t,'flash')}</script></body></html>

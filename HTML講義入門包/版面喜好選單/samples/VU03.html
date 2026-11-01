@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- 版面喜好選單範例 VU03｜開關｜來源：講師範例庫 output範例/元件庫/VU03-開關.html；原始來源 https://github.com/Ashutoshx7/VengeanceUI（src/components/ui/switch.tsx），作者 None，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  VU03 開關（Switch）
+  來源：https://github.com/Ashutoshx7/VengeanceUI　src/components/ui/switch.tsx
+  原作者：原檔未標　授權：MIT
+  移植：原作是 Radix＋shadcn 主題色（單一 primary）；改成原生 checkbox＋appearance:none，尺寸放大到 40×22，開啟色改成語意色，這是我的改動，非原作樣貌。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>開關</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f6f7f9;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;color:#1f2937}
+.panel{width:330px;background:#fff;border:1px solid #d4d4d8;border-radius:8px}
+label{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;font-size:15px;cursor:pointer;border-bottom:1px solid #e5e7eb}
+label:last-child{border-bottom:0}
+em{display:block;font-style:normal;font-size:12px;color:#6b7280;margin-top:2px}
+.sw{appearance:none;-webkit-appearance:none;flex:none;position:relative;width:40px;height:22px;margin:0;border-radius:99px;background:#d4d4d8;cursor:pointer;transition:background .15s}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:transform .15s}
+.sw:checked::after{transform:translateX(18px)}
+.sw:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+.ok:checked{background:#16a34a}
+.warn:checked{background:#d97706}
+.info:checked{background:#2563eb}
+@media (prefers-reduced-motion:reduce){.sw,.sw::after{transition:none}}
+</style>
+</head>
+<body>
+<div class="panel">
+<label><span>自動回鏈來源<em>通過才會開啟</em></span><input class="sw ok" type="checkbox" checked></label>
+<label><span>標示待查核欄位<em>未確認的數字加黃底</em></span><input class="sw warn" type="checkbox" checked></label>
+<label><span>顯示頁面目錄<em>左側固定</em></span><input class="sw info" type="checkbox"></label>
+</div>
+</body>
+</html>

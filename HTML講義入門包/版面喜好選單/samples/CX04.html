@@ -1,0 +1,53 @@
+<!doctype html>
+<!-- 版面喜好選單範例 CX04｜傾斜按鈕｜來源：講師範例庫 output範例/元件庫/CX04-傾斜按鈕新配色.html；原始來源 https://github.com/uiverse-io/galaxy（改版自 GX08），作者 None，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  CX04 傾斜按鈕（新配色）
+  來源：https://github.com/uiverse-io/galaxy　Buttons/JkHuger_loud-baboon-15.html（GX08）
+  原作者：JkHuger　授權：MIT
+  移植：原作只有 CSS 變數 --rx/--ry/--s、沒有改變數的程式；補了約 6 行原生 JS（pointermove 設定傾斜），reduced-motion 下不傾斜。
+  2026-10-09 改版：依使用者備註（GX08「設計不錯但顏色的搭配還沒到很滿意」）；
+    保留傾斜與跟游標 3D 轉動；彩虹字拿掉，全頁只用一個強調色（青綠），一淺一深兩種配色，
+    淺色放在淺底、深色放在深底，各自對應實際使用的頁面底色。
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>傾斜按鈕新配色</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{display:grid;grid-template-columns:1fr 1fr;font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.pane{display:grid;place-content:center;justify-items:center;gap:16px;padding:12px}
+.pane small{font-size:12px}
+.lt{background:#eef1f5;color:#4b5563}
+.dk{background:#101826;color:#94a3b8}
+.btn{--hl:rgba(255,255,255,.0);position:relative;font:inherit;font-size:16px;font-weight:600;cursor:pointer;padding:12px 28px;line-height:24px;border-radius:10px;overflow:hidden;
+ transform:scale(var(--s,1)) perspective(600px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .12s}
+.btn::before{content:"";position:absolute;inset:0;background:radial-gradient(90px circle at var(--mx,50%) var(--my,50%),var(--hl),transparent);opacity:var(--o,0);transition:opacity .2s}
+.btn span{position:relative;background:var(--tx);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.btn:active{transition:.25s;transform:scale(.94)}
+.btn:focus-visible{outline:2px solid #0d9488;outline-offset:3px}
+.light{background:#fff;border:1px solid #cfd6df;--tx:linear-gradient(90deg,#0f766e,#0e9aa7);--hl:rgba(13,148,136,.14);box-shadow:0 1px 2px rgba(16,24,38,.12),0 6px 16px rgba(16,24,38,.12)}
+.dark{background:#1a2638;border:1px solid #2c3d55;--tx:linear-gradient(90deg,#5eead4,#7dd3fc);--hl:rgba(94,234,212,.2);box-shadow:0 1px 2px #000,0 6px 20px rgba(0,0,0,.5)}
+@media (prefers-reduced-motion:reduce){.btn,.btn::before{transition:none}}
+@media (max-width:420px){body{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pane lt"><button class="btn light"><span>立即註冊</span></button><small>淺色版・放在淺底頁面</small></div>
+<div class="pane dk"><button class="btn dark"><span>立即註冊</span></button><small>深色版・放在深底頁面</small></div>
+<script>
+var m=matchMedia("(prefers-reduced-motion: reduce)");
+document.querySelectorAll(".btn").forEach(function(b){
+  b.addEventListener("pointermove",function(e){
+    if(m.matches)return;
+    var r=b.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+    b.style.setProperty("--ry",(x-.5)*30+"deg");b.style.setProperty("--rx",-(y-.5)*30+"deg");
+    b.style.setProperty("--s","1.07");b.style.setProperty("--mx",x*100+"%");b.style.setProperty("--my",y*100+"%");b.style.setProperty("--o","1");
+  });
+  b.addEventListener("pointerleave",function(){["--ry","--rx","--s","--o"].forEach(function(k){b.style.removeProperty(k)})});
+});
+</script>
+</body>
+</html>

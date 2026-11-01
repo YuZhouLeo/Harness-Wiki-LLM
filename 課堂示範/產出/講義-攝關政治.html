@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>講義：文史</title>
+<style>
+/* 講義模板：文史形式。給學生的 AI 讀，要換內容只改 main 裡的文字，不用改這段。
+   版型規則：單欄、左標籤右內容、標題三層（主題 → 重點 → 條列）；藍字只給考點；黑白印也分得出層級。 */
+@page{size:A4;margin:13mm 15mm}
+:root{--ink:#231f20;--ink-2:#58595b;--tone:#C8561E;--tone-soft:#FDEBDD;--line:#e3b99c;--line-soft:#f1d9c6;--key:#C8561E;--page:#e9e7e3;
+  --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;--digit:"Bahnschrift","Segoe UI","SF Pro Display",sans-serif}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{margin:0}
+body{background:var(--page);color:var(--ink);font:400 10.6pt/1.55 var(--font)}
+h1,h2,h3,p,ul,ol{margin:0;padding:0}
+ul,ol{list-style:none}
+.sheet{width:210mm;min-height:297mm;margin:8mm auto;background:#fff;padding:13mm 15mm;display:flex;flex-direction:column}
+.memo{flex:1;margin-top:3mm;border:.5pt solid var(--line);padding:.5mm 2.5mm;color:var(--tone);font-size:9pt;font-weight:500;background:repeating-linear-gradient(transparent 0 6.7mm,var(--line-soft) 6.7mm 7mm) 0 6mm/100% 7mm repeat-y}
+.band{display:flex;align-items:center;gap:3mm;background:var(--tone);color:#fff;padding:2.6mm 3.5mm;border-radius:1.2mm}
+.band .no{font:600 12pt var(--digit)}
+.band h1{background:#fff;color:var(--tone);border-radius:1mm;padding:.2mm 4mm;font-size:19pt;font-weight:900;line-height:1.3}
+.band .yrs{font-weight:500}
+.band .meta{margin-left:auto;font-size:9pt}
+.goal{margin-top:2.2mm;font-weight:500}
+.head{margin-top:4.5mm;display:flex;align-items:center;gap:2mm;border-bottom:.6pt solid var(--tone);padding-bottom:.8mm}
+.tag{display:flex;align-items:center;gap:1.2mm;color:var(--tone)}
+.tag i{font-style:normal;background:var(--tone);color:#fff;border-radius:.8mm;font-size:8.5pt;font-weight:500;line-height:1.15;padding:.5mm .7mm;width:5.2mm;text-align:center}
+.tag b{font:600 25pt/1 var(--digit)}
+.head h2{font-size:15pt;font-weight:700;line-height:1.3;padding-left:2.5mm;border-left:.6pt solid var(--ink-2)}
+.rail{display:grid;grid-template-columns:24mm minmax(0,1fr);border-bottom:.3pt solid var(--tone)}
+.rail:first-of-type{border-top:.3pt solid var(--tone)}
+.head+.rail{border-top:0}
+.rail>h3{background:var(--tone-soft);color:var(--tone);text-align:center;font-size:11pt;font-weight:500;line-height:1.3;padding:1mm 1.2mm}
+.rail>h3 span{display:block;width:5mm;height:5mm;line-height:5mm;margin:0 auto .5mm;border-radius:50%;background:var(--tone);color:#fff;font:600 9.5pt/5mm var(--digit)}
+.rail>div{padding:.9mm 0 .9mm 3mm}
+.pts{counter-reset:p}
+.pts li{position:relative;padding:.25mm 0 .25mm 1.25em;counter-increment:p}
+.pts li::before{content:counter(p) ".";position:absolute;left:0;font-weight:500;color:var(--tone)}
+.k{color:var(--key);font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:10pt}
+th{background:var(--tone);color:#fff;font-weight:500;padding:.7mm 2mm;text-align:left;white-space:nowrap}
+td{border-bottom:.3pt solid var(--line);padding:.7mm 2mm;vertical-align:top}
+td:first-child{font-weight:700;white-space:nowrap;background:var(--tone-soft);color:var(--tone)}
+.years{display:grid;grid-template-columns:repeat(5,1fr);margin-top:4mm;border:.6pt solid var(--tone)}
+.years div{padding:.9mm 1.5mm;border-left:.3pt solid var(--line);font-size:9.5pt;line-height:1.4}
+.years div:first-child{border-left:0}
+.years b{display:block;font:600 11pt var(--digit);color:var(--tone)}
+.note{margin-top:3.2mm;border-left:1.5pt solid var(--tone);padding-left:2mm;font-size:9.8pt}
+.note b{color:var(--tone)}
+@media print{body{background:#fff}.sheet{width:auto;min-height:268mm;margin:0;padding:0}.sheet+.sheet{break-before:page}}
+</style>
+</head>
+<body>
+<!-- 內容開始：AI 只改下面 main 裡的文字。放不下就複製一整個 main 區塊當下一頁；「我的筆記」只留在最後一頁。 -->
+<main class="sheet">
+  <header class="band">
+    <span class="no">平安時代</span><h1>攝關政治</h1><span class="yrs">794～1192</span>
+    <span class="meta">日本史</span>
+  </header>
+  <p class="goal">平安時代（794～1192）中段 10～11 世紀，藤原北家靠外戚身分出任攝政、關白，掌握政權。</p>
+
+  <section>
+    <div class="head"><div class="tag"><i>主題</i><b>01</b></div><h2>遷都平安京</h2></div>
+    <div class="rail">
+      <h3><span>1</span>為什麼遷都</h3>
+      <div><ol class="pts">
+        <li>奈良時代佛教與政治糾纏太深（<span class="k">道鏡事件</span>），平城京又沒有大河可運輸。</li>
+        <li>桓武天皇 784 年遷<span class="k">長岡京</span>，負責的藤原種繼遇刺、早良親王冤死，怨靈之說四起。</li>
+        <li>794 年再遷<span class="k">平安京</span>：仿長安的棋盤格局，城內只准蓋東寺、西寺，靠淀川與琵琶湖通往各道。</li>
+      </ol></div>
+    </div>
+    <div class="rail">
+      <h3><span>2</span>帶來什麼</h3>
+      <div><ol class="pts">
+        <li>京都盆地人口密集、濕熱，流行病一來就辦<span class="k">御靈會</span>安撫怨靈，這是祇園祭的起源。</li>
+      </ol></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="head"><div class="tag"><i>主題</i><b>02</b></div><h2>外戚藤原氏掌權</h2></div>
+    <div class="rail">
+      <h3><span>1</span>三個詞</h3>
+      <div><table>
+        <tr><th>詞</th><th>意思</th></tr>
+        <tr><td>攝政</td><td>天皇年幼、生病等「有理由」時，代理天皇。</td></tr>
+        <tr><td>關白</td><td>天皇成年後「沒有特別理由」也在旁輔佐，實權比攝政更大。</td></tr>
+        <tr><td>外戚</td><td>天皇母親或皇后的娘家。藤原氏把女兒嫁進皇室，當上外戚。</td></tr>
+      </table></div>
+    </div>
+    <div class="rail">
+      <h3><span>2</span>經過</h3>
+      <div><ol class="pts">
+        <li>894 年<span class="k">菅原道真</span>建議停派遣唐使（財政、海難、唐衰落、日本文化已夠成熟），日本風文化抬頭。</li>
+        <li>道真被藤原氏排擠，冤死大宰府，後來被奉為天神（北野天滿宮）。</li>
+        <li><span class="k">藤原北家</span>以外戚身分出任攝政、關白，<span class="k">道長、賴通</span>父子獨攬約八十年。</li>
+      </ol></div>
+    </div>
+    <div class="rail">
+      <h3><span>3</span>制度與宗教</h3>
+      <div><ol class="pts">
+        <li>律令跟不上現實：以「格」「式」補充，增設攝政、關白、征夷大將軍、檢非違使等<span class="k">令外官</span>。</li>
+        <li>軍團改成<span class="k">健兒制</span>，開始允許土地私有。</li>
+        <li>佛教從鎮護國家，轉為貴族求現世利益的<span class="k">密教</span>（最澄天台宗、空海真言宗）。</li>
+        <li>佛教並和神道結合，形成<span class="k">本地垂迹說</span>。</li>
+      </ol></div>
+    </div>
+  </section>
+
+  <div class="years">
+    <div><b>784</b>遷長岡京</div>
+    <div><b>794</b>遷平安京</div>
+    <div><b>894</b>停派遣唐使</div>
+    <div><b>10～11 世紀</b>攝關政治</div>
+    <div><b>1192</b>源賴朝開創鎌倉幕府</div>
+  </div>
+  <p class="note"><b>記住：</b>平安時代 794 年桓武天皇遷都平安京（今京都），1192 年源賴朝開鎌倉幕府；攝關政治是中段 10～11 世紀。</p>
+  <div class="memo">我的筆記</div>
+</main>
+<!-- 內容結束 -->
+
+</body>
+</html>

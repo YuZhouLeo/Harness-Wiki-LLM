@@ -1,0 +1,1226 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTML 的 3 層示意</title>
+<style>
+/*
+ * layer_demo.css：HTML 3 層示意動畫的樣式。class 全部以 ld- 開頭，不碰全域樣式。
+ * 配色來自 S7 復古未來：深青 #0c2c35、米白 #f1e6c8、青 #2f6f74、橘 #e8894a（唯一強調色）。
+ * 畫面由 layer_demo.js 的 render(t) 決定，這裡不寫 transition 與 animation。
+ */
+.ld-root {
+  all: initial;
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1600 / 820;
+  overflow: hidden;
+  background: #0c2c35;
+  color: #f1e6c8;
+  font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  font-size: 28px;
+  line-height: 1.4;
+  --ld-mono: ui-monospace, Consolas, Menlo, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", monospace;
+  --ld-paper: #f1e6c8;
+  --ld-paper-2: #d6ccae;
+  --ld-ink: #123c46;
+  --ld-ink-2: #2c5560;
+  --ld-deep: #0c2c35;
+  --ld-night: #061a20;
+  --ld-teal: #2f6f74;
+  --ld-orange: #e8894a;
+  --ld-hit: #b8481a;
+}
+.ld-root *, .ld-root *::before, .ld-root *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-style: normal;
+  letter-spacing: normal;
+}
+
+.ld-stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1600px;
+  height: 820px;
+  overflow: hidden;
+  transform-origin: 0 0;
+  user-select: none;
+  -webkit-user-select: none;
+  background:
+    radial-gradient(2px 2px at 9% 6%, #f1e6c8 50%, transparent 52%),
+    radial-gradient(2px 2px at 33% 44%, #f1e6c8 50%, transparent 52%),
+    radial-gradient(2px 2px at 61% 8%, #f1e6c8 50%, transparent 52%),
+    radial-gradient(2px 2px at 83% 72%, #f1e6c8 50%, transparent 52%),
+    radial-gradient(2px 2px at 95% 12%, #f1e6c8 50%, transparent 52%),
+    radial-gradient(2px 2px at 4% 56%, #f1e6c8 50%, transparent 52%),
+    radial-gradient(2px 2px at 47% 70%, #f1e6c8 50%, transparent 52%),
+    #0c2c35;
+}
+.ld-orbit {
+  position: absolute;
+  right: -300px;
+  bottom: 30px;
+  width: 1300px;
+  height: 300px;
+  border: 3px solid rgba(241, 230, 200, .13);
+  border-radius: 50%;
+  transform: rotate(-12deg);
+}
+
+/* 上方段落燈 */
+.ld-lamps {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  top: 14px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.ld-lamp {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 56px;
+  padding: 0 26px 0 18px;
+  border: 2px solid var(--ld-teal);
+  border-radius: 999px;
+  color: var(--ld-paper-2);
+  font-size: 30px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.ld-lamp i {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid var(--ld-paper-2);
+  background: var(--ld-deep);
+}
+.ld-lamp.ld-done i { background: var(--ld-paper); border-color: var(--ld-paper); }
+.ld-lamp.ld-on {
+  background: var(--ld-paper);
+  border-color: var(--ld-paper);
+  color: var(--ld-ink);
+  box-shadow: 6px 6px 0 var(--ld-orange);
+}
+.ld-lamp.ld-on i { background: var(--ld-orange); border-color: var(--ld-orange); }
+.ld-stripes {
+  margin-left: auto;
+  width: 300px;
+  height: 26px;
+  transform: skewX(-18deg);
+  background: linear-gradient(180deg, #e8894a 0 8px, transparent 8px 10px, #f1e6c8 10px 16px, transparent 16px 18px, #2f6f74 18px 26px);
+}
+
+/* 左：程式碼面板 */
+.ld-code {
+  position: absolute;
+  left: 32px;
+  top: 88px;
+  width: 770px;
+  height: 536px;
+  background: var(--ld-night);
+  border: 3px solid var(--ld-paper);
+  border-radius: 6px 36px 6px 36px;
+  box-shadow: 10px 10px 0 var(--ld-teal);
+  overflow: hidden;
+}
+.ld-tabs {
+  display: flex;
+  height: 54px;
+  border-bottom: 3px solid var(--ld-paper);
+  background: var(--ld-deep);
+}
+.ld-tab {
+  padding: 0 28px;
+  font-size: 26px;
+  line-height: 51px;
+  font-weight: 700;
+  color: var(--ld-paper-2);
+  border-right: 3px solid var(--ld-teal);
+}
+.ld-tab.ld-on { background: var(--ld-paper); color: var(--ld-ink); }
+.ld-view { position: relative; height: 473px; overflow: hidden; }
+.ld-inner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 2px;
+  display: flex;
+  font-family: var(--ld-mono);
+  font-size: 26px;
+  line-height: 36px;
+}
+.ld-gut {
+  flex: none;
+  width: 56px;
+  padding-right: 14px;
+  text-align: right;
+  white-space: pre;
+  font-size: 24px;
+  color: #6f9a9c;
+}
+.ld-src {
+  flex: 1;
+  padding-left: 12px;
+  font: inherit;
+  white-space: pre;
+  color: var(--ld-paper);
+}
+.ld-caret {
+  display: inline-block;
+  width: 14px;
+  height: 30px;
+  margin-left: 1px;
+  vertical-align: -6px;
+  background: var(--ld-orange);
+  opacity: var(--ld-caret, 1);
+}
+.ld-c-tx { color: var(--ld-paper); }
+.ld-c-tg { color: var(--ld-orange); }
+.ld-c-at { color: #86cbbd; }
+.ld-c-st { color: var(--ld-paper-2); }
+.ld-c-pn { color: #8fb3a1; }
+.ld-c-cm { color: #8fb3a1; }
+
+/* 右：假瀏覽器 */
+.ld-browser {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 738px;
+  height: 536px;
+  transform-origin: 0 0;
+  border-radius: 6px 36px 6px 6px;
+  background: var(--ld-paper);
+  box-shadow: 10px 10px 0 var(--ld-orange);
+  overflow: hidden;
+}
+.ld-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 18px;
+  background: var(--ld-paper-2);
+  color: var(--ld-ink);
+}
+.ld-bar > i { flex: none; width: 16px; height: 16px; border-radius: 50%; background: var(--ld-ink); }
+.ld-bar > i:nth-child(1) { background: var(--ld-orange); }
+.ld-bar > i:nth-child(2) { background: var(--ld-paper); }
+.ld-bar > i:nth-child(3) { background: var(--ld-teal); }
+.ld-addr {
+  flex: none;
+  margin-left: 10px;
+  padding: 0 18px;
+  height: 36px;
+  line-height: 36px;
+  border-radius: 999px;
+  background: var(--ld-paper);
+  font-size: 24px;
+}
+.ld-badge {
+  margin-left: auto;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ld-ink);
+  white-space: nowrap;
+}
+.ld-vp {
+  position: relative;
+  width: 738px;
+  height: 484px;
+  overflow: hidden;
+  background: #fff;
+}
+.ld-host-box {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 410px;
+  height: 268.9px;
+  transform: scale(1.8);
+  transform-origin: 0 0;
+}
+.ld-host { width: 100%; height: 100%; pointer-events: none; }
+.ld-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 64px;
+  height: 64px;
+  transform-origin: 10.7px 5.3px;
+  visibility: hidden;
+}
+.ld-cursor svg { display: block; }
+.ld-ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: 6px solid var(--ld-orange);
+  border-radius: 50%;
+  visibility: hidden;
+}
+
+/* 等角疊層：平面內部座標 738×484 */
+.ld-plane {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 738px;
+  height: 484px;
+  transform-origin: 0 0;
+  visibility: hidden;
+}
+.ld-p0 {
+  background: var(--ld-night);
+  border: 8px solid var(--ld-paper);
+  box-shadow: 26px 26px 0 var(--ld-teal);
+}
+.ld-p1 {
+  background: var(--ld-paper);
+  box-shadow: 26px 26px 0 var(--ld-teal);
+}
+.ld-p2 {
+  background: rgba(12, 44, 53, .78);
+  border: 8px dashed var(--ld-paper);
+}
+.ld-plane.ld-on { box-shadow: 26px 26px 0 var(--ld-orange); }
+.ld-p0.ld-on, .ld-p2.ld-on { border-color: var(--ld-orange); }
+
+.ld-wf {
+  position: absolute;
+  border: 6px solid var(--ld-paper);
+  font-family: var(--ld-mono);
+  font-size: 58px;
+  line-height: 1;
+  color: var(--ld-paper);
+}
+.ld-wf span { position: absolute; left: 18px; top: 50%; margin-top: -29px; }
+.ld-wf-card { left: 20px; top: 14px; width: 682px; height: 440px; border-style: dashed; }
+.ld-wf-card span { left: auto; right: 24px; top: 58px; }
+.ld-wf-h2 { left: 54px; top: 136px; width: 614px; height: 92px; }
+.ld-wf-btn { left: 54px; top: 238px; width: 380px; height: 92px; }
+.ld-wf-p { left: 54px; top: 340px; width: 614px; height: 92px; }
+
+.ld-sw {
+  position: absolute;
+  padding-left: 22px;
+  font-size: 58px;
+  line-height: 92px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.ld-sw-h2 { left: 60px; top: 136px; width: 618px; height: 92px; background: var(--ld-ink); color: var(--ld-paper); border-radius: 4px 30px 4px 30px; }
+.ld-sw-btn { left: 60px; top: 238px; width: 340px; height: 92px; background: var(--ld-orange); color: var(--ld-deep); }
+.ld-sw-p { left: 60px; top: 340px; width: 618px; height: 92px; background: var(--ld-hit); color: #fff; }
+.ld-dot { position: absolute; width: 92px; height: 92px; border-radius: 50%; top: 24px; }
+.ld-dot-a { left: 430px; background: var(--ld-teal); }
+.ld-dot-b { left: 556px; background: var(--ld-deep); }
+
+.ld-ghost {
+  position: absolute;
+  padding-left: 24px;
+  border: 6px solid var(--ld-paper);
+  font-size: 58px;
+  line-height: 80px;
+  font-weight: 700;
+  color: var(--ld-paper);
+  white-space: nowrap;
+}
+.ld-ghost-btn { left: 44px; top: 82px; width: 320px; height: 92px; }
+.ld-ghost-p { left: 380px; top: 248px; width: 320px; height: 92px; border-color: var(--ld-orange); }
+.ld-wire { position: absolute; left: -8px; top: -8px; width: 738px; height: 484px; overflow: visible; }
+
+/* 疊層右邊的標籤 */
+.ld-lbl {
+  position: absolute;
+  left: 968px;
+  width: 590px;
+  height: 100px;
+  padding: 8px 20px;
+  border-radius: 6px 28px 6px 28px;
+  color: var(--ld-paper);
+  visibility: hidden;
+}
+.ld-lbl::before {
+  content: "";
+  position: absolute;
+  left: -48px;
+  top: 50px;
+  width: 48px;
+  border-top: 3px dashed var(--ld-paper);
+}
+.ld-lbl b { display: block; font-size: 38px; line-height: 46px; font-weight: 900; white-space: nowrap; }
+.ld-lbl span { display: block; font-size: 28px; line-height: 36px; white-space: nowrap; }
+.ld-lbl.ld-on {
+  background: var(--ld-paper);
+  color: var(--ld-ink);
+  box-shadow: 8px 8px 0 var(--ld-orange);
+}
+
+/* 套件牌子 */
+.ld-tag {
+  position: absolute;
+  left: 28px;
+  top: 0;
+  width: 436px;
+  height: 96px;
+  padding: 8px 18px;
+  background: var(--ld-paper);
+  color: var(--ld-ink);
+  border-radius: 6px 26px 6px 26px;
+  box-shadow: 8px 8px 0 var(--ld-orange);
+  visibility: hidden;
+}
+.ld-tag code {
+  display: block;
+  font-family: var(--ld-mono);
+  font-size: 26px;
+  line-height: 40px;
+  white-space: nowrap;
+  color: var(--ld-ink);
+}
+.ld-tag em { font-weight: 700; color: var(--ld-hit); }
+.ld-tag span { display: block; font-size: 24px; line-height: 32px; color: var(--ld-ink-2); }
+
+/* 下方大字幕 */
+.ld-cap {
+  position: absolute;
+  left: 32px;
+  right: 40px;
+  top: 642px;
+  height: 92px;
+  padding: 0 32px;
+  background: var(--ld-paper);
+  color: var(--ld-ink);
+  border-radius: 6px 44px 6px 44px;
+  box-shadow: 8px 8px 0 var(--ld-orange);
+  font-size: 44px;
+  line-height: 92px;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+}
+.ld-hit { color: var(--ld-hit); font-weight: 900; }
+
+/* 段落交界的賽車條紋 */
+.ld-sweep {
+  position: absolute;
+  left: 0;
+  top: -40px;
+  width: 460px;
+  height: 900px;
+  display: flex;
+  visibility: hidden;
+  pointer-events: none;
+}
+.ld-sweep i { flex: 1; }
+.ld-sweep i:nth-child(1) { background: var(--ld-orange); }
+.ld-sweep i:nth-child(2) { background: var(--ld-paper); }
+.ld-sweep i:nth-child(3) { background: var(--ld-teal); }
+
+/* 控制列 */
+.ld-ctl {
+  position: absolute;
+  left: 32px;
+  right: 40px;
+  top: 750px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.ld-btn, .ld-seg {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 54px;
+  border: 2px solid var(--ld-paper);
+  border-radius: 6px 18px 6px 18px;
+  background: var(--ld-ink);
+  color: var(--ld-paper);
+  font-family: inherit;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+.ld-btn:hover, .ld-seg:hover { border-color: var(--ld-orange); }
+.ld-btn:focus-visible, .ld-seg:focus-visible, .ld-range:focus-visible { outline: 4px solid var(--ld-orange); outline-offset: 2px; }
+.ld-play {
+  flex: none;
+  width: 76px;
+  display: grid;
+  place-items: center;
+  background: var(--ld-orange);
+  border-color: var(--ld-orange);
+  color: var(--ld-deep);
+}
+.ld-play:hover { border-color: var(--ld-paper); }
+.ld-play svg { display: block; }
+.ld-ico-pause { display: none; }
+.ld-playing .ld-ico-play { display: none; }
+.ld-playing .ld-ico-pause { display: inline; }
+.ld-restart { flex: none; width: 92px; }
+
+.ld-range {
+  flex: 1;
+  min-width: 0;
+  height: 54px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.ld-range::-webkit-slider-runnable-track {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e8894a var(--ld-p, 0%), #2f6f74 var(--ld-p, 0%));
+}
+.ld-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 30px;
+  height: 30px;
+  margin-top: -9px;
+  border-radius: 50%;
+  border: 3px solid var(--ld-deep);
+  background: var(--ld-paper);
+}
+.ld-range::-moz-range-track { height: 12px; border-radius: 6px; background: #2f6f74; }
+.ld-range::-moz-range-progress { height: 12px; border-radius: 6px; background: #e8894a; }
+.ld-range::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 3px solid var(--ld-deep);
+  background: var(--ld-paper);
+}
+.ld-time {
+  flex: none;
+  width: 160px;
+  font-family: var(--ld-mono);
+  font-size: 24px;
+  text-align: center;
+  color: var(--ld-paper);
+  white-space: nowrap;
+}
+.ld-segs { flex: none; display: flex; gap: 8px; }
+.ld-seg {
+  position: relative;
+  overflow: hidden;
+  width: 112px;
+  background: var(--ld-deep);
+  border-color: var(--ld-teal);
+}
+.ld-seg:nth-child(4) { width: 124px; }
+.ld-seg i {
+  position: absolute;
+  inset: 0;
+  background: var(--ld-teal);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.ld-seg span { position: relative; }
+.ld-seg.ld-on { border-color: var(--ld-orange); }
+
+/* 錄影模式：只留段落按鈕，當影片的進度條 */
+.ld-rec .ld-rec-hide { display: none; }
+.ld-rec .ld-segs { flex: 1; }
+.ld-rec .ld-seg { flex: 1; width: auto; }
+.ld-rec .ld-seg:nth-child(4) { width: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ld-sweep { display: none; }
+}
+
+
+html, body { margin: 0; background: #061a20; }
+body { color: #f1e6c8; font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; }
+.pg-main { box-sizing: border-box; width: min(100%, calc((100vh - 104px) * 1600 / 820)); min-width: 640px; margin: 0 auto; padding: 16px 16px 0; }
+.pg-head { display: flex; align-items: baseline; gap: 20px; margin-bottom: 10px; }
+.pg-head h1 { margin: 0; font-size: 26px; font-weight: 900; }
+.pg-head p { margin: 0; font-size: 16px; color: #d6ccae; }
+.pg-card { box-sizing: border-box; max-width: 960px; margin: 40px auto 32px; padding: 14px 16px; border-top: 1px solid #2f6f74; font-size: 13px; line-height: 1.7; color: #8fb3a1; }
+.pg-card h2 { margin: 0 0 4px; font-size: 13px; font-weight: 700; }
+.pg-card p { margin: 0; }
+</style>
+</head>
+<body>
+<main class="pg-main">
+  <header class="pg-head">
+    <h1>HTML 的 3 層：骨架、外觀、動作</h1>
+    <p>按空白鍵播放或暫停。拖時間條能看任何一秒。</p>
+  </header>
+  <div id="ld-box"></div>
+</main>
+<section class="pg-card" aria-label="產出卡">
+  <h2>產出卡</h2>
+  <p>受眾：沒有 HTML 概念的大學生。</p>
+  <p>目的：讓學生分得出骨架、外觀、動作，並知道套件住在這 3 層裡。</p>
+  <p>使用情境：教室投影或自己在電腦上開，看一次約 60 秒。</p>
+  <p>限制：單檔、離線可開，舞台字級不小於 24px，不用外部資源。</p>
+  <p>語調：教學，一句一件事，同一件事同一個詞。</p>
+  <p>證據：右邊的畫面是真的 DOM，打出來的字就是瀏覽器讀到的字；配色與視覺語言來自 S7 復古未來。</p>
+</section>
+<script>
+/*
+ * layer_demo.js：HTML 3 層示意動畫元件（骨架／外觀／動作／拆開看／套件，共 60 秒）
+ *
+ * 嵌入方式：
+ *   頁面載入 layer_demo.css 與 layer_demo.js，再呼叫：
+ *   const demo = LayerDemo.mount(document.querySelector('#box'), {autoplay: false});
+ *   demo.play(); demo.pause(); demo.toggle(); demo.restart(); demo.seek(30); demo.duration;
+ *
+ * 規則：
+ * - 畫面完全由 render(t) 決定，不用 CSS transition／animation，也不用 setTimeout。
+ *   play() 只用 requestAnimationFrame 更新 t，所以逐格錄影和重複 seek 的畫面相同。
+ * - 內部固定 1600×820，依容器寬度等比例縮放。class 全部以 ld- 開頭。
+ * - 元件不聽全域鍵盤。簡報自己接 P 鍵；空白鍵歸翻頁引擎。
+ * - 瀏覽器視窗裡是真的 DOM：Shadow DOM 裡的 innerHTML 與 <style> 就是已打出的字串。
+ * - mount 的選項 controls:false 只留段落按鈕當進度條（錄影用）。
+ */
+(function (global) {
+  'use strict';
+
+  const W = 1600;
+  const DURATION = 60;
+  const SEGS = [
+    { name: '骨架', from: 0, to: 13 },
+    { name: '外觀', from: 13, to: 29 },
+    { name: '動作', from: 29, to: 41 },
+    { name: '拆開看', from: 41, to: 51 },
+    { name: '套件', from: 51, to: 60 },
+  ];
+
+  const HTML_SRC = [
+    '<div class="card">',
+    '  <h2>F12 改的字，重新整理後會怎樣？</h2>',
+    '  <button>看答案</button>',
+    '  <p id="answer" hidden>',
+    '    變回去。你只改了自己的瀏覽器。',
+    '  </p>',
+    '</div>',
+  ].join('\n');
+
+  const CSS_SRC = [
+    '.card {',
+    '  background: #f1e6c8;',
+    '  padding: 18px;',
+    '  border-radius: 4px 24px 4px 24px;',
+    '  box-shadow: 8px 8px 0 #e8894a;',
+    '  font-family: sans-serif;',
+    '}',
+    'h2 {',
+    '  margin: 0 0 12px;',
+    '  color: #123c46;',
+    '  font-size: 22px;',
+    '}',
+    'button {',
+    '  background: #e8894a;',
+    '  border: 0;',
+    '  padding: 8px 20px;',
+    '  font: 700 16px sans-serif;',
+    '}',
+    '#answer {',
+    '  margin: 12px 0 0;',
+    '  color: #b8481a;',
+    '  font-weight: 700;',
+    '}',
+  ].join('\n');
+
+  const JS_SRC = [
+    'const btn = document.querySelector("button");',
+    'const ans = document.querySelector("#answer");',
+    '',
+    '// 按下按鈕，答案就出現',
+    'btn.onclick = () => {',
+    '  ans.hidden = false;',
+    '};',
+  ].join('\n');
+
+  const TYPE_HTML = [1.0, 10.5];
+  const TYPE_CSS = [13.8, 27.0];
+  const TYPE_JS = [29.8, 36.2];
+  const CURSOR_MOVE = [36.4, 37.8];
+  const CLICK = 38.0;
+
+  /* 等角疊層的座標（平面內部座標 738×484，和瀏覽器畫面同大）。 */
+  const PLANE = { a: 0.4, b: 0.2, c: -0.4, d: 0.2, e: 625 };
+  const PLANE_F = [386, 236, 86]; /* 骨架、外觀、動作的最終高度（f 越小越上面） */
+  const BROWSER = { x: 830, y: 88, bar: 52 };
+
+  /* 套件牌子由下層往上掉，先掉的不會被後掉的穿過。 */
+  const TAGS = [
+    { layer: 0, at: 51.6, top: 435 },
+    { layer: 1, at: 53.0, top: 285 },
+    { layer: 2, at: 54.4, top: 135 },
+  ];
+  const FINAL_CAP = 55.8;
+  const FALL = 0.7;
+  const BOUNCE = 0.3;
+
+  const CAP_BY_SEG = [
+    'HTML＝有哪些東西。像房子的鋼筋和隔間。',
+    'CSS＝長什麼樣。像油漆和裝潢。',
+    'JavaScript＝按了會怎樣。像水電和開關。',
+  ];
+  const CAP_SPLIT = ['改字找骨架；', '改樣子找外觀；', '改「按了會怎樣」找動作。'];
+  const CAP_PKG_ASK = '套件住在哪一層？看牌子掉到哪裡。';
+  const CAP_PKG_END = '套件不是第 4 層，是別人寫好的這 3 層。';
+  const HIGHLIGHTS = [[45.4, 47.0, 0], [47.0, 48.6, 1], [48.6, 51.0, 2]];
+
+  const CODE_LINE_H = 36;
+  const CODE_VISIBLE = 13;
+
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const prog = (t, a, b) => clamp((t - a) / (b - a), 0, 1);
+  const easeIO = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2);
+  const lerp = (a, b, p) => a + (b - a) * p;
+  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const fmtTime = (s) => {
+    const n = Math.floor(s);
+    return Math.floor(n / 60) + ':' + String(n % 60).padStart(2, '0');
+  };
+
+  /* 每個字打出來的時間：換行與規則結尾多停一下，整段對齊到 [start, end]。 */
+  function buildTiming(src, range) {
+    const cum = [0];
+    let sum = 0;
+    for (const ch of src.split('')) {
+      sum += ch === '\n' ? 3 : ch === '}' ? 6 : ch === ';' ? 3 : 1;
+      cum.push(sum);
+    }
+    return { src, range, cum: cum.map((v) => (v / sum) * (range[1] - range[0]) + range[0]) };
+  }
+
+  function typedCount(seq, t) {
+    const c = seq.cum;
+    if (t <= c[0]) return 0;
+    if (t >= c[c.length - 1]) return seq.src.length;
+    let lo = 0;
+    let hi = c.length - 1;
+    while (lo + 1 < hi) {
+      const m = (lo + hi) >> 1;
+      if (c[m] <= t) lo = m;
+      else hi = m;
+    }
+    return lo;
+  }
+
+  /* 語法顏色：每個字對應一個 class。tg 標籤／選擇器、at 屬性、st 值、pn 標點、cm 註解、tx 內文 */
+  function classesHTML(src) {
+    const cls = new Array(src.length).fill('tx');
+    const mark = (from, to, c) => { for (let i = from; i < to; i++) cls[i] = c; };
+    const re = /<\/?([a-zA-Z0-9]+)([^>]*)>/g;
+    let m;
+    while ((m = re.exec(src))) {
+      const start = m.index;
+      const nameAt = src.indexOf(m[1], start);
+      mark(start, nameAt, 'pn');
+      mark(nameAt, nameAt + m[1].length, 'tg');
+      const attrsAt = nameAt + m[1].length;
+      mark(attrsAt, start + m[0].length, 'pn');
+      const ar = /([a-zA-Z-]+)(="[^"]*")?/g;
+      let a;
+      while ((a = ar.exec(m[2]))) {
+        const at = attrsAt + a.index;
+        mark(at, at + a[1].length, 'at');
+        if (a[2]) mark(at + a[1].length + 1, at + a[0].length, 'st');
+      }
+    }
+    return cls;
+  }
+
+  function classesCSS(src) {
+    const cls = new Array(src.length).fill('tx');
+    let i = 0;
+    for (const line of src.split('\n')) {
+      const mark = (from, to, c) => { for (let k = from; k < to; k++) cls[i + k] = c; };
+      const colon = line.indexOf(':');
+      if (line.indexOf('{') >= 0) {
+        mark(0, line.length, 'tg');
+        mark(line.indexOf('{'), line.length, 'pn');
+      } else if (colon >= 0) {
+        mark(0, colon, 'at');
+        mark(colon, colon + 1, 'pn');
+        mark(colon + 1, line.length, 'st');
+        if (line.endsWith(';')) mark(line.length - 1, line.length, 'pn');
+      } else {
+        mark(0, line.length, 'pn');
+      }
+      i += line.length + 1;
+    }
+    return cls;
+  }
+
+  function classesJS(src) {
+    const cls = new Array(src.length).fill('tx');
+    const re = /\/\/[^\n]*|"[^"]*"|\b(?:const|false)\b|=>|[(){};.=]/g;
+    let m;
+    while ((m = re.exec(src))) {
+      const s = m[0];
+      const c = s.startsWith('//') ? 'cm' : s.startsWith('"') ? 'st' : /^[a-z]/.test(s) ? 'tg' : 'pn';
+      for (let k = 0; k < s.length; k++) cls[m.index + k] = c;
+    }
+    return cls;
+  }
+
+  const LANGS = [
+    { key: 'html', tab: 'HTML', seq: buildTiming(HTML_SRC, TYPE_HTML), cls: classesHTML(HTML_SRC) },
+    { key: 'css', tab: 'CSS', seq: buildTiming(CSS_SRC, TYPE_CSS), cls: classesCSS(CSS_SRC) },
+    { key: 'js', tab: 'JavaScript', seq: buildTiming(JS_SRC, TYPE_JS), cls: classesJS(JS_SRC) },
+  ];
+
+  function codeMarkup(lang, n) {
+    const { src } = lang.seq;
+    let out = '';
+    let i = 0;
+    while (i < n) {
+      let j = i + 1;
+      while (j < n && lang.cls[j] === lang.cls[i]) j++;
+      out += '<span class="ld-c-' + lang.cls[i] + '">' + esc(src.slice(i, j)) + '</span>';
+      i = j;
+    }
+    return out + '<span class="ld-caret"></span>';
+  }
+
+  /* 只套到最後一個寫完的宣告，打到一半的值不會讓畫面閃。 */
+  function appliedCss(typed) {
+    return typed.slice(0, Math.max(typed.lastIndexOf(';'), typed.lastIndexOf('}')) + 1);
+  }
+
+  const TEMPLATE = `
+<div class="ld-stage">
+  <div class="ld-orbit"></div>
+  <div class="ld-lamps">
+    <div class="ld-lamp" data-lamp="0"><i></i><span>骨架 HTML</span></div>
+    <div class="ld-lamp" data-lamp="1"><i></i><span>外觀 CSS</span></div>
+    <div class="ld-lamp" data-lamp="2"><i></i><span>動作 JavaScript</span></div>
+    <div class="ld-stripes"></div>
+  </div>
+
+  <div class="ld-code">
+    <div class="ld-tabs">
+      <div class="ld-tab" data-tab="0">HTML</div>
+      <div class="ld-tab" data-tab="1">CSS</div>
+      <div class="ld-tab" data-tab="2">JavaScript</div>
+    </div>
+    <div class="ld-view">
+      <div class="ld-inner">
+        <div class="ld-gut"></div>
+        <pre class="ld-src"></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="ld-browser">
+    <div class="ld-bar">
+      <i></i><i></i><i></i>
+      <div class="ld-addr">卡片.html</div>
+      <div class="ld-badge"></div>
+    </div>
+    <div class="ld-vp">
+      <div class="ld-host-box"><div class="ld-host"></div></div>
+      <div class="ld-ring"></div>
+      <div class="ld-cursor"><svg viewBox="0 0 24 24" width="64" height="64" aria-hidden="true"><path d="M4 2 L4 20 L9 15.5 L12.5 22.5 L15.5 21 L12 14 L19 14 Z" fill="#fff" stroke="#0c2c35" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+    </div>
+  </div>
+
+  <div class="ld-plane ld-p0">
+    <div class="ld-wf ld-wf-card"><span>&lt;div&gt;</span></div>
+    <div class="ld-wf ld-wf-h2"><span>&lt;h2&gt;</span></div>
+    <div class="ld-wf ld-wf-btn"><span>&lt;button&gt;</span></div>
+    <div class="ld-wf ld-wf-p"><span>&lt;p&gt;</span></div>
+  </div>
+  <div class="ld-plane ld-p1">
+    <div class="ld-sw ld-sw-h2">粗黑體 22px</div>
+    <div class="ld-sw ld-sw-btn">橘色</div>
+    <div class="ld-sw ld-sw-p">深橘色的字</div>
+    <div class="ld-dot ld-dot-a"></div>
+    <div class="ld-dot ld-dot-b"></div>
+  </div>
+  <div class="ld-plane ld-p2">
+    <div class="ld-ghost ld-ghost-btn">按下</div>
+    <div class="ld-ghost ld-ghost-p">答案出現</div>
+    <svg class="ld-wire" viewBox="0 0 738 484" aria-hidden="true">
+      <path d="M366 136 H560 V210" fill="none" stroke="#e8894a" stroke-width="10" stroke-dasharray="26 16"/>
+      <path d="M536 210 L560 244 L584 210 Z" fill="#e8894a"/>
+      <path transform="translate(240 98) scale(5)" d="M4 2 L4 20 L9 15.5 L12.5 22.5 L15.5 21 L12 14 L19 14 Z" fill="#fff" stroke="#0c2c35" stroke-width="1.4" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <div class="ld-lbl" data-lbl="2" style="top:184px"><b>動作 JavaScript</b><span>改「按了會怎樣」找它</span></div>
+  <div class="ld-lbl" data-lbl="1" style="top:334px"><b>外觀 CSS</b><span>改樣子找它</span></div>
+  <div class="ld-lbl" data-lbl="0" style="top:484px"><b>骨架 HTML</b><span>改字找它</span></div>
+
+  <div class="ld-tag" data-tag="0"><code>&lt;<em>div</em> class="uiverse-卡片"&gt;</code><span>小元件的骨架</span></div>
+  <div class="ld-tag" data-tag="1"><code>&lt;<em>link</em> href="katex.css"&gt;</code><span>數學式的外觀</span></div>
+  <div class="ld-tag" data-tag="2"><code>&lt;<em>script</em> src="chart.js"&gt;</code><span>畫圖表的動作</span></div>
+
+  <div class="ld-cap" aria-live="off"></div>
+  <div class="ld-sweep"><i></i><i></i><i></i></div>
+
+  <div class="ld-ctl">
+    <button type="button" class="ld-btn ld-play ld-rec-hide" aria-label="播放"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path class="ld-ico-play" d="M6 3 L21 12 L6 21 Z" fill="currentColor"/><path class="ld-ico-pause" d="M5 3 H10 V21 H5 Z M14 3 H19 V21 H14 Z" fill="currentColor"/></svg></button>
+    <button type="button" class="ld-btn ld-restart ld-rec-hide">重播</button>
+    <input type="range" class="ld-range ld-rec-hide" min="0" max="${DURATION}" step="0.05" value="0" aria-label="時間">
+    <div class="ld-time ld-rec-hide"></div>
+    <div class="ld-segs">
+      ${SEGS.map((s, i) => `<button type="button" class="ld-seg" data-seg="${i}"><i></i><span>${s.name}</span></button>`).join('')}
+    </div>
+  </div>
+</div>`;
+
+  function mount(el, opts) {
+    const options = opts || {};
+    const reduced = !!(global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    el.textContent = '';
+    const root = document.createElement('div');
+    root.className = 'ld-root' + (options.controls === false ? ' ld-rec' : '');
+    root.innerHTML = TEMPLATE;
+    el.appendChild(root);
+
+    const $ = (sel) => root.querySelector(sel);
+    const $$ = (sel) => Array.from(root.querySelectorAll(sel));
+    const stage = $('.ld-stage');
+    const dom = {
+      code: $('.ld-code'),
+      inner: $('.ld-inner'),
+      gut: $('.ld-gut'),
+      src: $('.ld-src'),
+      tabs: $$('.ld-tab'),
+      lamps: $$('.ld-lamp'),
+      browser: $('.ld-browser'),
+      badge: $('.ld-badge'),
+      vp: $('.ld-vp'),
+      cursor: $('.ld-cursor'),
+      ring: $('.ld-ring'),
+      planes: [$('.ld-p0'), $('.ld-p1'), $('.ld-p2')],
+      lbls: [$('[data-lbl="0"]'), $('[data-lbl="1"]'), $('[data-lbl="2"]')],
+      tags: [$('[data-tag="0"]'), $('[data-tag="1"]'), $('[data-tag="2"]')],
+      cap: $('.ld-cap'),
+      sweep: $('.ld-sweep'),
+      play: $('.ld-play'),
+      range: $('.ld-range'),
+      time: $('.ld-time'),
+      segs: $$('.ld-seg'),
+    };
+
+    /* 瀏覽器畫面：真的 Shadow DOM。lang 留空，瀏覽器才會用它沒設定過的預設字型。
+       外層的 div 用 padding 模擬 body 預設的 8px 邊界。 */
+    const host = $('.ld-host');
+    host.setAttribute('lang', '');
+    host.inert = true;
+    const shadow = host.attachShadow({ mode: 'open' });
+    const baseStyle = document.createElement('style');
+    baseStyle.textContent = ':host{all:initial;display:block;background:#fff;width:100%;height:100%;overflow:hidden}';
+    const liveStyle = document.createElement('style');
+    const page = document.createElement('div');
+    page.style.padding = '8px';
+    shadow.append(baseStyle, liveStyle, page);
+
+    let cur = 0;
+    let playing = false;
+    let rafId = 0;
+    let lastTs = 0;
+    let lastCode = '';
+    let lastPage = null;
+    let lastCss = null;
+    let lastCap = '';
+    let target = { x: 110, y: 200 };
+
+    function renderCode(t) {
+      const idx = t < SEGS[1].from ? 0 : t < SEGS[2].from ? 1 : 2;
+      const lang = LANGS[idx];
+      const n = typedCount(lang.seq, t);
+      const key = idx + ':' + n;
+      if (key !== lastCode) {
+        lastCode = key;
+        dom.src.innerHTML = codeMarkup(lang, n);
+        const lineCount = lang.seq.src.slice(0, n).split('\n').length;
+        let g = '';
+        for (let i = 1; i <= lineCount; i++) g += i + '\n';
+        dom.gut.textContent = g;
+        dom.tabs.forEach((tab, i) => tab.classList.toggle('ld-on', i === idx));
+      }
+      const typedText = lang.seq.src.slice(0, n);
+      const lineStart = typedText.lastIndexOf('\n') + 1;
+      const line = typedText.split('\n').length - 1;
+      const endOfLine = lang.seq.src.indexOf('\n', lineStart);
+      const lineLen = (endOfLine < 0 ? lang.seq.src.length : endOfLine) - lineStart;
+      const frac = lineLen ? (n - lineStart) / lineLen : 0;
+      const top = Math.max(0, line + frac - (CODE_VISIBLE - 2)) * CODE_LINE_H;
+      dom.inner.style.transform = 'translateY(' + (-top).toFixed(2) + 'px)';
+      const typing = t >= lang.seq.range[0] && t < lang.seq.range[1];
+      dom.src.style.setProperty('--ld-caret', typing || Math.floor(t * 1.6) % 2 === 0 ? '1' : '0');
+
+      const out = prog(t, 41, 41.7);
+      dom.code.style.opacity = String(1 - out);
+      dom.code.style.visibility = out >= 1 ? 'hidden' : 'visible';
+      dom.code.style.transform = 'translateX(' + (-80 * easeIO(out)).toFixed(2) + 'px)';
+    }
+
+    function renderPage(t) {
+      const pageHtml = HTML_SRC.slice(0, typedCount(LANGS[0].seq, t));
+      if (pageHtml !== lastPage) {
+        lastPage = pageHtml;
+        page.innerHTML = pageHtml;
+      }
+      const css = appliedCss(CSS_SRC.slice(0, typedCount(LANGS[1].seq, t)));
+      if (css !== lastCss) {
+        lastCss = css;
+        liveStyle.textContent = css;
+      }
+      const ans = page.querySelector('#answer');
+      if (ans) ans.hidden = t < CLICK;
+      const btn = page.querySelector('button');
+      if (btn) btn.style.transform = t >= CLICK - 0.15 && t < CLICK + 0.1 ? 'translateY(2px)' : '';
+      dom.badge.textContent = t < SEGS[1].from ? '只有 HTML' : t < SEGS[2].from ? 'HTML＋CSS' : 'HTML＋CSS＋JavaScript';
+      return btn;
+    }
+
+    function renderCursor(t, btn) {
+      const on = t >= CURSOR_MOVE[0] - 0.2 && t < 41;
+      dom.cursor.style.visibility = on ? 'visible' : 'hidden';
+      if (on) {
+        if (btn) {
+          const vr = dom.vp.getBoundingClientRect();
+          const br = btn.getBoundingClientRect();
+          const s = vr.width / 738;
+          if (s > 0) {
+            target = { x: (br.left + br.width / 2 - vr.left) / s, y: (br.top + br.height / 2 - vr.top) / s };
+          }
+        }
+        const p = easeIO(prog(t, CURSOR_MOVE[0], CURSOR_MOVE[1]));
+        /* 按完往右移開，不擋按鈕和答案。 */
+        const away = easeIO(prog(t, CLICK + 0.5, CLICK + 1.2));
+        const x = lerp(620, target.x, p) + 300 * away;
+        const y = lerp(410, target.y, p) - 40 * away;
+        const press = t >= CLICK - 0.15 && t < CLICK + 0.1 ? 0.86 : 1;
+        dom.cursor.style.transform = 'translate(' + (x - 10.7).toFixed(2) + 'px,' + (y - 5.3).toFixed(2) + 'px) scale(' + press + ')';
+      }
+      const r = prog(t, CLICK, CLICK + 0.55);
+      const ringOn = t >= CLICK && r < 1;
+      dom.ring.style.visibility = ringOn ? 'visible' : 'hidden';
+      if (ringOn) {
+        const size = lerp(24, 150, r);
+        dom.ring.style.transform = 'translate(' + (target.x - size / 2).toFixed(2) + 'px,' + (target.y - size / 2).toFixed(2) + 'px)';
+        dom.ring.style.width = dom.ring.style.height = size.toFixed(2) + 'px';
+        dom.ring.style.opacity = String(1 - r);
+      }
+    }
+
+    function renderStack(t) {
+      const tilt = easeIO(prog(t, 41, 42.4));
+      const fade = prog(t, 42.0, 42.5);
+      const lift = easeIO(prog(t, 42.5, 44.3));
+
+      const P = PLANE;
+      const be = P.e - P.c * BROWSER.bar;
+      const bf = PLANE_F[0] - P.d * BROWSER.bar;
+      dom.browser.style.transform = 'matrix(' + [
+        lerp(1, P.a, tilt), lerp(0, P.b, tilt), lerp(0, P.c, tilt), lerp(1, P.d, tilt),
+        lerp(BROWSER.x, be, tilt), lerp(BROWSER.y, bf, tilt),
+      ].map((v) => v.toFixed(4)).join(',') + ')';
+      dom.browser.style.opacity = String(1 - fade);
+      dom.browser.style.visibility = fade >= 1 ? 'hidden' : 'visible';
+
+      let hi = -1;
+      for (const h of HIGHLIGHTS) if (t >= h[0] && t < h[1]) hi = h[2];
+      for (const tag of TAGS) {
+        const land = tag.at + FALL;
+        if (t >= land && t < land + 1.1) hi = tag.layer;
+      }
+
+      dom.planes.forEach((plane, i) => {
+        const f = lerp(PLANE_F[0], PLANE_F[i], lift);
+        plane.style.transform = 'matrix(' + [P.a, P.b, P.c, P.d, P.e, f.toFixed(2)].join(',') + ')';
+        plane.style.opacity = String(fade);
+        plane.style.visibility = fade <= 0 ? 'hidden' : 'visible';
+        plane.classList.toggle('ld-on', hi === i);
+      });
+
+      dom.lbls.forEach((lbl, i) => {
+        const p = prog(t, 44.1 + i * 0.4, 44.5 + i * 0.4);
+        lbl.style.opacity = String(p);
+        lbl.style.visibility = p <= 0 ? 'hidden' : 'visible';
+        lbl.style.transform = 'translateX(' + (30 * (1 - p)).toFixed(2) + 'px)';
+        lbl.classList.toggle('ld-on', hi === i);
+      });
+
+      dom.tags.forEach((el2, i) => {
+        const tag = TAGS[i];
+        const on = t >= tag.at;
+        el2.style.visibility = on ? 'visible' : 'hidden';
+        if (!on) return;
+        const p = prog(t, tag.at, tag.at + FALL);
+        const b = prog(t, tag.at + FALL, tag.at + FALL + BOUNCE);
+        const y = lerp(-140, tag.top, p * p) - (b > 0 && b < 1 ? Math.sin(Math.PI * b) * 16 : 0);
+        el2.style.transform = 'translateY(' + y.toFixed(2) + 'px) rotate(' + ((1 - p) * -5).toFixed(2) + 'deg)';
+      });
+      return hi;
+    }
+
+    function renderLamps(t) {
+      const seg = segIndex(t);
+      dom.lamps.forEach((lamp, i) => {
+        lamp.classList.toggle('ld-on', seg === i || seg >= 3);
+        lamp.classList.toggle('ld-done', seg < 3 && seg > i);
+      });
+      dom.segs.forEach((b, i) => {
+        const s = SEGS[i];
+        b.classList.toggle('ld-on', seg === i);
+        b.firstElementChild.style.transform = 'scaleX(' + prog(t, s.from, s.to).toFixed(4) + ')';
+      });
+    }
+
+    function renderCaption(t, hi) {
+      const seg = segIndex(t);
+      let html;
+      if (seg < 3) html = CAP_BY_SEG[seg];
+      else if (seg === 3) html = CAP_SPLIT.map((c, i) => '<span class="' + (hi === i ? 'ld-hit' : '') + '">' + c + '</span>').join('');
+      else html = t >= FINAL_CAP ? CAP_PKG_END : CAP_PKG_ASK;
+      if (html !== lastCap) {
+        lastCap = html;
+        dom.cap.innerHTML = html;
+      }
+    }
+
+    function renderSweep(t) {
+      let x = null;
+      for (const at of [SEGS[1].from, SEGS[2].from]) {
+        if (t >= at - 0.35 && t < at + 0.35) x = lerp(-700, 1760, (t - at + 0.35) / 0.7);
+      }
+      dom.sweep.style.visibility = x === null ? 'hidden' : 'visible';
+      if (x !== null) dom.sweep.style.transform = 'translateX(' + x.toFixed(2) + 'px) skewX(-18deg)';
+    }
+
+    function renderCtl(t) {
+      dom.range.value = String(t);
+      dom.range.style.setProperty('--ld-p', ((t / DURATION) * 100).toFixed(2) + '%');
+      dom.time.textContent = fmtTime(t) + ' / ' + fmtTime(DURATION);
+      root.classList.toggle('ld-playing', playing);
+      dom.play.setAttribute('aria-label', playing ? '暫停' : '播放');
+    }
+
+    function render(t) {
+      renderCode(t);
+      const btn = renderPage(t);
+      renderCursor(t, btn);
+      const hi = renderStack(t);
+      renderLamps(t);
+      renderCaption(t, hi);
+      renderSweep(t);
+      renderCtl(t);
+    }
+
+    function segIndex(t) {
+      for (let i = 0; i < SEGS.length; i++) if (t < SEGS[i].to) return i;
+      return SEGS.length - 1;
+    }
+
+    function tick(ts) {
+      if (!playing) return;
+      const dt = Math.min((ts - lastTs) / 1000, 0.1);
+      lastTs = ts;
+      cur = Math.min(DURATION, cur + dt);
+      if (cur >= DURATION) playing = false;
+      render(cur);
+      if (playing) rafId = requestAnimationFrame(tick);
+    }
+
+    const api = {
+      duration: DURATION,
+      play() {
+        if (playing) return;
+        if (cur >= DURATION) cur = 0;
+        playing = true;
+        lastTs = performance.now();
+        render(cur);
+        rafId = requestAnimationFrame(tick);
+      },
+      pause() {
+        playing = false;
+        cancelAnimationFrame(rafId);
+        render(cur);
+      },
+      toggle() {
+        if (playing) api.pause();
+        else api.play();
+      },
+      restart() {
+        cur = 0;
+        render(cur);
+        if (!playing) api.play();
+      },
+      seek(t) {
+        cur = clamp(Number(t) || 0, 0, DURATION);
+        render(cur);
+      },
+    };
+
+    /* 控制列：滑鼠點完就放開焦點，空白鍵才會回到翻頁引擎；鍵盤操作和點擊不往外傳，簡報不會跟著翻頁。 */
+    const ctl = $('.ld-ctl');
+    const releaseFocus = (e) => { if (e.detail > 0 && e.currentTarget.blur) e.currentTarget.blur(); };
+    ['click', 'pointerdown', 'mousedown', 'touchstart'].forEach((type) => {
+      ctl.addEventListener(type, (e) => e.stopPropagation());
+    });
+    ctl.addEventListener('keydown', (e) => e.stopPropagation());
+    dom.play.addEventListener('click', (e) => { api.toggle(); releaseFocus(e); });
+    $('.ld-restart').addEventListener('click', (e) => { api.restart(); releaseFocus(e); });
+    dom.range.addEventListener('input', () => {
+      const value = dom.range.value; /* pause 會重畫並改回舊值，先讀 */
+      api.pause();
+      api.seek(value);
+    });
+    dom.range.addEventListener('pointerup', () => dom.range.blur());
+    dom.segs.forEach((b, i) => {
+      b.addEventListener('click', (e) => { api.seek(SEGS[i].from); releaseFocus(e); });
+    });
+
+    function fit() {
+      const w = root.clientWidth;
+      stage.style.transform = 'scale(' + (w > 0 ? w / W : 1) + ')';
+    }
+    fit();
+    let ro = null;
+    if (global.ResizeObserver) {
+      ro = new ResizeObserver(fit);
+      ro.observe(root);
+    }
+
+    api.destroy = () => {
+      api.pause();
+      if (ro) ro.disconnect();
+      root.remove();
+    };
+
+    render(0);
+    if (options.autoplay && !reduced) api.play();
+    return api;
+  }
+
+  global.LayerDemo = { mount };
+})(window);
+
+</script>
+<script>
+(function () {
+  var api = LayerDemo.mount(document.getElementById('ld-box'), { autoplay: true });
+  window.layerDemoApi = api;
+  document.addEventListener('keydown', function (e) {
+    if (e.code !== 'Space' || e.repeat) return;
+    e.preventDefault();
+    api.toggle();
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,728 @@
+<!doctype html>
+<!-- 版面喜好選單範例 I03｜清單原地展開｜來源：講師範例庫 output範例/UI互動技巧/03-共享元素無縫展開.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>03 · 共享元素無縫展開</title>
+<script>
+  // 先於 CSS 套用 embed 模式，避免閃一下完整版面
+  try { if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed'); } catch (e) {}
+</script>
+<style>
+  :root {
+    --bg:#f4f3ef; --surface:#ffffff; --text:#1c1b19; --muted:#6b6862; --line:#e4e1da;
+    --accent:#5b4bff; --accent-2:#00b3a4;
+    --font:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Consolas,"Microsoft JhengHei",monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+      --accent:#8b7dff; --accent-2:#2fd6c6;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+    --accent:#8b7dff; --accent-2:#2fd6c6;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: var(--font); line-height: 1.6;
+    overflow-x: hidden;
+  }
+  main { max-width: 920px; margin: 0 auto; padding: 0 16px 64px; }
+
+  /* ---------- header ---------- */
+  header { padding: 44px 0 8px; position: relative; }
+  .kicker { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; letter-spacing: .08em; }
+  .kicker .no { font-family: var(--mono); font-size: 13px; color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 1px 10px; }
+  h1 { margin: 10px 0 6px; font-size: clamp(28px, 6vw, 44px); line-height: 1.15; letter-spacing: -.01em; font-weight: 800; }
+  h1 .n { color: var(--accent); font-family: var(--mono); font-weight: 600; margin-right: .3em; }
+  header p { margin: 0; max-width: 40em; color: var(--muted); font-size: 16px; }
+  .theme-btn {
+    position: absolute; right: 0; top: 44px; font: inherit; font-size: 13px; color: var(--muted);
+    background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; cursor: pointer;
+  }
+  .theme-btn:hover { color: var(--text); border-color: var(--muted); }
+
+  /* ---------- stage ---------- */
+  .stage {
+    margin-top: 28px; padding: 40px 0 28px; border-radius: 28px; border: 1px solid var(--line);
+    display: flex; flex-direction: column; align-items: center; gap: 18px; position: relative; overflow: hidden;
+    background:
+      radial-gradient(520px 360px at 50% 40%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+      radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text) 13%, transparent) 1px, transparent 1.4px) 0 0/22px 22px,
+      var(--bg);
+  }
+  .phone {
+    width: min(390px, 100vw - 32px); height: 720px; border-radius: 44px; flex: none;
+    background: var(--surface); border: 1px solid var(--line);
+    box-shadow: 0 30px 60px -20px rgba(20,18,40,.28), 0 8px 20px -8px rgba(20,18,40,.18);
+    position: relative; overflow: hidden; isolation: isolate;
+  }
+  .phone::before { /* 瀏海 */
+    content: ""; position: absolute; top: 10px; left: 50%; width: 104px; height: 28px; margin-left: -52px;
+    border-radius: 99px; background: #0c0c0e; z-index: 9; pointer-events: none;
+  }
+
+  /* 背景列表（會跟著縮小） */
+  .screen {
+    position: absolute; inset: 0; display: flex; flex-direction: column; overflow: hidden;
+    background: color-mix(in srgb, var(--bg) 70%, var(--surface));
+    border-radius: 43px; transform-origin: 50% 50%; will-change: transform; z-index: 1;
+  }
+  .status { height: 50px; flex: none; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 30px 6px; font-size: 14px; font-weight: 700; }
+  .status i { font-style: normal; font-size: 11px; letter-spacing: 2px; }
+  .appbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 26px 10px; flex: none; }
+  .appbar h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: .02em; }
+  .appbar small { display: block; color: var(--muted); font-size: 12px; font-weight: 500; letter-spacing: .04em; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; font-weight: 700; color: #fff;
+    background: linear-gradient(140deg, var(--accent), var(--accent-2)); }
+
+  .feed {
+    flex: 1; min-height: 0; overflow-y: auto; position: relative;
+    padding: 6px 24px 30px; display: flex; flex-direction: column; gap: 18px;
+    touch-action: pan-y; overscroll-behavior: contain; scrollbar-width: none;
+  }
+  .feed::-webkit-scrollbar { display: none; }
+
+  .trip {
+    position: relative; flex: none; width: 100%; aspect-ratio: 390 / 296; border-radius: 26px; overflow: hidden;
+    cursor: pointer; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none;
+    box-shadow: 0 14px 28px -14px rgba(20,16,40,.45);
+  }
+  .trip .cover { position: absolute; inset: 0; transition: filter .15s; }
+  .trip.down .cover { filter: brightness(.88); }
+  .trip:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+  .trip-text { position: absolute; left: 20px; right: 20px; bottom: 18px; color: #fff; pointer-events: none; }
+
+  /* 封面：卡片與詳情共用同一份標記，內部尺寸一律用 cqw，等比縮放後完全一致 */
+  .cover { position: relative; overflow: hidden; container-type: inline-size; background: #333; }
+  .cover svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .cover .shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,6,16,.62) 0%, rgba(8,6,16,.18) 42%, rgba(8,6,16,0) 62%); }
+  .cover .chip {
+    position: absolute; top: 4.6cqw; right: 4.6cqw; font-size: 3.1cqw; font-weight: 700; letter-spacing: .08em; color: #fff;
+    padding: .7cqw 2.8cqw; border-radius: 99px; background: rgba(255,255,255,.22); border: .26cqw solid rgba(255,255,255,.4);
+    background: rgba(14,10,28,.34); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); white-space: nowrap;
+  }
+
+  /* 共享文字：兩邊同字串、nowrap，寬度比例＝字級比例 */
+  .t-sub, .d-sub { display: block; width: max-content; white-space: nowrap; letter-spacing: .06em; font-weight: 600; opacity: .9; transform-origin: 0 0; }
+  .t-title, .d-title { display: block; width: max-content; white-space: nowrap; font-weight: 800; line-height: 1.25; letter-spacing: .02em; transform-origin: 0 0; text-shadow: 0 2px 12px rgba(0,0,0,.28); }
+  .t-sub { font-size: 12px; line-height: 1.5; margin-bottom: 2px; }
+  .t-title { font-size: 23px; }
+  .d-sub { font-size: 13.5px; line-height: 1.5; margin-bottom: 3px; }
+  .d-title { font-size: 30px; }
+
+  /* 遮罩與詳情層 */
+  .scrim { position: absolute; inset: 0; background: #07060c; opacity: 0; pointer-events: none; z-index: 2; }
+  .detail { position: absolute; inset: 0; z-index: 3; visibility: hidden; pointer-events: none; }
+  .detail.on { visibility: visible; pointer-events: auto; }
+  .shell {
+    position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden;
+    background: var(--surface); transform-origin: 0 0; will-change: transform;
+    box-shadow: 0 22px 48px -16px rgba(10,8,24,.5);
+  }
+  .inner { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform-origin: 0 0; will-change: transform; }
+  .d-scroll { position: absolute; inset: 0; overflow-y: hidden; overscroll-behavior: contain; touch-action: pan-y; scrollbar-width: none; }
+  .d-scroll::-webkit-scrollbar { display: none; }
+  .d-content { position: relative; will-change: transform; }
+  .d-cover { width: 100%; aspect-ratio: 390 / 296; transform-origin: 0 0; will-change: transform; }
+  .d-head { position: absolute; left: 0; top: 0; width: 100%; aspect-ratio: 390 / 296; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+  .d-head.drag { cursor: grabbing; }
+  .d-text { position: absolute; left: 24px; right: 24px; bottom: 22px; color: #fff; pointer-events: none; }
+  .d-sub, .d-title { will-change: transform; }
+
+  .d-btn {
+    position: absolute; top: 52px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.35);
+    display: grid; place-items: center; cursor: pointer; color: #fff; padding: 0; z-index: 2;
+    background: rgba(16,14,24,.34); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+  .d-btn svg { width: 20px; height: 20px; }
+  .d-back { left: 18px; }
+  .d-fav { right: 18px; }
+  .d-fav[aria-pressed="true"] svg { fill: #ff5d7a; stroke: #ff5d7a; }
+  .d-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+  .d-body { padding: 20px 24px 44px; will-change: transform, opacity; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat { background: color-mix(in srgb, var(--text) 5%, transparent); border-radius: 14px; padding: 9px 12px; }
+  .stat small { display: block; font-size: 11px; color: var(--muted); letter-spacing: .08em; }
+  .stat b { font-size: 15px; font-weight: 700; white-space: nowrap; }
+  .d-intro { margin: 16px 0 0; font-size: 14.5px; line-height: 1.8; color: color-mix(in srgb, var(--text) 86%, transparent); }
+  .d-body h4 { margin: 22px 0 10px; font-size: 12px; letter-spacing: .14em; color: var(--muted); font-weight: 700; }
+  .plan { list-style: none; margin: 0; padding: 0; position: relative; }
+  .plan::before { content: ""; position: absolute; left: 21px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+  .plan li { position: relative; display: grid; grid-template-columns: 44px 1fr; gap: 12px; padding: 7px 0; font-size: 14px; line-height: 1.6; }
+  .plan li span { position: relative; z-index: 1; align-self: start; justify-self: center; font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--accent);
+    background: var(--surface); border: 1.5px solid var(--accent); border-radius: 99px; padding: 1px 7px; }
+  .cta { display: flex; gap: 10px; margin-top: 22px; }
+  .cta button { flex: 1; font: inherit; font-size: 14px; font-weight: 700; border-radius: 14px; padding: 11px 0; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--text); }
+  .cta button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .readout {
+    padding: 5px 14px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line);
+    font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap;
+  }
+  .readout b { color: var(--text); font-weight: 600; display: inline-block; min-width: 3.6em; text-align: right; }
+
+  /* ---------- knobs / prompt / notes ---------- */
+  section.knobs, section.prompt, section.notes { margin-top: 28px; }
+  h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .1em; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+  .knobs .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .knob { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+  .knob label { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 600; }
+  .knob output { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .knob small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  input[type=range] { width: 100%; margin: 10px 0 0; accent-color: var(--accent); height: 28px; }
+  input[type=range]:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+  .d-btn:focus-visible { border-radius: 50%; }
+
+  .prompt .box { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; display: flex; gap: 16px; align-items: flex-start; }
+  .prompt blockquote { margin: 0; flex: 1; font-size: 16px; line-height: 1.8; border-left: 3px solid var(--accent-2); padding-left: 14px; }
+  .copy { flex: none; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 0; border-radius: 10px; padding: 8px 16px; background: var(--accent); color: #fff; min-width: 76px; }
+  .copy.ok { background: var(--accent-2); color: #06201d; }
+
+  .notes ol { margin: 0; padding: 0; counter-reset: n; list-style: none; display: grid; gap: 10px; }
+  .notes li { counter-increment: n; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px 12px 52px; position: relative; font-size: 15px; }
+  .notes li::before { content: counter(n); position: absolute; left: 16px; top: 12px; width: 24px; height: 24px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); font-family: var(--mono); font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+  .notes code { font-family: var(--mono); font-size: 13px; background: color-mix(in srgb, var(--text) 8%, transparent); padding: 1px 6px; border-radius: 6px; }
+
+  @media (max-width: 560px) {
+    .prompt .box { flex-direction: column; }
+    .copy { align-self: stretch; }
+    .theme-btn { position: static; margin-top: 12px; }
+    .stage { border-radius: 20px; padding: 24px 0 20px; }
+  }
+
+  /* ---------- embed ---------- */
+  html.embed, html.embed body { background: transparent; overflow: hidden; height: 100%; }
+  html.embed header, html.embed .knobs, html.embed .prompt, html.embed .notes, html.embed .readout { display: none; }
+  html.embed main { max-width: none; padding: 0; height: 100%; }
+  html.embed .stage { margin: 0; padding: 0; border: 0; background: none; height: 100%; justify-content: center; border-radius: 0; overflow: visible; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="kicker"><span class="no">03</span><span>UI 互動技巧・實體質感</span></div>
+    <h1><span class="n">03 ·</span>共享元素無縫展開</h1>
+    <p>換頁時的白屏和推入動畫會讓人一瞬間失去方向。讓被點的卡片自己膨脹成詳情頁，封面與標題一路跟過去，返回時再縮回原位，使用者一直知道自己在哪、從哪裡來。</p>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="切換淺色與深色">切換深淺色</button>
+  </header>
+
+  <section class="stage" aria-label="Demo 舞台">
+    <div class="phone" id="phone">
+      <div class="screen" id="screen">
+        <div class="status"><span>9:41</span><i>●●●● ▮</i></div>
+        <div class="appbar">
+          <div><h2>我的旅程</h2><small>2026 下半年・5 趟｜點卡片展開</small></div>
+          <div class="avatar" aria-hidden="true">宇</div>
+        </div>
+        <div class="feed" id="feed"></div>
+      </div>
+      <div class="scrim" id="scrim"></div>
+      <div class="detail" id="detail" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+        <div class="shell" id="shell">
+          <div class="inner" id="inner">
+            <div class="d-scroll" id="dScroll">
+              <div class="d-content" id="dContent">
+                <div class="cover d-cover" id="dCover"></div>
+                <div class="d-head" id="dHead">
+                  <div class="d-text"><span class="d-sub" id="dSub"></span><span class="d-title" id="dTitle"></span></div>
+                </div>
+                <div class="d-body" id="dBody"></div>
+              </div>
+            </div>
+            <button class="d-btn d-back" id="dBack" type="button" aria-label="返回列表">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+            </button>
+            <button class="d-btn d-fav" id="dFav" type="button" aria-label="收藏" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="readout" aria-live="off">progress <b id="rp">0.000</b>　速度 <b id="rv">0.00</b></div>
+  </section>
+
+  <section class="knobs" aria-label="可調參數">
+    <h3>可調參數</h3>
+    <div class="grid">
+      <div class="knob"><label for="kStiff">剛性 stiffness <output id="oStiff"></output></label><input id="kStiff" type="range" min="60" max="400" step="5" value="190"><small>越大展開越快、越俐落</small></div>
+      <div class="knob"><label for="kDamp">阻尼 damping <output id="oDamp"></output></label><input id="kDamp" type="range" min="6" max="40" step="1" value="22"><small>越小落定前的回彈越明顯，約 28 為臨界阻尼</small></div>
+      <div class="knob"><label for="kBg">背景縮放 <output id="oBg"></output></label><input id="kBg" type="range" min="0.8" max="1" step="0.01" value="0.94"><small>展開時背後列表縮到多小（1 = 不縮）</small></div>
+      <div class="knob"><label for="kSpeed">播放速度 <output id="oSpeed"></output></label><input id="kSpeed" type="range" min="0.1" max="1" step="0.05" value="1"><small>調低變慢動作，方便看清每一層怎麼動</small></div>
+    </div>
+  </section>
+
+  <section class="prompt" aria-label="AI 描述詞">
+    <h3>AI 描述詞</h3>
+    <div class="box">
+      <blockquote id="promptText">實現 card 到詳情頁的共享元素轉場，背景與 card 容器做連續平滑縮放。</blockquote>
+      <button class="copy" id="copyBtn" type="button">複製</button>
+    </div>
+  </section>
+
+  <section class="notes" aria-label="實作要點">
+    <h3>實作要點</h3>
+    <ol>
+      <li><b>FLIP 外殼：</b>詳情頁永遠以全螢幕排版（Last），打開時量出卡片位置（First），外殼套 <code>translate + scale(sx, sy)</code> 從卡片形狀長到全螢幕；內層再套 <code>scale(1/sx, 1/sy)</code> 抵消拉伸，圓角寫成 <code>r/sx px / r/sy px</code>，才不會被壓成橢圓。</li>
+      <li><b>共享元素：</b>封面在卡片與詳情是同一份標記，內部字級與間距用 <code>cqw</code>，所以只要等比 <code>scale(w/W)</code> 就和卡片完全重疊。標題與副標不跟外殼縮放，而是從卡片標題的位置 translate＋等比縮放到詳情標題；兩邊同字串且 <code>nowrap</code>，換行才一致。</li>
+      <li><b>一個進度值 p 管全部：</b>外殼、封面、標題、內文淡入、背景縮放（預設 0.94）、遮罩濃度都是 p 的函數。p 由彈簧驅動（預設 k=190、c=22，阻尼比約 0.8），返回只是把目標改成 0、保留當下速度，所以動畫中途反悔也不會跳幀。</li>
+      <li><b>對準原卡片：</b>每次返回都重新量卡片（用 <code>offsetTop − scrollTop</code>，不受背景縮放影響），列表捲動過也會縮回正確位置；詳情若已捲動，先把 <code>scrollTop</code> 換成等量位移，再隨 p 一起歸零。</li>
+      <li><b>套用注意：</b>轉場期間原卡片用 <code>visibility:hidden</code> 保留版位、詳情鎖捲動、列表設 <code>inert</code>；下拉關閉只綁在封面（<code>touch-action:none</code>），內文仍能正常捲動。<code>prefers-reduced-motion</code> 時直接切換不做動畫。</li>
+    </ol>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+  const R = 296 / 390;        // 封面長寬比
+  const CARD_R = 26;          // 卡片圓角
+
+  /* ---------- 封面插畫（inline SVG，同一函式產生卡片與詳情兩份） ---------- */
+  const svg = (inner) => `<svg viewBox="0 0 390 296" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${inner}</svg>`;
+  const grad = (id, stops) => `<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">${stops.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient>`;
+  const ART = {
+    kyoto(u) {
+      let pag = '';
+      const cx = 112;
+      [34, 29, 24, 19, 14].forEach((w, i) => {
+        const y = 206 - i * 20;
+        pag += `<rect x="${cx - w + 10}" y="${y - 12}" width="${2 * w - 20}" height="13"/><path d="M${cx - w} ${y - 12}h${2 * w}l-9 -7h-${2 * w - 18}z"/>`;
+      });
+      pag += `<rect x="${cx - 1.5}" y="94" width="3" height="20"/>`;
+      let leaves = '';
+      for (let j = 0; j < 22; j++) {
+        const x = (j * 71 + 23) % 390, y = 24 + (j * 43) % 170, r = 2.2 + (j % 3) * 1.1;
+        leaves += `<ellipse cx="${x}" cy="${y}" rx="${r * 1.4}" ry="${r}" transform="rotate(${(j * 37) % 180} ${x} ${y})" fill="${j % 2 ? '#ffd27a' : '#ff5a36'}" opacity=".75"/>`;
+      }
+      return svg(`<defs>${grad(u + 's', [[0, '#ffd89a'], [.55, '#f4854e'], [1, '#c63f2e']])}</defs>
+        <rect width="390" height="296" fill="url(#${u}s)"/>
+        <circle cx="286" cy="92" r="36" fill="#fff4da" opacity=".85"/>
+        <path d="M0 184 L58 146 L118 172 L186 124 L258 168 L330 132 L390 158 V296 H0Z" fill="#b2352b" opacity=".7"/>
+        <g fill="#4c1419">${pag}</g>
+        <path d="M0 226 L76 194 L150 218 L228 186 L308 222 L390 200 V296 H0Z" fill="#7a1f24"/>
+        <path d="M0 262 Q120 236 240 258 T390 250 V296 H0Z" fill="#541319"/>${leaves}`);
+    },
+    hokkaido(u) {
+      let pines = '';
+      for (let j = 0; j < 11; j++) {
+        const x = 18 + j * 17 + (j % 3) * 4, base = 158 + Math.sin(j * .7) * 6, h = 16 + (j % 4) * 4;
+        pines += `<path d="M${x} ${base - h}l${h * .38} ${h}h-${h * .76}z"/>`;
+      }
+      let snow = '';
+      for (let j = 0; j < 30; j++) snow += `<circle cx="${(j * 53 + 11) % 390}" cy="${(j * 29 + 7) % 250}" r="${1 + (j % 3) * .6}" fill="#fff" opacity=".8"/>`;
+      return svg(`<defs>${grad(u + 's', [[0, '#e7f1ff'], [1, '#9dbbe8']])}</defs>
+        <rect width="390" height="296" fill="url(#${u}s)"/>
+        <circle cx="96" cy="72" r="26" fill="#fff" opacity=".7"/>
+        <path d="M0 166 Q100 128 200 156 T390 144 V296 H0Z" fill="#eef4fc"/>
+        <g fill="#34476a">${pines}</g>
+        <path d="M0 216 Q120 178 250 206 T390 196 V296 H0Z" fill="#fff"/>
+        <g fill="#26344f"><rect x="268" y="176" width="3" height="24"/><circle cx="269.5" cy="170" r="15"/><rect x="298" y="186" width="2.4" height="16"/><circle cx="299" cy="182" r="9"/><rect x="243" y="188" width="2.4" height="14"/><circle cx="244" cy="184" r="8"/></g>
+        <path d="M0 252 Q150 226 390 256 V296 H0Z" fill="#d8e4f5"/>${snow}`);
+    },
+    okinawa(u) {
+      let waves = '';
+      for (let j = 0; j < 9; j++) {
+        const x = (j * 67 + 20) % 360, y = 172 + (j * 17) % 60;
+        waves += `<path d="M${x} ${y}q8 -5 16 0t16 0" stroke="#fff" stroke-width="2" fill="none" opacity=".45" stroke-linecap="round"/>`;
+      }
+      return svg(`<defs>${grad(u + 's', [[0, '#bff5ff'], [1, '#5ccfe5']])}${grad(u + 'w', [[0, '#1fc6d2'], [1, '#0a6a92']])}</defs>
+        <rect width="390" height="296" fill="url(#${u}s)"/>
+        <circle cx="300" cy="72" r="30" fill="#fffbe0"/>
+        <circle cx="300" cy="72" r="46" fill="#fffbe0" opacity=".25"/>
+        <rect y="152" width="390" height="144" fill="url(#${u}w)"/>
+        <path d="M18 154 Q66 116 132 154Z" fill="#1d8a65"/>
+        <path d="M110 154 Q140 136 176 154Z" fill="#2aa37a"/>
+        ${waves}
+        <path d="M0 244 Q200 218 390 256 V296 H0Z" fill="#f6e7c6"/>
+        <path d="M0 244 Q200 218 390 256" stroke="#fff" stroke-width="4" fill="none" opacity=".8"/>`);
+    },
+    hualien(u) {
+      let foam = '';
+      for (let j = 0; j < 7; j++) foam += `<path d="M${140 + j * 34} ${196 + (j % 3) * 22}h18" stroke="#fff" stroke-width="2" opacity=".4" stroke-linecap="round"/>`;
+      return svg(`<defs>${grad(u + 's', [[0, '#e6f7f1'], [1, '#a2d9cb']])}${grad(u + 'w', [[0, '#2d8fb8'], [1, '#0d4467']])}</defs>
+        <rect width="390" height="296" fill="url(#${u}s)"/>
+        <path d="M0 118 L64 72 L124 102 L186 54 L254 98 L322 64 L390 92 V200 H0Z" fill="#79b39a"/>
+        <rect y="164" width="390" height="132" fill="url(#${u}w)"/>
+        ${foam}
+        <path d="M0 76 L74 108 L116 196 L160 296 H0Z" fill="#26604a"/>
+        <path d="M0 140 L54 162 L96 296 H0Z" fill="#163c2d"/>
+        <path d="M14 88 L80 118 L118 200" stroke="#efe6cf" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M118 202 q14 4 26 18 M138 262 q12 6 22 22" stroke="#fff" stroke-width="3" fill="none" opacity=".7" stroke-linecap="round"/>`);
+    },
+    seoul(u) {
+      let city = '', win = '';
+      let x = 0, j = 0;
+      while (x < 390) {
+        const w = 22 + (j * 13) % 26, h = 40 + (j * 37) % 90;
+        city += `<rect x="${x}" y="${262 - h}" width="${w - 3}" height="${h}"/>`;
+        for (let k = 0; k < 4; k++) {
+          const wy = 262 - h + 8 + k * 14;
+          if (wy < 252 && (j + k) % 3) win += `<rect x="${x + 5 + (k % 2) * 7}" y="${wy}" width="4" height="5"/>`;
+        }
+        x += w; j++;
+      }
+      let stars = '';
+      for (let i = 0; i < 26; i++) stars += `<circle cx="${(i * 59 + 13) % 390}" cy="${(i * 23 + 9) % 120}" r="${.8 + (i % 3) * .5}" fill="#fff" opacity="${.4 + (i % 4) * .15}"/>`;
+      return svg(`<defs>${grad(u + 's', [[0, '#1a1240'], [.6, '#5b2574'], [1, '#e0668a']])}</defs>
+        <rect width="390" height="296" fill="url(#${u}s)"/>${stars}
+        <circle cx="72" cy="62" r="18" fill="#fff1cc"/>
+        <path d="M170 212 Q262 136 354 212Z" fill="#261a4a"/>
+        <g fill="#f3e9ff"><rect x="259" y="112" width="7" height="60"/><ellipse cx="262.5" cy="122" rx="12" ry="7"/><rect x="261.5" y="86" width="2" height="28"/></g>
+        <circle cx="262.5" cy="86" r="2.4" fill="#ff6f91"/>
+        <g fill="#140d2c">${city}</g><g fill="#ffd67a" opacity=".85">${win}</g>
+        <rect y="262" width="390" height="34" fill="#22174a"/>
+        <path d="M20 274h60M120 282h80M250 272h90" stroke="#ffd67a" stroke-width="2" opacity=".35" stroke-linecap="round"/>`);
+    },
+  };
+
+  /* ---------- 假資料 ---------- */
+  const TRIPS = [
+    { art: 'kyoto', title: '嵐山紅葉小旅行', sub: '京都・11 月・4 天', chip: '已訂房',
+      stats: [['天數', '4 天 3 夜'], ['預算', 'NT$38,000'], ['同行', '2 人']],
+      intro: '趁楓紅最濃的那一週去嵐山。早上避開人潮走竹林小徑，下午坐嵯峨野小火車看保津川溪谷，住在渡月橋附近的町家，晚上散步去看夜楓點燈。',
+      plan: [['D1', '抵達關西機場，搭 Haruka 到京都站，傍晚入住嵐山町家'], ['D2', '清晨竹林小徑 → 天龍寺 → 嵯峨野觀光小火車'], ['D3', '保津川遊船，晚上渡月橋夜楓點燈'], ['D4', '錦市場買伴手禮，傍晚搭機回台北']] },
+    { art: 'hokkaido', title: '美瑛雪原慢行', sub: '北海道・1 月・6 天', chip: '規劃中',
+      stats: [['天數', '6 天 5 夜'], ['預算', 'NT$62,000'], ['同行', '3 人']],
+      intro: '從旭川租車出發，沿著拼布之路看雪原上的親子之木，晚上住白金溫泉。冬天四點就天黑，行程排鬆一點，雪地開車不趕路。',
+      plan: [['D1', '旭川機場取車，旭山動物園看企鵝散步'], ['D2', '拼布之路、親子之木、聖誕樹之木'], ['D3', '白金青池夜間點燈，住溫泉旅館'], ['D4', '富良野滑雪一日'], ['D5', '札幌二條市場、狸小路'], ['D6', '新千歲機場還車回程']] },
+    { art: 'okinawa', title: '慶良間跳島', sub: '沖繩・7 月・5 天', chip: '已訂機票',
+      stats: [['天數', '5 天 4 夜'], ['預算', 'NT$45,000'], ['同行', '2 人']],
+      intro: '從那霸泊港搭高速船到渡嘉敷島浮潛看海龜，隔天換座間味島，古座間味海灘那片藍就是大家說的「慶良間藍」。',
+      plan: [['D1', '那霸國際通散步，晚餐吃阿古豬涮涮鍋'], ['D2', '高速船到渡嘉敷島，阿波連海灘浮潛'], ['D3', '座間味島、古座間味海灘'], ['D4', '回本島，美麗海水族館'], ['D5', '瀨長島看夕陽後回程']] },
+    { art: 'hualien', title: '清水斷崖海線', sub: '花蓮・4 月・3 天', chip: '草稿',
+      stats: [['天數', '3 天 2 夜'], ['預算', 'NT$12,000'], ['同行', '4 人']],
+      intro: '搭早班太魯閣號到新城，騎車走蘇花公路看清水斷崖，隔天清晨到七星潭等日出。三天兩夜不趕，留一個下午在市區吃扁食和炸蛋蔥油餅。',
+      plan: [['D1', '新城站租機車，清水斷崖觀景台、崇德海灘'], ['D2', '七星潭日出，晚上東大門夜市'], ['D3', '松園別館，搭午後火車回台北']] },
+    { art: 'seoul', title: '首爾夜色散步', sub: '首爾・10 月・4 天', chip: '已訂房',
+      stats: [['天數', '4 天 3 夜'], ['預算', 'NT$33,000'], ['同行', '2 人']],
+      intro: '住在乙支路，白天逛聖水洞的咖啡廳，晚上沿清溪川走到廣藏市場吃綠豆煎餅，最後一晚上南山塔看整片首爾夜景。',
+      plan: [['D1', '仁川機場搭 AREX 進市區，廣藏市場晚餐'], ['D2', '聖水洞咖啡廳、首爾林'], ['D3', '景福宮換韓服、北村韓屋村'], ['D4', '南山塔夜景，隔天早班機回程']] },
+  ];
+  const coverHTML = (t, uid) => `${ART[t.art](uid)}<div class="shade"></div><span class="chip">${t.chip}</span>`;
+
+  /* ---------- 元素 ---------- */
+  const phone = $('#phone'), screen = $('#screen'), feed = $('#feed'), scrim = $('#scrim');
+  const detail = $('#detail'), shell = $('#shell'), inner = $('#inner');
+  const dScroll = $('#dScroll'), dContent = $('#dContent'), dCover = $('#dCover'), dHead = $('#dHead');
+  const dSub = $('#dSub'), dTitle = $('#dTitle'), dBody = $('#dBody'), dBack = $('#dBack'), dFav = $('#dFav');
+  const rp = $('#rp'), rv = $('#rv');
+
+  const cards = TRIPS.map((t, i) => {
+    const el = document.createElement('div');
+    el.className = 'trip';
+    el.tabIndex = 0;
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-label', `${t.title}，${t.sub}，開啟詳情`);
+    el.innerHTML = `<div class="cover">${coverHTML(t, 'c' + i)}</div>
+      <div class="trip-text"><span class="t-sub">${t.sub}</span><span class="t-title">${t.title}</span></div>`;
+    feed.appendChild(el);
+    return el;
+  });
+
+  /* ---------- 參數 ---------- */
+  const P = { k: 190, c: 22, bg: .94, speed: 1 };
+
+  /* ---------- 狀態 ---------- */
+  let p = 0, v = 0, target = 0;        // 彈簧：進度 p 與速度 v（m = 1）
+  let active = false, cur = -1;
+  let dims = { W: 388, H: 718 };
+  let first = { x: 0, y: 0, w: 1, h: 1 };  // 卡片在「未縮放背景」中的位置（相對手機）
+  let shared = [];                          // 共享文字：[el, A(卡片內), B(詳情內)]
+  let so = 0;                               // 返回時換算成位移的詳情捲動量
+  let chip = null;
+
+  [
+    ['kStiff', 'oStiff', 'k', v => String(v)],
+    ['kDamp', 'oDamp', 'c', v => String(v)],
+    ['kBg', 'oBg', 'bg', v => v.toFixed(2)],
+    ['kSpeed', 'oSpeed', 'speed', v => '×' + v.toFixed(2)],
+  ].forEach(([id, oid, key, fmt]) => {
+    const el = $('#' + id), out = $('#' + oid);
+    const apply = () => { P[key] = +el.value; out.textContent = fmt(+el.value); if (key === 'bg') render(); };
+    el.addEventListener('input', apply);
+    apply();
+  });
+
+  function rel(el, anc) {
+    let x = 0, y = 0;
+    while (el && el !== anc) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; }
+    return { x, y };
+  }
+  // 量測：全用 offset 系列，不受任何 transform（背景縮放、按壓）干擾
+  function measure() {
+    dims.W = detail.clientWidth; dims.H = detail.clientHeight;
+    if (cur < 0) return;
+    const card = cards[cur];
+    const o = rel(card, screen);
+    first = { x: o.x - feed.scrollLeft, y: o.y - feed.scrollTop, w: card.offsetWidth, h: card.offsetHeight };
+    const pairs = [[$('.t-sub', card), dSub], [$('.t-title', card), dTitle]];
+    shared = pairs.map(([a, b]) => {
+      const ra = rel(a, card), rb = rel(b, dContent);
+      return [b, { x: ra.x, y: ra.y, w: a.offsetWidth }, { x: rb.x, y: rb.y, w: b.offsetWidth }];
+    });
+  }
+
+  function fill(i) {
+    const t = TRIPS[i];
+    dCover.innerHTML = coverHTML(t, 'd' + i);
+    chip = $('.chip', dCover);
+    dSub.textContent = t.sub;
+    dTitle.textContent = t.title;
+    dBody.innerHTML = `
+      <div class="stats">${t.stats.map(([k, val]) => `<div class="stat"><small>${k}</small><b>${val}</b></div>`).join('')}</div>
+      <p class="d-intro">${t.intro}</p>
+      <h4>每日行程</h4>
+      <ol class="plan">${t.plan.map(([d, s]) => `<li><span>${d}</span><div>${s}</div></li>`).join('')}</ol>
+      <div class="cta"><button type="button" class="primary">加入行事曆</button><button type="button">分享行程</button></div>`;
+    dFav.setAttribute('aria-pressed', 'false');
+  }
+
+  /* ---------- 繪製：所有圖層都是 p 的函數（只動 transform / opacity） ---------- */
+  function render() {
+    const { W, H } = dims;
+    const s = 1 - (1 - P.bg) * p;                         // 背景縮放
+    screen.style.transform = p === 0 ? '' : `scale(${s.toFixed(5)})`;
+    scrim.style.opacity = clamp(p * .5, 0, .6).toFixed(4);
+    rp.textContent = p.toFixed(3);
+    rv.textContent = v.toFixed(2);
+    if (!active) return;
+
+    // First：卡片目前在縮放後背景中的位置（繞手機中心縮放）
+    const fx = W / 2 + (first.x - W / 2) * s, fy = H / 2 + (first.y - H / 2) * s;
+    const fw = first.w * s, fh = first.h * s;
+    // 外殼從 First 連續變形到 Last（全螢幕）
+    const x = lerp(fx, 0, p), y = lerp(fy, 0, p);
+    const w = Math.max(24, lerp(fw, W, p)), h = Math.max(24, lerp(fh, H, p));
+    const sx = w / W, sy = h / H;
+    const r = Math.max(0, lerp(CARD_R * s, 43, p));
+    shell.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) scale(${sx.toFixed(5)}, ${sy.toFixed(5)})`;
+    shell.style.borderRadius = `${(r / sx).toFixed(2)}px / ${(r / sy).toFixed(2)}px`;
+    // Invert：內層反向縮放，裡面的東西回到 1:1 像素空間
+    inner.style.transform = `scale(${(1 / sx).toFixed(5)}, ${(1 / sy).toFixed(5)})`;
+
+    // 詳情若捲動過，返回時把捲動量換成位移，隨 p 歸零
+    dContent.style.transform = so ? `translateY(${(-so * p).toFixed(2)}px)` : '';
+    // 封面：等比縮放，寬度永遠貼齊外殼
+    dCover.style.transform = `scale(${(w / W).toFixed(5)})`;
+    if (chip) chip.style.opacity = clamp(1 - p * 1.6, 0, 1).toFixed(3);   // 卡片專屬的標籤，讓位給收藏鈕
+    // 共享文字：卡片位置 → 詳情位置，只做 translate + 等比 scale
+    for (const [el, A, B] of shared) {
+      const tx = lerp(A.x * s, B.x, p) - B.x, ty = lerp(A.y * s, B.y, p) - B.y;
+      const sc = lerp(A.w * s, B.w, p) / B.w;
+      el.style.transform = `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) scale(${sc.toFixed(5)})`;
+    }
+    // 內文貼著封面底部往上長，後半段淡入
+    dBody.style.transform = `translateY(${((w - W) * R + (1 - p) * 36).toFixed(2)}px)`;
+    dBody.style.opacity = clamp((p - .35) / .65, 0, 1).toFixed(3);
+    const bo = clamp((p - .5) / .5, 0, 1).toFixed(3);
+    dBack.style.opacity = bo;
+    dFav.style.opacity = bo;
+    dFav.style.transform = `translateX(${(w - W).toFixed(2)}px)`;
+  }
+
+  /* ---------- 彈簧 rAF ---------- */
+  let running = false, last = 0, dragging = false;
+  function kick() {
+    if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
+  }
+  function frame(now) {
+    if (dragging) { running = false; return; }
+    let dt = Math.min((now - last) / 1000, 1 / 20);
+    last = now;
+    if (reduceMQ.matches) { p = target; v = 0; }
+    else {
+      dt *= P.speed;
+      const n = Math.max(1, Math.ceil(dt / (1 / 240))), hstep = dt / n;
+      for (let i = 0; i < n; i++) {
+        const a = -P.k * (p - target) - P.c * v;          // 半隱式 Euler
+        v += a * hstep;
+        p += v * hstep;
+      }
+    }
+    if (Math.abs(p - target) < 5e-4 && Math.abs(v) < 5e-3) {
+      p = target; v = 0;
+      render(); settle();
+      running = false;
+      return;
+    }
+    render();
+    requestAnimationFrame(frame);
+  }
+  function settle() {
+    if (target === 1) {
+      // 落定全螢幕：解鎖捲動，把位移換回真正的 scrollTop
+      dScroll.style.overflowY = 'auto';
+      if (so) { const k = so; so = 0; render(); dScroll.scrollTop = k; }
+    } else {
+      active = false; so = 0;
+      detail.classList.remove('on');
+      screen.inert = false;
+      const card = cards[cur];
+      card.style.visibility = '';
+      render();
+      card.focus({ preventScroll: true });
+      cur = -1;
+    }
+  }
+
+  /* ---------- 開／關 ---------- */
+  function lockScroll() {
+    if (dScroll.style.overflowY !== 'hidden') {
+      so += dScroll.scrollTop;
+      dScroll.scrollTop = 0;
+      dScroll.style.overflowY = 'hidden';
+    }
+  }
+  function open(i) {
+    if (active && cur !== i) return;
+    if (!active) {
+      cur = i; fill(i); so = 0;
+      dScroll.style.overflowY = 'hidden'; dScroll.scrollTop = 0;
+      active = true;
+      detail.classList.add('on');
+      cards[i].style.visibility = 'hidden';
+      screen.inert = true;
+    }
+    lockScroll();
+    measure();
+    target = 1;
+    render();          // 同步畫出第一幀，避免閃一下全螢幕
+    kick();
+    dBack.focus({ preventScroll: true });
+  }
+  function close() {
+    if (!active || target === 0) return;
+    lockScroll();
+    measure();         // 重新量「原卡片目前位置」
+    target = 0;
+    kick();
+  }
+
+  /* ---------- 卡片：Pointer Events 按壓回饋＋點擊／鍵盤開啟 ---------- */
+  cards.forEach((card, i) => {
+    const up = () => card.classList.remove('down');
+    card.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' || e.button === 0) card.classList.add('down'); });
+    card.addEventListener('pointerup', up);
+    card.addEventListener('pointercancel', up);   // 開始捲動列表時瀏覽器會送 cancel
+    card.addEventListener('pointerleave', up);
+    card.addEventListener('click', () => open(i));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!e.repeat) open(i); }
+    });
+  });
+
+  dBack.addEventListener('click', e => { e.stopPropagation(); close(); });
+  dFav.addEventListener('click', e => {
+    e.stopPropagation();
+    dFav.setAttribute('aria-pressed', dFav.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && active) { e.preventDefault(); close(); } });
+
+  // 點外殼以外（縮回途中露出的遮罩）→ 關閉；縮回途中點外殼 → 反轉展開
+  let suppressClick = false;
+  detail.addEventListener('click', e => {
+    if (suppressClick) { suppressClick = false; return; }
+    if (!shell.contains(e.target)) { close(); return; }
+    if (target === 0 && !e.target.closest('button')) open(cur);
+  });
+
+  /* ---------- 下拉封面關閉（手勢直接驅動 p） ---------- */
+  let g = null;
+  dHead.addEventListener('pointerdown', e => {
+    if (!active || target !== 1 || running || dScroll.scrollTop > 1) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    g = { id: e.pointerId, y0: e.clientY, lastY: e.clientY, lastT: performance.now(), vel: 0, moved: false };
+    try { dHead.setPointerCapture(e.pointerId); } catch (_) {}
+  });
+  dHead.addEventListener('pointermove', e => {
+    if (!g || e.pointerId !== g.id) return;
+    const dy = e.clientY - g.y0;
+    if (!g.moved) {
+      if (dy < 6) return;
+      g.moved = true; dragging = true;
+      dHead.classList.add('drag');
+      lockScroll(); measure();
+    }
+    const now = performance.now();
+    const np = 1 - Math.max(0, dy) / (dims.H * 1.1);
+    const dtm = Math.max(1, now - g.lastT) / 1000;
+    g.vel = lerp(g.vel, (np - p) / dtm, .5);   // p 的速度（每秒）
+    g.lastT = now;
+    p = np; v = g.vel;
+    render();
+  });
+  const endDrag = e => {
+    if (!g || e.pointerId !== g.id) return;
+    const wasMoved = g.moved, dy = e.clientY - g.y0, vel = g.vel;
+    g = null;
+    try { dHead.releasePointerCapture(e.pointerId); } catch (_) {}
+    if (!wasMoved) return;
+    dHead.classList.remove('drag');
+    dragging = false; suppressClick = true;
+    setTimeout(() => { suppressClick = false; }, 0);
+    v = vel;
+    if (dy > 110 || vel < -1.2) { target = 0; } else { target = 1; }
+    kick();
+  };
+  dHead.addEventListener('pointerup', endDrag);
+  dHead.addEventListener('pointercancel', endDrag);
+
+  addEventListener('resize', () => { measure(); render(); });
+  reduceMQ.addEventListener && reduceMQ.addEventListener('change', () => { if (active) kick(); });
+  measure();
+  render();
+
+  /* ---------- 複製 ---------- */
+  const copyBtn = $('#copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    const text = $('#promptText').textContent.trim();
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (_) {}
+    if (!ok) {
+      try {
+        const r = document.createRange(); r.selectNodeContents($('#promptText'));
+        const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        ok = document.execCommand('copy');
+      } catch (_) {}
+    }
+    copyBtn.textContent = ok ? '已複製' : '請按 Ctrl+C';
+    copyBtn.classList.toggle('ok', ok);
+    setTimeout(() => { copyBtn.textContent = '複製'; copyBtn.classList.remove('ok'); }, 1600);
+  });
+
+  /* ---------- 深淺色手動切換 ---------- */
+  $('#themeBtn').addEventListener('click', () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+  });
+
+  // 測試掛鉤：?state=open 直接展開第一張、?p=0.5 停在中間（僅供截圖檢查）
+  try {
+    const q = new URLSearchParams(location.search);
+    const qi = +(q.get('card') || 0);
+    if (q.get('state') === 'open') { open(qi); p = 1; v = 0; running = false; render(); settle(); }
+    if (q.has('p')) { open(qi); dragging = true; p = +q.get('p'); render(); }
+  } catch (_) {}
+})();
+</script>
+</body>
+</html>

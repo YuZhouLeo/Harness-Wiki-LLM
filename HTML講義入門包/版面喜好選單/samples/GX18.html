@@ -1,0 +1,66 @@
+<!doctype html><!-- 版面喜好選單範例 GX18｜放射線圓形勾選｜來源：講師範例庫 output範例/元件庫/GX18-放射線圓形勾選.html；原始來源 https://github.com/uiverse-io/galaxy（Checkboxes/catraco_hungry-squid-59.html），作者 catraco，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX18 放射線圓形勾選（Round checkbox that pops in with a radiating burst）
+  來源：https://github.com/uiverse-io/galaxy　Checkboxes/catraco_hungry-squid-59.html
+  原作者：catraco　授權：MIT (Copyright 2023 Uiverse.io)　commit：adbd2ad
+  移植：保留原作的兩段動作——勾選時實心圓從 0 放大（.3s），同時外圈六條短線往外放射並淡出（kfr-celebrate .4s）；
+    原作未勾選時只是一個白圓、放在淺底上看不見，補一圈 2px 外框；短線原本 1px 細線，加粗成 2px 圓頭；
+    綠色 #20c580 換成 P11 的 --accent；改成「本週待辦」四列清單，整列都可點，底部用 CSS counter 顯示已完成數（不用 JS）；
+    原作 input 只有 opacity:0、無焦點樣式，補 focus-visible 外框；prefers-reduced-motion 時不放射、勾號只淡入。
+  2026-10-09 由子代理移植成純 HTML／CSS（必要時加少量原生 JS）
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>放射線圓形勾選</title>
+<style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px 16px;background:var(--bg);color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.card{width:100%;max-width:340px;background:var(--surface);border:1px solid var(--line);border-radius:6px;counter-reset:done}
+.hd{display:flex;align-items:baseline;justify-content:space-between;padding:12px 16px 10px;border-bottom:1px solid var(--line)}
+.hd h1{margin:0;font-size:15px;font-weight:700}
+.hd span{font-size:12px;color:var(--ink-2)}
+.row{display:flex;align-items:center;gap:14px;padding:9px 16px;border-bottom:1px solid var(--line);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.row:hover{background:var(--surface-2)}
+.tx{flex:1;min-width:0}
+.tx b{display:block;font-weight:500;transition:color .2s}
+.tx small{display:block;font-size:12px;color:var(--ink-2)}
+.row:has(input:checked) .tx b{color:var(--ink-2)}
+.ft{padding:10px 16px;font-size:12px;color:var(--ink-2)}
+.ft::before{content:"已完成 " counter(done) "／4"}
+
+/* 原作 .container：圓形底＋置中 */
+.cb{position:relative;flex:none;display:flex;justify-content:center;align-items:center;width:26px;height:26px;border-radius:50%;background:var(--surface);box-shadow:inset 0 0 0 2px var(--ink-2)}
+.cb input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.cb input:checked{counter-increment:done}
+.mk{position:relative;height:26px;width:26px;border-radius:50%;transform:scale(0);transition:transform .3s}
+.mk::after{content:"";position:absolute;display:none;left:9.5px;top:5.5px;width:6px;height:11px;border:solid var(--on-accent);border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.cb input:checked~.mk{background:var(--accent);transform:scale(1)}
+.cb input:checked~.mk::after{display:block}
+.cb:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:3px}
+/* 原作 .celebrate：六條短線，勾選時顯示並放射 */
+.burst{position:absolute;left:50%;top:50%;width:50px;height:50px;margin:-25px 0 0 -25px;transform-origin:center;display:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;fill:none;pointer-events:none;overflow:visible;animation:kfr-celebrate .4s forwards}
+.cb input:checked~.burst{display:block}
+@keyframes kfr-celebrate{0%{transform:scale(0)}50%{opacity:1}100%{transform:scale(1.2);opacity:0}}
+
+@media (prefers-reduced-motion:reduce){
+  .mk{transform:none;transition:background-color .2s}
+  .mk::after{display:block;opacity:0;transition:opacity .2s}
+  .cb input:checked~.mk::after{opacity:1}
+  .cb input:checked~.burst{display:none}
+  .tx b{transition:none}
+}
+</style></head><body>
+<div class="card">
+  <div class="hd"><h1>本週待辦</h1><span>點一下整列即可勾選</span></div>
+  <label class="row"><span class="cb"><input type="checkbox" checked><span class="mk"></span><svg class="burst" viewBox="0 0 50 50" aria-hidden="true"><polygon points="0,0 10,10"/><polygon points="0,25 10,25"/><polygon points="0,50 10,40"/><polygon points="50,0 40,10"/><polygon points="50,25 40,25"/><polygon points="50,50 40,40"/></svg></span><span class="tx"><b>送出交通費報帳單</b><small>週三前・會計室</small></span></label>
+  <label class="row"><span class="cb"><input type="checkbox"><span class="mk"></span><svg class="burst" viewBox="0 0 50 50" aria-hidden="true"><polygon points="0,0 10,10"/><polygon points="0,25 10,25"/><polygon points="0,50 10,40"/><polygon points="50,0 40,10"/><polygon points="50,25 40,25"/><polygon points="50,50 40,40"/></svg></span><span class="tx"><b>回覆助教的分組信</b><small>週四前・策略管理</small></span></label>
+  <label class="row"><span class="cb"><input type="checkbox"><span class="mk"></span><svg class="burst" viewBox="0 0 50 50" aria-hidden="true"><polygon points="0,0 10,10"/><polygon points="0,25 10,25"/><polygon points="0,50 10,40"/><polygon points="50,0 40,10"/><polygon points="50,25 40,25"/><polygon points="50,50 40,40"/></svg></span><span class="tx"><b>備份筆記庫到雲端</b><small>週五・兩台都要同步</small></span></label>
+  <label class="row"><span class="cb"><input type="checkbox"><span class="mk"></span><svg class="burst" viewBox="0 0 50 50" aria-hidden="true"><polygon points="0,0 10,10"/><polygon points="0,25 10,25"/><polygon points="0,50 10,40"/><polygon points="50,0 40,10"/><polygon points="50,25 40,25"/><polygon points="50,50 40,40"/></svg></span><span class="tx"><b>整理課堂錄音逐字稿</b><small>週日・財務管理</small></span></label>
+  <div class="ft" aria-live="polite"></div>
+</div>
+</body></html>

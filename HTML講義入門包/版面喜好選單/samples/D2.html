@@ -1,0 +1,330 @@
+<!doctype html>
+<!-- 版面喜好選單範例 D2｜側欄追蹤頁｜來源：講師範例庫 output範例/設計偏好選擇/samples/D2-側欄追蹤頁.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<!-- 範例 D2 側欄追蹤頁：淡紫底的應用程式外框。左邊一條固定側欄（兩組選單＋巢狀子項＋底部帳號），右邊由上到下是問候列、三張漸層指標磚、長條圖（數值標在膠囊裡、一條虛線上限、當日那根實心）配名單卡，最下面是附環形進度與狀態膠囊的追蹤表。文字與數字是示意內容。 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>課務總覽</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">')</script>
+<style>
+/* 變數名與 配色/palettes.css 相同，換配色時整段蓋掉即可；--desk 與 --tile-* 是這個版式自己的 */
+:root{
+  color-scheme:light;
+  --desk:#d7d8e2;
+  --bg:#f1f1fa;
+  --surface:#ffffff;
+  --surface-2:#e9e9f6;
+  --ink:#191a23;
+  --ink-2:#585a6c;
+  --line:#dedfee;
+  --accent:#5658ad;
+  --on-accent:#ffffff;
+  --accent-soft:#dcdcf5;
+  --c1:#5658ad; --c1-soft:#dcdcf5;
+  --c2:#b0325a; --c2-soft:#f6dce3;
+  --ok:#5658ad; --ok-soft:#ececfa;
+  --bad:#b0325a; --bad-soft:#fbe9ee;
+  --warn:#7a5a12; --warn-soft:#f7edd3;
+  --tile-a:linear-gradient(100deg,#f6dbe0,#eedbe8);
+  --tile-b:linear-gradient(100deg,#f1dbe6,#dcdcf5);
+  --tile-c:linear-gradient(100deg,#dfdff6,#d5d9f3);
+  --sans:"Lexend","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--desk)}
+body{margin:0;background:var(--desk);color:var(--ink);font:400 14px/1.6 var(--sans);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+h1,h2,h3,p,ul{margin:0;padding:0}
+h1,h2,h3{text-wrap:balance}
+ul{list-style:none}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+
+.app{display:grid;grid-template-columns:224px minmax(0,1fr);max-width:1184px;margin:36px auto;border-radius:28px;overflow:hidden;background:var(--bg);box-shadow:0 30px 70px -40px rgba(40,40,70,.5)}
+
+/* 側欄 */
+.side{display:flex;flex-direction:column;padding:22px 18px 18px;border-right:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:8px;margin-bottom:26px;font-size:17px;font-weight:500}
+.brand i{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--ink);color:#fff}
+.brand .i:last-child{margin-left:auto;color:var(--ink-2)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:10px;height:36px;padding:0 14px;border-radius:999px;color:var(--ink-2);font-size:13.5px}
+.nav a:hover{color:var(--ink)}
+.nav a.on{background:var(--surface);color:var(--ink);font-weight:500;box-shadow:0 6px 16px -10px rgba(60,60,110,.5)}
+.nav a .end{margin-left:auto}
+.nav .dot{position:relative}
+.nav .dot::after{content:"";position:absolute;right:-1px;top:-1px;width:6px;height:6px;border-radius:50%;background:var(--c2)}
+.nav hr{width:100%;border:0;border-top:1px solid var(--line);margin:12px 0}
+.nav .sub{margin:0 0 0 22px;padding-left:14px;border-left:1px solid var(--line);display:flex;flex-direction:column}
+.nav .sub a{padding:0 6px;height:30px}
+.nav a.add{color:var(--ink);font-weight:500}
+.me{display:grid;grid-template-columns:34px minmax(0,1fr) 18px;gap:10px;align-items:center;margin-top:auto;padding-top:28px}
+.me i{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--c2-soft);color:var(--c2);font-style:normal;font-weight:700}
+.me b{display:block;font-size:13px;font-weight:500;line-height:1.3}
+.me span{display:block;font-size:12px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* 主區 */
+.main{padding:18px 42px 8px}
+.top{display:flex;align-items:center;gap:16px;min-height:44px}
+.top h1{font-size:clamp(20px,2.1vw,24px);font-weight:500;line-height:1.3}
+.search{display:flex;align-items:center;gap:8px;padding-left:14px;border-left:1px solid var(--line);color:var(--ink-2);flex:1;min-width:0}
+.search input{border:0;background:none;outline:0;width:100%;min-width:0;font-size:13px}
+.search input::placeholder{color:var(--ink-2);opacity:1}
+.meta{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2);white-space:nowrap}
+.cta{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 18px;border-radius:999px;border:0;background:var(--ink);color:#fff;font-size:13px;font-weight:500;white-space:nowrap}
+.cta .i{width:15px;height:15px}
+
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:20px}
+.tile{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:6px;background:var(--tile-a)}
+.tile:nth-child(2){background:var(--tile-b)}
+.tile:nth-child(3){background:var(--tile-c)}
+.tile i{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--surface)}
+.tile span{display:block;font-size:12px;color:var(--ink-2);line-height:1.4}
+.tile b{font-size:21px;font-weight:500;line-height:1.3}
+.tile b small{font-size:12px;font-weight:400;color:var(--ink-2);margin-left:5px}
+
+.row{display:grid;grid-template-columns:minmax(0,1fr) 276px;gap:6px;margin-top:6px}
+.card{background:var(--surface);border-radius:6px;padding:22px 26px}
+.card-h{display:flex;align-items:center;gap:14px}
+.card-h h2{font-size:18px;font-weight:500}
+.sel{display:inline-flex;align-items:center;gap:6px;padding-left:14px;border:0;border-left:1px solid var(--line);background:none;font-size:13px;color:var(--ink-2)}
+.sel .i{width:14px;height:14px}
+.avg{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2);white-space:nowrap}
+.avg b{font-size:19px;font-weight:500;color:var(--ink)}
+
+/* 長條圖：高度＝(值−40)×2.9px；y 軸 40–120 */
+.bars{display:grid;grid-template-columns:30px minmax(0,1fr);gap:0 12px;margin-top:22px}
+.yax{display:flex;flex-direction:column;justify-content:space-between;height:244px;padding-top:6px;font-size:12px;color:var(--ink-2)}
+.yax span{line-height:1}
+.plot{position:relative;display:flex;align-items:flex-end;gap:6px;height:244px;padding-top:6px}
+.col{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.bar{width:100%;height:calc((var(--v) - 40) * 2.9px);border-radius:10px 10px 0 0;background:repeating-linear-gradient(-45deg,#ececf8 0 3px,#f8f8fd 3px 6px);border-top:2px solid #fff;box-shadow:0 -5px 0 #f1f1fa}
+.val{position:relative;z-index:2;margin-bottom:6px;padding:3px 10px;border-radius:999px;background:var(--surface-2);font-size:12px;color:var(--ink-2);white-space:nowrap}
+.val b{font-weight:500;color:var(--ink);margin-right:2px}
+.col.now .bar{background:linear-gradient(#b9bbea,#d3d4f3);border-radius:10px 10px 6px 6px;box-shadow:none;border-top:0}
+.col.now .val{margin-bottom:-8px;padding:5px 14px;background:var(--accent);color:#fff;box-shadow:0 0 0 3px var(--surface)}
+.col.now .val b{color:#fff}
+.max{position:absolute;left:0;right:0;bottom:calc((106 - 40) * 2.9px);border-top:1.5px dashed var(--c2);z-index:1}
+.max span{position:absolute;left:0;top:-11px;padding:1px 10px;border-radius:999px;background:var(--c2);color:#fff;font-size:12px}
+.days{grid-column:2;display:flex;gap:6px;margin-top:12px;font-size:13px;color:var(--ink-2)}
+.days span{flex:1;text-align:center}
+.days .now{color:var(--accent);font-weight:500}
+
+.team .card-h h2{margin-right:auto}
+.team .card-h a{font-size:12px;color:var(--ink-2)}
+.team ul{margin-top:10px}
+.team li{display:grid;grid-template-columns:32px minmax(0,1fr) 18px;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.team li:last-child{border-bottom:0}
+.who{position:relative;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--c1-soft);color:var(--accent);font-weight:700;font-size:13px}
+.who.on::after{content:"";position:absolute;right:-1px;bottom:-1px;width:8px;height:8px;border-radius:50%;background:#9fd35c;border:2px solid var(--surface)}
+.team li:nth-child(even) .who{background:var(--c2-soft);color:var(--c2)}
+.team b{display:block;font-size:13px;font-weight:500;line-height:1.3}
+.team li div span{display:block;font-size:12px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.team .i{color:var(--ink-2)}
+.outline{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:38px;margin-top:8px;border-radius:999px;border:1px solid #c9cadb;background:none;font-size:13px;font-weight:500}
+
+/* 追蹤表 */
+.track{margin-top:30px}
+.track-h{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.track-h h2{font-size:18px;font-weight:500}
+.new{padding:1px 10px;border-radius:999px;background:var(--surface);font-size:12px;font-weight:500}
+.track-h .meta:first-of-type{margin-left:auto}
+.tw{position:relative;overflow-x:auto}
+table{width:100%;min-width:720px;border-collapse:collapse}
+th{padding:12px 8px;font-size:12px;font-weight:400;color:var(--ink-2);text-align:left;white-space:nowrap}
+td{padding:14px 8px;border-top:1px solid var(--line);font-size:13px;white-space:nowrap}
+td b{font-weight:500}
+td small{font-size:12px;color:var(--ink-2);margin-left:6px}
+.chk{display:inline-block;width:14px;height:14px;border:1px solid #b9bacb;border-radius:3px;vertical-align:-2px;margin-right:10px}
+.prog{display:inline-flex;align-items:center;gap:12px}
+.prog svg{width:26px;height:26px;transform:rotate(-90deg)}
+.st{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:999px;background:var(--surface);font-size:12px;font-weight:500;color:var(--ok)}
+.st.bad{color:var(--bad)}
+.st.mid{color:var(--warn)}
+.st .i{width:15px;height:15px}
+.more{border:0;background:none;color:var(--ink-2);font-size:16px;line-height:1}
+
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cta,.outline{transition:transform .15s}
+.cta:active,.outline:active{transform:scale(.97)}
+
+@media (max-width:1000px){
+  .app{grid-template-columns:minmax(0,1fr);margin:0;border-radius:0}
+  .side{border-right:0;border-bottom:1px solid var(--line);padding:16px 20px}
+  .brand{margin-bottom:12px}
+  .nav{flex-direction:row;flex-wrap:wrap;gap:4px}
+  .nav hr{display:none}
+  .nav a{padding:0 12px;height:32px}
+  .nav .sub{flex-direction:row;flex-wrap:wrap;margin:0;padding:0 0 0 8px}
+  .nav a .end{margin-left:4px}
+  .me{display:none}
+  .main{padding:18px 20px 8px}
+  .row{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  .top{flex-wrap:wrap;gap:10px 14px}
+  .top h1{flex:1 1 100%}
+  .search{flex:1 1 100%;padding-left:0;border-left:0;order:9}
+  .tiles{grid-template-columns:minmax(0,1fr)}
+  .card{padding:18px 16px}
+  .card-h{flex-wrap:wrap;gap:8px 12px}
+  .plot,.days{gap:3px}
+  .val{padding:2px 5px}
+  .val .u{display:none}
+  .col.now .val{padding:4px 8px}
+  .track-h{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion:reduce){ *{transition:none !important} }
+@media print{
+  html,body{background:#fff}
+  .app{margin:0;box-shadow:none;border-radius:0}
+  .card{border:1px solid var(--line)}
+  .card,tr{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6h-6v6H4z" fill="currentColor"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 16v-4M12 16V8M15 16v-6"/></symbol>
+  <symbol id="i-team" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 19c.6-3.2 2.8-5 6-5s5.4 1.8 6 5M16 6a3 3 0 0 1 0 5.500M18 14.500c1.8.6 2.7 2.2 3 4.5"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M5 5h14v11h-8l-4 3v-3H5z"/><path d="M9 9v3M12 8v5M15 9v3"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 5.500C7.5 4.5 10 5 12 6.500c2-1.5 4.5-2 7-1v13c-2.5-1-5-.5-7 1-2-1.5-4.5-2-7-1zM12 6.500v13"/></symbol>
+  <symbol id="i-task" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="16" rx="3"/><path d="M9 5V3.500h6V5M9 11h6M9 15h4"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="3"/><path d="M9 9h6M9 13h6"/></symbol>
+  <symbol id="i-set" viewBox="0 0 24 24"><path d="M12 3l7.8 4.500v9L12 21l-7.8-4.500v-9z"/><circle cx="12" cy="12" r="2.6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-updown" viewBox="0 0 24 24"><path d="M8 10l4-4 4 4M8 14l4 4 4-4"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M14 5v14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15zM10 21h4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4M9 15h2"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 5H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5M12 13l8-8M15 5h5v5"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="3"/><path d="M8 10l4 3 4-3"/></symbol>
+  <symbol id="i-seat" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5" fill="currentColor" stroke="none"/><path d="M9.5 12l1.8 1.8 3.2-3.6" stroke="#fff" stroke-width="2"/></symbol>
+  <symbol id="i-score" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.200A4.2 4.2 0 0 1 12 7.400a4.2 4.2 0 0 1 7.5 2.400C19.5 15.4 12 20 12 20z" fill="currentColor" stroke="none"/><path d="M7 12h3l1.5-2.5 2 4.5 1.2-2H17" stroke="#fff" stroke-width="1.5"/></symbol>
+  <symbol id="i-focus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5" fill="currentColor" stroke="none"/><path d="M9 14c.9 1 1.9 1.5 3 1.500s2.1-.5 3-1.500M9.5 10h.01M14.5 10h.01" stroke="#fff" stroke-width="2"/></symbol>
+  <symbol id="i-pulse" viewBox="0 0 48 24"><path d="M1 12h10l4-8 5 16 5-12 3 4h19" stroke-width="1.4"/></symbol>
+  <symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
+  <symbol id="i-no" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M6.5 17.500l11-11"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2"/></symbol>
+</svg>
+
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <i><svg class="i" style="width:16px;height:16px"><use href="#i-book"/></svg></i>課務
+      <svg class="i"><use href="#i-panel"/></svg>
+    </div>
+    <nav class="nav" aria-label="主選單">
+      <a class="on" href="#" aria-current="page"><svg class="i"><use href="#i-home"/></svg>總覽</a>
+      <a href="#"><svg class="i"><use href="#i-chart"/></svg>讀書紀錄</a>
+      <a href="#"><svg class="i"><use href="#i-team"/></svg>小組<svg class="i end" style="width:15px;height:15px"><use href="#i-plus"/></svg></a>
+      <a href="#"><span class="dot"><svg class="i" style="display:block"><use href="#i-msg"/></svg></span>訊息</a>
+      <hr>
+      <a href="#"><svg class="i"><use href="#i-cal"/></svg>行事曆</a>
+      <a href="#"><svg class="i"><use href="#i-book"/></svg>講義</a>
+      <a href="#"><svg class="i"><use href="#i-task"/></svg>作業<svg class="i end" style="width:15px;height:15px"><use href="#i-up"/></svg></a>
+      <div class="sub">
+        <a href="#">個人作業</a>
+        <a href="#">小組報告</a>
+        <a href="#">補交</a>
+      </div>
+      <a class="add" href="#"><svg class="i" style="width:15px;height:15px"><use href="#i-plus"/></svg>新增作業</a>
+      <a href="#"><svg class="i"><use href="#i-doc"/></svg>文件</a>
+      <a href="#"><svg class="i"><use href="#i-set"/></svg>設定</a>
+    </nav>
+    <div class="me">
+      <i>學</i>
+      <div><b>王小明</b><span>114-1 學期・碩一</span></div>
+      <svg class="i" style="color:var(--ink-2)"><use href="#i-updown"/></svg>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <h1>歡迎回來，小明！</h1>
+      <label class="search"><svg class="i"><use href="#i-search"/></svg><span class="sr">搜尋</span><input type="search" placeholder="搜尋…"></label>
+      <span class="meta"><svg class="i"><use href="#i-bell"/></svg>+4</span>
+      <span class="meta"><svg class="i"><use href="#i-pin"/></svg>第 5 週<svg class="i" style="width:14px;height:14px"><use href="#i-down"/></svg></span>
+      <button class="cta" type="button"><svg class="i"><use href="#i-share"/></svg>分享進度</button>
+    </header>
+
+    <section class="tiles" aria-label="本週指標">
+      <div class="tile"><i><svg class="i"><use href="#i-seat"/></svg></i><div><span>本週出席</span><b>6/7<small>堂</small></b></div></div>
+      <div class="tile"><i><svg class="i"><use href="#i-score"/></svg></i><div><span>作業平均</span><b>88/100<small>分</small></b></div></div>
+      <div class="tile"><i><svg class="i"><use href="#i-focus"/></svg></i><div><span>專注程度</span><b>7/10</b></div></div>
+    </section>
+
+    <section class="row">
+      <article class="card">
+        <div class="card-h">
+          <h2>每日讀書時間</h2>
+          <button class="sel" type="button">本週<svg class="i"><use href="#i-down"/></svg></button>
+          <span class="avg"><b>76</b>分（平均）<svg width="44" height="22" class="i" style="width:44px;height:22px;color:#b9bacb"><use href="#i-pulse"/></svg></span>
+        </div>
+        <div class="bars" role="img" aria-label="本週每日讀書分鐘：一 72、二 61、三 81、四 110（超過上限 106）、五 82、六 72、日尚無資料">
+          <div class="yax" aria-hidden="true"><span>120</span><span>100</span><span>80</span><span>60</span><span>40</span></div>
+          <div class="plot" aria-hidden="true">
+            <div class="max"><span>上限</span></div>
+            <div class="col"><span class="val"><b>72</b><span class="u">分</span></span><div class="bar" style="--v:72"></div></div>
+            <div class="col"><span class="val"><b>61</b><span class="u">分</span></span><div class="bar" style="--v:61"></div></div>
+            <div class="col"><span class="val"><b>81</b><span class="u">分</span></span><div class="bar" style="--v:81"></div></div>
+            <div class="col now"><span class="val"><b>110</b><span class="u">分</span></span><div class="bar" style="--v:110"></div></div>
+            <div class="col"><span class="val"><b>82</b><span class="u">分</span></span><div class="bar" style="--v:82"></div></div>
+            <div class="col"><span class="val"><b>72</b><span class="u">分</span></span><div class="bar" style="--v:72"></div></div>
+            <div class="col"><span class="val">–</span><div class="bar" style="--v:44"></div></div>
+          </div>
+          <div class="days" aria-hidden="true"><span>一</span><span>二</span><span>三</span><span class="now">四</span><span>五</span><span>六</span><span>日</span></div>
+        </div>
+      </article>
+
+      <article class="card team">
+        <div class="card-h"><h2>小組成員</h2><a href="#">看全部</a></div>
+        <ul>
+          <li><span class="who on">林</span><div><b>林佳穎</b><span>個案分析・簡報</span></div><svg class="i"><use href="#i-mail"/></svg></li>
+          <li><span class="who">陳</span><div><b>陳柏翰</b><span>財務試算</span></div><svg class="i"><use href="#i-mail"/></svg></li>
+          <li><span class="who on">張</span><div><b>張育誠</b><span>資料蒐集</span></div><svg class="i"><use href="#i-mail"/></svg></li>
+          <li><span class="who">李</span><div><b>李思妤</b><span>報告彙整</span></div><svg class="i"><use href="#i-mail"/></svg></li>
+        </ul>
+        <button class="outline" type="button"><svg class="i" style="width:15px;height:15px"><use href="#i-plus"/></svg>新增成員</button>
+      </article>
+    </section>
+
+    <section class="track">
+      <div class="track-h">
+        <h2>作業追蹤</h2>
+        <span class="new">+3 新</span>
+        <span class="meta"><svg class="i"><use href="#i-search"/></svg>搜尋…</span>
+        <span class="meta" style="padding-left:12px;border-left:1px solid var(--line)">本月<svg class="i" style="width:14px;height:14px"><use href="#i-down"/></svg></span>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th><span class="chk"></span>名稱</th><th>進度</th><th>開始日</th><th>截止時間</th><th>狀態</th><th>預估工時</th><th><span class="sr">更多</span></th></tr></thead>
+          <tbody>
+            <tr><td><span class="chk"></span><b>策略管理</b><small>個案報告</small></td>
+              <td><span class="prog"><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="9.5" fill="none" stroke="#ddd" stroke-width="5"/><circle cx="13" cy="13" r="9.5" fill="none" stroke="#b0325a" stroke-width="5" stroke-dasharray="35.2 59.7" opacity=".75"/></svg>59%</span></td>
+              <td>9/20</td><td>10/05 23:59</td><td><span class="st mid"><svg class="i"><use href="#i-clock"/></svg>進行中</span></td><td>3 週</td><td><button class="more" type="button" aria-label="更多">···</button></td></tr>
+            <tr><td><span class="chk"></span><b>統計學</b><small>習題三</small></td>
+              <td><span class="prog"><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="9.5" fill="none" stroke="#ddd" stroke-width="5"/><circle cx="13" cy="13" r="9.5" fill="none" stroke="#5658ad" stroke-width="5" stroke-dasharray="59.7 59.7"/></svg>100%</span></td>
+              <td>9/22</td><td>9/29 12:00</td><td><span class="st"><svg class="i"><use href="#i-ok"/></svg>已交</span></td><td>7 天</td><td><button class="more" type="button" aria-label="更多">···</button></td></tr>
+            <tr><td><span class="chk"></span><b>財務管理</b><small>期中預習單</small></td>
+              <td><span class="prog"><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="9.5" fill="none" stroke="#ddd" stroke-width="5"/><circle cx="13" cy="13" r="9.5" fill="none" stroke="#b0325a" stroke-width="5" stroke-dasharray="51.9 59.7"/></svg>87%</span></td>
+              <td>9/20</td><td>9/30 07:25</td><td><span class="st bad"><svg class="i"><use href="#i-no"/></svg>逾期</span></td><td>14 天</td><td><button class="more" type="button" aria-label="更多">···</button></td></tr>
+            <tr><td><span class="chk"></span><b>組織行為</b><small>閱讀心得</small></td>
+              <td><span class="prog"><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="9.5" fill="none" stroke="#ddd" stroke-width="5"/><circle cx="13" cy="13" r="9.5" fill="none" stroke="#5658ad" stroke-width="5" stroke-dasharray="14.9 59.7"/></svg>25%</span></td>
+              <td>9/29</td><td>10/12 23:59</td><td><span class="st mid"><svg class="i"><use href="#i-clock"/></svg>進行中</span></td><td>10 天</td><td><button class="more" type="button" aria-label="更多">···</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

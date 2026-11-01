@@ -1,0 +1,49 @@
+<!doctype html>
+<!-- 版面喜好選單範例 VU06｜數字計數器｜來源：講師範例庫 output範例/元件庫/VU06-數字計數器.html；原始來源 https://github.com/Ashutoshx7/VengeanceUI（src/components/ui/stats-counter.tsx），作者 None，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  VU06 數字計數器（StatsCounter）
+  來源：https://github.com/Ashutoshx7/VengeanceUI　src/components/ui/stats-counter.tsx
+  原作者：原檔未標　授權：MIT
+  移植：framer-motion useSpring（bounce 0）改成 requestAnimationFrame＋ease-out cubic，時長 1.5s；省略 useInView 觸發，載入即播並加重播按鈕；reduced-motion 直接顯示最終值；統計卡與顏色是我加的示範。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>數字計數器</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f6f7f9;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;color:#1f2937}
+.wrap{display:grid;gap:14px;justify-items:center}
+.g{display:grid;grid-template-columns:repeat(2,170px);gap:10px}
+.s{background:#fff;border:1px solid #d4d4d8;border-left:5px solid var(--c);border-radius:6px;padding:10px 14px}
+.s small{display:block;font-size:12px;color:#6b7280}
+.n{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c)}
+.n i{font-style:normal;font-size:14px;font-weight:500;margin-left:2px}
+button{font:inherit;font-size:13px;padding:6px 14px;border:1px solid #a1a1aa;border-radius:6px;background:#fff;color:#1f2937;cursor:pointer}
+button:hover{background:#f4f4f5}
+button:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="g">
+<div class="s" style="--c:#16a34a"><small>通過題數</small><span class="n"><b data-to="28" data-d="0">0</b><i>題</i></span></div>
+<div class="s" style="--c:#d97706"><small>待查核</small><span class="n"><b data-to="5" data-d="0">0</b><i>項</i></span></div>
+<div class="s" style="--c:#2563eb"><small>回鏈覆蓋率</small><span class="n"><b data-to="96.4" data-d="1">0</b><i>%</i></span></div>
+<div class="s" style="--c:#dc2626"><small>斷鏈</small><span class="n"><b data-to="3" data-d="0">0</b><i>筆</i></span></div>
+</div>
+<button id="re">重播</button>
+</div>
+<script>
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function play(){document.querySelectorAll('[data-to]').forEach(el=>{
+ const to=+el.dataset.to,d=+el.dataset.d,t0=performance.now(),D=1500;
+ if(reduce){el.textContent=to.toFixed(d);return}
+ (function f(t){const p=Math.min((t-t0)/D,1),e=1-Math.pow(1-p,3);
+  el.textContent=(to*e).toFixed(d);if(p<1)requestAnimationFrame(f)})(t0)})}
+document.getElementById('re').onclick=play;play();
+</script>
+</body>
+</html>

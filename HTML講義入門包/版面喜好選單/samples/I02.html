@@ -1,0 +1,633 @@
+<!doctype html>
+<!-- 版面喜好選單範例 I02｜膠囊形變按鈕｜來源：講師範例庫 output範例/UI互動技巧/02-流體膠囊形變按鈕.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>02 · 流體膠囊形變按鈕</title>
+<script>
+  // 先於 CSS 套用 embed 模式，避免閃一下完整版面
+  try { if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed'); } catch (e) {}
+</script>
+<style>
+  :root {
+    --bg:#f4f3ef; --surface:#ffffff; --text:#1c1b19; --muted:#6b6862; --line:#e4e1da;
+    --accent:#5b4bff; --accent-2:#00b3a4;
+    --ink:#1a1642; --on:#ffffff;
+    --font:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Consolas,"Microsoft JhengHei",monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+      --accent:#8b7dff; --accent-2:#2fd6c6; --ink:#2a2568; --on:#0f0b2e;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+    --accent:#8b7dff; --accent-2:#2fd6c6; --ink:#2a2568; --on:#0f0b2e;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: var(--font); line-height: 1.6;
+    overflow-x: hidden;
+  }
+  main { max-width: 920px; margin: 0 auto; padding: 0 16px 64px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---------- header ---------- */
+  header { padding: 44px 0 8px; position: relative; }
+  .kicker { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; letter-spacing: .08em; }
+  .kicker .no { font-family: var(--mono); font-size: 13px; color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 1px 10px; }
+  h1 { margin: 10px 0 6px; font-size: clamp(28px, 6vw, 44px); line-height: 1.15; letter-spacing: -.01em; font-weight: 800; }
+  h1 .n { color: var(--accent); font-family: var(--mono); font-weight: 600; margin-right: .3em; }
+  header p { margin: 0; max-width: 40em; color: var(--muted); font-size: 16px; }
+  .theme-btn {
+    position: absolute; right: 0; top: 44px; font: inherit; font-size: 13px; color: var(--muted);
+    background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; cursor: pointer;
+  }
+  .theme-btn:hover { color: var(--text); border-color: var(--muted); }
+
+  /* ---------- stage ---------- */
+  .stage {
+    margin-top: 28px; padding: 40px 0 64px; border-radius: 28px; border: 1px solid var(--line);
+    display: flex; justify-content: center; position: relative; overflow: hidden;
+    background:
+      radial-gradient(520px 360px at 50% 70%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+      radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text) 13%, transparent) 1px, transparent 1.4px) 0 0/22px 22px,
+      var(--bg);
+  }
+  .phone {
+    --p: 0; /* 形變進度 0=按鈕 1=面板，由 JS 每幀寫入，讓顏色跟著高度走 */
+    --mixc: color-mix(in srgb, var(--ink) calc(var(--p) * 100%), var(--accent));
+    width: min(390px, 100vw - 32px); height: 720px; border-radius: 44px; flex: none;
+    background: var(--surface); border: 1px solid var(--line);
+    box-shadow: 0 30px 60px -20px rgba(20,18,40,.28), 0 8px 20px -8px rgba(20,18,40,.18);
+    position: relative; overflow: hidden; isolation: isolate;
+  }
+  .phone::before { /* 瀏海 */
+    content: ""; position: absolute; top: 10px; left: 50%; width: 104px; height: 28px; margin-left: -52px;
+    border-radius: 99px; background: #0c0c0e; z-index: 9;
+  }
+  .screen {
+    position: absolute; inset: 0; display: flex; flex-direction: column; overflow: hidden;
+    background: color-mix(in srgb, var(--bg) 70%, var(--surface));
+    touch-action: pan-y; padding-bottom: 96px;
+  }
+  .screen::after { /* 底部淡出，讓膠囊按鈕浮在內容上 */
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 150px; pointer-events: none;
+    background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--bg) 70%, var(--surface)) 72%);
+  }
+  .status { height: 50px; flex: none; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 30px 6px; font-size: 14px; font-weight: 700; }
+  .status i { font-style: normal; font-size: 11px; letter-spacing: 2px; }
+  .appbar { padding: 10px 24px 4px; }
+  .appbar h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: .02em; }
+  .appbar small { display: block; color: var(--muted); font-size: 13px; font-weight: 500; letter-spacing: .04em; }
+
+  .route {
+    margin: 12px 18px 0; background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 16px 18px 14px;
+    position: relative;
+  }
+  .route .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .route .city { font-size: 24px; font-weight: 800; line-height: 1.1; }
+  .route .city small { display: block; font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--muted); margin-top: 4px; letter-spacing: .02em; }
+  .route .city:last-child { text-align: right; }
+  .route .track { flex: 1; min-width: 0; text-align: center; color: var(--muted); font-size: 12px; }
+  .route .track i { display: block; height: 0; border-top: 2px dotted var(--muted); margin: 6px 6px 5px; opacity: .55; position: relative; }
+  .route .track i::after { content: ""; position: absolute; right: -4px; top: -6px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+  .route .meta { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); display: flex; gap: 8px; flex-wrap: wrap; }
+  .tagp { font-size: 12.5px; color: var(--muted); border: 1px solid var(--line); border-radius: 99px; padding: 1px 10px; }
+  .tagp.on { color: var(--accent); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); font-weight: 700; }
+
+  .sec { margin: 16px 24px 0; font-size: 13px; color: var(--muted); letter-spacing: .1em; font-weight: 700; }
+  .dates { display: flex; gap: 8px; margin: 8px 18px 0; }
+  .dates div { flex: 1; text-align: center; padding: 8px 0 7px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+  .dates div b { display: block; font-size: 18px; color: var(--text); }
+  .dates div.sel { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .dates div.sel b { color: var(--bg); }
+  .seatrow { display: flex; align-items: center; gap: 12px; margin: 8px 18px 0; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px 14px; font-size: 14px; }
+  .seatrow .map { display: grid; grid-template-columns: repeat(5, 12px); gap: 4px; }
+  .seatrow .map i { width: 12px; height: 12px; border-radius: 4px; background: color-mix(in srgb, var(--text) 14%, transparent); }
+  .seatrow .map i.me { background: var(--accent); }
+  .seatrow .map i.gap { background: none; }
+  .seatrow b { display: block; }
+  .seatrow small { color: var(--muted); font-size: 12.5px; }
+  .seatrow .fare { margin-left: auto; text-align: right; font-family: var(--mono); font-weight: 700; }
+
+  /* ---------- 形變：背景黏滯層（goo，只有背景，沒有文字） ---------- */
+  .scrim { position: absolute; inset: 0; z-index: 2; background: rgba(12,10,32,.5); opacity: 0; pointer-events: none; touch-action: none; }
+  .scrim.on { pointer-events: auto; }
+  .goo { position: absolute; inset: 0; z-index: 3; pointer-events: none; filter: url(#goo); }
+  .goo > * { position: absolute; background: var(--mixc); }
+  .goo .gbody { left: 0; bottom: 0; }
+  .goo .drop { left: 0; top: 0; border-radius: 50%; will-change: transform; }
+
+  /* ---------- 形變：唯一的容器 ---------- */
+  .morph {
+    position: absolute; left: 50%; bottom: 22px; width: 240px; height: 56px; border-radius: 28px; z-index: 5;
+    transform: translateX(-50%); transform-origin: 50% 100%;
+    background: linear-gradient(165deg, color-mix(in srgb, var(--mixc) 84%, #fff), var(--mixc));
+    box-shadow: 0 16px 34px -12px color-mix(in srgb, var(--mixc) 75%, transparent), inset 0 0 0 1px rgba(255,255,255,.14), inset 0 1px 0 rgba(255,255,255,.3);
+    overflow: hidden; color: var(--on); touch-action: none;
+    user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+  }
+  .layer { position: absolute; inset: 0; }
+  .layer[inert] { pointer-events: none; }
+  button { font: inherit; color: inherit; }
+  .l-pill, .l-spin {
+    border: 0; background: none; padding: 0; cursor: pointer; display: grid; place-items: center;
+    border-radius: inherit; -webkit-tap-highlight-color: transparent;
+  }
+  .morph button:focus-visible { outline: 3px solid var(--on); outline-offset: -5px; }
+  .pill-in { display: flex; align-items: center; gap: 10px; white-space: nowrap; font-weight: 800; font-size: 17px; letter-spacing: .04em; will-change: transform, opacity, filter; }
+  .pill-in .price { font-family: var(--mono); font-size: 14px; font-weight: 600; opacity: .8; letter-spacing: 0; padding-left: 10px; border-left: 1px solid currentColor; border-left-color: color-mix(in srgb, currentColor 40%, transparent); }
+  .pill-in svg { width: 18px; height: 18px; flex: none; }
+  .spin-in { display: grid; place-items: center; will-change: transform, opacity, filter; }
+  .spin-in svg { width: 30px; height: 30px; animation: spin .85s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .l-panel { inset: auto; left: 50%; top: 0; transform: translateX(-50%); color: #fff; }
+  .panel-in { padding: 22px; will-change: transform, opacity, filter; transform-origin: 50% 30%; }
+  .rv { will-change: transform, opacity; }
+  .p-head { display: flex; align-items: center; gap: 14px; }
+  .p-head .ok { width: 46px; height: 46px; flex: none; border-radius: 50%; background: color-mix(in srgb, var(--accent-2) 90%, #fff 0%); display: grid; place-items: center; box-shadow: 0 0 0 5px rgba(255,255,255,.08); }
+  .p-head .ok svg { width: 26px; height: 26px; }
+  .p-head h2 { margin: 0; font-size: 22px; font-weight: 800; line-height: 1.2; letter-spacing: .02em; }
+  .p-head p { margin: 2px 0 0; font-size: 13.5px; opacity: .72; line-height: 1.45; }
+  .ticket { margin-top: 18px; background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.12); border-radius: 18px; padding: 14px 16px 6px; }
+  .ticket .rt { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 800; padding-bottom: 12px; border-bottom: 1px dashed rgba(255,255,255,.25); }
+  .ticket .rt i { flex: 1; height: 0; border-top: 2px dotted rgba(255,255,255,.4); }
+  .ticket dl { margin: 0; }
+  .ticket dl div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 14.5px; }
+  .ticket dl div + div { border-top: 1px solid rgba(255,255,255,.08); }
+  .ticket dt { opacity: .65; }
+  .ticket dd { margin: 0; font-weight: 600; text-align: right; }
+  .total { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 4px 0; }
+  .total span { font-size: 14px; opacity: .7; }
+  .total b { font-family: var(--mono); font-size: 26px; letter-spacing: -.01em; }
+  .done {
+    display: block; width: 100%; margin-top: 16px; height: 50px; border: 0; border-radius: 99px; cursor: pointer;
+    background: #fff; color: #1a1642; font-weight: 800; font-size: 17px; letter-spacing: .3em; text-indent: .3em;
+  }
+  .done:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 3px; }
+
+  .readout {
+    position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); padding: 5px 14px; border-radius: 99px;
+    background: var(--surface); border: 1px solid var(--line);
+    font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap;
+  }
+  .readout b { color: var(--text); font-weight: 600; display: inline-block; min-width: 3em; text-align: right; }
+  .readout em { font-style: normal; color: var(--accent); font-weight: 600; display: inline-block; min-width: 3.6em; }
+
+  /* ---------- knobs / prompt / notes ---------- */
+  section.knobs, section.prompt, section.notes { margin-top: 28px; }
+  h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .1em; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+  .knobs .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .knob { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+  .knob label { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 600; }
+  .knob output { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .knob small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  input[type=range] { width: 100%; margin: 10px 0 0; accent-color: var(--accent); height: 28px; }
+  input[type=range]:focus-visible, .theme-btn:focus-visible, .copy:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+  .prompt .box { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; display: flex; gap: 16px; align-items: flex-start; }
+  .prompt blockquote { margin: 0; flex: 1; font-size: 16px; line-height: 1.8; border-left: 3px solid var(--accent-2); padding-left: 14px; }
+  .copy { flex: none; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 0; border-radius: 10px; padding: 8px 16px; background: var(--accent); color: var(--on); min-width: 76px; }
+  .copy.ok { background: var(--accent-2); color: #06201d; }
+
+  .notes ol { margin: 0; padding: 0; counter-reset: n; list-style: none; display: grid; gap: 10px; }
+  .notes li { counter-increment: n; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px 12px 52px; position: relative; font-size: 15px; }
+  .notes li::before { content: counter(n); position: absolute; left: 16px; top: 12px; width: 24px; height: 24px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); font-family: var(--mono); font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+  .notes code { font-family: var(--mono); font-size: 13px; background: color-mix(in srgb, var(--text) 8%, transparent); padding: 1px 6px; border-radius: 6px; }
+
+  @media (max-width: 560px) {
+    .prompt .box { flex-direction: column; }
+    .copy { align-self: stretch; }
+    .theme-btn { position: static; margin-top: 12px; }
+    .stage { border-radius: 20px; padding: 24px 0 60px; }
+  }
+
+  /* ---------- embed ---------- */
+  html.embed, html.embed body { background: transparent; overflow: hidden; height: 100%; }
+  html.embed header, html.embed .knobs, html.embed .prompt, html.embed .notes, html.embed .readout { display: none; }
+  html.embed main { max-width: none; padding: 0; height: 100%; }
+  html.embed .stage { margin: 0; padding: 0; border: 0; background: none; height: 100%; align-items: center; border-radius: 0; overflow: visible; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<!-- goo 濾鏡：只套在 .goo 背景層，文字層完全不受影響 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="goo" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feGaussianBlur id="gooBlur" in="SourceGraphic" stdDeviation="5"/>
+      <feColorMatrix id="gooMx" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8"/>
+    </filter>
+  </defs>
+</svg>
+
+<main>
+  <header>
+    <div class="kicker"><span class="no">02</span><span>UI 互動技巧・實體質感</span></div>
+    <h1><span class="n">02 ·</span>流體膠囊形變按鈕</h1>
+    <p>彈窗硬生生跳出來，使用者會失去「我剛按了什麼」的脈絡。讓按鈕本身像水滴一樣流動、延展成面板，寬、高、圓角各自帶彈簧，前後關係一眼就懂。</p>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="切換淺色與深色">切換深淺色</button>
+  </header>
+
+  <section class="stage" aria-label="Demo 舞台">
+    <div class="phone" id="phone">
+      <div class="screen">
+        <div class="status"><span>9:41</span><i>●●●● ▮</i></div>
+        <div class="appbar"><h2>高鐵訂票</h2><small>1 位成人・單程</small></div>
+        <div class="route">
+          <div class="top">
+            <div class="city">台北<small>18:22</small></div>
+            <div class="track">1 小時 42 分<i></i>直達</div>
+            <div class="city">左營<small>20:04</small></div>
+          </div>
+          <div class="meta"><span class="tagp on">車次 0647</span><span class="tagp">標準車廂</span><span class="tagp">早鳥 9 折已套用</span></div>
+        </div>
+        <div class="sec">出發日期</div>
+        <div class="dates">
+          <div>週四<b>10/1</b></div><div class="sel">週五<b>10/2</b></div><div>週六<b>10/3</b></div><div>週日<b>10/4</b></div>
+        </div>
+        <div class="sec">座位</div>
+        <div class="seatrow">
+          <div class="map" aria-hidden="true"><i></i><i></i><i class="gap"></i><i></i><i></i><i></i><i class="me"></i><i class="gap"></i><i></i><i></i></div>
+          <div><b>7 車 12C</b><small>靠窗・面向行進方向</small></div>
+          <div class="fare">NT$1,490</div>
+        </div>
+      </div>
+
+      <div class="scrim" id="scrim"></div>
+      <div class="goo" id="goo" aria-hidden="true">
+        <div class="gbody" id="gbody"></div>
+        <div class="drop"></div><div class="drop"></div><div class="drop"></div>
+      </div>
+
+      <div class="morph" id="morph">
+        <button class="layer l-pill" id="pillBtn" type="button" aria-label="立即訂購，總計 1,490 元">
+          <span class="pill-in" id="pillIn">
+            立即訂購<span class="price">NT$1,490</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </button>
+        <button class="layer l-spin" id="spinBtn" type="button" aria-label="處理中，按一下取消" inert>
+          <span class="spin-in" id="spinIn">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="12" opacity=".25"/><path d="M16 4a12 12 0 0 1 12 12"/></svg>
+          </span>
+        </button>
+        <div class="layer l-panel" id="panelLayer" role="dialog" aria-label="訂購確認" inert>
+          <div class="panel-in" id="panelIn">
+            <div class="rv p-head">
+              <span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="#06201d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path id="checkPath" d="M5 12.5l4.6 4.6L19 7.5" stroke-dasharray="20" stroke-dashoffset="20"/></svg></span>
+              <div><h2>訂購成功</h2><p>電子車票已傳到你的 LINE 與信箱</p></div>
+            </div>
+            <div class="rv ticket">
+              <div class="rt">台北<i></i>左營</div>
+              <dl>
+                <div><dt>車次</dt><dd>0647 直達</dd></div>
+                <div><dt>出發</dt><dd>10/2（五）18:22</dd></div>
+                <div><dt>座位</dt><dd>7 車 12C 靠窗</dd></div>
+                <div><dt>票價（含早鳥 9 折）</dt><dd>NT$1,490</dd></div>
+              </dl>
+            </div>
+            <div class="rv total"><span>合計</span><b>NT$1,490</b></div>
+            <button class="rv done" id="doneBtn" type="button">完成</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="readout" aria-hidden="true"><em id="rdState">膠囊</em>　寬 <b id="rdW">240</b>　高 <b id="rdH">56</b>　圓角 <b id="rdR">28</b></div>
+    <div class="sr" id="live" aria-live="polite"></div>
+  </section>
+
+  <section class="knobs" aria-label="可調參數">
+    <h3>可調參數</h3>
+    <div class="grid">
+      <div class="knob"><label for="kStiff">剛性 stiffness <output id="oStiff"></output></label><input id="kStiff" type="range" min="60" max="400" step="5" value="150"><small>寬的剛性；高為 0.8 倍、圓角為 1.3 倍</small></div>
+      <div class="knob"><label for="kDamp">阻尼比 damping ratio <output id="oDamp"></output></label><input id="kDamp" type="range" min="0.5" max="1.2" step="0.01" value="0.8"><small>1.0 為臨界阻尼；0.8 有約 1.5% 的微過衝</small></div>
+      <div class="knob"><label for="kLag">寬高時間差 <output id="oLag"></output></label><input id="kLag" type="range" min="0" max="240" step="5" value="90"><small>展開時寬先動、高稍晚；收回時反過來</small></div>
+      <div class="knob"><label for="kGoo">黏滯水滴 goo <output id="oGoo"></output></label><input id="kGoo" type="range" min="0" max="100" step="5" value="60"><small>背景層的模糊量；0% 關閉，只剩純彈簧</small></div>
+    </div>
+  </section>
+
+  <section class="prompt" aria-label="AI 描述詞">
+    <h3>AI 描述詞</h3>
+    <div class="box">
+      <blockquote id="promptText">實現膠囊按鈕向彈窗面板的流體形態變換，尺寸與圓角採用高阻尼流體曲線無縫過渡。</blockquote>
+      <button class="copy" id="copyBtn" type="button">複製</button>
+    </div>
+  </section>
+
+  <section class="notes" aria-label="實作要點">
+    <h3>實作要點</h3>
+    <ol>
+      <li><b>同一個容器，三種形態：</b>按鈕、載入圓、面板全是 <code>.morph</code> 這一個元素，直接改 <code>width／height／border-radius</code>，不用 <code>scale</code>，所以文字不會被拉伸。內容分三層各自固定尺寸，容器 <code>overflow:hidden</code> 當遮罩。全頁只有這一個元素在動 layout，成本很小。</li>
+      <li><b>寬、高、圓角各自一根彈簧：</b>預設 k=150、阻尼比 0.8，微過衝約 1.5%。高的剛性是寬的 0.8 倍，圓角 1.3 倍。展開時高比寬晚 90ms 才啟動，收回時反過來，水滴被拉長再收攏的感覺就來自這個時間差。</li>
+      <li><b>內容用 crossfade 換手：</b>每層各有一根臨界阻尼的 opacity 彈簧，同時帶 <code>blur</code> 與 <code>scale</code>，面板內的元素再依序延遲浮現。文字層永遠不被縮放到變形，而且比容器晚一拍出現，就不會看到內容被擠壓。</li>
+      <li><b>可以中途反轉：</b>狀態機只改「目標值」，位置與速度不重設；延遲以「排程中的目標」實作，新指令會覆蓋舊排程。所以動畫跑到一半再點（或按 Esc），會從當下姿態直接反向流動。載入圓也是按鈕，可取消。</li>
+      <li><b>goo 只套在背景層：</b>獨立的 <code>.goo</code> 層放主體複本與 3 顆較軟、欠阻尼的尾隨水滴，套 <code>feGaussianBlur＋feColorMatrix(alpha×20−8)</code>；真正的容器與文字在它上面，所以文字保持銳利。套用時注意這層是整個手機大小，低階裝置可把「黏滯」調到 0。</li>
+    </ol>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ---------- 參數 ---------- */
+  const P = { k: 150, z: 0.8, lag: 90, goo: 0.6 };
+  const blurEl = $('#gooBlur');
+  const applyGoo = () => blurEl.setAttribute('stdDeviation', (P.goo * 9).toFixed(2));
+  [
+    ['kStiff', 'oStiff', 'k', v => String(v)],
+    ['kDamp', 'oDamp', 'z', v => v.toFixed(2)],
+    ['kLag', 'oLag', 'lag', v => v + ' ms'],
+    ['kGoo', 'oGoo', 'goo', v => Math.round(v * 100) + '%'],
+  ].forEach(([id, oid, key, fmt]) => {
+    const el = $('#' + id), out = $('#' + oid);
+    const apply = () => {
+      const v = +el.value;
+      P[key] = key === 'goo' ? v / 100 : v;
+      out.textContent = fmt(P[key]);
+      if (key === 'goo') applyGoo();
+    };
+    el.addEventListener('input', apply);
+    apply();
+  });
+
+  /* ---------- 元素 ---------- */
+  const phone = $('#phone'), morph = $('#morph'), gbody = $('#gbody'), scrim = $('#scrim');
+  const pillBtn = $('#pillBtn'), spinBtn = $('#spinBtn'), panelLayer = $('#panelLayer'), doneBtn = $('#doneBtn');
+  const pillIn = $('#pillIn'), spinIn = $('#spinIn'), panelIn = $('#panelIn'), checkPath = $('#checkPath');
+  const rvs = [...panelIn.querySelectorAll('.rv')];
+  const dropEls = [...document.querySelectorAll('.drop')];
+  const live = $('#live');
+  const rd = { s: $('#rdState'), w: $('#rdW'), h: $('#rdH'), r: $('#rdR') };
+  const STATE_NAME = { pill: '膠囊', loading: '圓形', panel: '面板' };
+
+  /* ---------- 幾何 ---------- */
+  const G = { W: 390, H: 720, B: 22, pw: 240, panelW: 354, panelH: 372, h0: 56, rPanel: 38 };
+  function measure() {
+    G.W = phone.clientWidth; G.H = phone.clientHeight;
+    G.pw = Math.min(240, G.W - 56);
+    G.panelW = G.W - 36;
+    panelLayer.style.width = G.panelW + 'px';
+    G.panelH = Math.ceil(panelIn.offsetHeight);
+  }
+  const shape = st => st === 'panel' ? { w: G.panelW, h: G.panelH, r: G.rPanel }
+                   : st === 'loading' ? { w: G.h0, h: G.h0, r: G.h0 / 2 }
+                   : { w: G.pw, h: G.h0, r: G.h0 / 2 };
+
+  /* ---------- 彈簧通道 ---------- */
+  const ch = x => ({ x, v: 0, t: x, pend: null });
+  const S = { w: ch(240), h: ch(56), r: ch(28), oPill: ch(1), oSpin: ch(0), oPanel: ch(0), press: ch(0) };
+  const CH = Object.values(S);
+  function setT(c, t, delay, now) {
+    if (delay <= 0) { c.t = t; c.pend = null; }
+    else c.pend = { at: now + delay, t };
+  }
+  // 每個通道的 [剛性, 阻尼比, 位移容許, 速度容許]
+  function conf(name) {
+    switch (name) {
+      case 'w': return [P.k, P.z, .04, .4];
+      case 'h': return [P.k * .8, P.z, .04, .4];
+      case 'r': return [P.k * 1.3, P.z, .04, .4];
+      case 'press': return [520, .55, .001, .05];
+      default: return [240, 1, .0015, .02];   // 內容 opacity：臨界阻尼，不過衝
+    }
+  }
+  const DROPS = [
+    { fx: -.3, r: 8,   k: 260, z: .4 },
+    { fx: .05, r: 5.5, k: 330, z: .45 },
+    { fx: .32, r: 10,  k: 210, z: .36 },
+  ].map(d => Object.assign(d, { x: 0, y: 0, vx: 0, vy: 0, el: null }));
+  DROPS.forEach((d, i) => d.el = dropEls[i]);
+
+  const LEASH = 26;
+  function dropTarget(d) {
+    const top = G.H - G.B - S.h.x;
+    return { x: G.W / 2 + d.fx * Math.max(S.w.x - 36, 0), y: top + Math.min(S.h.x / 2, 20) };
+  }
+
+  /* ---------- 狀態機 ---------- */
+  let state = 'pill', loadTimer = 0;
+  const LOAD_MS = 1500;
+  function go(next) {
+    const now = performance.now();
+    clearTimeout(loadTimer);
+    const prev = state; state = next;
+    const reduce = reduceMQ.matches;
+    const lag = reduce ? 0 : P.lag;
+    const T = shape(next);
+    const hadFocus = morph.contains(document.activeElement);
+
+    if (next === 'panel') {
+      // 展開：寬先、高與圓角稍晚；面板內容等外形差不多到位才浮現
+      setT(S.w, T.w, 0, now); setT(S.h, T.h, lag, now); setT(S.r, T.r, lag * .6, now);
+      setT(S.oPill, 0, 0, now); setT(S.oSpin, 0, 0, now); setT(S.oPanel, 1, lag + 70, now);
+    } else if (S.h.x > 70 || S.h.t > 70) {
+      // 從面板（或展開到一半）收回：高先、寬稍晚；按鈕內容等寬度快回來才浮現
+      setT(S.h, T.h, 0, now); setT(S.w, T.w, lag, now); setT(S.r, T.r, lag * .6, now);
+      setT(S.oPanel, 0, 0, now);
+      setT(S.oPill, next === 'pill' ? 1 : 0, next === 'pill' ? lag + 120 : 0, now);
+      setT(S.oSpin, next === 'loading' ? 1 : 0, next === 'loading' ? lag + 120 : 0, now);
+    } else {
+      // 膠囊 ⇄ 圓形：只有寬在變
+      setT(S.w, T.w, 0, now); setT(S.h, T.h, 0, now); setT(S.r, T.r, 0, now);
+      setT(S.oPanel, 0, 0, now);
+      setT(S.oPill, next === 'pill' ? 1 : 0, next === 'pill' ? 90 : 0, now);
+      setT(S.oSpin, next === 'loading' ? 1 : 0, next === 'loading' ? 60 : 0, now);
+    }
+
+    pillBtn.toggleAttribute('inert', next !== 'pill');
+    spinBtn.toggleAttribute('inert', next !== 'loading');
+    panelLayer.toggleAttribute('inert', next !== 'panel');
+    scrim.classList.toggle('on', next === 'panel');
+    if (hadFocus) {
+      const to = next === 'pill' ? pillBtn : next === 'loading' ? spinBtn : doneBtn;
+      to.focus({ preventScroll: true });
+    }
+    live.textContent = next === 'loading' ? '處理中' : next === 'panel' ? '訂購成功，已顯示訂單摘要' : '';
+    if (next === 'loading') loadTimer = setTimeout(() => go('panel'), reduce ? 500 : LOAD_MS);
+    wake();
+  }
+
+  /* ---------- 主迴圈 ---------- */
+  let running = false, last = 0;
+  function wake() {
+    if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
+  }
+  function snap() {
+    for (const c of CH) { c.x = c.t; c.v = 0; c.pend = null; }
+    DROPS.forEach(d => { const t = dropTarget(d); d.x = t.x; d.y = t.y; d.vx = d.vy = 0; });
+  }
+  function frame(now) {
+    const dt = Math.min((now - last) / 1000, 1 / 20);
+    last = now;
+    for (const c of CH) if (c.pend && now >= c.pend.at) { c.t = c.pend.t; c.pend = null; }
+
+    let moving = false;
+    if (reduceMQ.matches) {
+      // 減少動態：直接跳到終點
+      for (const c of CH) if (!c.pend) { c.x = c.t; c.v = 0; } else moving = true;
+      DROPS.forEach(d => { const t = dropTarget(d); d.x = t.x; d.y = t.y; d.vx = d.vy = 0; });
+    } else {
+      const n = Math.max(1, Math.ceil(dt / (1 / 120))), h = dt / n;
+      const names = Object.keys(S);
+      for (const name of names) {
+        const c = S[name], [k, z, tolX, tolV] = conf(name), damp = 2 * z * Math.sqrt(k);
+        for (let i = 0; i < n; i++) {
+          c.v += (-k * (c.x - c.t) - damp * c.v) * h;
+          c.x += c.v * h;
+        }
+        if (c.pend || Math.abs(c.x - c.t) > tolX || Math.abs(c.v) > tolV) moving = true;
+        else { c.x = c.t; c.v = 0; }
+      }
+      for (const d of DROPS) {
+        const damp = 2 * d.z * Math.sqrt(d.k);
+        for (let i = 0; i < n; i++) {
+          const t = dropTarget(d);
+          d.vx += (-d.k * (d.x - t.x) - damp * d.vx) * h;
+          d.vy += (-d.k * (d.y - t.y) - damp * d.vy) * h;
+          d.x += d.vx * h; d.y += d.vy * h;
+          // 繩長：水滴離本體最遠 LEASH px，才會保持在黏滯距離內、看起來是被拉出來而不是飛走
+          const dy = d.y - t.y, dx = d.x - t.x;
+          if (Math.abs(dy) > LEASH) { d.y = t.y + Math.sign(dy) * LEASH; if (d.vy * dy > 0) d.vy = 0; }
+          if (Math.abs(dx) > LEASH) { d.x = t.x + Math.sign(dx) * LEASH; if (d.vx * dx > 0) d.vx = 0; }
+        }
+        const t = dropTarget(d);
+        if (Math.abs(d.x - t.x) > .05 || Math.abs(d.y - t.y) > .05 || Math.abs(d.vx) > .5 || Math.abs(d.vy) > .5) moving = true;
+        else { d.x = t.x; d.y = t.y; d.vx = d.vy = 0; }
+      }
+    }
+    render();
+    if (moving) requestAnimationFrame(frame); else running = false;
+  }
+
+  /* ---------- 繪製 ---------- */
+  function layerFx(el, o, blurMax, s0) {
+    const q = clamp(o, 0, 1);
+    el.style.opacity = q.toFixed(3);
+    el.style.filter = q > .995 ? 'none' : `blur(${((1 - q) * blurMax).toFixed(2)}px)`;
+    el.style.transform = `scale(${(s0 + (1 - s0) * q).toFixed(4)})`;
+  }
+  function render() {
+    const w = S.w.x, h = S.h.x, r = Math.max(S.r.x, 0);
+    morph.style.width = w.toFixed(2) + 'px';
+    morph.style.height = h.toFixed(2) + 'px';
+    morph.style.borderRadius = r.toFixed(2) + 'px';
+    morph.style.transform = `translateX(-50%) scale(${(1 - .04 * S.press.x).toFixed(4)})`;
+
+    // 形變進度：跟著高度走，用來混色與調暗背景
+    const prog = clamp((h - G.h0) / Math.max(G.panelH - G.h0, 1), 0, 1);
+    phone.style.setProperty('--p', prog.toFixed(3));
+    scrim.style.opacity = (prog * prog).toFixed(3);
+
+    // goo 背景層：主體複本（略縮 1px，避免濾鏡外擴露邊）＋尾隨水滴
+    gbody.style.width = Math.max(w - 2, 0).toFixed(2) + 'px';
+    gbody.style.height = Math.max(h - 2, 0).toFixed(2) + 'px';
+    gbody.style.borderRadius = Math.max(r - 1, 0).toFixed(2) + 'px';
+    gbody.style.left = (G.W / 2 - w / 2 + 1).toFixed(2) + 'px';
+    gbody.style.bottom = (G.B + 1) + 'px';
+    for (const d of DROPS) {
+      const s = d.r * 2;
+      d.el.style.width = d.el.style.height = s + 'px';
+      d.el.style.transform = `translate3d(${(d.x - d.r).toFixed(2)}px, ${(d.y - d.r).toFixed(2)}px, 0)`;
+    }
+
+    // 內容三層 crossfade（opacity＋blur＋scale）
+    layerFx(pillIn, S.oPill.x, 5, .9);
+    layerFx(spinIn, S.oSpin.x, 4, .6);
+    const op = clamp(S.oPanel.x, 0, 1);
+    layerFx(panelIn, clamp(op * 2, 0, 1), 8, .94);
+    rvs.forEach((el, i) => {
+      const q = clamp((op - .08 * i) / .6, 0, 1);
+      el.style.opacity = q.toFixed(3);
+      el.style.transform = `translate3d(0, ${((1 - q) * 12).toFixed(2)}px, 0)`;
+    });
+    checkPath.style.strokeDashoffset = (20 * (1 - clamp((op - .45) / .4, 0, 1))).toFixed(2);
+
+    rd.s.textContent = STATE_NAME[state];
+    rd.w.textContent = Math.round(w); rd.h.textContent = Math.round(h); rd.r.textContent = Math.round(r);
+  }
+
+  /* ---------- 互動：Pointer Events（按壓回饋）＋ click（含鍵盤 Enter/Space） ---------- */
+  function pressable(btn) {
+    let pid = null;
+    btn.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      pid = e.pointerId;
+      try { btn.setPointerCapture(e.pointerId); } catch (_) {}
+      S.press.t = 1; wake();
+    });
+    const end = e => {
+      if (e.pointerId !== pid) return;
+      pid = null; S.press.t = 0; wake();
+    };
+    btn.addEventListener('pointerup', end);
+    btn.addEventListener('pointercancel', end);
+    btn.addEventListener('lostpointercapture', end);
+    btn.addEventListener('contextmenu', e => e.preventDefault());
+  }
+  pressable(pillBtn); pressable(spinBtn);
+  pillBtn.addEventListener('click', () => { if (state === 'pill') go('loading'); });
+  spinBtn.addEventListener('click', () => { if (state === 'loading') go('pill'); });   // 載入中再點＝取消，從當下姿態反向流動
+  doneBtn.addEventListener('click', () => { if (state === 'panel') go('pill'); });
+  scrim.addEventListener('pointerdown', e => { if (state === 'panel') { e.preventDefault(); go('pill'); } });
+  addEventListener('keydown', e => {
+    if (e.key === 'Escape' && state !== 'pill') go('pill');
+  });
+
+  addEventListener('resize', () => {
+    measure();
+    const T = shape(state);
+    S.w.t = T.w; S.h.t = T.h; S.r.t = T.r;
+    snap(); render();
+  });
+  reduceMQ.addEventListener && reduceMQ.addEventListener('change', wake);
+
+  measure();
+  { const T = shape('pill'); S.w.t = T.w; S.h.t = T.h; S.r.t = T.r; }
+  snap(); render();
+  // 字型載入後高度可能改變，補量一次
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); render(); });
+
+  /* ---------- 複製 ---------- */
+  const copyBtn = $('#copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    const text = $('#promptText').textContent.trim();
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (_) {}
+    if (!ok) {
+      try {
+        const r = document.createRange(); r.selectNodeContents($('#promptText'));
+        const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        ok = document.execCommand('copy');
+      } catch (_) {}
+    }
+    copyBtn.textContent = ok ? '已複製' : '請按 Ctrl+C';
+    copyBtn.classList.toggle('ok', ok);
+    setTimeout(() => { copyBtn.textContent = '複製'; copyBtn.classList.remove('ok'); }, 1600);
+  });
+
+  /* ---------- 深淺色手動切換 ---------- */
+  $('#themeBtn').addEventListener('click', () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+  });
+})();
+</script>
+</body>
+</html>

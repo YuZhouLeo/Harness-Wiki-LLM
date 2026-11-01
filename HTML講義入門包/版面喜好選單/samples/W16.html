@@ -1,0 +1,587 @@
+<!doctype html>
+<!-- 版面喜好選單範例 W16｜動效主導｜來源：講師範例庫 output範例/網頁設計風格/16-動效主導.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W16 動效主導 Motion-first｜網頁設計風格</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,100,500;0,100,700;1,100,700;1,125,900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">')</script>
+<style>
+/* ===== 風格本體：所有規則都收在 .style 底下，不寫會漏進 .spec 的全域選擇器 ===== */
+:root { color-scheme: dark; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: #08050f; }
+.style {
+  --bg: #08050f;
+  --panel: #140c2b;
+  --deep: #2a1780;
+  --violet: #6d4dff;
+  --lilac: #b9a4ff;
+  --mist: #e6deff;
+  --ink: #ffffff;
+  --ink-2: #b7aed4;
+  --line: rgba(185,164,255,.24);
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  color: var(--ink);
+  background: var(--bg);
+  font-family: "Archivo", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  line-height: 1.7;
+  text-spacing-trim: space-first;
+}
+.style *, .style *::before, .style *::after { box-sizing: border-box; }
+.style h1, .style h2, .style h3 { text-wrap: balance; margin: 0; line-height: 1.25; }
+.style p { margin: 0; text-wrap: pretty; }
+.style a { color: inherit; text-decoration: none; }
+.style a:focus-visible { outline: 2px solid var(--mist); outline-offset: 3px; }
+
+/* ---------- 動效：全部的 keyframes ---------- */
+@keyframes rise   { from { transform: translate3d(0, 30px, 0); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes slam   { from { transform: translate3d(-110px, 0, 0) skewX(-16deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes cardin { from { transform: translate3d(150px, 50px, 0) rotate(9deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes trail  { from { transform: translate3d(calc(var(--i) * var(--g, 1) * 12px), calc(var(--i) * var(--g, 1) * 3px), 0) skewX(0deg); } to { transform: translate3d(calc(var(--i) * var(--g, 1) * 50px), calc(var(--i) * var(--g, 1) * 12px), 0) skewX(-5deg); } }
+@keyframes shoot  { 0% { transform: translate3d(-80%, 0, 0) scaleX(.3); opacity: 0; } 20% { opacity: .9; } 100% { transform: translate3d(170%, 0, 0) scaleX(1); opacity: 0; } }
+@keyframes bob    { from { transform: translate3d(0, -10px, 0) rotate(-.7deg); } to { transform: translate3d(0, 12px, 0) rotate(.8deg); } }
+@keyframes sheen  { 0%, 55% { transform: translate3d(-130%, 0, 0) skewX(-18deg); } 100% { transform: translate3d(230%, 0, 0) skewX(-18deg); } }
+@keyframes ping   { from { transform: scale(1); opacity: .7; } to { transform: scale(1.9); opacity: 0; } }
+@keyframes dotc   { 0%, 30% { background: #fff; transform: scale(1.25); } 36%, 100% { background: rgba(255,255,255,.3); transform: scale(1); } }
+@keyframes drift  { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(9%, -7%, 0) scale(1.15); } }
+@keyframes stripe { to { background-position: 28px 0; } }
+@keyframes lift   { from { transform: translate3d(0, 34px, 0) skewY(1.2deg); } to { transform: none; } }
+@keyframes slidein { from { transform: translate3d(-26px, 0, 0); } to { transform: none; } }
+@keyframes draw   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes run    { from { left: -12%; } to { left: 100%; } }
+
+.style .rise { animation: rise .6s var(--ease) backwards; animation-delay: calc(var(--d, 0) * 80ms); }
+.style .arr { display: inline-block; transition: transform .3s var(--ease); }
+.style .pill {
+  position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 10px; border-radius: 999px;
+  background: var(--mist); color: var(--panel); font-weight: 700;
+  box-shadow: 0 0 26px rgba(185,164,255,.45); transition: transform .3s var(--ease), box-shadow .3s, background .3s;
+}
+.style .pill:hover { transform: translate3d(0, -3px, 0); background: #fff; box-shadow: 0 10px 40px rgba(185,164,255,.75); }
+.style .pill:hover .arr { transform: translate3d(6px, 0, 0); }
+
+/* ---------- 第一屏 ---------- */
+.style .hero {
+  position: relative; isolation: isolate; overflow: hidden;
+  min-height: clamp(600px, 100svh, 860px);
+  display: flex; flex-direction: column;
+  padding: 0 clamp(20px, 4.4vw, 56px) clamp(28px, 4vw, 48px);
+  background:
+    radial-gradient(52% 70% at 74% 58%, rgba(109,77,255,.5), transparent 70%),
+    radial-gradient(40% 50% at 26% 44%, rgba(109,77,255,.2), transparent 70%),
+    var(--bg);
+}
+/* 光軌：一整層往右上斜 15 度，每條各自從左射到右 */
+.style .fx { position: absolute; inset: -30% -20%; z-index: -1; transform: rotate(-15deg); pointer-events: none; }
+.style .fx i {
+  position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h, 2px); border-radius: 99px;
+  background: linear-gradient(90deg, rgba(109,77,255,0), rgba(185,164,255,.85) 75%, #fff);
+  opacity: .5; animation: shoot var(--t, 3s) cubic-bezier(.4, 0, .6, 1) var(--dl, 0s) infinite;
+}
+
+.style .nav { display: flex; align-items: center; gap: 24px; padding: clamp(18px, 2.4vw, 30px) 0; }
+.style .brand { font-size: clamp(22px, 2vw, 26px); font-weight: 700; }
+.style .nav ul { display: flex; gap: clamp(24px, 4.4vw, 60px); list-style: none; margin: 0 auto 0 clamp(40px, 22vw, 330px); padding: 0; font-size: 15px; font-weight: 500; }
+.style .nav ul a { position: relative; padding: 6px 0; }
+.style .nav ul a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--lilac); transform: scaleX(0); transform-origin: right; transition: transform .35s var(--ease); }
+.style .nav ul a:hover::after { transform: scaleX(1); transform-origin: left; }
+.style .nav .pill { padding: 8px 22px; font-size: 14px; }
+
+.style .hero-body { flex: 1; display: grid; grid-template-columns: minmax(0, 1.42fr) minmax(0, 1fr) auto; gap: clamp(20px, 3.4vw, 46px); align-items: center; }
+.style .copy { position: relative; z-index: 1; }
+/* 大字：本體一層，後面四層殘影，來回位移做動態模糊 */
+.style .title {
+  font-style: italic; font-weight: 900; font-stretch: 125%; font-size: clamp(44px, 7.1vw, 94px); line-height: 1; letter-spacing: -.01em;
+  white-space: nowrap; transform: translate3d(var(--px, 0px), 0, 0); transition: transform .4s ease-out;
+}
+.style .ln { position: relative; display: block; width: max-content; animation: slam .7s var(--ease) both; animation-delay: calc(var(--d, 0) * 80ms); }
+.style .ln + .ln { margin-left: -.12em; }
+.style .tx { position: relative; z-index: 1; display: block; padding-right: .14em; background: linear-gradient(100deg, #fff 40%, var(--lilac)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.style .gh {
+  position: absolute; left: 0; top: 0; color: var(--violet);
+  opacity: calc(.62 - var(--i) * .13); filter: blur(calc(var(--i) * 1.3px));
+  transform: translate3d(calc(var(--i) * 32px), calc(var(--i) * 8px), 0) skewX(-3deg);
+  animation: trail 1.9s ease-in-out calc(var(--i) * -.22s) infinite alternate;
+}
+.style .sub { margin-top: 22px; font-size: clamp(21px, 2.1vw, 27px); font-weight: 500; }
+.style .lead { margin-top: 8px; max-width: 26em; font-size: clamp(15px, 1.3vw, 17px); color: var(--ink-2); }
+.style .hero .cta { margin-top: 30px; padding: 13px 30px; font-size: 15.5px; }
+
+.style .stage { position: relative; z-index: 2; perspective: 1100px; animation: cardin .8s var(--ease) .2s both; }
+.style .float { animation: bob 5.5s ease-in-out infinite alternate; }
+.style .card {
+  position: relative; display: block; aspect-ratio: 4 / 5.3; overflow: hidden; border-radius: 26px;
+  border: 1px solid rgba(230,222,255,.5); background: var(--deep);
+  transform: translate3d(0, 4%, 0) rotate(6deg) rotateY(calc(-12deg + var(--ry, 0deg))) rotateX(calc(4deg + var(--rx, 0deg)));
+  transition: transform .35s ease-out;
+  box-shadow: 0 0 0 1px rgba(109,77,255,.45), 0 30px 90px rgba(109,77,255,.65), 0 0 130px rgba(109,77,255,.4), inset 0 1px 0 rgba(255,255,255,.55);
+}
+.style .card svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.style .card::after { content: ""; position: absolute; top: -20%; bottom: -20%; left: 0; width: 34%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent); animation: sheen 4.6s ease-in-out infinite; }
+.style .card-t { position: absolute; z-index: 1; left: 9%; bottom: 8%; font-style: italic; font-weight: 700; font-size: clamp(19px, 2vw, 27px); line-height: 1.16; text-shadow: 0 2px 18px rgba(8,5,15,.6); }
+.style .card-n { position: absolute; z-index: 1; right: 8%; bottom: 9%; font-size: 13px; font-weight: 500; letter-spacing: .08em; color: var(--mist); }
+
+.style .side { align-self: stretch; display: flex; flex-direction: column; justify-content: space-between; padding: clamp(48px, 9.5vw, 128px) 0 6px; }
+.style .side ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; font-size: 15px; font-weight: 500; }
+.style .side ul a { display: inline-block; color: var(--ink-2); transition: transform .3s var(--ease), color .2s; }
+.style .side li:first-child a, .style .side ul a:hover { color: var(--ink); }
+.style .side ul a:hover { transform: translate3d(8px, 0, 0); }
+.style .next { position: relative; display: grid; place-items: center; width: 58px; height: 58px; margin-left: 58px; border-radius: 50%; border: 1px solid rgba(230,222,255,.45); transition: background .3s, transform .3s var(--ease); }
+.style .next::before { content: ""; position: absolute; inset: -1px; border-radius: 50%; border: 1px solid var(--lilac); animation: ping 2.2s ease-out infinite; }
+.style .next:hover { background: rgba(185,164,255,.2); transform: translate3d(6px, 0, 0); }
+.style .next svg { width: 18px; height: 18px; fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.style .dots { display: flex; gap: 16px; margin-left: 62px; }
+.style .dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.3); animation: dotc 6s linear infinite; }
+.style .dots i:first-child { background: #fff; }
+.style .dots i:nth-child(2) { animation-delay: 2s; }
+.style .dots i:nth-child(3) { animation-delay: 4s; }
+
+/* ---------- 套到學校資料 ---------- */
+.style .school {
+  position: relative; isolation: isolate; overflow: hidden;
+  padding: clamp(44px, 6vw, 84px) clamp(20px, 4.4vw, 56px) clamp(48px, 6vw, 88px);
+  border-top: 1px solid var(--line);
+}
+.style .school::before, .style .school::after {
+  content: ""; position: absolute; z-index: -1; width: 52vw; height: 52vw; max-width: 760px; max-height: 760px; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(109,77,255,.34), transparent); animation: drift 13s ease-in-out infinite alternate;
+}
+.style .school::before { left: -12%; top: -6%; }
+.style .school::after { right: -14%; bottom: 2%; animation-duration: 17s; animation-direction: alternate-reverse; }
+.style .school > header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin-bottom: 28px; }
+.style .stripes { flex: none; width: 46px; height: 22px; transform: skewX(-22deg); background: repeating-linear-gradient(90deg, var(--lilac) 0 8px, transparent 8px 14px); animation: stripe .7s linear infinite; }
+.style .school h2 { font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; font-size: clamp(27px, 3.2vw, 40px); font-weight: 900; }
+.style .school > header p { color: var(--ink-2); font-size: 15px; }
+.style .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
+
+/* 卡片：進場往上滑（只動 transform，內容一直看得到）、hover 抬起並掃過一道光 */
+.style .mcard {
+  position: relative; overflow: hidden; min-width: 0; margin: 0; padding: 24px; border-radius: 22px;
+  background: linear-gradient(165deg, rgba(109,77,255,.26), rgba(20,12,43,.92) 62%);
+  border: 1px solid var(--line);
+  transition: transform .45s var(--ease), border-color .3s, box-shadow .45s;
+}
+.style .mcard::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 40%; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(230,222,255,.16), transparent); transform: translate3d(-140%, 0, 0) skewX(-18deg); }
+.style .mcard:hover { transform: translate3d(0, -7px, 0); border-color: rgba(230,222,255,.6); box-shadow: 0 22px 60px rgba(109,77,255,.45); }
+.style .mcard:hover::after { transform: translate3d(330%, 0, 0) skewX(-18deg); transition: transform .9s var(--ease); }
+.style .mv.in { animation: lift .75s var(--ease) backwards; animation-delay: calc(var(--d, 0) * 70ms); }
+.style .label { display: block; font-size: 13px; color: var(--ink-2); }
+.style .mcard h3.t { font-size: 18px; font-weight: 700; }
+
+.style .course { grid-column: span 4; display: flex; flex-direction: column; gap: 10px; }
+.style .course::before { content: ""; position: absolute; left: 24px; top: 0; width: 44px; height: 3px; border-radius: 0 0 3px 3px; background: linear-gradient(90deg, var(--violet), var(--mist)); transition: width .6s var(--ease); }
+.style .course:hover::before { width: calc(100% - 48px); }
+.style .course .meta { display: flex; align-items: center; justify-content: space-between; font-size: 13.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.style .course time { font-style: italic; font-weight: 700; color: var(--lilac); }
+.style .course h3 { font-size: 19px; font-weight: 700; line-height: 1.45; }
+.style .course p { font-size: 14.5px; color: var(--ink-2); }
+.style .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 8px; }
+.style .tag { font-size: 12.5px; line-height: 1.7; padding: 1px 12px; border-radius: 999px; background: rgba(185,164,255,.16); color: var(--mist); }
+.style .course .go { align-self: flex-start; margin-top: 8px; padding: 7px 18px; font-size: 14px; }
+
+.style .nums { grid-column: span 5; display: flex; flex-direction: column; gap: 14px; }
+.style .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: auto 0; }
+/* 數字後面兩層殘影：::before／::after 讀 data-t，跟第一屏大字同一支 trail 動畫 */
+.style .big { position: relative; z-index: 0; width: max-content; font-style: italic; font-weight: 900; font-stretch: 125%; font-size: clamp(52px, 5.8vw, 78px); line-height: 1.05; font-variant-numeric: tabular-nums; }
+.style .big span { font-size: .42em; margin-left: 3px; color: var(--lilac); }
+.style .big::before, .style .big::after { content: attr(data-t); position: absolute; left: 0; top: 0; z-index: -1; color: var(--violet); animation: trail 1.9s ease-in-out infinite alternate; }
+.style .big { --g: .32; }
+.style .big::before { --i: 1; opacity: .6; transform: translate3d(10px, 3px, 0); }
+.style .big::after { --i: 2; opacity: .3; filter: blur(1.5px); transform: translate3d(20px, 6px, 0); animation-delay: -.3s; }
+.style .nums p { font-size: 15px; color: var(--mist); }
+
+.style .tablecard { grid-column: span 7; }
+.style .table-wrap { overflow-x: auto; margin-top: 12px; }
+.style table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 14.5px; }
+.style th, .style td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); background: linear-gradient(90deg, rgba(109,77,255,.4), rgba(109,77,255,.12)) no-repeat 0 0 / 0% 100%; transition: background-size .5s var(--ease); }
+.style thead th { font-weight: 700; color: var(--lilac); border-bottom-color: var(--lilac); }
+.style tbody th { font-weight: 500; color: var(--ink-2); white-space: nowrap; }
+.style tbody tr:hover th, .style tbody tr:hover td { background-size: 100% 100%; }
+.style tbody tr:last-child th, .style tbody tr:last-child td { border-bottom: 0; }
+
+.style .time { grid-column: span 12; }
+.style .line { list-style: none; margin: 20px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; position: relative; }
+.style .line::before { content: ""; position: absolute; left: 0; right: 0; top: 6px; height: 2px; background: linear-gradient(90deg, var(--mist), var(--violet)); transform-origin: left; }
+.style .time.in .line::before { animation: draw 1.1s var(--ease) .15s backwards; }
+.style .line::after { content: ""; position: absolute; top: 3px; left: -12%; width: 12%; height: 8px; border-radius: 99px; background: linear-gradient(90deg, transparent, #fff); filter: blur(2px); animation: run 3.4s linear infinite; }
+.style .line li { position: relative; padding-top: 26px; font-size: 14.5px; color: var(--mist); transition: transform .35s var(--ease); }
+.style .line li:hover { transform: translate3d(0, -5px, 0); }
+.style .line li::before { content: ""; position: absolute; top: 0; left: 0; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 14px var(--lilac); }
+.style .line li::after { content: ""; position: absolute; top: 0; left: 0; width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--lilac); animation: ping 2.4s ease-out infinite; animation-delay: calc(var(--n) * .35s); }
+.style .line b { display: block; font-style: italic; font-weight: 900; font-stretch: 125%; font-size: 28px; line-height: 1.25; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.style .quote { grid-column: span 5; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+.style .quote blockquote { margin: 0; font-size: clamp(18px, 1.8vw, 23px); font-weight: 700; line-height: 1.6; }
+
+.style .keys { grid-column: span 7; }
+.style .keys ol { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; counter-reset: k; }
+.style .keys li { counter-increment: k; display: flex; gap: 14px; align-items: center; padding: 10px 16px 10px 10px; border-radius: 999px; background: rgba(185,164,255,.12); font-size: 15px; transition: transform .35s var(--ease), background .3s; }
+.style .keys li:hover { transform: translate3d(10px, 0, 0); background: rgba(185,164,255,.26); }
+.style .keys li::before { content: counter(k); flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--mist); color: var(--panel); font-style: italic; font-weight: 900; font-size: 15px; }
+.style .keys.in li { animation: slidein .6s var(--ease) backwards; animation-delay: calc(var(--n) * 110ms + 150ms); }
+
+@media (max-width: 960px) {
+  .style .nav ul { display: none; }
+  /* 側欄不用 display:none 收掉（會讓進場動畫在跨斷點時重播），改排成橫列放在卡片下方 */
+  .style .side { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 14px 20px; padding: 0; }
+  .style .side ul { display: flex; flex-wrap: wrap; gap: 6px 20px; width: 100%; }
+  .style .next { width: 46px; height: 46px; margin-left: auto; order: 2; }
+  .style .dots { margin-left: 0; }
+  .style .nav .pill { margin-left: auto; }
+  .style .hero-body { grid-template-columns: 1fr; padding-top: clamp(20px, 5vw, 44px); }
+  .style .stage { width: min(72%, 320px); margin: 6px auto 26px; }
+  .style .course, .style .nums, .style .tablecard, .style .quote, .style .keys { grid-column: span 12; }
+}
+@media (max-width: 620px) {
+  .style .keys li { border-radius: 20px; }
+  .style .line { grid-template-columns: 1fr; gap: 14px; }
+  .style .line::before { left: 6px; right: auto; top: 0; bottom: 0; width: 2px; height: auto; transform-origin: top; background: linear-gradient(180deg, var(--mist), var(--violet)); }
+  .style .time.in .line::before { animation: none; }
+  .style .line::after { display: none; }
+  .style .line li { padding: 0 0 0 32px; }
+  .style .line li::before, .style .line li::after { top: 10px; }
+}
+/* 不要動效的人：全部停在最終狀態（殘影留在固定位移、光軌靜止、卡片維持傾斜） */
+@media (prefers-reduced-motion: reduce) {
+  .style *, .style *::before, .style *::after { animation: none !important; transition: none !important; }
+  .style .card::after, .style .line::after, .style .next::before, .style .line li::after { display: none; }
+  html { scroll-behavior: auto; }
+}
+@media print {
+  body { background: #fff; }
+  .style { --ink: #17112e; --ink-2: #4b4470; --mist: #2a1780; --lilac: #4a2fd0; --line: #cfc8ee; background: #fff; }
+  .style *, .style *::before, .style *::after { animation: none !important; transition: none !important; box-shadow: none !important; text-shadow: none !important; }
+  .style .fx, .style .gh, .style .school::before, .style .school::after, .style .card::after, .style .mcard::after, .style .line::after, .style .line li::after, .style .next::before, .style .big::before, .style .big::after { display: none; }
+  .style .hero { min-height: 0; background: #fff; }
+  .style .tx { background: none; color: #17112e; }
+  .style .pill { background: #fff; color: #17112e; border: 1px solid #17112e; }
+  .style .card-t, .style .card-n { color: #fff; }
+  .style .mcard { background: #f5f2ff; break-inside: avoid; }
+  .style .next { border-color: #17112e; }
+  .style .dots i { background: #cfc8ee; }
+  .style .dots i:first-child { background: #17112e; }
+  .style .line li::before { background: #4a2fd0; }
+  .style .tag, .style .keys li { background: #ebe6ff; }
+  .style .keys li::before { background: #2a1780; color: #fff; }
+}
+
+/* ===== 共用：風格規格面板（各頁相同，逐字複製，不要改） ===== */
+.spec { all: initial; display: block; background: #f6f5f1; color: #1c1b19; color-scheme: light; border-top: 1px solid #dcd9d0;
+  font: 400 15px/1.7 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; text-spacing-trim: space-first;
+  padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 48px) 64px; }
+.spec *, .spec *::before, .spec *::after { box-sizing: border-box; }
+.spec .spec-in { max-width: 1120px; margin: 0 auto; }
+.spec .spec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin: 0 0 6px; }
+.spec .spec-code { font: 700 13px/1 ui-monospace, Consolas, monospace; color: #fff; background: #1c1b19; padding: 5px 9px; border-radius: 6px; }
+.spec h2 { margin: 0; font-size: clamp(22px, 3vw, 30px); line-height: 1.3; font-weight: 700; text-wrap: balance; }
+.spec .spec-en { font: 500 14px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-def { margin: 0 0 22px; max-width: 46em; color: #3b3935; }
+.spec .spec-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.spec .spec-card { background: #fff; border: 1px solid #e4e1da; border-radius: 12px; padding: 16px 18px; min-width: 0; }
+.spec .spec-card.wide { grid-column: 1 / -1; }
+.spec h3 { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: #6b6862; }
+.spec ul, .spec ol { margin: 0; padding-left: 1.2em; }
+.spec li { margin: 2px 0; }
+.spec p { margin: 0; }
+.spec p + p { margin-top: 6px; }
+.spec code { font: 13px/1.5 ui-monospace, Consolas, monospace; background: #f0eee8; padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.spec .spec-traits { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 16px; }
+.spec .spec-traits small { display: block; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-sw { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.spec .spec-sw li { margin: 0; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #3b3935; }
+.spec .spec-sw i { display: block; height: 34px; border-radius: 8px; border: 1px solid rgba(0,0,0,.12); margin-bottom: 4px; }
+.spec .spec-fit b { display: inline-block; min-width: 4.2em; }
+.spec .spec-prompt { background: #efedff; border-color: #dcd8ff; }
+.spec .spec-back { display: inline-block; margin-top: 22px; color: #1c1b19; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 720px) { .spec .spec-grid { grid-template-columns: 1fr; } }
+@media print { .spec { border-top: 0; } .spec .spec-card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<main class="style">
+
+  <!-- ========== 第一屏：重現參考圖 ========== -->
+  <section class="hero" id="hero">
+    <div class="fx" aria-hidden="true">
+      <i style="--x:8%;--y:44%;--w:46%;--h:3px;--t:2.6s;--dl:-.4s"></i>
+      <i style="--x:20%;--y:52%;--w:38%;--t:3.4s;--dl:-1.6s"></i>
+      <i style="--x:2%;--y:60%;--w:52%;--h:5px;--t:3s;--dl:-2.2s"></i>
+      <i style="--x:30%;--y:38%;--w:30%;--t:2.2s;--dl:-.9s"></i>
+      <i style="--x:14%;--y:68%;--w:44%;--t:3.8s;--dl:-3s"></i>
+      <i style="--x:36%;--y:74%;--w:34%;--h:3px;--t:2.8s;--dl:-1.2s"></i>
+    </div>
+
+    <nav class="nav rise" aria-label="主選單">
+      <a class="brand" href="#hero">Motionly</a>
+      <ul>
+        <li><a href="#school">產品</a></li>
+        <li><a href="#school">案例</a></li>
+        <li><a href="#school">價格</a></li>
+        <li><a href="#spec">關於</a></li>
+      </ul>
+      <a class="pill" href="#school">開始體驗</a>
+    </nav>
+
+    <div class="hero-body">
+      <div class="copy">
+        <h1 class="title">
+          <span class="ln" style="--d:1"><span class="tx">IDEAS</span><span class="gh" style="--i:1" aria-hidden="true">IDEAS</span><span class="gh" style="--i:2" aria-hidden="true">IDEAS</span><span class="gh" style="--i:3" aria-hidden="true">IDEAS</span></span>
+          <span class="ln" style="--d:2"><span class="tx">IN MOTION</span><span class="gh" style="--i:1" aria-hidden="true">IN MOTION</span><span class="gh" style="--i:2" aria-hidden="true">IN MOTION</span><span class="gh" style="--i:3" aria-hidden="true">IN MOTION</span><span class="gh" style="--i:4" aria-hidden="true">IN MOTION</span></span>
+        </h1>
+        <p class="sub rise" style="--d:4">讓創意動起來</p>
+        <p class="lead rise" style="--d:5">動態互動，讓每一次瀏覽都成為一種體驗。</p>
+        <a class="pill cta rise" style="--d:6" href="#school">探索展示 <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="stage">
+        <div class="float">
+          <a class="card" id="card" href="#school">
+            <svg viewBox="0 0 400 530" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs>
+                <linearGradient id="cbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5b3df2"/><stop offset=".5" stop-color="#2a1780"/><stop offset="1" stop-color="#140c2b"/></linearGradient>
+                <radialGradient id="cgl" cx=".78" cy=".22" r=".8"><stop offset="0" stop-color="#b9a4ff" stop-opacity=".7"/><stop offset="1" stop-color="#b9a4ff" stop-opacity="0"/></radialGradient>
+                <radialGradient id="helm" cx=".34" cy=".26" r=".85"><stop offset="0" stop-color="#5a45c4"/><stop offset=".45" stop-color="#22166a"/><stop offset="1" stop-color="#0a0520"/></radialGradient>
+                <linearGradient id="visor" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a1b6e"/><stop offset=".5" stop-color="#0a0520"/><stop offset="1" stop-color="#05020f"/></linearGradient>
+                <linearGradient id="suit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c1e78"/><stop offset="1" stop-color="#0b0624"/></linearGradient>
+                <clipPath id="vz"><path d="M140 216C136 152 180 106 244 102C292 106 318 152 310 208C304 252 268 282 220 284C180 282 146 258 140 216Z"/></clipPath>
+                <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e6deff" stop-opacity="0"/><stop offset="1" stop-color="#e6deff"/></linearGradient>
+              </defs>
+              <rect width="400" height="530" fill="url(#cbg)"/>
+              <rect width="400" height="530" fill="url(#cgl)"/>
+              <g stroke="url(#beam)" stroke-linecap="round" fill="none">
+                <path d="M-10 250L150 214" stroke-width="3" opacity=".7"/>
+                <path d="M-10 300L120 276" stroke-width="2" opacity=".5"/>
+                <path d="M220 60L400 22" stroke-width="2" opacity=".6"/>
+                <path d="M300 350L410 326" stroke-width="4" opacity=".55"/>
+                <path d="M330 300L410 284" stroke-width="2" opacity=".5"/>
+              </g>
+              <g fill="#e6deff"><circle cx="46" cy="70" r="5" fill="none" stroke="#e6deff" stroke-width="1.6"/><circle cx="344" cy="42" r="2"/><circle cx="362" cy="36" r="1.6"/><circle cx="90" cy="150" r="1.4"/><circle cx="60" cy="360" r="1.6"/><circle cx="372" cy="210" r="1.4"/></g>
+              <!-- 身體與肩甲 -->
+              <path d="M96 530C100 452 132 398 190 372L236 344C268 358 306 360 334 348L362 366C390 386 400 420 400 450V530Z" fill="url(#suit)"/>
+              <path d="M190 372C176 420 172 474 176 530M236 344C240 392 262 432 300 452C338 444 360 410 362 366M300 452V530" fill="none" stroke="#7b5cff" stroke-opacity=".55" stroke-width="2"/>
+              <path d="M130 446C150 440 168 444 178 458M318 480H372" fill="none" stroke="#b9a4ff" stroke-opacity=".5" stroke-width="2" stroke-linecap="round"/>
+              <path d="M214 306L236 362C266 376 304 376 330 364L326 306Z" fill="#0b0624"/>
+              <!-- 頭盔：球體、整片深色面罩、後側耳罩 -->
+              <ellipse cx="258" cy="206" rx="122" ry="120" fill="url(#helm)"/>
+              <path d="M146 166A122 120 0 0 1 350 128" fill="none" stroke="#e6deff" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+              <path d="M252 88C314 96 366 150 372 222" fill="none" stroke="#7b5cff" stroke-opacity=".7" stroke-width="2"/>
+              <path d="M140 216C136 152 180 106 244 102C292 106 318 152 310 208C304 252 268 282 220 284C180 282 146 258 140 216Z" fill="url(#visor)" stroke="#b9a4ff" stroke-opacity=".45" stroke-width="1.6"/>
+              <g clip-path="url(#vz)">
+                <path d="M118 262L262 92h40L158 262Z" fill="#b9a4ff" opacity=".2"/>
+                <path d="M196 296L340 126h16L212 296Z" fill="#6d4dff" opacity=".45"/>
+              </g>
+              <path d="M160 182C170 146 204 124 240 120" fill="none" stroke="#e6deff" stroke-width="5" stroke-linecap="round" opacity=".75"/>
+              <path d="M176 196C182 176 196 162 214 154" fill="none" stroke="#b9a4ff" stroke-width="2.5" stroke-linecap="round" opacity=".6"/>
+              <path d="M150 252C168 298 212 326 264 326C314 326 352 302 370 264L346 252C328 282 296 296 262 294C226 292 196 278 176 256Z" fill="#150c3a"/>
+              <path d="M176 256C196 278 226 292 262 294C296 296 328 282 346 252" fill="none" stroke="#b9a4ff" stroke-opacity=".5" stroke-width="1.6"/>
+              <circle cx="338" cy="232" r="20" fill="#150c3a" stroke="#7b5cff" stroke-width="2"/>
+              <circle cx="338" cy="232" r="7" fill="#b9a4ff"/>
+              <path d="M300 300l22-10M306 312l26-12" stroke="#7b5cff" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="card-t">EXPLORE<br>A BRIGHTER<br>TOMORROW</span>
+            <span class="card-n">01 / 03 ›</span>
+          </a>
+        </div>
+      </div>
+
+      <aside class="side" aria-label="分類">
+        <ul>
+          <li class="rise" style="--d:5"><a href="#school">Motion</a></li>
+          <li class="rise" style="--d:6"><a href="#school">Design</a></li>
+          <li class="rise" style="--d:7"><a href="#school">Interaction</a></li>
+          <li class="rise" style="--d:8"><a href="#school">Experience</a></li>
+        </ul>
+        <a class="next rise" style="--d:8" href="#school" aria-label="下一張"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></a>
+        <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ========== 套到學校資料：各頁內容相同，只換風格 ========== -->
+  <section class="school" id="school">
+    <header>
+      <span class="stripes" aria-hidden="true"></span>
+      <h2>套到學校資料</h2>
+      <p>同一份課堂內容，換上這個風格。</p>
+    </header>
+
+    <div class="grid">
+      <article class="mcard mv course" style="--d:0">
+        <div class="meta"><span>策略管理</span><time datetime="2026-09-18">09/18</time></div>
+        <h3>外部分析：PESTEL・五力分析・策略群組</h3>
+        <p>五力分析說明的是產業的獲利潛力，不是某一家公司的獲利。</p>
+        <div class="tags"><span class="tag">課堂筆記</span><span class="tag">考點</span></div>
+        <a class="pill go" href="#school">打開講義 <span class="arr">→</span></a>
+      </article>
+      <article class="mcard mv course" style="--d:1.5">
+        <div class="meta"><span>日本史</span><time datetime="2026-09-21">09/21</time></div>
+        <h3>古代律令制國家的建構：大化改新・奈良時代</h3>
+        <p>律是刑法、令是行政法；法制真正完成要到大寶律令、養老律令。</p>
+        <div class="tags"><span class="tag">課堂筆記</span><span class="tag">補充</span></div>
+        <a class="pill go" href="#school">打開講義 <span class="arr">→</span></a>
+      </article>
+      <article class="mcard mv course" style="--d:3">
+        <div class="meta"><span>日文寫作（一）</span><time datetime="2026-09-16">09/16</time></div>
+        <h3>作文預備知識：原稿用紙・文体・書きことば</h3>
+        <p>一篇文章只能選一種文末形式，丁寧体或普通体，不能混用。</p>
+        <div class="tags"><span class="tag">課堂筆記</span><span class="tag">考點</span></div>
+        <a class="pill go" href="#school">打開講義 <span class="arr">→</span></a>
+      </article>
+
+      <div class="mcard mv nums" style="--d:0">
+        <span class="label">策略管理・投影片 2｜公司績效從哪裡來</span>
+        <div class="pair">
+          <div><div class="big" data-t="20">20<span>%</span></div><span class="label">產業效果（約）</span></div>
+          <div><div class="big" data-t="25">25<span>%</span></div><span class="label">景氣與運氣（約）</span></div>
+        </div>
+        <p>平均而言，廠商效果比產業效果大。</p>
+      </div>
+
+      <div class="mcard mv tablecard" style="--d:1.5">
+        <h3 class="t">產業競爭結構的四種型態</h3>
+        <span class="label">策略管理・投影片 18</span>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">結構</th><th scope="col">完全競爭</th><th scope="col">獨占性競爭</th><th scope="col">寡占</th><th scope="col">獨占</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">廠商</th><td>很多小廠</td><td>很多廠</td><td>少數大廠</td><td>一家</td></tr>
+              <tr><th scope="row">定價</th><td>只能接受市場價格</td><td>有一點定價能力</td><td>有一些定價能力</td><td>定價能力很大</td></tr>
+              <tr><th scope="row">產品</th><td>大宗商品</td><td>有差異化</td><td>有差異化</td><td>獨一無二</td></tr>
+              <tr><th scope="row">進入障礙</th><td>低</td><td>中</td><td>高</td><td>非常高</td></tr>
+              <tr><th scope="row">獲利潛力</th><td>低</td><td>→</td><td>→</td><td>高</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="mcard mv time" style="--d:0">
+        <h3 class="t">律令制國家年表</h3>
+        <span class="label">日本史・09/21</span>
+        <ol class="line">
+          <li style="--n:0"><b>645</b>改新之詔</li>
+          <li style="--n:1"><b>663</b>白村江之戰</li>
+          <li style="--n:2"><b>701</b>大寶律令</li>
+          <li style="--n:3"><b>710</b>遷都平城京</li>
+          <li style="--n:4"><b>794</b>遷都平安京</li>
+        </ol>
+      </div>
+
+      <figure class="mcard mv quote" style="--d:0">
+        <blockquote>「在古代社會，你沒有土地基本上就失去了生存的資格。」</blockquote>
+        <figcaption class="label">日本史・老師的話</figcaption>
+      </figure>
+
+      <div class="mcard mv keys" style="--d:1.5">
+        <h3 class="t">記住三件事</h3>
+        <span class="label">日文寫作（一）・原稿用紙</span>
+        <ol>
+          <li style="--n:0">標題固定空三格，從第四格開始寫</li>
+          <li style="--n:1">名字前加系級，名字後空一格</li>
+          <li style="--n:2">格式錯誤扣兩分或五分，比文法錯誤（一分）重</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ========== 風格規格：給人挑、也給之後照這個風格實作的 AI 讀 ========== -->
+<section class="spec" id="spec">
+  <div class="spec-in">
+    <div class="spec-head">
+      <span class="spec-code">W16</span>
+      <h2>動效主導</h2>
+      <span class="spec-en">Motion-first</span>
+    </div>
+    <p class="spec-def">版面先決定「什麼東西怎麼動」：大字拖著殘影、卡片浮動並跟著指標傾斜、元素依序進場，靜止時也看得出方向與速度。</p>
+
+    <div class="spec-grid">
+      <div class="spec-card">
+        <h3>關鍵特徵</h3>
+        <ul class="spec-traits">
+          <li>動態<small>DYNAMIC</small></li>
+          <li>互動<small>INTERACTIVE</small></li>
+          <li>充滿生命力<small>ALIVE</small></li>
+          <li>讓網頁動起來<small>ON THE WEB</small></li>
+        </ul>
+      </div>
+      <div class="spec-card">
+        <h3>字型</h3>
+        <p>英數 <code>Archivo</code>（可變字型）：大字與數字用 <code>font-style: italic; font-weight: 900; font-stretch: 125%</code>，其餘 500／700；中文 <code>Noto Sans TC</code>，離線改用 PingFang TC／Microsoft JhengHei。斜體只給英數，中文一律正體。</p>
+      </div>
+      <div class="spec-card wide">
+        <h3>色票</h3>
+        <ul class="spec-sw">
+          <li><i style="background:#08050f"></i>--bg #08050f</li>
+          <li><i style="background:#140c2b"></i>--panel #140c2b</li>
+          <li><i style="background:#2a1780"></i>--deep #2a1780</li>
+          <li><i style="background:#6d4dff"></i>--violet #6d4dff</li>
+          <li><i style="background:#b9a4ff"></i>--lilac #b9a4ff</li>
+          <li><i style="background:#e6deff"></i>--mist #e6deff</li>
+          <li><i style="background:#ffffff"></i>--ink #ffffff</li>
+          <li><i style="background:#b7aed4"></i>--ink-2 #b7aed4</li>
+        </ul>
+      </div>
+      <div class="spec-card wide">
+        <h3>關鍵做法</h3>
+        <ol>
+          <li>殘影大字：同一行字疊 3–4 層 <code>aria-hidden</code> 的複本，每層用 <code>--i</code> 決定位移（<code>--i × 12px → 50px</code>）、透明度（<code>.62 − i × .13</code>）與 <code>blur(i × 1.3px)</code>，跑 <code>trail 1.9s ease-in-out infinite alternate</code>，各層 <code>animation-delay</code> 錯開 0.22 秒。</li>
+          <li>進場順序用一個變數管：元素掛 <code>.rise</code>，<code>animation-delay: calc(var(--d) * 80ms)</code>；緩動統一 <code>cubic-bezier(.16, 1, .3, 1)</code>，時長 0.6–0.8 秒，整個第一屏 1.3 秒內到位。</li>
+          <li>主卡三層分工：外層 <code>.stage</code> 管進場與 <code>perspective: 1100px</code>，中層 <code>.float</code> 跑 5.5 秒的上下浮動，內層 <code>.card</code> 的 <code>rotateX／rotateY</code> 讀 <code>--rx／--ry</code>，由 <code>pointermove</code> 寫入（上限 ±12°／±16°）。三層各用自己的 <code>transform</code>，不會互相蓋掉。</li>
+          <li>光軌：一個旋轉 <code>-15deg</code> 的容器裡放 6 條漸層細線，各自跑 <code>translate3d(-80% → 170%)</code>，時長 2.2–3.8 秒並用負的 delay 錯開，任何時刻畫面上都有幾條在飛。</li>
+          <li>資料區卡片：捲到才加 <code>.in</code> 播一次上滑（只動 <code>transform</code>、<code>animation-fill-mode: backwards</code>，沒有 JS 時內容照樣可見）；hover 抬起 7px 並掃過一道斜光；年表有一顆沿線跑的光點與擴散圈，表格列 hover 時底色由左往右填滿。</li>
+          <li>只動 <code>transform</code>、<code>opacity</code>、<code>background-size</code>；<code>prefers-reduced-motion: reduce</code> 時 <code>animation: none; transition: none</code>，殘影停在固定位移、卡片維持傾斜，畫面完整。</li>
+        </ol>
+      </div>
+      <div class="spec-card wide spec-fit">
+        <h3>套到學校資料</h3>
+        <p><b>適合</b>在螢幕上看的入口頁、簡報式的課程導覽、要帶人按順序看重點的頁面：進場順序本身就是閱讀順序。</p>
+        <p><b>不適合</b>要列印、要匯出 PDF、要手寫的講義：動效全部消失後只剩深紫底的卡片，長文也不適合一直有東西在動。</p>
+        <p><b>要改</b>用在政大交付物時拿掉所有 <code>animation</code>／<code>transition</code> 與指標互動，換成淺色底；速度感改用靜態手法保留：英數粗斜體、固定位移的殘影數字、斜切的條紋記號。</p>
+      </div>
+      <div class="spec-card wide spec-prompt">
+        <h3>AI 描述詞</h3>
+        <p>動效主導（Motion-first）：深紫黑底，白色粗斜體加寬的超大英文標題，後面拖著幾層往右位移、逐層變淡變糊的紫色殘影並循環擺動；斜向飛過的紫白光軌；一張傾斜的紫色發光卡片緩慢浮動、隨滑鼠傾斜，卡片上是戴頭盔的人物輪廓；右側直列選單、圓形箭頭鈕與分頁點；元素依序滑入進場，卡片 hover 抬起並掃過一道光；支援 prefers-reduced-motion。</p>
+      </div>
+    </div>
+    <a class="spec-back" href="../index.html">← 回喜好選單</a>
+  </div>
+</section>
+
+<script>
+/* 兩件事：第一屏卡片跟著指標傾斜；資料區卡片捲到時加 .in 播進場。不要動效的人兩件都不做。 */
+(function () {
+  var root = document.querySelector('.style');
+  if (!root || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var hero = document.getElementById('hero');
+  var card = document.getElementById('card');
+  var title = root.querySelector('.title');
+  hero.addEventListener('pointermove', function (e) {
+    if (e.pointerType === 'touch') return;
+    var r = hero.getBoundingClientRect();
+    var x = (e.clientX - r.left) / r.width - 0.5;
+    var y = (e.clientY - r.top) / r.height - 0.5;
+    card.style.setProperty('--ry', (x * 16).toFixed(2) + 'deg');
+    card.style.setProperty('--rx', (y * -12).toFixed(2) + 'deg');
+    title.style.setProperty('--px', (x * -22).toFixed(1) + 'px');
+  });
+  hero.addEventListener('pointerleave', function () {
+    card.style.removeProperty('--ry');
+    card.style.removeProperty('--rx');
+    title.style.removeProperty('--px');
+  });
+
+  if (!('IntersectionObserver' in window)) return;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      en.target.classList.add('in');
+      io.unobserve(en.target);
+    });
+  });
+  root.querySelectorAll('.mv').forEach(function (el) { io.observe(el); });
+})();
+</script>
+</body>
+</html>

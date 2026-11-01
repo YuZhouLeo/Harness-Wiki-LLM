@@ -1,0 +1,413 @@
+<!doctype html>
+<!-- 版面喜好選單範例 F1｜毛玻璃便當盒｜來源：講師範例庫 output範例/網頁設計風格/F1-毛玻璃便當盒.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F1 毛玻璃×便當盒｜九月課堂總覽</title>
+<style>
+/* ===== 風格本體：所有規則都收在 .style 底下。照 3-output/NCCU/製作規範.md：
+   淺色底、系統字型、沒有動畫與 transition、沒有 fixed／sticky、沒有 vh 高度；
+   列印是無縫直式（182×243mm，iPad 直拿、GoodNotes 垂直捲動），文字跨頁接續、小格不被切開 ===== */
+:root { color-scheme: light; }
+body { margin: 0; background: #e9e8f4; }
+.style {
+  --ink: #1b1d2a;
+  --ink-2: #474b60;
+  --glass: rgba(255,255,255,.6);
+  --edge: rgba(255,255,255,.95);
+  --rule: rgba(27,29,42,.14);
+  /* 每個顏色綁一件事，整頁不換 */
+  --c-strategy: #1d5fb8;   /* 策略管理 */
+  --c-history: #b8401d;    /* 日本史 */
+  --c-writing: #2b6b3d;    /* 日文寫作 */
+  --c-club: #6a45b0;       /* 社團 */
+  --c-todo: #855600;       /* 作業 */
+  color: var(--ink);
+  font: 400 14.5px/1.65 "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+  text-spacing-trim: space-first;
+}
+.style *, .style *::before, .style *::after { box-sizing: border-box; }
+.style h1, .style h2, .style h3 { margin: 0; line-height: 1.3; text-wrap: balance; }
+.style p { margin: 0; text-wrap: pretty; }
+.style a { color: inherit; text-underline-offset: 3px; }
+
+/* 工具列：只在螢幕上出現 */
+.style .bar { width: 182mm; max-width: 100%; margin: 0 auto; padding: 12px 8mm 0; display: flex; align-items: center; gap: 12px; font-size: 13.5px; color: var(--ink-2); }
+.style .bar button { font: inherit; font-weight: 700; color: #fff; background: var(--ink); border: 0; border-radius: 999px; padding: 7px 18px; cursor: pointer; }
+.style .bar button:focus-visible, .style a:focus-visible { outline: 2px solid var(--c-strategy); outline-offset: 2px; }
+
+/* 紙：螢幕上寬 182mm、左右留白 8mm，跟 @page 一樣（內容寬 166mm），所以螢幕上的換行跟 PDF 一致 */
+.style .sheet {
+  width: 182mm; max-width: 100%; margin: 12px auto 0; padding: 8mm 8mm 10mm;
+  background:
+    radial-gradient(46% 30% at 8% 4%, #d6ccff 0, transparent 70%),
+    radial-gradient(44% 28% at 96% 10%, #c3e2ff 0, transparent 70%),
+    radial-gradient(50% 30% at 88% 58%, #ffd9c4 0, transparent 70%),
+    radial-gradient(48% 30% at 6% 62%, #c8f0df 0, transparent 70%),
+    radial-gradient(60% 26% at 50% 100%, #e3d3ff 0, transparent 70%),
+    #f3f2fa;
+}
+
+/* 便當盒：6 欄格線，每格只裝一件事 */
+.style .bento { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+.style .s2 { grid-column: span 2; } .style .s3 { grid-column: span 3; }
+.style .s4 { grid-column: span 4; } .style .s6 { grid-column: span 6; }
+
+/* 毛玻璃：半透明白底＋背景模糊＋白色亮邊＋頂部高光 */
+.style .tile {
+  --c: var(--ink);
+  min-width: 0; padding: 14px 16px 16px; border-radius: 18px;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid var(--edge);
+  box-shadow: 0 8px 22px rgba(70,78,130,.13), inset 0 1px 0 #fff;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.style .strategy { --c: var(--c-strategy); } .style .history { --c: var(--c-history); }
+.style .writing { --c: var(--c-writing); } .style .club { --c: var(--c-club); } .style .todo { --c: var(--c-todo); }
+
+.style .kicker { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--c); }
+.style .kicker::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--c); }
+.style .kicker time, .style .kicker span { margin-left: auto; font-weight: 400; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.style h3 { font-size: 16.5px; font-weight: 700; }
+.style .muted { color: var(--ink-2); font-size: 13.5px; }
+
+.style .title h1 { font-size: 34px; font-weight: 700; line-height: 1.2; }
+.style .title p { color: var(--ink-2); }
+.style .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: auto; padding-top: 6px; font-size: 13px; }
+.style .legend span { display: inline-flex; align-items: center; gap: 6px; }
+.style .legend i { width: 10px; height: 10px; border-radius: 3px; background: var(--c); }
+
+.style .counts { justify-content: space-between; }
+.style .counts div { display: flex; align-items: baseline; gap: 8px; border-bottom: 1px solid var(--rule); padding-bottom: 4px; }
+.style .counts div:last-child { border-bottom: 0; padding-bottom: 0; }
+.style .counts b { font: 700 30px/1 "Segoe UI", "SF Pro Display", system-ui, sans-serif; font-variant-numeric: tabular-nums; min-width: 1.2em; }
+
+/* 「先記三個詞」：詞條一列一個 */
+.style .terms { margin: 0; display: grid; gap: 5px; }
+.style .terms div { display: grid; grid-template-columns: 6.2em minmax(0, 1fr); gap: 8px; padding-top: 5px; border-top: 1px solid var(--rule); }
+.style .writing .terms div { grid-template-columns: 7.4em minmax(0, 1fr); }
+.style .terms dt { font-weight: 700; color: var(--c); }
+.style .terms dd { margin: 0; }
+.style .lecture + .lecture { margin-top: 4px; padding-top: 10px; border-top: 1px dashed var(--rule); }
+.style .lecture { display: grid; gap: 6px; }
+
+.style .nums { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.style .big { font: 700 44px/1 "Segoe UI", "SF Pro Display", system-ui, sans-serif; color: var(--c); font-variant-numeric: tabular-nums; }
+.style .big small { font-size: 18px; margin-left: 2px; }
+.style .scale { display: grid; grid-template-columns: 1.5fr 1fr 1.5fr; gap: 3px; margin-top: 2px; font-size: 13px; text-align: center; }
+.style .scale span { padding: 4px 2px; border-radius: 8px; background: rgba(29,95,184,.1); border: 1px solid rgba(29,95,184,.28); }
+.style .scale span:nth-child(2) { background: rgba(29,95,184,.2); }
+.style .scale span:nth-child(3) { background: rgba(29,95,184,.32); }
+.style .scale b { display: block; font-variant-numeric: tabular-nums; }
+
+.style .eras { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.style .eras li { display: grid; grid-template-columns: 3.2em minmax(0, 1fr); gap: 8px; padding: 5px 0 5px 12px; border-left: 3px solid var(--rule); font-size: 13.5px; }
+.style .eras li.now { border-left-color: var(--c); background: rgba(184,64,29,.07); border-radius: 0 8px 8px 0; }
+.style .eras b { font-weight: 700; }
+.style .eras li.now b { color: var(--c); }
+.style .eras span { font-variant-numeric: tabular-nums; color: var(--ink-2); }
+
+.style .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; counter-reset: s; }
+.style .steps li { counter-increment: s; padding: 8px 10px; border-radius: 12px; background: rgba(255,255,255,.62); border: 1px solid var(--rule); font-size: 13.5px; }
+.style .steps li::before { content: counter(s); display: block; font: 700 13px/1.4 "Segoe UI", system-ui, sans-serif; color: var(--c); }
+.style .steps b { display: block; font-size: 14.5px; }
+
+.style .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.style .checks li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: start; }
+.style .checks li::before { content: ""; width: 16px; height: 16px; margin-top: 4px; border: 1.6px solid var(--c); border-radius: 4px; background: #fff; }
+.style .checks b { color: var(--c); }
+
+/* 手寫區：留在版面裡，匯進 GoodNotes 直接寫。橫線用 inline SVG（一條很粗的虛線，每 26px 一段），
+   不用 CSS 漸層：漸層在 PDF 裡會被點陣化，放大手寫時線會糊 */
+.style .write { position: relative; flex: 1; min-height: 132px; border-radius: 10px; background: rgba(255,255,255,.7); overflow: hidden; color: rgba(27,29,42,.2); }
+.style .write svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.style .files { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; font-size: 13.5px; }
+.style .files li { display: flex; gap: 8px; align-items: baseline; }
+.style .files i { flex: none; width: 8px; height: 8px; border-radius: 2px; background: var(--c); }
+.style .foot { margin-top: 10px; font-size: 13px; color: var(--ink-2); }
+
+@media (max-width: 640px) {
+  .style .sheet { padding: 16px; }
+  .style .s2, .style .s3, .style .s4 { grid-column: span 6; }
+  .style .files, .style .steps { grid-template-columns: 1fr; }
+  .style .title h1 { font-size: 28px; }
+}
+/* 列印：無縫直式（照 3-output/NCCU/製作規範.md 第 1 節）。182×243mm、上下 4mm 左右 8mm、不印頁碼；
+   六個邊界框都給空字串，Chrome 才不會印自己的頁首頁尾 */
+@page {
+  size: 182mm 243mm; margin: 4mm 8mm 4mm;
+  @top-left { content: "" } @top-center { content: "" } @top-right { content: "" }
+  @bottom-left { content: "" } @bottom-center { content: "" } @bottom-right { content: "" }
+}
+@media print {
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { background: #fff; }             /* Chrome 不會把底色鋪到 @page 的邊界，所以頁面一律白底 */
+  .style .bar, .spec { display: none !important; }
+  /* 紙在列印時就是頁面：白底、不留白（邊界由 @page 給），內容寬 166mm，跟螢幕上的內容區一樣，換行才會一致 */
+  .style .sheet { width: auto; max-width: none; margin: 0; padding: 0; background: #fff; }
+  /* 分頁照製作規範第 1 節：長的便當格（.tile）裡的文字可以跨頁，格子在頁尾斷成上下兩段、下一頁接著同一格，頁尾不留半頁空白；
+     不拆的只有格子裡的小格（詞條一列、步驟方塊、時代一列、作業一項、數字、級距、手寫區、檔案一列），標題與標籤不落單。
+     不再整格、整列往下一頁推（舊版那樣做，頁尾會空出半頁）。
+     玻璃改成淡紫灰實心格：拿掉 backdrop-filter 與陰影，PDF 才不會出現點陣化的色塊 */
+  .style .tile { -webkit-backdrop-filter: none; backdrop-filter: none; background: #f5f4fb; border-color: #dcdbe9; box-shadow: none; }
+  /* 只有長的格子（詞條、時代軸、作業清單）可以跨頁；矮格子不拆，否則頁尾會留下一個空的格子頭 */
+  .style .tile { break-inside: avoid; }
+  .style .tile:has(.terms), .style .tile:has(.eras), .style .tile:has(.checks) { break-inside: auto; }
+  .style .terms div, .style .steps li, .style .eras li, .style .checks li, .style .counts div,
+  .style .nums, .style .scale, .style .files li, .style .legend, .style .write { break-inside: avoid; }
+  .style .write { background: #fff; }
+  .style h1, .style h3, .style .kicker { break-after: avoid; }
+  .style p { orphans: 1; widows: 1; }
+  .style .foot { break-before: avoid; padding: 0 4px; }
+}
+
+/* ===== 共用：風格規格面板（各頁相同，逐字複製，不要改） ===== */
+.spec { all: initial; display: block; background: #f6f5f1; color: #1c1b19; color-scheme: light; border-top: 1px solid #dcd9d0;
+  font: 400 15px/1.7 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; text-spacing-trim: space-first;
+  padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 48px) 64px; }
+.spec *, .spec *::before, .spec *::after { box-sizing: border-box; }
+.spec .spec-in { max-width: 1120px; margin: 0 auto; }
+.spec .spec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin: 0 0 6px; }
+.spec .spec-code { font: 700 13px/1 ui-monospace, Consolas, monospace; color: #fff; background: #1c1b19; padding: 5px 9px; border-radius: 6px; }
+.spec h2 { margin: 0; font-size: clamp(22px, 3vw, 30px); line-height: 1.3; font-weight: 700; text-wrap: balance; }
+.spec .spec-en { font: 500 14px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-def { margin: 0 0 22px; max-width: 46em; color: #3b3935; }
+.spec .spec-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.spec .spec-card { background: #fff; border: 1px solid #e4e1da; border-radius: 12px; padding: 16px 18px; min-width: 0; }
+.spec .spec-card.wide { grid-column: 1 / -1; }
+.spec h3 { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: #6b6862; }
+.spec ul, .spec ol { margin: 0; padding-left: 1.2em; }
+.spec li { margin: 2px 0; }
+.spec p { margin: 0; }
+.spec p + p { margin-top: 6px; }
+.spec code { font: 13px/1.5 ui-monospace, Consolas, monospace; background: #f0eee8; padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.spec .spec-traits { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 16px; }
+.spec .spec-traits small { display: block; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-sw { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.spec .spec-sw li { margin: 0; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #3b3935; }
+.spec .spec-sw i { display: block; height: 34px; border-radius: 8px; border: 1px solid rgba(0,0,0,.12); margin-bottom: 4px; }
+.spec .spec-fit b { display: inline-block; min-width: 4.2em; }
+.spec .spec-prompt { background: #efedff; border-color: #dcd8ff; }
+.spec .spec-back { display: inline-block; margin-top: 22px; color: #1c1b19; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 720px) { .spec .spec-grid { grid-template-columns: 1fr; } }
+@media print { .spec { border-top: 0; } .spec .spec-card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<main class="style">
+  <div class="bar">
+    <button type="button" id="pdf" title="iPad 直式、無縫分頁（182×243mm，文字跨頁接續），給 GoodNotes 垂直捲動閱讀；在列印視窗的目的地選「另存為 PDF」，其他設定不用動">匯出 PDF（GoodNotes 直式）</button>
+    <span>會輸出成 iPad 直式（182×243mm）的無縫分頁 PDF，可以匯進 GoodNotes 手寫。</span>
+  </div>
+
+  <div class="sheet" id="sheet">
+    <div class="bento">
+
+      <header class="tile title s4">
+        <span class="kicker" style="--c:var(--ink)">國立政治大學<span>2026 年 9 月</span></span>
+        <h1>九月課堂總覽</h1>
+        <p>三門課到目前為止的筆記講義、要先記住的詞、還沒做完的事，放在同一頁。</p>
+        <div class="legend">
+          <span style="--c:var(--c-strategy)"><i></i>策略管理</span>
+          <span style="--c:var(--c-history)"><i></i>日本史</span>
+          <span style="--c:var(--c-writing)"><i></i>日文寫作</span>
+          <span style="--c:var(--c-club)"><i></i>社團</span>
+          <span style="--c:var(--c-todo)"><i></i>作業</span>
+        </div>
+      </header>
+
+      <section class="tile counts s2" aria-label="數量">
+        <div><b>3</b>門課</div>
+        <div><b>4</b>份筆記講義</div>
+        <div><b>3</b>項作業與練習</div>
+        <div><b>1</b>場社團迎新</div>
+      </section>
+
+      <section class="tile strategy s3">
+        <span class="kicker">策略管理<time datetime="2026-09-18">09/18</time></span>
+        <h3>外部分析：PESTEL・五力分析・策略群組</h3>
+        <p>五力分析說明的是產業的獲利潛力，不是某一家公司的獲利。</p>
+        <dl class="terms">
+          <div><dt>進入障礙</dt><dd>新公司要進來得跨過的門檻</dd></div>
+          <div><dt>議價力</dt><dd>上下游能不能逼你降價、或讓你吃虧</dd></div>
+          <div><dt>HHI</dt><dd>每家公司的市占率平方後加總，越高越集中</dd></div>
+        </dl>
+      </section>
+
+      <section class="tile strategy s3">
+        <span class="kicker">公司績效從哪裡來<span>投影片 2、22</span></span>
+        <div class="nums">
+          <div><div class="big">20<small>%</small></div><span class="muted">產業效果（約）</span></div>
+          <div><div class="big">25<small>%</small></div><span class="muted">景氣與運氣（約）</span></div>
+        </div>
+        <p class="muted">平均而言，廠商效果比產業效果大。</p>
+        <h3>HHI 的集中度門檻</h3>
+        <div class="scale">
+          <span><b>&lt; 1500</b>低</span>
+          <span><b>1500–2500</b>中</span>
+          <span><b>&gt; 2500</b>高度集中</span>
+        </div>
+      </section>
+
+      <section class="tile history s4">
+        <div class="lecture">
+          <span class="kicker">日本史<time datetime="2026-09-14">09/14</time></span>
+          <h3>古代天皇制的形成：大和時代（古墳時期＆飛鳥時期）</h3>
+          <dl class="terms">
+            <div><dt>大王</dt><dd>當時對君主的稱呼；「天皇」是 7 世紀末才有的稱號</dd></div>
+            <div><dt>豪族</dt><dd>地方上有勢力的大家族，跟大王合作也跟大王競爭</dd></div>
+            <div><dt>百濟</dt><dd>朝鮮半島西南的國家，日本最重要的技術與文化來源</dd></div>
+          </dl>
+        </div>
+        <div class="lecture">
+          <span class="kicker">日本史<time datetime="2026-09-21">09/21</time></span>
+          <h3>古代律令制國家的建構：大化改新・奈良時代</h3>
+          <dl class="terms">
+            <div><dt>律令</dt><dd>律是刑法、令是行政法，合起來是整套國家運作的成文規則</dd></div>
+            <div><dt>公地公民</dt><dd>土地和人民名義上全部收歸天皇（國家）所有</dd></div>
+            <div><dt>平城京</dt><dd>仿長安蓋的新都城（今奈良市），710 到 794 年的首都</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="tile history s2">
+        <span class="kicker">時代軸</span>
+        <ol class="eras">
+          <li><b>繩文</b><span>約前 1 萬年～前 3 世紀</span></li>
+          <li><b>彌生</b><span>約前 3 世紀～3 世紀</span></li>
+          <li class="now"><b>古墳</b><span>3～6 世紀</span></li>
+          <li class="now"><b>飛鳥</b><span>592～710</span></li>
+          <li class="now"><b>奈良</b><span>710～794</span></li>
+          <li><b>平安</b><span>794～1185</span></li>
+          <li><b>鎌倉以後</b><span>1185～</span></li>
+        </ol>
+        <p class="muted">有底色的三段是這兩堂課講到的範圍。</p>
+      </section>
+
+      <section class="tile writing s3">
+        <span class="kicker">日文寫作（一）<time datetime="2026-09-16">09/16</time></span>
+        <h3>作文預備知識：原稿用紙・文体・書きことば</h3>
+        <ol class="steps" aria-label="動筆前的三道關卡">
+          <li><b>格式</b>把字放進稿紙正確的位置</li>
+          <li><b>文体</b>整篇統一丁寧体或普通体</li>
+          <li><b>用語</b>把話しことば換回書きことば</li>
+        </ol>
+        <dl class="terms">
+          <div><dt>マス</dt><dd>稿紙的一格</dd></div>
+          <div><dt>丁寧体／普通体</dt><dd>句尾用です・ます還是だ</dd></div>
+          <div><dt>口語縮約形</dt><dd>說話時把音省掉的短形式，例如「のです→んです」</dd></div>
+        </dl>
+      </section>
+
+      <section class="tile todo s3">
+        <span class="kicker">作業與練習</span>
+        <ul class="checks">
+          <li><span><b>策略管理</b>　個人加分作業：算出美國麥片產業 1970 與 1993 年的 CR4 和 HHI，並寫出結論。下週上課前一天上傳。</span></li>
+          <li><span><b>日文寫作</b>　p.15：替短文取標題，抄上四百字稿紙（直式橫書），漢字不標音。下次上課開始時交。</span></li>
+          <li><span><b>日文寫作</b>　p.19 練習 1、2：判斷文種的文体、把混用的短文統一，自己對課本後面的答案。</span></li>
+        </ul>
+        <p class="muted">做完在方格打勾。加分作業「午夜以前上傳」是從逐字稿推測的，需確認。</p>
+      </section>
+
+      <section class="tile club s4">
+        <span class="kicker">AI 人工智慧應用社<span>迎新</span></span>
+        <h3>今天不教寫程式，講「把想法講清楚」</h3>
+        <ol class="steps" aria-label="迎新三段">
+          <li><b>費曼學習法</b>AI 時代的學習法</li>
+          <li><b>作品 demo</b>規劃 app、回顧網站、Telegram 機器人</li>
+          <li><b>前後端</b>用三個作品講純前端到純後端</li>
+        </ol>
+        <p class="muted">破冰遊戲：AI 版十根手指，接著比手畫腳（一對一＋傳遞版）。</p>
+      </section>
+
+      <section class="tile s2">
+        <span class="kicker" style="--c:var(--ink)">這週要補的</span>
+        <div class="write" aria-label="手寫區"><svg aria-hidden="true"><line x1="50%" y1="0" x2="50%" y2="100%" stroke="currentColor" stroke-width="4000" stroke-dasharray="1 25" stroke-dashoffset="-25"/></svg></div>
+      </section>
+
+      <section class="tile s6">
+        <span class="kicker" style="--c:var(--ink)">講義檔案</span>
+        <ul class="files">
+          <li style="--c:var(--c-history)"><i></i><a data-removed-link>日本史 09/14　上古古代 筆記講義</a></li>
+          <li style="--c:var(--c-writing)"><i></i><a data-removed-link>日文寫作 09/16　作文預備知識 筆記講義</a></li>
+          <li style="--c:var(--c-strategy)"><i></i><a data-removed-link>策略管理 09/18　外部分析 筆記講義</a></li>
+          <li style="--c:var(--c-history)"><i></i><a data-removed-link>日本史 09/21　律令國家 筆記講義</a></li>
+        </ul>
+      </section>
+
+    </div>
+    <p class="foot">內容取自 2-wiki 的四份課堂筆記母版與 3-output/NCCU/NUUC_AIC 的迎新文件。</p>
+  </div>
+</main>
+
+<!-- ========== 風格規格：給人挑、也給之後照這個風格實作的 AI 讀（不進 PDF） ========== -->
+<section class="spec" id="spec">
+  <div class="spec-in">
+    <div class="spec-head">
+      <span class="spec-code">F1</span>
+      <h2>毛玻璃×便當盒</h2>
+      <span class="spec-en">Glassmorphism × Bento Grid</span>
+    </div>
+    <p class="spec-def">淺色的柔彩背景上鋪一張便當盒格線，每一格是一片霧面玻璃，只裝一件事；顏色用來分課程，不用來裝飾。</p>
+
+    <div class="spec-grid">
+      <div class="spec-card">
+        <h3>從兩個風格各拿什麼</h3>
+        <ul>
+          <li><b>W04 玻璃擬態</b>：半透明底、背景模糊、白色亮邊、頂部高光。</li>
+          <li><b>W05 便當盒佈局</b>：模組化格線、每格一件事、格子大小代表份量。</li>
+          <li><b>沒有拿的</b>：深色漸層、山景、光帶動畫、圖片格。</li>
+        </ul>
+      </div>
+      <div class="spec-card">
+        <h3>字型</h3>
+        <p>只用系統字型：<code>PingFang TC</code>／<code>Microsoft JhengHei</code>；大數字用 <code>Segoe UI</code>／<code>SF Pro Display</code>。不連 CDN，匯出 PDF 時不會掉字型。內文 14.5px（約 11pt）。</p>
+      </div>
+      <div class="spec-card wide">
+        <h3>色票（每個顏色綁一件事）</h3>
+        <ul class="spec-sw">
+          <li><i style="background:#1d5fb8"></i>策略管理 #1d5fb8</li>
+          <li><i style="background:#b8401d"></i>日本史 #b8401d</li>
+          <li><i style="background:#2b6b3d"></i>日文寫作 #2b6b3d</li>
+          <li><i style="background:#6a45b0"></i>社團 #6a45b0</li>
+          <li><i style="background:#855600"></i>作業 #855600</li>
+          <li><i style="background:#1b1d2a"></i>--ink #1b1d2a</li>
+          <li><i style="background:#f3f2fa"></i>紙 #f3f2fa</li>
+          <li><i style="background:linear-gradient(90deg,#d6ccff,#c3e2ff,#ffd9c4,#c8f0df)"></i>背景四個柔彩</li>
+        </ul>
+      </div>
+      <div class="spec-card wide">
+        <h3>關鍵做法</h3>
+        <ol>
+          <li>紙寬 <code>182mm</code>、左右留白 <code>8mm</code>，與 <code>@page</code> 相同（內容寬 166mm），裡面是 6 欄格線；格子只用 2、3、4、6 欄四種寬度，螢幕上的換行跟 PDF 一致。</li>
+          <li>玻璃格：<code>background: rgba(255,255,255,.6)</code>、<code>backdrop-filter: blur(16px) saturate(160%)</code>、1px 白邊、<code>inset 0 1px 0 #fff</code>。背景是五個柔彩 <code>radial-gradient</code>，沒有圖片。</li>
+          <li>列印是無縫直式：<code>@page { size: 182mm 243mm; margin: 4mm 8mm 4mm }</code>、六個邊界框給空字串、不印頁碼，給 iPad 直拿、GoodNotes 垂直捲動。格線照留；長的格子（有詞條、時代軸、作業清單的）文字可以跨頁，格子在頁尾斷成上下兩段、下一頁接著同一格；矮格子與格子裡的小格（詞條一列、步驟方塊、時代一列、作業一項、手寫區）<code>break-inside: avoid</code>。不再為了整格不拆把整列往下一頁推，頁尾不會空出半頁。頁面白底，玻璃改成淡紫灰實心格（<code>#f5f4fb</code>），拿掉 <code>backdrop-filter</code> 與陰影，PDF 不會出現點陣化的色塊。</li>
+          <li>每格左上一個色點加標籤（<code>.kicker</code>），色點、詞條、大數字都吃同一個 <code>--c</code>，換課程只改一個變數。</li>
+          <li>手寫區是畫了橫線的空格，橫線用 inline SVG（不用 CSS 漸層，PDF 放大才不會糊），作業前面留方格，直接在 GoodNotes 上打勾。</li>
+        </ol>
+      </div>
+      <div class="spec-card wide spec-fit">
+        <h3>套到學校資料</h3>
+        <p><b>適合</b>學期或每週總覽、考前一頁重點、社團活動一頁說明：內容是很多小塊、彼此沒有先後順序。</p>
+        <p><b>不適合</b>逐條講義正文：長段落塞進格子會把格線撐歪，改用 F2、F3。</p>
+        <p><b>規範</b>符合 NCCU 製作規範：淺色底、無動畫、無 fixed／sticky、無 vh、系統字型、182×243mm 無縫直式、文字跨頁接續且小格不被切開（規格面板與工具列不進 PDF）。</p>
+      </div>
+      <div class="spec-card wide spec-prompt">
+        <h3>AI 描述詞</h3>
+        <p>毛玻璃便當盒（Glassmorphism × Bento Grid）：淺色柔彩漸層背景，6 欄便當盒格線，半透明白色霧面玻璃格，圓角 18px，白色亮邊，每格一件事，每門課一個固定顏色，系統字型，靜態，列印為 182×243mm 無縫直式（iPad 直式、GoodNotes 垂直捲動）、文字跨頁接續、小格不拆，留手寫區。</p>
+      </div>
+    </div>
+    <a class="spec-back" href="../index.html">← 回喜好選單</a>
+  </div>
+</section>
+
+<script>
+/* 匯出 PDF：頁面尺寸（182×243mm 無縫直式）與邊界都寫在上面的 @page，這裡只開列印視窗（照 3-output/NCCU/製作規範.md 第 1 節） */
+document.getElementById('pdf').addEventListener('click', function () { window.print(); });
+</script>
+</body>
+</html>

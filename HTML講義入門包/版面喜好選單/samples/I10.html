@@ -1,0 +1,650 @@
+<!doctype html>
+<!-- 版面喜好選單範例 I10｜滾動換場景｜來源：講師範例庫 output範例/網頁互動效果/02-滾動驅動的場景切換.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>02 · 滾動驅動的場景切換</title>
+<!-- 畫廊頁的卡片文字由這三個 meta 產生 -->
+<meta name="demo-desc" content="滾輪往下滾，頁面沒有往下移，畫面在原地一幕一幕換成不同作品的滿版場景。">
+<meta name="demo-use" content="適合：作品集首頁、產品故事的分章敘事、年度回顧這類一幕一幕講的頁面">
+<meta name="demo-input" content="wheel">
+<script>
+  // 先於 CSS 套用 embed 模式，避免閃一下完整版面
+  try { if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed'); } catch (e) {}
+</script>
+<style>
+  /* ================= 共用樣式 開始（13 頁一致，勿改） ================= */
+  :root {
+    --bg:#f4f3ef; --surface:#ffffff; --text:#1c1b19; --muted:#6b6862; --line:#e4e1da;
+    --accent:#5b4bff; --accent-2:#00b3a4;
+    --site-bg:#f7f5f0; --site-ink:#16150f; --site-sub:#6f6b61; --site-line:#dedad0;
+    --font:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Consolas,"Microsoft JhengHei",monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+      --accent:#8b7dff; --accent-2:#2fd6c6;
+      --site-bg:#0f0f12; --site-ink:#f3f1ea; --site-sub:#9d998f; --site-line:#2a2a30;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+    --accent:#8b7dff; --accent-2:#2fd6c6;
+    --site-bg:#0f0f12; --site-ink:#f3f1ea; --site-sub:#9d998f; --site-line:#2a2a30;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: var(--font); line-height: 1.6;
+    overflow-x: hidden;
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 0 16px 64px; }
+
+  /* ---------- header ---------- */
+  header { padding: 44px 0 8px; position: relative; }
+  .kicker { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; letter-spacing: .08em; }
+  .kicker .no { font-family: var(--mono); font-size: 13px; color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 1px 10px; }
+  h1 { margin: 10px 0 2px; font-size: clamp(28px, 6vw, 44px); line-height: 1.15; letter-spacing: 0; font-weight: 800; }
+  h1 .n { color: var(--accent); font-family: var(--mono); font-weight: 600; margin-right: .3em; }
+  .en { margin: 0 0 8px; font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  header p.sum { margin: 0; max-width: 40em; color: var(--muted); font-size: 16px; }
+  .theme-btn {
+    position: absolute; right: 0; top: 44px; font: inherit; font-size: 13px; color: var(--muted);
+    background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; cursor: pointer;
+  }
+  .theme-btn:hover { color: var(--text); border-color: var(--muted); }
+
+  /* ---------- stage：一個假的瀏覽器視窗，效果都發生在 .view 裡 ---------- */
+  .stage {
+    margin-top: 28px; padding: clamp(12px, 3vw, 28px); border-radius: 28px; border: 1px solid var(--line);
+    position: relative;
+    background:
+      radial-gradient(520px 360px at 50% 40%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+      radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text) 13%, transparent) 1px, transparent 1.4px) 0 0/22px 22px,
+      var(--bg);
+  }
+  .browser {
+    width: 100%; height: clamp(420px, 68vh, 600px); border-radius: 16px; border: 1px solid var(--line);
+    background: var(--site-bg); overflow: hidden; display: flex; flex-direction: column; position: relative;
+    box-shadow: 0 30px 60px -20px rgba(20,18,40,.28), 0 8px 20px -8px rgba(20,18,40,.18);
+  }
+  .bar {
+    height: 34px; flex: none; display: flex; align-items: center; gap: 7px; padding: 0 12px;
+    border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 60%, var(--surface));
+    font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap;
+  }
+  .bar i { width: 9px; height: 9px; border-radius: 50%; background: color-mix(in srgb, var(--muted) 45%, transparent); flex: none; }
+  .bar .url { margin-left: 8px; overflow: hidden; text-overflow: ellipsis; }
+  .bar .readout { margin-left: auto; overflow: hidden; text-overflow: ellipsis; }
+  .bar .readout b { color: var(--text); font-weight: 600; }
+  .bar .auto {
+    font: inherit; color: var(--muted); background: transparent; border: 1px solid var(--line);
+    border-radius: 99px; padding: 1px 10px; cursor: pointer; flex: none;
+  }
+  .bar .auto[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+  .view {
+    flex: 1; min-height: 0; position: relative; overflow: hidden; container-type: size;
+    background: var(--site-bg); color: var(--site-ink); outline: none;
+  }
+  .view.scroll { overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; }
+  .view:focus-visible { box-shadow: inset 0 0 0 3px var(--accent); }
+  .hint {
+    position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 30; pointer-events: none;
+    font-size: 12px; line-height: 1; padding: 7px 12px; border-radius: 99px; white-space: nowrap;
+    background: rgba(18,18,22,.78); color: #fff; transition: opacity .4s;
+  }
+  .hint.off { opacity: 0; }
+
+  /* 作品圖：由共用腳本的 paintArt() 畫好後塞進 --art0 … --art5 */
+  .art { background: #888 center / cover no-repeat; }
+  .art[data-a="0"] { background-image: var(--art0); } .art[data-a="1"] { background-image: var(--art1); }
+  .art[data-a="2"] { background-image: var(--art2); } .art[data-a="3"] { background-image: var(--art3); }
+  .art[data-a="4"] { background-image: var(--art4); } .art[data-a="5"] { background-image: var(--art5); }
+
+  /* ---------- knobs / prompt / notes ---------- */
+  section.knobs, section.prompt, section.notes { margin-top: 28px; }
+  h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .1em; color: var(--muted); font-weight: 700; }
+  .knobs .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .knob { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+  .knob label { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 600; }
+  .knob output { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .knob small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  input[type=range] { width: 100%; margin: 10px 0 0; accent-color: var(--accent); height: 28px; }
+  input[type=range]:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+  .prompt .box { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; display: flex; gap: 16px; align-items: flex-start; }
+  .prompt blockquote { margin: 0; flex: 1; font-size: 16px; line-height: 1.8; border-left: 3px solid var(--accent-2); padding-left: 14px; }
+  .copy { flex: none; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 0; border-radius: 10px; padding: 8px 16px; background: var(--accent); color: #fff; min-width: 76px; }
+  .copy.ok { background: var(--accent-2); color: #06201d; }
+
+  .notes ol { margin: 0; padding: 0; counter-reset: n; list-style: none; display: grid; gap: 10px; }
+  .notes li { counter-increment: n; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px 12px 52px; position: relative; font-size: 15px; }
+  .notes li::before { content: counter(n); position: absolute; left: 16px; top: 12px; width: 24px; height: 24px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); font-family: var(--mono); font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+  .notes code { font-family: var(--mono); font-size: 13px; background: color-mix(in srgb, var(--text) 8%, transparent); padding: 1px 6px; border-radius: 6px; }
+
+  @media (max-width: 560px) {
+    .prompt .box { flex-direction: column; }
+    .copy { align-self: stretch; }
+    .theme-btn { position: static; margin-top: 12px; }
+    .stage { border-radius: 20px; }
+    .bar .url { display: none; }
+  }
+
+  /* ---------- embed：畫廊卡片裡的預覽，只留瀏覽器視窗 ---------- */
+  html.embed, html.embed body { background: transparent; overflow: hidden; height: 100%; }
+  html.embed header, html.embed .knobs, html.embed .prompt, html.embed .notes { display: none; }
+  html.embed main { max-width: none; padding: 0; height: 100%; }
+  html.embed .stage { margin: 0; padding: 0; border: 0; background: none; height: 100%; border-radius: 0; }
+  html.embed .browser { height: 100%; border: 0; border-radius: 0; box-shadow: none; }
+  html.embed .bar .auto, html.embed .hint { display: none; }   /* 操作提示改由畫廊頁顯示 */
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+  }
+  /* ================= 共用樣式 結束 ================= */
+
+  /* ================= 本效果樣式 ================= */
+  .eyebrow { margin: 0; font-family: var(--mono); font-size: clamp(11px, 1.5cqw, 12px); letter-spacing: .14em; color: var(--site-sub); }
+  .track { position: relative; }
+  .pin { position: sticky; top: 0; height: 100cqh; overflow: hidden; color: var(--site-ink); --stg: 70ms; }
+
+  /* 所有場景疊在同一個位置，後面的場景蓋在前面的上面 */
+  .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; will-change: opacity, clip-path; }
+  .scene.is-on { visibility: visible; }
+  .scene .bg { position: absolute; inset: 0; will-change: transform; }
+
+  /* 場景內的文字：成為主場景時依序進場 */
+  .rise { opacity: 0; transform: translate3d(0, 2.6cqh, 0); transition: opacity .16s linear, transform .16s linear; }
+  .scene.is-on .rise {
+    opacity: 1; transform: none;
+    transition: opacity .5s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
+    transition-delay: calc(60ms + var(--d, 0) * var(--stg));
+  }
+  .scene.no-anim .rise { transition: none; }
+
+  /* 開場 */
+  .s-intro .bg {
+    background:
+      radial-gradient(70cqw 90cqh at 84% 24%, color-mix(in srgb, var(--accent-2) 17%, transparent), transparent 70%),
+      var(--site-bg);
+  }
+  .s-intro .stack i {
+    position: absolute; width: 21cqw; aspect-ratio: 16 / 10; border-radius: clamp(6px, 1.2cqw, 12px);
+    box-shadow: 0 2.6cqh 5cqh -2.4cqh rgba(20,18,40,.5);
+  }
+  .s-intro .stack i:nth-child(1) { right: 24cqw; top: 15cqh; transform: rotate(-5deg); }
+  .s-intro .stack i:nth-child(2) { right: 11cqw; top: 38cqh; transform: rotate(4deg); }
+  .s-intro .stack i:nth-child(3) { right: 26cqw; top: 61cqh; transform: rotate(-2deg); }
+  .s-intro .say { position: absolute; left: 7cqw; top: 50%; width: 40cqw; transform: translateY(-46%); }
+  .s-intro h2 { margin: 1.5cqh 0 2cqh; font-size: clamp(22px, 5.4cqw, 54px); line-height: 1.16; font-weight: 800; }
+  .s-intro .lead { margin: 0; font-size: clamp(12px, 1.7cqw, 15px); color: var(--site-sub); max-width: 24em; }
+
+  /* 作品場景 */
+  .s-work .scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,8,14,.66), rgba(8,8,14,.1) 48%, rgba(8,8,14,.22)); }
+  .cap { position: absolute; left: 7cqw; right: 16cqw; bottom: 9cqh; color: #f6f3ea; text-shadow: 0 1px 18px rgba(0,0,0,.35); }
+  .cap .kind { margin: 0; font-size: clamp(11px, 1.6cqw, 14px); color: rgba(246,243,234,.84); }
+  .cap h2 { margin: .8cqh 0 0; font-size: clamp(28px, 8.4cqw, 86px); line-height: 1.06; font-weight: 800; }
+  .cap .sub { margin: .9cqh 0 0; font-family: var(--mono); font-size: clamp(11px, 1.6cqw, 15px); letter-spacing: .1em; }
+  .cap .line { margin: 1.8cqh 0 0; font-size: clamp(12px, 1.6cqw, 15px); max-width: 30em; color: rgba(246,243,234,.92); }
+
+  /* 釘在上面不跟著換的東西：站名與場景指示 */
+  .nav, .idx { position: absolute; z-index: 5; transition: color .3s; }
+  .pin.on-art .nav, .pin.on-art .idx { color: #f6f3ea; }
+  .nav { left: 7cqw; right: 7cqw; top: 4.5cqh; display: flex; justify-content: space-between; align-items: baseline; font-size: clamp(11px, 1.5cqw, 13px); }
+  .nav b { font-family: var(--mono); letter-spacing: .12em; font-weight: 700; }
+  .nav span { display: flex; gap: 2.4cqw; }
+  .idx { right: 4cqw; top: 52%; transform: translateY(-50%); display: grid; justify-items: center; gap: 1.6cqh; }
+  .idx .num { margin: 0; font-family: var(--mono); font-size: clamp(11px, 1.4cqw, 13px); line-height: 1.25; text-align: center; }
+  .idx .num b { display: block; font-size: clamp(15px, 2.6cqw, 24px); font-weight: 600; }
+  .idx ol { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(3px, .9cqh, 6px); }
+  .idx button { display: block; position: relative; width: 24px; height: clamp(18px, 6.4cqh, 36px); padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+  .idx button::before, .idx button i { content: ""; position: absolute; left: 11px; top: 0; bottom: 0; width: 2px; border-radius: 2px; background: currentColor; }
+  .idx button::before { opacity: .28; }
+  .idx button i { transform-origin: 50% 0; transform: scaleY(0); }
+
+  .after { padding: 9cqh 7cqw 12cqh; display: grid; grid-template-columns: 1fr 1.5fr; gap: 5cqw; border-top: 1px solid var(--site-line); }
+  .after h4 { margin: 0; font-size: clamp(15px, 2.6cqw, 22px); line-height: 1.4; }
+  .after ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2cqh; }
+  .after li { display: grid; grid-template-columns: clamp(64px, 14cqw, 120px) 1fr; gap: 2.4cqw; align-items: center; font-size: clamp(12.5px, 1.7cqw, 16px); font-weight: 700; }
+  .after li i { aspect-ratio: 16 / 10; border-radius: 6px; }
+  .after li small { display: block; font-weight: 400; color: var(--site-sub); font-size: clamp(11px, 1.4cqw, 13px); }
+
+  @container (max-width: 520px) {
+    .s-intro .stack { position: absolute; left: 6cqw; bottom: 12cqh; display: flex; gap: 2.5cqw; }
+    .s-intro .stack i:nth-child(n) { position: static; width: 22cqw; transform: none; }
+    .s-intro .stack i:nth-child(2) { transform: translateY(-1.4cqh); }
+    .s-intro .say { left: 6cqw; right: 15cqw; width: auto; top: 15cqh; transform: none; }
+    .cap { left: 6cqw; }
+    .nav { left: 6cqw; right: 6cqw; }
+    .after { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="kicker"><span class="no">02</span><span>網頁互動效果・滾動</span></div>
+    <h1><span class="n">02 ·</span>滾動驅動的場景切換</h1>
+    <p class="en">Scroll-driven Scene Switching · scroll-triggered scene transition · scrollytelling</p>
+    <p class="sum">滾輪往下滾，頁面看起來沒有往下移，而是在原地換成下一個滿版場景。每個場景分到一段捲動距離，大部分時間畫面停著不動，只有段尾一小段在換場，所以停下來時看到的一定是完整的一幕。</p>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="切換淺色與深色">切換深淺色</button>
+  </header>
+
+  <section class="stage" aria-label="Demo 舞台">
+    <div class="browser">
+      <div class="bar">
+        <i></i><i></i><i></i><span class="url">studio-kiri.tw</span>
+        <span class="readout" id="readout" aria-hidden="true"></span>
+        <button class="auto" id="autoBtn" type="button" aria-pressed="true">自動示範：開</button>
+      </div>
+      <div class="view scroll" id="view" tabindex="0" role="region" aria-label="示範頁面，可用滾輪或方向鍵捲動">
+        <div class="track" id="track">
+          <div class="pin" id="pin">
+            <section class="scene s-intro is-on" aria-label="開場">
+              <div class="bg">
+                <div class="stack" aria-hidden="true"><i class="art" data-a="0"></i><i class="art" data-a="2"></i><i class="art" data-a="3"></i></div>
+              </div>
+              <div class="say">
+                <p class="eyebrow rise" style="--d:0">DESIGN STUDIO · TAIPEI</p>
+                <h2 class="rise" style="--d:1">安靜的品牌，<br>也要有形狀。</h2>
+                <p class="lead rise" style="--d:2">Studio KIRI 是六個人的設計工作室，做識別、包裝與網站。往下是這兩年的三件作品。</p>
+              </div>
+            </section>
+            <section class="scene s-work" aria-label="作品：霧島茶室">
+              <div class="bg art" data-a="0"></div>
+              <div class="scrim"></div>
+              <div class="cap">
+                <p class="kind rise" style="--d:0">品牌識別 · 2026</p>
+                <h2 class="rise" style="--d:1">霧島茶室</h2>
+                <p class="sub rise" style="--d:2">KIRISHIMA TEA HOUSE</p>
+                <p class="line rise" style="--d:3">茶園一年有兩百天起霧，識別只留一個月亮和三層霧。</p>
+              </div>
+            </section>
+            <section class="scene s-work" aria-label="作品：北緯二十五">
+              <div class="bg art" data-a="2"></div>
+              <div class="scrim"></div>
+              <div class="cap">
+                <p class="kind rise" style="--d:0">電商網站 · 2025</p>
+                <h2 class="rise" style="--d:1">北緯二十五</h2>
+                <p class="sub rise" style="--d:2">N25° OUTDOOR</p>
+                <p class="line rise" style="--d:3">把等高線做成選單，逛裝備像在看一張地形圖。</p>
+              </div>
+            </section>
+            <section class="scene s-work" aria-label="作品：夜行列車">
+              <div class="bg art" data-a="3"></div>
+              <div class="scrim"></div>
+              <div class="cap">
+                <p class="kind rise" style="--d:0">動態影像 · 2025</p>
+                <h2 class="rise" style="--d:1">夜行列車</h2>
+                <p class="sub rise" style="--d:2">NIGHT EXPRESS</p>
+                <p class="line rise" style="--d:3">九十秒的片頭，整列車只靠窗戶的光把故事說完。</p>
+              </div>
+            </section>
+
+            <div class="nav"><b>STUDIO KIRI</b><span><span>作品</span><span>關於</span><span>聯絡</span></span></div>
+            <nav class="idx" aria-label="場景">
+              <p class="num"><b id="idxNo">01</b>/ 04</p>
+              <ol>
+                <li><button type="button" aria-label="跳到場景 1：開場"><i></i></button></li>
+                <li><button type="button" aria-label="跳到場景 2：霧島茶室"><i></i></button></li>
+                <li><button type="button" aria-label="跳到場景 3：北緯二十五"><i></i></button></li>
+                <li><button type="button" aria-label="跳到場景 4：夜行列車"><i></i></button></li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+        <section class="after">
+          <h4>另外三件，<br>放在作品列表裡。</h4>
+          <ul>
+            <li><i class="art" data-a="1"></i><span>潮間帶書店<small>空間導視 · 2026</small></span></li>
+            <li><i class="art" data-a="4"></i><span>白露陶器<small>包裝設計 · 2024</small></span></li>
+            <li><i class="art" data-a="5"></i><span>巷弄氣象台<small>App 介面 · 2024</small></span></li>
+          </ul>
+        </section>
+      </div>
+      <div class="hint" id="hint">↓ 在這裡滾動滑鼠滾輪</div>
+    </div>
+  </section>
+
+  <section class="knobs" aria-label="可調參數">
+    <h3>可調參數</h3>
+    <div class="grid">
+      <div class="knob"><label for="kDist">場景捲動距離 <output id="oDist"></output></label><input id="kDist" type="range" min="60" max="200" step="10" value="100"><small>要捲多少個畫面高度才輪到下一個場景</small></div>
+      <div class="knob"><label for="kBand">轉場帶佔比 <output id="oBand"></output></label><input id="kBand" type="range" min="5" max="60" step="1" value="22"><small>每段最後多少比例用來換場，越小切得越乾脆</small></div>
+      <div class="knob"><label for="kStyle">轉場樣式 <output id="oStyle"></output></label><input id="kStyle" type="range" min="1" max="3" step="1" value="1"><small>淡入縮放、向上擦除、圓形展開三選一</small></div>
+      <div class="knob"><label for="kStg">文字錯開間隔 <output id="oStg"></output></label><input id="kStg" type="range" min="0" max="160" step="10" value="70"><small>場景換好後，每一行文字比上一行晚多久進場</small></div>
+    </div>
+  </section>
+
+  <section class="prompt" aria-label="AI 描述詞">
+    <h3>AI 描述詞</h3>
+    <div class="box">
+      <blockquote id="promptText">做一個滾動驅動的場景切換：用 sticky 釘住滿版容器，場景全部疊在裡面，各佔一個畫面高的捲動距離。每段前 78% 畫面不動，最後 22% 依捲動進度把下一個場景淡入並縮放到位，往回捲倒著播，不攔截滾輪事件。</blockquote>
+      <button class="copy" id="copyBtn" type="button">複製</button>
+    </div>
+  </section>
+
+  <section class="notes" aria-label="實作要點">
+    <h3>實作要點</h3>
+    <ol>
+      <li><b>一個場景配一段捲動距離：</b>外層 <code>.track</code> 的高度 ＝ 一個畫面高 ＋ 每段距離 ×（場景數 − 轉場帶佔比），最後一個場景後面沒有下一幕，所以少一段轉場帶。裡面的 <code>.pin</code> 設 <code>position: sticky; top: 0</code>。<code>scrollTop ÷ 每段距離</code> 的整數部分是目前場景，小數部分是段內進度。</li>
+      <li><b>段內分成停留與轉場帶：</b>段內進度小於 <code>1 − 轉場帶佔比</code> 時什麼都不動。超過之後把剩下那一小段換算成 0 到 1 的 q，再套 <code>q²(3 − 2q)</code> 讓頭尾變慢。佔比 22% 的意思是每段只有最後 22% 在換場。</li>
+      <li><b>轉場只處理下一個場景那一層：</b>場景全部絕對定位疊在一起，目前場景留在底下不透明。淡入是把上面那層的 <code>opacity</code> 從 0 拉到 1，擦除是 <code>clip-path: inset((1 − q) × 100% 0 0 0)</code>，圓形展開是 <code>circle(q × 72% at 50% 50%)</code>；72% 是因為圓要超過 70.7% 才蓋得到四個角。</li>
+      <li><b>背景跟著捲動，文字跟著時間：</b>q 過半時把 <code>.is-on</code> 換到下一個場景，文字用 CSS transition 進場，每一行的 <code>transition-delay</code> 多 70ms。文字如果也綁捲動進度，停在轉場帶裡會卡成半透明。</li>
+      <li><b>套用到別的頁面：</b>這不是攔截滾輪（scroll-jacking），原生捲動還在，所以觸控、鍵盤、捲軸都正常。真的去攔截 <code>wheel</code> 事件自己換頁，會破壞觸控板的慣性捲動與無障礙操作，不建議。另外 <code>.pin</code> 的祖先不能有 <code>overflow: hidden</code>，否則 sticky 會失效。</li>
+    </ol>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  /* ================= 共用腳本 開始（13 頁一致，勿改） ================= */
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const EMBED = document.documentElement.classList.contains('embed');
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ---------- 假網站的六件作品 ---------- */
+  const WORKS = [
+    { t: '霧島茶室',   en: 'Kirishima Tea House', tag: '品牌識別', yr: '2026' },
+    { t: '潮間帶書店', en: 'Intertidal Books',    tag: '空間導視', yr: '2026' },
+    { t: '北緯二十五', en: 'N25° Outdoor',        tag: '電商網站', yr: '2025' },
+    { t: '夜行列車',   en: 'Night Express',       tag: '動態影像', yr: '2025' },
+    { t: '白露陶器',   en: 'Hakuro Ceramics',     tag: '包裝設計', yr: '2024' },
+    { t: '巷弄氣象台', en: 'Alley Weather',       tag: 'App 介面', yr: '2024' },
+  ];
+
+  /* 把第 i 件作品畫進 canvas；t（秒）會讓畫面緩慢動起來，靜態圖傳 0 */
+  function paintArt(ctx, i, w, h, t = 0) {
+    const S = Math.sin;
+    const lin = (stops, x0 = 0, y0 = 0, x1 = 0, y1 = 1) => {
+      const g = ctx.createLinearGradient(x0 * w, y0 * h, x1 * w, y1 * h);
+      stops.forEach(([o, c]) => g.addColorStop(o, c)); return g;
+    };
+    const fill = c => { ctx.fillStyle = c; ctx.fillRect(0, 0, w, h); };
+    const disc = (x, y, r, c) => { ctx.beginPath(); ctx.arc(x * w, y * h, r * h, 0, 6.2832); ctx.fillStyle = c; ctx.fill(); };
+    const wave = (y, amp, freq, ph, c) => {
+      ctx.beginPath(); ctx.moveTo(0, h);
+      for (let x = 0; x <= 1.001; x += .04) ctx.lineTo(x * w, (y + amp * S(x * freq + ph)) * h);
+      ctx.lineTo(w, h); ctx.closePath(); ctx.fillStyle = c; ctx.fill();
+    };
+    ctx.save();
+    switch (((i % 6) + 6) % 6) {
+      case 0: // 霧島茶室：墨綠、月、三層霧
+        fill(lin([[0, '#2a5a52'], [1, '#0d2220']]));
+        disc(.68 + .012 * S(t * .5), .34 + .01 * S(t * .37), .19, '#ece4c6');
+        wave(.56, .05, 5.2, 1 + t * .5, 'rgba(176,214,196,.20)');
+        wave(.68, .06, 4.1, 3 + t * .7, 'rgba(176,214,196,.26)');
+        wave(.82, .04, 6.3, 5 + t * .9, 'rgba(206,232,218,.34)');
+        break;
+      case 1: // 潮間帶書店：沙色、朱紅太陽、三道浪
+        fill(lin([[0, '#f1e7d2'], [1, '#e3d3b2']]));
+        disc(.27, .3 + .012 * S(t * .6), .13, '#e2674a');
+        wave(.56, .035, 7, 0 + t * 1.1, '#5f9cc4');
+        wave(.68, .045, 5.4, 2 + t * .8, '#2f6694');
+        wave(.82, .035, 8.2, 4 + t * 1.4, '#1b3f62');
+        break;
+      case 2: { // 北緯二十五：橘底、等高線、兩座山
+        fill(lin([[0, '#f58a45'], [1, '#d8431c']]));
+        ctx.lineWidth = Math.max(1, h * .004); ctx.strokeStyle = 'rgba(255,240,220,.3)';
+        for (let k = 1; k <= 7; k++) {
+          ctx.beginPath(); ctx.ellipse(.74 * w, .3 * h, k * .1 * h * (1 + .03 * S(t + k)), k * .065 * h, -.3, 0, 6.2832); ctx.stroke();
+        }
+        const tri = (x0, x1, top, c) => { ctx.beginPath(); ctx.moveTo(x0 * w, h); ctx.lineTo((x0 + x1) / 2 * w, top * h); ctx.lineTo(x1 * w, h); ctx.closePath(); ctx.fillStyle = c; ctx.fill(); };
+        tri(.28, 1.02, .42, '#5a2a17'); tri(-.08, .66, .3, '#2a1710');
+        ctx.beginPath(); ctx.moveTo(.29 * w, .3 * h); ctx.lineTo(.235 * w, .5 * h); ctx.lineTo(.3 * w, .46 * h); ctx.lineTo(.345 * w, .5 * h); ctx.closePath(); ctx.fillStyle = '#fbe9d4'; ctx.fill();
+        break; }
+      case 3: { // 夜行列車：深紫夜、月、一列亮窗
+        fill(lin([[0, '#14112c'], [1, '#3d2c70']]));
+        for (let k = 0; k < 26; k++) disc((k * .381966) % 1, ((k * .618034) % 1) * .52, .003 + (k % 3) * .0018, `rgba(255,255,255,${.35 + .3 * S(t * 1.3 + k)})`);
+        disc(.2, .24, .1, '#f6e7b0'); disc(.236, .215, .09, '#211a45');
+        ctx.fillStyle = '#0a0818'; ctx.fillRect(0, .78 * h, w, .22 * h);
+        const y = .6 * h, ch = .18 * h, cw = .3 * w, off = ((t * .06) % 1) * (cw + .02 * w);
+        for (let x = -cw - .02 * w + off; x < w; x += cw + .02 * w) {
+          ctx.fillStyle = '#0e0b20'; ctx.beginPath(); ctx.roundRect(x, y, cw, ch, ch * .22); ctx.fill();
+          ctx.fillStyle = '#ffd76a';
+          for (let k = 0; k < 4; k++) { ctx.beginPath(); ctx.roundRect(x + cw * (.07 + k * .225), y + ch * .2, cw * .17, ch * .36, ch * .06); ctx.fill(); }
+        }
+        break; }
+      case 4: { // 白露陶器：米白、陶瓶、小碗
+        fill(lin([[0, '#f1ede6'], [1, '#ddd5c8']]));
+        ctx.fillStyle = '#c9bfae'; ctx.fillRect(0, .76 * h, w, .24 * h);
+        const sh = (x, rx) => { ctx.beginPath(); ctx.ellipse(x * w, .775 * h, rx * h, .022 * h, 0, 0, 6.2832); ctx.fillStyle = 'rgba(60,45,30,.22)'; ctx.fill(); };
+        sh(.44, .2); sh(.72, .15);
+        const cx = .42 * w, sway = .004 * w * S(t * .8);
+        ctx.beginPath(); ctx.moveTo(cx - .05 * h, .2 * h);
+        ctx.bezierCurveTo(cx - .06 * h + sway, .34 * h, cx - .21 * h, .4 * h, cx - .19 * h, .6 * h);
+        ctx.bezierCurveTo(cx - .17 * h, .74 * h, cx - .1 * h, .775 * h, cx, .775 * h);
+        ctx.bezierCurveTo(cx + .1 * h, .775 * h, cx + .17 * h, .74 * h, cx + .19 * h, .6 * h);
+        ctx.bezierCurveTo(cx + .21 * h, .4 * h, cx + .06 * h + sway, .34 * h, cx + .05 * h, .2 * h);
+        ctx.closePath(); ctx.fillStyle = lin([[0, '#a98f74'], [1, '#7d6450']], .3, 0, .55, 0); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(.61 * w, .62 * h); ctx.bezierCurveTo(.62 * w, .8 * h, .82 * w, .8 * h, .83 * w, .62 * h); ctx.closePath(); ctx.fillStyle = '#e9e3d8'; ctx.fill();
+        ctx.beginPath(); ctx.ellipse(.72 * w, .62 * h, .11 * w, .02 * h, 0, 0, 6.2832); ctx.fillStyle = '#b9a58c'; ctx.fill();
+        break; }
+      default: { // 巷弄氣象台：天藍、太陽、三朵雲
+        fill(lin([[0, '#6bb9f2'], [1, '#e4f3ff']]));
+        disc(.74, .3, .15 + .006 * S(t * 1.2), '#ffc93c');
+        const cloud = (x, y, s, a) => { for (const [dx, dy, r] of [[0, 0, .1], [.09, -.035, .13], [.2, 0, .1], [.1, .03, .11]]) disc(x + dx * s * h / w, y + dy * s, r * s, `rgba(255,255,255,${a})`); };
+        cloud(((.08 + t * .012) % 1.3) - .15, .56, 1.25, .96);
+        cloud(((.5 + t * .02) % 1.3) - .15, .34, .8, .9);
+        cloud(((.92 + t * .008) % 1.3) - .15, .76, 1, .93);
+        break; }
+    }
+    ctx.restore();
+  }
+
+  /* 靜態作品圖 → dataURL，並塞進 --art0 … --art5 給 .art[data-a] 用 */
+  const artCache = [];
+  function artURL(i) {
+    if (!artCache[i]) {
+      const c = document.createElement('canvas'); c.width = 960; c.height = 600;
+      paintArt(c.getContext('2d'), i, 960, 600, 0);
+      artCache[i] = c.toDataURL('image/jpeg', .86);
+    }
+    return artCache[i];
+  }
+  WORKS.forEach((_, i) => document.documentElement.style.setProperty('--art' + i, `url(${artURL(i)})`));
+
+  /* ---------- 可調參數：defs = [inputId, outputId, key, 顯示格式, 換算（可省）] ---------- */
+  function bindKnobs(P, defs, onChange) {
+    defs.forEach(([id, oid, key, fmt, conv]) => {
+      const el = $('#' + id), out = $('#' + oid);
+      const apply = () => { const v = +el.value; P[key] = conv ? conv(v) : v; out.textContent = fmt(v); };
+      el.addEventListener('input', () => { apply(); onChange && onChange(key); });
+      apply();
+    });
+  }
+
+  /* ---------- 舞台是否真的在螢幕上（iframe 內也準），不在就別空轉 ---------- */
+  const Stage = { el: $('.browser'), view: $('#view'), visible: true };
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(es => { Stage.visible = es[0].isIntersecting; Auto.vis(); }).observe(Stage.el);
+  }
+
+  /* ---------- 自動示範：一載入就播；使用者一動手就停。embed 閒置 4 秒後恢復 ---------- */
+  const Auto = (() => {
+    const btn = $('#autoBtn'), hint = $('#hint');
+    let tick = null, want = false, on = false, t = 0, last = 0, raf = 0, timer = 0;
+    function frame(now) {
+      if (!on) return;
+      const dt = Math.min((now - last) / 1000, .05); last = now; t += dt;
+      tick(t, dt);
+      raf = requestAnimationFrame(frame);
+    }
+    function sync() {
+      btn.setAttribute('aria-pressed', String(want));
+      btn.textContent = want ? '自動示範：開' : '自動示範：關';
+      hint.classList.toggle('off', !want);
+    }
+    function run() {
+      if (on || !tick || !want || !Stage.visible || reduceMQ.matches) return;
+      on = true; last = performance.now(); raf = requestAnimationFrame(frame);
+    }
+    function halt() { on = false; cancelAnimationFrame(raf); }
+    btn.addEventListener('click', () => { clearTimeout(timer); want = !want; want ? run() : halt(); sync(); });
+    return {
+      get on() { return on; },
+      /* fn(t, dt)：t 為自動示範累計秒數；在裡面去改 scrollTop 或餵假的指標座標 */
+      init(fn) { tick = fn; want = !reduceMQ.matches; sync(); run(); },
+      /* 使用者真的動手時呼叫 */
+      poke() {
+        clearTimeout(timer);
+        if (want) { want = false; halt(); sync(); }
+        if (EMBED) timer = setTimeout(() => { want = true; sync(); run(); }, 4000);
+      },
+      /* 幫忙掛監聽：Auto.watch(view, 'wheel pointerdown touchstart keydown') */
+      watch(el, types) { types.split(' ').forEach(ty => el.addEventListener(ty, () => Auto.poke(), { passive: true })); },
+      vis() { Stage.visible ? run() : halt(); },
+    };
+  })();
+
+  /* ---------- 複製描述詞 ---------- */
+  const copyBtn = $('#copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    const text = $('#promptText').textContent.trim();
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (_) {}
+    if (!ok) {
+      try {
+        const r = document.createRange(); r.selectNodeContents($('#promptText'));
+        const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        ok = document.execCommand('copy');
+      } catch (_) {}
+    }
+    copyBtn.textContent = ok ? '已複製' : '請按 Ctrl+C';
+    copyBtn.classList.toggle('ok', ok);
+    setTimeout(() => { copyBtn.textContent = '複製'; copyBtn.classList.remove('ok'); }, 1600);
+  });
+
+  /* ---------- 深淺色：自己的按鈕，或由畫廊頁 postMessage 帶進來 ---------- */
+  $('#themeBtn').addEventListener('click', () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+  });
+  addEventListener('message', e => {
+    const th = e.data && e.data.theme;
+    if (th === 'light' || th === 'dark') document.documentElement.dataset.theme = th;
+    if (e.data && e.data.poke) Auto.poke();          // 畫廊頁：使用者點了預覽，準備動手
+  });
+  /* ================= 共用腳本 結束 ================= */
+
+  /* ================= 本效果 ================= */
+  const view = Stage.view, track = $('#track'), pin = $('#pin'), readout = $('#readout'), idxNo = $('#idxNo');
+  const scenes = $$('.scene', pin).map(el => ({ el, bg: $('.bg', el) }));
+  const dots = $$('.idx button', pin), fills = dots.map(b => $('i', b));
+  const N = scenes.length;
+  const STYLES = ['淡入縮放', '向上擦除', '圓形展開'];
+  const P = { dist: 1, band: .22, style: 1, stg: 70 };
+  const pad = n => String(n).padStart(2, '0');
+  let unit = 1;        // 一段捲動距離是幾 px
+  let main = -1;       // 目前的主場景（文字進場、指示數字跟著它）
+
+  // 行程 =（N − 1）段完整的 ＋ 最後一個場景的停留；改距離或視窗大小時維持在同一個場景位置
+  function layout() {
+    const s = view.scrollTop / unit;
+    track.style.height = ((1 + (N - P.band) * P.dist) * 100).toFixed(2) + 'cqh';
+    unit = Math.max(1, P.dist * view.clientHeight);
+    if (Math.abs(view.scrollTop - s * unit) > 1) view.scrollTop = s * unit;
+  }
+
+  function render() {
+    const hold = 1 - P.band;
+    const s = clamp(view.scrollTop / unit, 0, N - P.band);
+    const i = Math.min(N - 1, Math.floor(s + 1e-6));           // 目前場景
+    const local = clamp(s - i, 0, 1);                          // 段內進度
+    const q = i < N - 1 ? clamp((local - hold) / P.band, 0, 1) : 0;   // 轉場帶內的進度
+    const e = q * q * (3 - 2 * q);
+
+    scenes.forEach((sc, k) => {
+      const out = k === i, inn = k === i + 1 && e > 0;
+      sc.el.style.visibility = out || inn ? 'visible' : 'hidden';
+      if (!out && !inn) return;
+      let op = 1, clip = 'none', tf = 'none';
+      if (P.style === 1) {                                     // 淡入縮放
+        if (inn) { op = e; tf = `scale(${(1.1 - .1 * e).toFixed(4)})`; }
+        else if (e > 0) tf = `scale(${(1 + .06 * e).toFixed(4)})`;
+      } else if (P.style === 2) {                              // 向上擦除
+        if (inn) { clip = `inset(${((1 - e) * 100).toFixed(2)}% 0 0 0)`; tf = `translate3d(0, ${((1 - e) * 10).toFixed(2)}%, 0)`; }
+        else if (e > 0) tf = `translate3d(0, ${(-6 * e).toFixed(2)}%, 0)`;
+      } else {                                                 // 圓形展開
+        if (inn) { clip = `circle(${(e * 72).toFixed(2)}% at 50% 50%)`; tf = `scale(${(1.14 - .14 * e).toFixed(4)})`; }
+        else if (e > 0) tf = `scale(${(1 + .05 * e).toFixed(4)})`;
+      }
+      sc.el.style.opacity = op.toFixed(3);
+      sc.el.style.clipPath = clip;
+      sc.bg.style.transform = tf;
+    });
+
+    const m = e < .5 ? i : i + 1;                              // 轉場過半就換主場景
+    if (m !== main) {
+      main = m;
+      scenes.forEach((sc, k) => sc.el.classList.toggle('is-on', k === m));
+      dots.forEach((d, k) => { if (k === m) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
+      pin.classList.toggle('on-art', m > 0);
+      idxNo.textContent = pad(m + 1);
+    }
+    fills.forEach((f, k) => {
+      const v = clamp(k < N - 1 ? s - k : (s - k) / hold, 0, 1);
+      f.style.transform = `scaleY(${Math.max(v, k === main ? .14 : 0).toFixed(3)})`;   // 主場景那一格至少亮一小段
+    });
+    readout.innerHTML = `場景 <b>${pad(i + 1)}/${pad(N)}</b>　段內 <b>${local.toFixed(2)}</b>　<b>${q > 0 && q < 1 ? '轉場' : '停留'}</b>`;
+  }
+
+  // 改了錯開間隔就把主場景的文字重播一次，才看得到差別
+  function replay() {
+    const sc = scenes[main]; if (!sc) return;
+    sc.el.classList.add('no-anim'); sc.el.classList.remove('is-on');
+    void sc.el.offsetWidth;
+    sc.el.classList.remove('no-anim'); sc.el.classList.add('is-on');
+  }
+
+  let queued = false;
+  const request = () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; render(); }); } };
+  view.addEventListener('scroll', request, { passive: true });
+  new ResizeObserver(() => { layout(); request(); }).observe(view);
+
+  // 指示條可以點：直接捲到那個場景的開頭
+  dots.forEach((d, k) => d.addEventListener('click', () => {
+    view.scrollTo({ top: k * unit + 1, behavior: reduceMQ.matches ? 'auto' : 'smooth' });
+  }));
+
+  bindKnobs(P, [
+    ['kDist', 'oDist', 'dist', v => (v / 100).toFixed(1) + ' 個畫面', v => v / 100],
+    ['kBand', 'oBand', 'band', v => v + '%', v => v / 100],
+    ['kStyle', 'oStyle', 'style', v => STYLES[v - 1]],
+    ['kStg', 'oStg', 'stg', v => v + 'ms'],
+  ], key => {
+    if (key === 'stg') { pin.style.setProperty('--stg', P.stg + 'ms'); replay(); }
+    layout(); request();
+  });
+  pin.style.setProperty('--stg', P.stg + 'ms');
+  layout(); render();
+
+  // 自動示範：每個場景慢慢捲過停留區，再通過轉場帶；到最後一個場景後一路捲回開頭
+  const T_HOLD = 1.05, T_TRANS = .55, T_BACK = 2.3, T_REST = .35;
+  Auto.watch(view, 'wheel pointerdown touchstart keydown');
+  Auto.init(t => {
+    const hold = 1 - P.band, step = T_HOLD + T_TRANS, fwd = (N - 1) * step + T_HOLD;
+    const u = Math.max(0, t) % (fwd + T_BACK + T_REST);
+    let s = 0;
+    if (u < fwd) {
+      const k = Math.min(N - 1, Math.floor(u / step)), v = u - k * step;
+      s = v < T_HOLD ? k + hold * (k === N - 1 ? .6 : 1) * (v / T_HOLD) : k + hold + P.band * ((v - T_HOLD) / T_TRANS);
+    } else if (u < fwd + T_BACK) {
+      const b = (u - fwd) / T_BACK;
+      s = (N - 1 + hold * .6) * (1 - b * b * (3 - 2 * b));
+    }
+    view.scrollTop = s * unit;
+  });
+})();
+</script>
+</body>
+</html>

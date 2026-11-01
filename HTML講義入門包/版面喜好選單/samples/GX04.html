@@ -1,0 +1,24 @@
+<!doctype html><!-- 版面喜好選單範例 GX04｜可還原的已讀標記｜來源：講師範例庫 output範例/元件庫/GX04-可還原已讀標記.html；原始來源 https://github.com/uiverse-io/galaxy（Checkboxes/AnthonyPreite_nasty-zebra-57.html），作者 AnthonyPreite，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX04 可還原已讀標記（Check/Uncheck pill (red-green)）
+  來源：https://github.com/uiverse-io/galaxy　Checkboxes/AnthonyPreite_nasty-zebra-57.html
+  原作者：AnthonyPreite　授權：MIT
+  移植：原作文字為英文 Check/Uncheck，改為「標為已讀／取消已讀」；原色 #4EBE96、#D84F68 的文字加深以通過對比；補 focus-visible 與 reduced-motion；原作 position:fixed 的隱藏 input 改 absolute。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>demo</title><style>*{box-sizing:border-box}html,body{margin:0;height:100%}body{background:#f5f6f8;color:#1f2937;font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;display:flex;align-items:center;justify-content:center}.cap{font-size:12px;color:#6b7280;margin-top:14px;text-align:center}
+.grp{display:flex;flex-direction:column;gap:10px;align-items:center}
+.pill input{position:absolute;opacity:0}
+.ni{display:block;font-size:15px;font-weight:600;padding:8px 20px;border-radius:.8rem;min-width:140px;text-align:center;background:rgba(78,190,150,.12);border:1px solid rgba(22,179,124,.4);cursor:pointer;transition:all .3s ease;color:#16795a}
+.ni::before{content:"標為已讀"}
+.ni:active{transform:scale(.94)}
+.pill input:checked+.ni{background:rgba(216,79,104,.1);border-color:rgba(216,79,104,.4);color:#b4233f}
+.pill input:checked+.ni::before{content:"取消已讀"}
+.pill input:focus-visible+.ni{outline:2px solid #1d4ed8;outline-offset:2px}
+.row{display:flex;gap:12px;align-items:center}
+.t{width:170px}
+@media (prefers-reduced-motion:reduce){.ni{transition:none}.ni:active{transform:none}}
+</style></head><body><div class="grp">
+<div class="row"><span class="t">第 3 週講義：資本結構</span><label class="pill"><input type="checkbox"><span class="ni"></span></label></div>
+<div class="row"><span class="t">第 4 週講義：股利政策</span><label class="pill"><input type="checkbox" checked><span class="ni"></span></label></div>
+<div class="cap">綠＝可執行、紅＝可還原；文字與顏色一起換，不只靠顏色</div></div></body></html>

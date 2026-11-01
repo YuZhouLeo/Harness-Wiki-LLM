@@ -1,0 +1,457 @@
+<!doctype html>
+<!-- 版面喜好選單範例 S7｜復古未來簡報｜來源：講師範例庫 output範例/設計偏好選擇/samples/S7-復古未來簡報.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S7 復古未來簡報｜知識庫準確度基線</title>
+<style>
+/* ═════════ S7 復古未來：token ═════════
+   角色分工（W12 的深青／米白／橘，只留一個強調色）
+   底 #0c2c35　面 #123c46　主字 #f1e6c8　主色 青 #2f6f74（分類與邊線）　強調 橘 #e8894a（面積小：重點數字、未達、目前位置）
+   狀態：未達＝強調橘　接近＝米白描邊　達標＝青綠 #86cbbd */
+:root {
+  --shell: #061a20;
+  --surface: #0c2c35;
+  --surface-2: #123c46;
+  --surface-3: #17505a;
+  --text: #f1e6c8;
+  --text-2: #d6ccae;
+  --text-mute: #d6ccae;
+  --text-faint: #2c5560;
+  --rule: #2f6f74;
+  --accent: #e8894a;
+  --font-display-cn: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-mono: ui-monospace, Consolas, Menlo, monospace;
+  --dur-base: 520ms; --dur-slow: 900ms;
+  --r-stage: 0;
+  --shadow-stage: 0 40px 120px rgba(0, 0, 0, .55);
+  --surface-pattern: none; --surface-pattern-size: 1px 1px; --surface-pattern-blend: normal; --surface-pattern-opacity: 0;
+  --ease-quart: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.1, 1);
+
+  --ink: #f1e6c8;
+  --ink-2: #e2d8b9;
+  --mute: #a3bfba;
+  --kick: #d6ccae;
+  --num: #e8894a;
+  --line: rgba(241, 230, 200, .28);
+  --track: rgba(241, 230, 200, .16);
+  --fillc: #e8894a;
+  --bad: #e8894a;
+  --mid: #f1e6c8;
+  --good: #86cbbd;
+  --on-flag: #0c2c35;
+  --paper: #f1e6c8;
+  --paper-ink: #123c46;
+  --paper-ink-2: #2c5560;
+  --paper-num: #b8481a;
+}
+
+/* ═════════ STAGE ENGINE · CSS（VF 系列共用，整段可直接複製） ═════════ */
+.deck { position: relative; height: 100vh; height: 100svh; min-height: 240px; background: var(--shell);
+  display: flex; align-items: center; justify-content: center; overflow: hidden; }
+@media (max-aspect-ratio: 1/1) { .deck { height: calc(100vw * 9 / 16 + 48px); min-height: 0; } }
+.stage-fitter { position: relative; flex: none; }
+.stage-frame { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0;
+  background: var(--surface); overflow: hidden; cursor: pointer; box-shadow: var(--shadow-stage);
+  border-radius: var(--r-stage); user-select: none; -webkit-user-select: none; }
+.stage-frame::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background-image: var(--surface-pattern); background-size: var(--surface-pattern-size);
+  mix-blend-mode: var(--surface-pattern-blend); opacity: var(--surface-pattern-opacity); }
+.slide { position: absolute; inset: 0; z-index: 2; opacity: 0; visibility: hidden;
+  transition: opacity var(--dur-base) var(--ease-soft), visibility 0s linear var(--dur-base); }
+.slide.is-active { opacity: 1; visibility: visible;
+  transition: opacity var(--dur-slow) var(--ease-soft) 120ms, visibility 0s; }
+/* 宣告式逐步揭示：data-at="n" 的元素在 step ≥ n 時得到 .on（= n 時另有 .now，> n 時 .past） */
+.rv { opacity: 0; transform: translateY(18px);
+  transition: opacity var(--dur-base) var(--ease-soft), transform var(--dur-slow) var(--ease-quart); }
+.rv.on { opacity: 1; transform: none; }
+.wipe { clip-path: inset(0 100% 0 0); transition: clip-path var(--dur-slow) var(--ease-quart); }
+.wipe.on { clip-path: inset(0 0 0 0); }
+.stage-frame.instant .slide, .stage-frame.instant .slide * { transition: none !important; }
+/* 旁白字幕（N 切換，預設關；畫在舞台內，錄影抓得到） */
+.cap { position: absolute; left: 50%; bottom: 150px; transform: translateX(-50%); z-index: 30; width: max-content;
+  max-width: 1500px; padding: 14px 30px; background: var(--text); color: var(--surface-2);
+  font-family: var(--font-display-cn); font-size: 32px; line-height: 1.5; text-align: center;
+  pointer-events: none; opacity: 0; transition: opacity 300ms linear; }
+.stage-frame.show-cap .cap { opacity: 1; }
+.cap:empty { display: none; }
+/* 底部進度列：平常完全隱藏，滑鼠移到底部 56px 才出現 */
+.pb-hover { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; z-index: 40;
+  display: flex; justify-content: center; align-items: flex-end; }
+.pb { display: flex; align-items: center; gap: 2px; max-width: calc(100% - 24px); overflow-x: auto; scrollbar-width: none;
+  padding: 8px 12px; background: var(--text); color: var(--surface);
+  opacity: 0; transform: translateY(100%);
+  transition: opacity var(--dur-base) var(--ease-quart), transform var(--dur-base) var(--ease-quart); }
+.pb-hover:hover .pb, .pb:focus-within { opacity: 1; transform: none; }
+.pb button { font: inherit; font-size: 13px; line-height: 1.4; color: var(--text-faint); background: none;
+  border: 1px solid transparent; padding: 4px 10px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.pb button:hover { color: var(--surface); }
+.pb button.act { color: var(--surface); border-color: var(--accent); }
+.pb .no { font-family: var(--font-mono); color: var(--accent); }
+.pb .pips { display: flex; gap: 4px; }
+.pb .pip { width: 7px; height: 7px; border-radius: 50%; background: var(--text-mute); }
+.pb .pip.on { background: var(--accent); }
+.pb .cnt { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); padding: 0 6px 0 10px; white-space: nowrap; }
+/* ═════════ STAGE ENGINE · CSS 結束 ═════════ */
+/* ═════════ 共用版面骨架（三份簡報同一套網格，差別只在 token 與裝飾） ═════════
+   1920×1080 舞台。字級三層：標題 88／重點 數字 340 或 句子 56／說明 38；最小 26。
+   邊界 左右 120；標題區 top 80；內容區 top 318 ~ bottom 150；頁尾 bottom 52。 */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--shell); color: var(--ink); overflow-x: hidden;
+  font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+  -webkit-font-smoothing: antialiased; letter-spacing: normal; }
+h1, h2, h3, p, ul, ol, li { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+.slide { overflow: hidden; color: var(--ink); }
+.hd { position: absolute; left: 120px; right: 120px; top: 80px; z-index: 3; }
+.kick { margin: 0 0 12px; font-size: 30px; line-height: 1.3; font-weight: 700; color: var(--kick); }
+.hd h2 { font-size: 88px; line-height: 1.18; font-weight: 900; }
+.bd { position: absolute; left: 120px; right: 120px; top: 318px; bottom: 150px; z-index: 3; }
+.src { position: absolute; left: 120px; right: 120px; bottom: 52px; z-index: 3; display: flex; justify-content: space-between;
+  align-items: baseline; gap: 40px; font-size: 26px; line-height: 1.4; color: var(--mute); }
+.src .pg { flex: none; font-variant-numeric: tabular-nums; }
+
+/* 封面 */
+.cover { position: absolute; inset: 0; z-index: 3; }
+.cover .kick { position: absolute; left: 120px; top: 236px; font-size: 36px; margin: 0; }
+.cover h1 { position: absolute; left: 120px; top: 300px; font-size: 176px; line-height: 1.1; font-weight: 900; white-space: nowrap; }
+.cover .sub { position: absolute; left: 120px; top: 640px; width: 1180px; font-size: 44px; line-height: 1.55; color: var(--ink-2); }
+.cover .meta { position: absolute; left: 120px; right: 120px; bottom: 64px; display: flex; gap: 20px 64px; flex-wrap: wrap; font-size: 30px; line-height: 1.45; color: var(--mute); }
+.cover .meta b { font-weight: 500; color: var(--ink-2); }
+
+/* 左：重點數字；右：說明 */
+.split { display: grid; grid-template-columns: 780px 1fr; column-gap: 100px; align-items: center; height: 100%; }
+.big { font-size: 340px; line-height: .92; font-weight: 900; font-variant-numeric: tabular-nums; color: var(--num); white-space: nowrap; }
+.big small { font-size: .3em; font-weight: 700; margin-left: .08em; color: var(--ink-2); }
+.lab { margin-top: 22px; font-size: 42px; line-height: 1.4; font-weight: 500; color: var(--ink-2); }
+.notes { display: grid; gap: 44px; }
+.notes li { font-size: 40px; line-height: 1.5; }
+.notes li b { display: block; margin-bottom: 6px; font-size: 30px; font-weight: 700; color: var(--kick); }
+.chips { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; }
+.chips span { font-size: 30px; line-height: 1; padding: 12px 20px; font-variant-numeric: tabular-nums; }
+
+/* 第 2 張：公式＋三步 */
+.lede { font-size: 56px; line-height: 1.45; font-weight: 700; }
+.lede .eq { color: var(--num); }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 56px; }
+.steps li { padding: 34px 38px 38px; font-size: 36px; line-height: 1.55; }
+.steps li b { display: block; margin-bottom: 12px; font-size: 48px; line-height: 1.2; font-weight: 900; }
+.steps li i { font-style: normal; color: var(--num); margin-right: 14px; font-variant-numeric: tabular-nums; }
+
+/* 第 4 張：三列分數 */
+.rows { display: grid; gap: 22px; height: 100%; align-content: center; }
+.row { display: grid; grid-template-columns: 170px 1fr 290px 190px 190px; align-items: center; column-gap: 32px; padding: 22px 44px; opacity: .38; transition: opacity .6s var(--ease-soft); }
+.row.on { opacity: 1; }
+.row .nm { font-size: 58px; font-weight: 900; line-height: 1.1; }
+.row .track { position: relative; height: 36px; background: var(--track); }
+.row .fill { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--v) * 100%); background: var(--fillc);
+  transform: scaleX(0); transform-origin: 0 50%; transition: transform 1.2s var(--ease-quart) .25s; }
+.row.on .fill { transform: scaleX(1); }
+.row .thr { position: absolute; top: -16px; bottom: -16px; left: calc(var(--t) * 100%); width: 6px; margin-left: -3px; background: var(--ink); }
+.row .val { font-size: 112px; line-height: 1; font-weight: 900; text-align: right; font-variant-numeric: tabular-nums; color: var(--num); }
+.row .ref { font-size: 34px; line-height: 1.3; color: var(--mute); }
+.row .ref b { display: block; font-size: 50px; line-height: 1.1; font-weight: 700; color: var(--ink-2); }
+.flag { display: inline-flex; align-items: center; gap: 12px; font-size: 38px; font-weight: 700; white-space: nowrap; }
+.flag svg { width: 34px; height: 34px; flex: none; }
+.flag.bad { color: var(--bad); } .flag.mid { color: var(--mid); } .flag.good { color: var(--good); }
+.legend { margin-top: 22px; font-size: 28px; color: var(--mute); }
+
+/* 第 5 張：檢查清單 */
+.checks { display: grid; }
+.chk { display: grid; grid-template-columns: 1fr 190px 190px; align-items: center; column-gap: 24px; padding: 26px 0; border-bottom: 2px solid var(--line); font-size: 38px; line-height: 1.35; }
+.chk:first-child { border-top: 2px solid var(--line); }
+.chk .v { font-size: 72px; line-height: 1; font-weight: 900; text-align: right; font-variant-numeric: tabular-nums; color: var(--num); }
+.chk small { display: block; font-size: 28px; color: var(--mute); }
+
+/* 第 7 張：判讀＋三題 */
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 52px; }
+.tile { padding: 32px 38px 36px; }
+.tile .qid { font-size: 28px; font-weight: 700; color: var(--kick); }
+.tile h3 { margin: 8px 0 14px; font-size: 40px; line-height: 1.35; font-weight: 700; }
+.tile .sc { font-size: 88px; line-height: 1; font-weight: 900; color: var(--num); font-variant-numeric: tabular-nums; }
+.tile p { margin-top: 12px; font-size: 32px; line-height: 1.5; color: var(--ink-2); }
+
+/* 第 8 張：三個缺口 */
+.gaps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+.gap { padding: 34px 40px 38px; }
+.gap .nm { font-size: 52px; font-weight: 900; line-height: 1.2; }
+.gap .ft { margin-top: 10px; font-size: 34px; line-height: 1.5; color: var(--ink-2); }
+.gap .d { margin-top: 22px; font-size: 140px; line-height: 1; font-weight: 900; font-variant-numeric: tabular-nums; color: var(--ink); }
+.gap .d small { font-size: 40px; font-weight: 700; margin-right: 12px; color: var(--ink-2); }
+.gap.max .d { color: var(--num); }
+.flow { margin-top: 52px; font-size: 44px; line-height: 1.5; font-weight: 500; }
+.flow b { color: var(--num); font-weight: 900; }
+
+@media (prefers-reduced-motion: reduce) {
+  .row .fill { transition: none; transform: scaleX(1); }
+}
+
+/* ═════════ 風格覆寫（放在引擎與骨架之後） ═════════ */
+/* S7：海報紙板、賽車條紋、星空與軌道 */
+.stage-frame { background: var(--surface); }
+.slide { background:
+    radial-gradient(2px 2px at 9% 8%, #f1e6c8 50%, transparent 52%),
+    radial-gradient(1.6px 1.6px at 33% 5%, #f1e6c8 50%, transparent 52%),
+    radial-gradient(2.2px 2.2px at 61% 9%, #f1e6c8 50%, transparent 52%),
+    radial-gradient(1.6px 1.6px at 83% 6%, #f1e6c8 50%, transparent 52%),
+    radial-gradient(2px 2px at 95% 14%, #f1e6c8 50%, transparent 52%),
+    radial-gradient(1.6px 1.6px at 4% 56%, #f1e6c8 50%, transparent 52%),
+    radial-gradient(2px 2px at 97% 66%, #f1e6c8 50%, transparent 52%),
+    linear-gradient(180deg, #0c2c35 0%, #123c46 58%, #17505a 100%);
+  transform: translate3d(90px, 0, 0) skewX(-3deg);
+  transition: opacity var(--dur-base) var(--ease-soft), transform var(--dur-slow) var(--ease-quart), visibility 0s linear var(--dur-slow); }
+.slide.is-active { transform: none;
+  transition: opacity var(--dur-base) var(--ease-soft) 60ms, transform var(--dur-slow) var(--ease-quart) 60ms, visibility 0s; }
+/* 背景軌道：每張內頁右下一圈淡淡的橢圓 */
+.slide::after { content: ""; position: absolute; right: -380px; bottom: -150px; width: 1500px; height: 360px; z-index: 0; pointer-events: none;
+  border: 3px solid rgba(241, 230, 200, .13); border-radius: 50%; transform: rotate(-12deg); }
+.slide:first-child::after { display: none; }
+.deco { position: absolute; inset: 0; z-index: 0; }
+.deco svg { width: 100%; height: 100%; display: block; }
+
+/* 標題區：米白粗黑體＋三道賽車條紋 */
+.kick { display: inline-block; padding: 6px 26px 8px; border: 2px solid var(--kick); border-radius: 999px; font-size: 28px; }
+.cover .kick { padding: 8px 30px 10px; font-size: 32px; }
+.hd h2, .cover h1 { color: var(--paper); text-shadow: 5px 5px 0 rgba(6, 26, 32, .7); }
+.hd::after { content: ""; position: absolute; left: 6px; top: 178px; width: 260px; height: 18px; transform: skewX(-18deg);
+  background: linear-gradient(180deg, #e8894a 0 6px, transparent 6px 8px, #f1e6c8 8px 12px, transparent 12px 14px, #2f6f74 14px 18px); }
+.cover h1 { font-size: 184px; }
+.cover .sub { color: var(--paper); text-shadow: 0 2px 0 rgba(6, 26, 32, .5); font-weight: 500; }
+.cover .meta { color: var(--paper); }
+.cover .meta b { color: var(--paper); opacity: .82; }
+.bd { top: 340px; }
+
+/* 紙板（W12 的斜對角圓角＋位移陰影） */
+.keybox, .tile, .gap { background: var(--paper); border-radius: 6px 44px 6px 44px; box-shadow: 12px 12px 0 #e8894a; color: var(--paper-ink); }
+.keybox { padding: 54px 60px 58px; --ink: var(--paper-ink); --ink-2: var(--paper-ink-2); --num: var(--paper-num); }
+.keybox .big { text-shadow: none; }
+.keybox .big small { color: var(--paper-ink-2); }
+.keybox .lab { color: var(--paper-ink); font-weight: 700; }
+.tile, .gap { --ink: var(--paper-ink); --ink-2: var(--paper-ink-2); --num: var(--paper-num); --kick: var(--paper-ink-2); }
+.tile h3 { color: var(--paper-ink); }
+.gap { box-shadow: 10px 10px 0 #2f6f74; }
+.gap.max { box-shadow: 14px 14px 0 #e8894a; }
+.gap .d small { color: var(--paper-ink-2); }
+.notes li { color: var(--paper); }
+.notes li b { display: inline-block; padding: 2px 16px 4px; margin-bottom: 12px; border-radius: 999px; background: #2f6f74; color: #f1e6c8; font-size: 28px; }
+.chips span { background: #f1e6c8; color: var(--paper-ink); border-radius: 999px; font-weight: 700; }
+
+/* 步驟、檢查、分數列：深面＋米白框 */
+.steps li { background: #123c46; border: 2px solid var(--paper); border-radius: 6px 36px 6px 36px; }
+.steps li i { display: inline-grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; background: #e8894a; color: #0c2c35; font-size: 34px; margin-right: 16px; vertical-align: 4px; }
+.lede { color: var(--paper); }
+.row { background: #123c46; border: 2px solid var(--paper); border-radius: 6px 36px 6px 36px; transition: opacity var(--dur-base) var(--ease-soft), transform var(--dur-slow) var(--ease-quart), box-shadow .5s, background .5s; }
+.row.now { background: #17505a; box-shadow: 10px 10px 0 #e8894a; }
+.row.bad { --fillc: #e8894a; } .row.mid { --fillc: #f1e6c8; } .row.good { --fillc: #86cbbd; }
+.row .track { border-radius: 999px; overflow: visible; }
+.row .fill { border-radius: 999px; }
+.row .thr { background: #f1e6c8; border-radius: 3px; }
+.chk { border-color: var(--line); }
+.chk small { color: var(--mute); }
+
+/* 目前位置：底部一條航線，每一步是一顆行星 */
+.route { position: absolute; left: 120px; right: 120px; bottom: 14px; height: 24px; z-index: 6; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+.route::before { content: ""; position: absolute; left: 0; right: 0; top: 11px; border-top: 2px dashed rgba(241, 230, 200, .45); }
+.route i { position: relative; width: 20px; height: 20px; border-radius: 50%; background: #0c2c35; border: 2px solid #f1e6c8; transition: background .4s, transform .5s var(--ease-quart); }
+.route i.done { background: #f1e6c8; }
+.route i.cur { background: #e8894a; border-color: #e8894a; transform: scale(1.5); box-shadow: 0 0 0 5px #0c2c35; }
+.src { bottom: 50px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide, .slide.is-active { transform: none !important; transition: opacity 240ms linear, visibility 0s !important; }
+  .route i { transition: none; }
+  .row { transition: opacity 240ms linear !important; }
+}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="m-bad" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6.5" fill="currentColor"/><rect x="6.1" y="3" width="1.8" height="5.2" rx=".6" fill="var(--on-flag,#fff)"/><rect x="6.1" y="9.4" width="1.8" height="1.8" rx=".6" fill="var(--on-flag,#fff)"/></symbol>
+  <symbol id="m-mid" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="7" cy="7" r="2" fill="currentColor"/></symbol>
+  <symbol id="m-good" viewBox="0 0 14 14"><path d="M2.5 7.4l3 3 6-6.6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+<section class="deck" id="deck" aria-label="簡報：知識庫準確度基線">
+  <div class="stage-fitter" id="fitter">
+    <div class="stage-frame" id="frame">
+<section class="slide" id="sl-1" aria-label="封面"><div class="deco" aria-hidden="true"><svg viewBox="0 0 1920 1080" preserveAspectRatio="xMaxYMax slice">
+<defs><linearGradient id="sk7" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c2c35"/><stop offset=".55" stop-color="#17505a"/><stop offset=".86" stop-color="#3f8182"/><stop offset="1" stop-color="#8fb3a1"/></linearGradient></defs>
+<rect width="1920" height="1080" fill="url(#sk7)"/>
+<g fill="#f1e6c8"><circle cx="1180" cy="90" r="2.4"/><circle cx="1420" cy="170" r="1.8"/><circle cx="1690" cy="80" r="2.6"/><circle cx="1830" cy="230" r="1.8"/><circle cx="1300" cy="300" r="1.6"/><circle cx="1560" cy="40" r="1.8"/><circle cx="1010" cy="200" r="1.6"/></g>
+<ellipse cx="1640" cy="720" rx="360" ry="86" fill="none" stroke="#f1e6c8" stroke-opacity=".45" stroke-width="3" transform="rotate(-14 1640 720)"/>
+<ellipse cx="1640" cy="720" rx="270" ry="58" fill="none" stroke="#f1e6c8" stroke-opacity=".28" stroke-width="2" transform="rotate(-14 1640 720)"/>
+<circle cx="1640" cy="720" r="124" fill="#e8894a"/>
+<path d="M1520 690 A124 124 0 0 1 1760 690 L1760 706 A140 140 0 0 0 1520 706 Z" fill="#b8481a" opacity=".5"/>
+<ellipse cx="1640" cy="728" rx="215" ry="42" fill="none" stroke="#f1e6c8" stroke-width="7" transform="rotate(-14 1640 728)" clip-path="polygon(0 55%, 100% 55%, 100% 100%, 0 100%)"/>
+<circle cx="1420" cy="560" r="18" fill="#f1e6c8"/><circle cx="1414" cy="566" r="18" fill="#2f6f74" opacity=".35"/>
+<path d="M0 1010 Q480 930 960 985 T1920 960 L1920 1080 L0 1080 Z" fill="#123c46"/>
+<path d="M0 1050 Q520 990 1040 1040 T1920 1020 L1920 1080 L0 1080 Z" fill="#0c2c35"/>
+</svg></div><div class="deform"><div class="cover"><p class="kick rv" data-at="0" style="--i:0">改流程之前的第一次完整量測</p><h1 class="ttl rv" data-at="0" style="--i:1">知識庫準確度基線</h1><p class="sub rv" data-at="0" style="--i:2">三個分數對門檻、零編造、8 題漏答。</p><div class="meta"><span class="m rv" data-at="0" style="--i:3"><b>量測日期</b>　2026-10-08</span><span class="m rv" data-at="0" style="--i:4"><b>題數</b>　33 題（主題庫 28、保留題 5）</span><span class="m rv" data-at="0" style="--i:5"><b>版本</b>　830b563</span></div></div></div></section>
+<section class="slide" id="sl-2" aria-label="怎麼量"><div class="deform"><header class="hd"><p class="kick rv" data-at="0" style="--i:0">怎麼量</p><h2 class="ttl rv" data-at="0" style="--i:1">分數量的是：答到幾成關鍵事實</h2></header><div class="bd"><p class="lede rv" data-at="0" style="--i:2"><span class="eq">分數 ＝</span>（答到 ＋ 0.5 × 答到一半）<br>　　　 ／ 標準答案的事實數</p><ol class="steps"><li class="st rv" data-at="0" style="--i:3"><b><i>1</i>派題</b>每題一個新的子代理，照 wiki-query 規則、只用知識庫作答，看不到標準答案</li><li class="st rv" data-at="0" style="--i:4"><b><i>2</i>比對</b>程式先比對標準答案與可接受寫法，沒對上的由評分代理逐條判定</li><li class="st rv" data-at="0" style="--i:5"><b><i>3</i>計分</b>每條事實判成答到、答到一半或沒答到，並引用答案原句</li></ol></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）</span><span class="pg">02 / 08</span></footer></div></section>
+<section class="slide" id="sl-3" aria-label="總評"><div class="deform"><header class="hd"><p class="kick rv" data-at="0" style="--i:0">總評</p><h2 class="ttl rv" data-at="0" style="--i:1">有 9 題的關鍵事實沒答全</h2></header><div class="bd"><div class="split"><div class="keybox"><p class="big rv" data-at="0" style="--i:2">9<small>／33</small></p><p class="lab rv" data-at="0" style="--i:3">題的關鍵事實沒答全</p></div><ul class="notes"><li class="n rv" data-at="0" style="--i:4"><b>題庫</b>主題庫 28 題，加上保留題 5 題</li><li class="n rv" data-at="0" style="--i:5"><b>這張表的用途</b>改流程之前的基準點。改完再跑同一份題目，比的是這張表的變化。</li></ul></div></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）</span><span class="pg">03 / 08</span></footer></div></section>
+<section class="slide" id="sl-4" aria-label="三項分數"><div class="deform"><header class="hd"><p class="kick rv" data-at="0" style="--i:0">三項核心分數</p><h2 class="ttl rv" data-at="0" style="--i:1">查找、彙整、推論，都沒過門檻</h2></header><div class="bd"><div class="rows"><div class="row bad" data-at="0" style="--i:0;--v:0.7;--t:0.9"><p class="nm">查找</p><div class="track"><i class="fill"></i><i class="thr"></i></div><p class="val">0.70</p><p class="ref">門檻<b>0.9</b></p><span class="flag bad"><svg aria-hidden="true"><use href="#m-bad"/></svg>未達</span></div><div class="row mid" data-at="1" style="--i:1;--v:0.8;--t:0.9"><p class="nm">彙整</p><div class="track"><i class="fill"></i><i class="thr"></i></div><p class="val">0.80</p><p class="ref">門檻<b>0.9</b></p><span class="flag mid"><svg aria-hidden="true"><use href="#m-mid"/></svg>接近</span></div><div class="row bad" data-at="2" style="--i:2;--v:0.59;--t:0.8"><p class="nm">推論</p><div class="track"><i class="fill"></i><i class="thr"></i></div><p class="val">0.59</p><p class="ref">門檻<b>0.8</b></p><span class="flag bad"><svg aria-hidden="true"><use href="#m-bad"/></svg>未達</span></div></div></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）｜coverage，滿分 1.00</span><span class="pg">04 / 08</span></footer></div></section>
+<section class="slide" id="sl-5" aria-label="零編造"><div class="deform"><header class="hd"><p class="kick rv" data-at="0" style="--i:0">零編造</p><h2 class="ttl rv" data-at="0" style="--i:1">答出來的都是對的：零編造</h2></header><div class="bd"><div class="split"><div class="keybox"><p class="big rv" data-at="0" style="--i:2">0</p><p class="lab rv" data-at="0" style="--i:3">確認後的編造</p></div><ul class="checks"><li class="chk rv" data-at="0" style="--i:3"><span>must_not 命中</span><span class="v">0</span><span class="flag good"><svg aria-hidden="true"><use href="#m-good"/></svg>達標</span></li><li class="chk rv" data-at="0" style="--i:4"><span>確認後的編造</span><span class="v">0</span><span class="flag good"><svg aria-hidden="true"><use href="#m-good"/></svg>達標</span></li><li class="chk rv" data-at="0" style="--i:5"><span>無資料題錯答</span><span class="v">0</span><span class="flag good"><svg aria-hidden="true"><use href="#m-good"/></svg>達標</span></li><li class="chk rv" data-at="0" style="--i:6"><span>precision<small>答出的事實有幾成對</small></span><span class="v">1.00</span><span></span></li></ul></div></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）</span><span class="pg">05 / 08</span></footer></div></section>
+<section class="slide" id="sl-6" aria-label="漏答"><div class="deform"><header class="hd"><p class="kick rv" data-at="0" style="--i:0">漏答</p><h2 class="ttl rv" data-at="0" style="--i:1">分數低不是答錯，是答不出來</h2></header><div class="bd"><div class="split"><div class="keybox"><p class="big rv" data-at="0" style="--i:2">8</p><p class="lab rv" data-at="0" style="--i:3">題有資料卻回答「筆記裡沒有」</p></div><ul class="notes"><li class="n rv" data-at="0" style="--i:4"><b>怎麼掉的分</b>不是答錯，是該答的沒答</li><li class="n rv" data-at="0" style="--i:5"><b>對照</b>答出來的事實全對（precision 1.00）</li><li class="n rv" data-at="0" style="--i:6"><b>這 8 題</b><span class="chips"><span>Q01</span><span>Q02</span><span>Q10</span><span>Q13</span><span>Q14</span><span>Q20</span><span>Q21</span><span>H02</span></span></li></ul></div></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）</span><span class="pg">06 / 08</span></footer></div></section>
+<section class="slide" id="sl-7" aria-label="原因判讀"><div class="deform"><header class="hd"><p class="kick rv" data-at="0" style="--i:0">原因判讀</p><h2 class="ttl rv" data-at="0" style="--i:1">漏答多半是 wiki 沒收進這些細節</h2></header><div class="bd"><p class="lede rv" data-at="0" style="--i:2">題目只從 1-raw 出，漏答的細節多半沒被 wiki 收進去</p><ul class="tiles"><li class="tile rv" data-at="0" style="--i:3"><p class="qid">Q10　期末報告</p><h3>第一週的分組報告，這組選了哪個主題？</h3><p class="sc">0.00</p><p>標準答案：需查原文</p></li><li class="tile rv" data-at="0" style="--i:4"><p class="qid">Q14　大阪美食</p><h3>不預約也能吃到的寶藏美食有哪幾家？</h3><p class="sc">0.00</p><p>標準答案：なべや等 6 家</p></li><li class="tile rv" data-at="0" style="--i:5"><p class="qid">Q20　模型評估</p><h3>評估一個預測模型，會挑什麼毛病？</h3><p class="sc">0.00</p><p>標準答案：樣本偏誤等 5 點</p></li></ul></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）｜「wiki 漏收」是判讀，尚待逐題確認</span><span class="pg">07 / 08</span></footer></div></section>
+<section class="slide" id="sl-8" aria-label="下一步"><div class="deform"><header class="hd"><p class="kick rv" data-at="0" style="--i:0">下一步</p><h2 class="ttl rv" data-at="0" style="--i:1">改完流程，重跑同一份 33 題</h2></header><div class="bd"><ul class="gaps"><li class="gap rv" data-at="0" style="--i:2"><p class="nm">查找</p><p class="ft">現在 0.70　門檻 0.9</p><p class="d"><small>還差</small>0.20</p></li><li class="gap rv" data-at="0" style="--i:3"><p class="nm">彙整</p><p class="ft">現在 0.80　門檻 0.9</p><p class="d"><small>還差</small>0.10</p></li><li class="gap max rv" data-at="0" style="--i:4"><p class="nm">推論</p><p class="ft">現在 0.59　門檻 0.8</p><p class="d"><small>還差</small>0.21</p></li></ul><p class="flow rv" data-at="0" style="--i:5">改流程　→　<b>重跑同一份 33 題</b>　→　只比這張表的變化</p></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）｜缺口 ＝ 門檻 − 本次</span><span class="pg">08 / 08</span></footer></div></section>
+<div class="route" id="route" aria-hidden="true"></div>
+      <div class="cap" id="cap" aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="pb-hover" data-no-advance><nav class="pb" id="pb" aria-label="簡報進度"></nav></div>
+</section>
+<script id="stage-engine">
+/* ═════════ STAGE ENGINE v1（VF 系列共用，整段原樣複製，只在下方另寫 Stage.init 設定） ═════════
+ * 需要的 DOM：#deck > #fitter > #frame > section.slide…、#frame 內的 #cap、#deck 內的 #pb。
+ * Stage.init({ slides: [{ el: '#id', title: '封面', narr: ['旁白…', …], onStep(k, ctx) {} }] })
+ *   ctx = { step, prevStep(同張上一步，換張時為 -1), fresh(剛換張), instant(不播動畫), dir, reduce, el }
+ * 宣告式揭示：slide 內 [data-at="n"] 在 step ≥ n 時加 .on；= n 加 .now；> n 加 .past；
+ *   [data-until="m"] 讓它在 step > m 時再拿掉 .on。
+ * 操作：→／空白／PageDown／點擊＝下一步；←／PageUp＝上一步；Home／End；1–9 跳張；N 切換字幕。
+ * #s=<1 起算的全域步數> 直接開到該步（instant），翻頁時 replaceState 更新。 */
+const Stage = (() => {
+  const W = 1920, H = 1080;
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  let deck, fitter, frame, cap, pb, slides = [], offsets = [], total = 0, g = -1, visible = true;
+
+  function locate(gi) {
+    let s = 0;
+    while (s < slides.length - 1 && gi >= offsets[s] + slides[s].narr.length) s++;
+    return { s, k: gi - offsets[s] };
+  }
+  function fit() {
+    const r = deck.getBoundingClientRect();
+    const sc = Math.min(r.width / W, r.height / H);
+    fitter.style.width = (W * sc) + 'px';
+    fitter.style.height = (H * sc) + 'px';
+    frame.style.transform = 'scale(' + sc + ')';
+  }
+  function markSteps(sl, k) {
+    sl.el.dataset.step = k;
+    sl.el.querySelectorAll('[data-at]').forEach(el => {
+      const n = +el.dataset.at, u = el.dataset.until != null ? +el.dataset.until : Infinity;
+      el.classList.toggle('on', k >= n && k <= u);
+      el.classList.toggle('now', k === n);
+      el.classList.toggle('past', k > n);
+    });
+  }
+  function go(target, opts = {}) {
+    target = clamp(target | 0, 0, total - 1);
+    if (target === g && !opts.force) return;
+    const prev = g, from = prev < 0 ? { s: -1, k: -1 } : locate(prev), to = locate(target);
+    const fresh = from.s !== to.s;
+    const instant = !!opts.instant;
+    g = target;
+    frame.classList.toggle('instant', instant);
+    const sl = slides[to.s];
+    if (fresh) {                                   // 剛進這張：先清掉上次留下的狀態，讓揭示重新播
+      sl.el.querySelectorAll('[data-at]').forEach(el => el.classList.remove('on', 'now', 'past'));
+      void sl.el.offsetWidth;
+    }
+    slides.forEach((s, i) => {
+      s.el.classList.toggle('is-active', i === to.s);
+      s.el.setAttribute('aria-hidden', i === to.s ? 'false' : 'true');
+    });
+    markSteps(sl, to.k);
+    const ctx = { step: to.k, prevStep: fresh ? -1 : from.k, fresh, instant, dir: Math.sign(target - prev),
+                  reduce: reduceMQ.matches, el: sl.el };
+    if (fresh && from.s >= 0 && slides[from.s].onLeave) slides[from.s].onLeave();
+    if (sl.onStep) sl.onStep(to.k, ctx);
+    cap.textContent = sl.narr[to.k] || '';
+    renderPB();
+    frame.dataset.g = g + 1;
+    if (instant) requestAnimationFrame(() => requestAnimationFrame(() => frame.classList.remove('instant')));
+    const h = '#s=' + (g + 1);
+    if (location.hash !== h) history.replaceState(null, '', h);
+  }
+  function buildPB() {
+    pb.innerHTML = slides.map((s, i) =>
+      '<button type="button" data-s="' + i + '"><span class="no">' + String(i + 1).padStart(2, '0') + '</span>' +
+      '<span>' + s.title + '</span><span class="pips"></span></button>').join('') + '<span class="cnt"></span>';
+    pb.addEventListener('click', e => {
+      e.stopPropagation();
+      const pip = e.target.closest('.pip');
+      if (pip) { go(+pip.dataset.g); return; }
+      const b = e.target.closest('button');
+      if (b) go(offsets[+b.dataset.s]);
+    });
+  }
+  function renderPB() {
+    const { s: cs, k } = locate(g);
+    pb.querySelectorAll('button').forEach((b, i) => {
+      b.classList.toggle('act', i === cs);
+      const pips = b.querySelector('.pips');
+      pips.innerHTML = i === cs ? slides[i].narr.map((_, j) =>
+        '<span class="pip' + (j <= k ? ' on' : '') + '" data-g="' + (offsets[i] + j) + '"></span>').join('') : '';
+    });
+    pb.querySelector('.cnt').textContent = String(g + 1).padStart(2, '0') + ' / ' + total;
+  }
+  function fromHash() {
+    const m = /(?:^#|&)s=(\d+)/.exec(location.hash);
+    return m ? clamp(+m[1] - 1, 0, total - 1) : null;
+  }
+  function init(cfg) {
+    deck = document.getElementById('deck'); fitter = document.getElementById('fitter');
+    frame = document.getElementById('frame'); cap = document.getElementById('cap'); pb = document.getElementById('pb');
+    slides = cfg.slides.map(s => Object.assign({}, s, { el: typeof s.el === 'string' ? document.querySelector(s.el) : s.el }));
+    let acc = 0;
+    offsets = slides.map(s => { const o = acc; acc += s.narr.length; return o; });
+    total = acc;
+    buildPB(); fit();
+    addEventListener('resize', fit);
+    if (typeof ResizeObserver === 'function') new ResizeObserver(fit).observe(deck);
+    if (typeof IntersectionObserver === 'function')
+      new IntersectionObserver(es => { visible = es[0].intersectionRatio >= 0.5; }, { threshold: [0, 0.5, 1] }).observe(deck);
+    frame.addEventListener('click', e => {
+      if (e.target.closest('a, button, input, [data-no-advance]')) return;
+      go(g + 1);
+    });
+    addEventListener('keydown', e => {
+      if (!visible || e.ctrlKey || e.metaKey || e.altKey) return;
+      const t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      const k = e.key;
+      if (k === 'ArrowRight' || k === ' ' || k === 'PageDown') { e.preventDefault(); go(g + 1); }
+      else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); go(g - 1); }
+      else if (k === 'Home') { e.preventDefault(); go(0); }
+      else if (k === 'End') { e.preventDefault(); go(total - 1); }
+      else if (/^[1-9]$/.test(k)) { const i = +k - 1; if (i < slides.length) go(offsets[i]); }
+      else if (k === 'n' || k === 'N') frame.classList.toggle('show-cap');
+    });
+    addEventListener('hashchange', () => { const h = fromHash(); if (h != null && h !== g) go(h, { instant: true }); });
+    const h = fromHash();
+    go(h == null ? 0 : h, { instant: h != null, force: true });
+    return api;
+  }
+  const api = { init, go, get index() { return g; }, get total() { return total; }, reduceMQ };
+  return api;
+})();
+/* ═════════ STAGE ENGINE v1 結束 ═════════ */
+</script>
+<script id="deck-config" type="application/json">{"narr": [["知識庫準確度基線：改流程之前，第一次完整量測。"], ["每題一個新的子代理，只准查知識庫；分數是答到幾成關鍵事實。"], ["33 題裡，有 9 題的關鍵事實沒答全。"], ["查找 0.70，門檻 0.9，未達。", "彙整 0.80，門檻 0.9，接近但沒過。", "推論 0.59，門檻 0.8，未達。"], ["零編造：三項都是 0，答出來的事實全對。"], ["分數低不是答錯，是有資料卻答不出來，共 8 題。"], ["漏答多半是 wiki 沒收進細節；這是判讀，要逐題確認。"], ["改完流程重跑同一份 33 題；推論還差最多。"]], "titles": ["封面", "怎麼量", "總評", "三項分數", "零編造", "漏答", "原因判讀", "下一步"], "lant": [[80, 82], [66, 82], [50, 82], [20, 82], [50, 82], [80, 82], [72, 82], [40, 82], [60, 82], [84, 82]]}</script>
+<script id="deck-effects">
+(() => {
+  'use strict';
+  const cfg = JSON.parse(document.getElementById('deck-config').textContent);
+  const route = document.getElementById('route');
+  const total = cfg.narr.reduce((a, n) => a + n.length, 0);
+  route.innerHTML = '<i></i>'.repeat(total);
+  const offs = []; let acc = 0;
+  cfg.narr.forEach(n => { offs.push(acc); acc += n.length; });
+  const slides = cfg.narr.map((n, i) => ({
+    el: '#sl-' + (i + 1), title: cfg.titles[i], narr: n,
+    onStep(k) {
+      const g = offs[i] + k;
+      [...route.children].forEach((d, j) => { d.className = j < g ? 'done' : j === g ? 'cur' : ''; });
+    }
+  }));
+  Stage.init({ slides });
+})();
+
+</script>
+</body>
+</html>

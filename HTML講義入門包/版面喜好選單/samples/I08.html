@@ -1,0 +1,550 @@
+<!doctype html>
+<!-- 版面喜好選單範例 I08｜彈性微縮按鈕｜來源：講師範例庫 output範例/UI互動技巧/08-彈性微縮觸覺按鈕.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>08 · 彈性微縮觸覺按鈕</title>
+<script>
+  // 先於 CSS 套用 embed 模式，避免閃一下完整版面
+  try { if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed'); } catch (e) {}
+</script>
+<style>
+  :root {
+    --bg:#f4f3ef; --surface:#ffffff; --text:#1c1b19; --muted:#6b6862; --line:#e4e1da;
+    --accent:#5b4bff; --accent-2:#00b3a4; --on-accent:#ffffff;
+    /* 按鈕的「浮起」與「壓入」兩層陰影，由 --p（0..1 壓下程度）交叉淡化 */
+    --raise: inset 0 1px 0 rgba(255,255,255,.8), 0 12px 18px -10px rgba(40,30,90,.42), 0 2px 5px rgba(40,30,90,.12);
+    --sink: inset 0 6px 14px rgba(20,16,50,.34), inset 0 1px 2px rgba(20,16,50,.4), 0 1px 0 rgba(255,255,255,.7);
+    --font:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Consolas,"Microsoft JhengHei",monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+      --accent:#8b7dff; --accent-2:#2fd6c6; --on-accent:#14112e;
+      --raise: inset 0 1px 0 rgba(255,255,255,.1), 0 12px 18px -8px rgba(0,0,0,.75), 0 2px 5px rgba(0,0,0,.45);
+      --sink: inset 0 6px 14px rgba(0,0,0,.65), inset 0 1px 2px rgba(0,0,0,.65), 0 1px 0 rgba(255,255,255,.07);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+    --accent:#8b7dff; --accent-2:#2fd6c6; --on-accent:#14112e;
+    --raise: inset 0 1px 0 rgba(255,255,255,.1), 0 12px 18px -8px rgba(0,0,0,.75), 0 2px 5px rgba(0,0,0,.45);
+    --sink: inset 0 6px 14px rgba(0,0,0,.65), inset 0 1px 2px rgba(0,0,0,.65), 0 1px 0 rgba(255,255,255,.07);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: var(--font); line-height: 1.6;
+    overflow-x: hidden;
+  }
+  main { max-width: 920px; margin: 0 auto; padding: 0 16px 64px; }
+
+  /* ---------- header ---------- */
+  header { padding: 44px 0 8px; position: relative; }
+  .kicker { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; letter-spacing: .08em; }
+  .kicker .no { font-family: var(--mono); font-size: 13px; color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 1px 10px; }
+  h1 { margin: 10px 0 6px; font-size: clamp(28px, 6vw, 44px); line-height: 1.15; letter-spacing: -.01em; font-weight: 800; }
+  h1 .n { color: var(--accent); font-family: var(--mono); font-weight: 600; margin-right: .3em; }
+  header p { margin: 0; max-width: 40em; color: var(--muted); font-size: 16px; }
+  .theme-btn {
+    position: absolute; right: 0; top: 44px; font: inherit; font-size: 13px; color: var(--muted);
+    background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; cursor: pointer;
+  }
+  .theme-btn:hover { color: var(--text); border-color: var(--muted); }
+
+  /* ---------- stage ---------- */
+  .stage {
+    margin-top: 28px; padding: 40px 0; border-radius: 28px; border: 1px solid var(--line);
+    display: flex; justify-content: center; position: relative; overflow: hidden;
+    background:
+      radial-gradient(520px 360px at 50% 40%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+      radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text) 13%, transparent) 1px, transparent 1.4px) 0 0/22px 22px,
+      var(--bg);
+  }
+  .phone {
+    width: min(390px, 100vw - 32px); height: 720px; border-radius: 44px; flex: none;
+    background: var(--surface); border: 1px solid var(--line);
+    box-shadow: 0 30px 60px -20px rgba(20,18,40,.28), 0 8px 20px -8px rgba(20,18,40,.18);
+    position: relative; overflow: hidden; display: flex; flex-direction: column;
+  }
+  .phone::before { /* 瀏海 */
+    content: ""; position: absolute; top: 10px; left: 50%; width: 104px; height: 28px; margin-left: -52px;
+    border-radius: 99px; background: #0c0c0e; z-index: 5;
+  }
+  .screen {
+    flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden;
+    background: color-mix(in srgb, var(--bg) 70%, var(--surface));
+    touch-action: pan-y; overscroll-behavior: contain; scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+  .status { height: 50px; flex: none; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 30px 6px; font-size: 14px; font-weight: 700; }
+  .status i { font-style: normal; font-size: 11px; letter-spacing: 2px; }
+  .appbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 22px 4px; flex: none; }
+  .appbar h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: .02em; }
+  .appbar small { display: block; color: var(--muted); font-size: 12px; font-weight: 500; letter-spacing: .04em; }
+  .appbar .dot { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; font-size: 13px; font-weight: 700; color: var(--accent); }
+
+  .body { display: grid; gap: 12px; padding: 10px 20px 14px; flex: none; }
+
+  /* ---------- 可按元件的共用外觀（重點） ---------- */
+  .press {
+    position: relative; isolation: isolate; will-change: transform;
+    touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent; cursor: pointer;
+    font: inherit; color: inherit; margin: 0; padding: 0; border: 0; background: none; text-align: inherit;
+    outline: none;
+  }
+  .press::before, .press::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; }
+  .press::before { z-index: -1; box-shadow: var(--raise); opacity: calc(1 - var(--p, 0)); }   /* 浮起：按下時收斂 */
+  .press::after  { z-index: 2;  box-shadow: var(--sink);  opacity: var(--p, 0); }             /* 壓入：按下時加深 */
+  .press:focus-visible, .plain:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    height: 48px; border-radius: 24px; font-size: 15px; font-weight: 700; letter-spacing: .03em;
+    background: var(--surface); border: 1px solid var(--line); color: var(--text);
+  }
+  .cta {
+    height: 58px; border-radius: 29px; font-size: 17px; letter-spacing: .08em; border: 0; color: var(--on-accent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 82%, #fff), var(--accent) 70%);
+    --raise: inset 0 1px 0 rgba(255,255,255,.4), 0 14px 22px -10px color-mix(in srgb, var(--accent) 80%, transparent), 0 2px 5px rgba(20,16,60,.2);
+    --sink: inset 0 8px 18px rgba(10,6,50,.6), inset 0 2px 3px rgba(10,6,50,.5), 0 1px 0 rgba(255,255,255,.35);
+  }
+  .cta svg { width: 20px; height: 20px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .btn small { font-family: var(--mono); font-weight: 600; font-size: 11px; color: var(--muted); }
+
+  /* 圓形圖示列 */
+  .icons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .ic { display: grid; justify-items: center; gap: 6px; font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .04em; }
+  .round { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 1px solid var(--line); color: var(--muted); transition: color .2s, background-color .2s, border-color .2s; }
+  .round svg { width: 24px; height: 24px; }
+  .round.on { background: color-mix(in srgb, var(--accent) 16%, var(--surface)); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+
+  /* 智慧家電卡片 */
+  .devs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .dev {
+    height: 116px; border-radius: 24px; background: var(--surface); border: 1px solid var(--line);
+    padding: 14px 14px 12px; display: flex; flex-direction: column; justify-content: space-between; color: var(--text);
+    transition: color .2s;
+  }
+  .dev.on { color: var(--on-accent); border-color: transparent; }
+  .glow { position: absolute; inset: -1px; border-radius: inherit; opacity: 0; pointer-events: none; z-index: 0;
+    background: linear-gradient(150deg, var(--accent) 10%, color-mix(in srgb, var(--accent) 55%, var(--accent-2))); }
+  .dev > *:not(.glow) { position: relative; z-index: 1; }
+  .dev .top { display: flex; justify-content: space-between; align-items: center; }
+  .dev .di { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: color-mix(in srgb, var(--text) 8%, transparent); transition: background-color .2s; }
+  .dev.on .di { background: rgba(255,255,255,.22); }
+  .dev.on.dk .di { background: rgba(20,17,46,.16); }
+  .dev svg { width: 20px; height: 20px; }
+  .pilot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); box-shadow: inset 0 1px 1px rgba(0,0,0,.25); transition: background-color .2s, box-shadow .2s; }
+  .dev.on .pilot { background: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,.3), 0 0 10px 2px rgba(255,255,255,.7); }
+  .dev .nm { font-size: 15px; font-weight: 800; letter-spacing: .02em; line-height: 1.25; }
+  .dev .st { font-size: 12px; opacity: .72; font-weight: 600; letter-spacing: .03em; }
+
+  /* 開關列 */
+  .swrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px 12px 18px; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); }
+  .swrow b { display: block; font-size: 15px; letter-spacing: .02em; }
+  .swrow small { color: var(--muted); font-size: 12px; }
+  .sw { flex: none; width: 56px; height: 32px; border-radius: 16px; background: color-mix(in srgb, var(--text) 14%, var(--surface)); --raise: inset 0 1px 2px rgba(0,0,0,.18), 0 1px 0 rgba(255,255,255,.4); --sink: inset 0 3px 7px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.3); }
+  .sw .glow { inset: 0; }
+  .sw .thumb { position: absolute; left: 3px; top: 3px; width: 26px; height: 26px; border-radius: 50%; background: #fff; z-index: 1; box-shadow: 0 2px 5px rgba(0,0,0,.35), 0 0 0 .5px rgba(0,0,0,.08); will-change: transform; }
+
+  /* 對照組 */
+  .cmp-h { font-size: 12px; color: var(--muted); letter-spacing: .05em; margin: 2px 2px -4px; font-weight: 600; }
+  .plain {
+    display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; border-radius: 24px; font: inherit; font-size: 15px; font-weight: 700; letter-spacing: .03em;
+    background: var(--surface); border: 1px solid var(--line); color: var(--text); margin: 0; padding: 0; cursor: pointer;
+    box-shadow: var(--raise); touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none;
+  }
+  .plain:active { opacity: .4; }
+  .plain small { font-family: var(--mono); font-weight: 600; font-size: 11px; color: var(--muted); }
+
+  .readout {
+    flex: none; margin: 2px auto 0; padding: 5px 14px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line);
+    font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; max-width: 100%;
+  }
+  .readout b { color: var(--text); font-weight: 600; display: inline-block; min-width: 3.6em; text-align: right; }
+  .readout b.c { min-width: 1.4em; }
+
+  .toast {
+    position: absolute; left: 50%; top: 58px; transform: translate(-50%, -6px); z-index: 6; pointer-events: none;
+    background: var(--text); color: var(--bg); font-size: 13px; font-weight: 700; padding: 6px 16px; border-radius: 99px; opacity: 0; white-space: nowrap;
+    transition: opacity .2s, transform .2s;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ---------- knobs / prompt / notes ---------- */
+  section.knobs, section.prompt, section.notes { margin-top: 28px; }
+  h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .1em; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+  .knobs .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .knob { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+  .knob label { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 600; }
+  .knob output { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .knob small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .knob .chk { justify-content: flex-start; gap: 10px; align-items: center; cursor: pointer; }
+  .knob .chk input { width: 18px; height: 18px; accent-color: var(--accent); margin: 0; }
+  input[type=range] { width: 100%; margin: 10px 0 0; accent-color: var(--accent); height: 28px; }
+  input[type=range]:focus-visible, input[type=checkbox]:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+  .prompt .box { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; display: flex; gap: 16px; align-items: flex-start; }
+  .prompt blockquote { margin: 0; flex: 1; font-size: 16px; line-height: 1.8; border-left: 3px solid var(--accent-2); padding-left: 14px; }
+  .copy { flex: none; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 0; border-radius: 10px; padding: 8px 16px; background: var(--accent); color: var(--on-accent); min-width: 76px; }
+  .copy.ok { background: var(--accent-2); color: #06201d; }
+
+  .notes ol { margin: 0; padding: 0; counter-reset: n; list-style: none; display: grid; gap: 10px; }
+  .notes li { counter-increment: n; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px 12px 52px; position: relative; font-size: 15px; }
+  .notes li::before { content: counter(n); position: absolute; left: 16px; top: 12px; width: 24px; height: 24px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); font-family: var(--mono); font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+  .notes code { font-family: var(--mono); font-size: 13px; background: color-mix(in srgb, var(--text) 8%, transparent); padding: 1px 6px; border-radius: 6px; }
+
+  @media (max-width: 560px) {
+    .prompt .box { flex-direction: column; }
+    .copy { align-self: stretch; }
+    .theme-btn { position: static; margin-top: 12px; }
+    .stage { border-radius: 20px; padding: 24px 0; }
+  }
+  @media (max-width: 380px) {
+    .body { padding-left: 16px; padding-right: 16px; }
+    .readout { font-size: 11px; padding: 5px 10px; }
+  }
+
+  /* ---------- embed ---------- */
+  html.embed, html.embed body { background: transparent; overflow: hidden; height: 100%; }
+  html.embed header, html.embed .knobs, html.embed .prompt, html.embed .notes { display: none; }
+  html.embed main { max-width: none; padding: 0; height: 100%; }
+  html.embed .stage { margin: 0; padding: 0; border: 0; background: none; height: 100%; align-items: center; border-radius: 0; overflow: visible; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="kicker"><span class="no">08</span><span>UI 互動技巧・實體質感</span></div>
+    <h1><span class="n">08 ·</span>彈性微縮觸覺按鈕</h1>
+    <p>只把透明度調淡，按下去像在點一張圖。讓按鈕被壓到 0.96 並壓入表面、鬆手再微微衝過頭彈回，手指才會感覺按到了一顆實體的鍵。</p>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="切換淺色與深色">切換深淺色</button>
+  </header>
+
+  <section class="stage" aria-label="Demo 舞台">
+    <div class="phone">
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      <div class="screen">
+        <div class="status"><span>9:41</span><i>●●●● ▮</i></div>
+        <div class="appbar">
+          <div><h2>控制中心</h2><small>按下、放開，或按住後移出再放開</small></div>
+          <div class="dot" aria-hidden="true">家</div>
+        </div>
+
+        <div class="body">
+          <!-- 主要 CTA ＋ 次要按鈕 -->
+          <button class="press btn cta" id="cta" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></svg>
+            啟動回家情境
+          </button>
+          <div class="two">
+            <button class="press btn" id="skip" type="button">略過今晚</button>
+            <button class="press btn" id="edit" type="button">編輯情境</button>
+          </div>
+
+          <!-- 圓形圖示按鈕列 -->
+          <div class="icons">
+            <div class="ic"><button class="press round on" type="button" aria-pressed="true" aria-label="燈光" data-toast="燈光">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/></svg></button><span>燈光</span></div>
+            <div class="ic"><button class="press round" type="button" aria-pressed="false" aria-label="冷氣" data-toast="冷氣">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9"/><path d="M9.5 4.5L12 6.5l2.5-2M9.5 19.5l2.5-2 2.5 2"/></svg></button><span>冷氣</span></div>
+            <div class="ic"><button class="press round" type="button" aria-pressed="false" aria-label="音樂" data-toast="音樂">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></button><span>音樂</span></div>
+            <div class="ic"><button class="press round" type="button" aria-pressed="false" aria-label="勿擾" data-toast="勿擾">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button><span>勿擾</span></div>
+          </div>
+
+          <!-- 智慧家電卡片 -->
+          <div class="devs">
+            <button class="press dev on" type="button" aria-pressed="true" data-name="客廳吊燈" data-on-text="開啟・70%" data-off-text="已關閉">
+              <span class="glow"></span>
+              <span class="top"><span class="di"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v5"/><path d="M7 16a5 5 0 0 1 10 0z"/><path d="M6 16h12M10 19.5h4"/></svg></span><span class="pilot"></span></span>
+              <span><span class="nm" style="display:block">客廳吊燈</span><span class="st" style="display:block">開啟・70%</span></span>
+            </button>
+            <button class="press dev" type="button" aria-pressed="false" data-name="空氣清淨機" data-on-text="運轉中・自動" data-off-text="已關閉">
+              <span class="glow"></span>
+              <span class="top"><span class="di"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="3"/><circle cx="12" cy="11" r="3.2"/><path d="M8.5 17.5h7"/></svg></span><span class="pilot"></span></span>
+              <span><span class="nm" style="display:block">空氣清淨機</span><span class="st" style="display:block">已關閉</span></span>
+            </button>
+          </div>
+
+          <!-- toggle -->
+          <div class="swrow">
+            <div><b>夜間自動調暗</b><small>23:00 後降低所有燈光亮度</small></div>
+            <button class="press sw" id="sw" type="button" role="switch" aria-checked="false" aria-label="夜間自動調暗">
+              <span class="glow"></span><span class="thumb"></span>
+            </button>
+          </div>
+
+          <!-- 對照組 -->
+          <div class="cmp-h">對照組：左邊只改透明度，右邊是彈簧微縮</div>
+          <div class="two">
+            <button class="plain" id="plain" type="button">只變淡<small id="cPlain">×0</small></button>
+            <button class="press btn" id="spr" type="button">微縮回彈<small id="cSpr">×0</small></button>
+          </div>
+
+          <div class="readout" aria-hidden="true">縮放 <b id="rS">1.000</b> 過衝 <b id="rP">1.000</b> 取消 <b class="c" id="rC">0</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="knobs" aria-label="可調參數">
+    <h3>可調參數</h3>
+    <div class="grid">
+      <div class="knob"><label for="kScale">壓縮比例 <output id="oScale"></output></label><input id="kScale" type="range" min="0.90" max="0.99" step="0.01" value="0.96"><small>按下時縮到原尺寸的幾倍</small></div>
+      <div class="knob"><label for="kStiff">回彈剛性 stiffness <output id="oStiff"></output></label><input id="kStiff" type="range" min="150" max="800" step="10" value="380"><small>越大回得越快、越硬</small></div>
+      <div class="knob"><label for="kDamp">回彈阻尼 damping <output id="oDamp"></output></label><input id="kDamp" type="range" min="4" max="40" step="1" value="11"><small id="dHint">越小過衝越明顯</small></div>
+      <div class="knob"><label for="kSlow">時間流速 <output id="oSlow"></output></label><input id="kSlow" type="range" min="10" max="100" step="5" value="100"><small>調慢可以看清楚過衝與回穩</small></div>
+      <div class="knob"><label class="chk"><input id="kHap" type="checkbox" checked><span>按下時震動 8ms <output id="oHap"></output></span></label><small>僅支援 navigator.vibrate 的裝置有感</small></div>
+    </div>
+  </section>
+
+  <section class="prompt" aria-label="AI 描述詞">
+    <h3>AI 描述詞</h3>
+    <div class="box">
+      <blockquote id="promptText">按鈕按壓添加 0.96 的物理彈性壓縮與深度內陰影，釋放時觸發輕微超調回彈。</blockquote>
+      <button class="copy" id="copyBtn" type="button">複製</button>
+    </div>
+  </section>
+
+  <section class="notes" aria-label="實作要點">
+    <h3>實作要點</h3>
+    <ol>
+      <li><b>兩組彈簧、同一份狀態：</b>按下用高剛性（k=900、c=54，阻尼比約 0.9，又快又不晃）壓到 0.96；放開改用低阻尼（預設 k=380、c=11，阻尼比約 0.28），自然衝到約 1.016 再回穩。換的只有目標值與係數，位置與速度照舊積分，所以快速連點不會跳回起點。</li>
+      <li><b>深度由縮放量推出：</b>把 <code>scale</code> 換算成 0..1 的 <code>--p</code>，寫在元素上。<code>::before</code> 放「浮起」陰影、不透明度 <code>1−p</code>；<code>::after</code> 放「壓入」內陰影、不透明度 <code>p</code>。全程只動 transform 與 opacity，陰影不必重繪。</li>
+      <li><b>取消手勢：</b><code>setPointerCapture</code> 之後自己用 <code>getBoundingClientRect</code> 判斷指標是否還在按鈕內。移出就讓它回彈，移回再壓下；只有在範圍內放開才觸發 <code>onTap</code>，在外面放開或被系統取消（例如開始捲動）都算取消。</li>
+      <li><b>鍵盤與震動：</b>Space／Enter 按下與放開套用同一套壓縮與回彈，放開才觸發。<code>navigator.vibrate(8)</code> 有才呼叫、沒有就略過，可用上方開關關閉。<code>prefers-reduced-motion</code> 下彈簧直接跳到終點，只保留按下的縮放與陰影。</li>
+      <li><b>套用到其他頁面：</b>複製 <code>Spring</code>、<code>attachPress</code> 與 <code>.press</code> 那三段 CSS，對任何元素呼叫 <code>attachPress(el, { onTap })</code>，可用 <code>scale</code>、<code>gain</code> 調壓縮量（小開關用 gain=1.6）。元素要設 <code>touch-action: none</code>，且不要在它身上設 <code>overflow: hidden</code>，否則外陰影會被裁掉。</li>
+    </ol>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ---------- 參數（knobs） ---------- */
+  const P = { scale: 0.96, k: 380, c: 11, slow: 1, haptic: true };
+  const DOWN = { k: 900, c: 54 };            // 按下：高剛性、近臨界阻尼
+  const hasVibrate = typeof navigator.vibrate === 'function';
+  const dHint = $('#dHint');
+  [
+    ['kScale', 'oScale', 'scale', v => v.toFixed(2), v => v],
+    ['kStiff', 'oStiff', 'k', v => String(v), v => v],
+    ['kDamp', 'oDamp', 'c', v => String(v), v => v],
+    ['kSlow', 'oSlow', 'slow', v => v + '%', v => v / 100],
+  ].forEach(([id, oid, key, fmt, conv]) => {
+    const el = $('#' + id), out = $('#' + oid);
+    const apply = () => {
+      const v = +el.value; P[key] = conv(v); out.textContent = fmt(v);
+      if (key === 'k' || key === 'c') {
+        const z = P.c / (2 * Math.sqrt(P.k));
+        dHint.textContent = '阻尼比 ' + z.toFixed(2) + (z >= 1 ? '（無過衝）' : '，越小過衝越明顯');
+      }
+    };
+    el.addEventListener('input', apply); apply();
+  });
+  const kHap = $('#kHap');
+  kHap.addEventListener('change', () => { P.haptic = kHap.checked; });
+  if (!hasVibrate) { kHap.checked = false; kHap.disabled = true; P.haptic = false; $('#oHap').textContent = '（此裝置不支援）'; }
+
+  /* ================= 可重用區塊 A：Spring ================= */
+  const live = new Set();
+  let running = false, last = 0;
+  class Spring {
+    constructor(x, cb) { this.x = x; this.v = 0; this.t = x; this.k = 300; this.c = 20; this.tol = 1e-4; this.cb = cb; }
+    go(t, k, c) {
+      this.t = t; if (k != null) { this.k = k; this.c = c; }
+      if (reduceMQ.matches) { this.x = t; this.v = 0; live.delete(this); this.cb(t); return; }
+      live.add(this);
+      if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
+    }
+  }
+  function frame(now) {
+    const dt = Math.min((now - last) / 1000, 1 / 20) * P.slow;
+    last = now;
+    const n = Math.max(1, Math.ceil(dt / (1 / 240))), h = dt / n;
+    for (const s of [...live]) {
+      for (let i = 0; i < n; i++) {           // 半隱式 Euler，m = 1
+        s.v += (-s.k * (s.x - s.t) - s.c * s.v) * h;
+        s.x += s.v * h;
+      }
+      if (Math.abs(s.x - s.t) < s.tol && Math.abs(s.v) < s.tol * 10) { s.x = s.t; s.v = 0; live.delete(s); }
+      s.cb(s.x);
+    }
+    if (live.size) requestAnimationFrame(frame); else running = false;
+  }
+
+  /* ================= 可重用區塊 B：attachPress ================= */
+  /* attachPress(el, { onTap, gain, scale, down, up, haptic, onFrame, onDown, onCancel })
+     - scale()：回傳壓到的比例（預設讀 P.scale，經 gain 放大）
+     - down / up：{k, c} 彈簧係數 getter */
+  function attachPress(el, o = {}) {
+    const gain = o.gain || 1;
+    const dScale = () => o.scale ? o.scale() : 1 - (1 - P.scale) * gain;
+    const dCoef = () => o.down ? o.down() : DOWN;
+    const uCoef = () => o.up ? o.up() : P;
+    const wantHaptic = () => (o.haptic ? o.haptic() : P.haptic);
+    let pressed = false, inside = false, pid = null, kbd = null;
+
+    const sp = new Spring(1, s => {
+      const d = Math.max(1 - dScale(), 0.004);
+      el.style.setProperty('--p', clamp((1 - s) / d, 0, 1.15).toFixed(3));
+      el.style.transform = s === 1 ? '' : 'scale(' + s.toFixed(4) + ')';
+      o.onFrame && o.onFrame(s, pressed);
+    });
+    const goDown = () => { const d = dCoef(); sp.go(dScale(), d.k, d.c); };
+    const goUp = () => { const u = uCoef(); sp.go(1, u.k, u.c); };
+    const buzz = () => { if (wantHaptic() && hasVibrate) { try { navigator.vibrate(8); } catch (_) {} } };
+    const begin = () => { pressed = true; inside = true; buzz(); o.onDown && o.onDown(); goDown(); };
+    const finish = ok => {
+      pressed = false; goUp();
+      if (ok) o.onTap && o.onTap(); else o.onCancel && o.onCancel();
+    };
+
+    el.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (pid !== null || kbd) return;
+      pid = e.pointerId;
+      try { el.setPointerCapture(pid); } catch (_) {}
+      begin();
+    });
+    el.addEventListener('pointermove', e => {
+      if (e.pointerId !== pid) return;
+      const r = el.getBoundingClientRect(), m = 4;           // 容許 4px，避免縮小後邊緣抖動
+      const now = e.clientX >= r.left - m && e.clientX <= r.right + m && e.clientY >= r.top - m && e.clientY <= r.bottom + m;
+      if (now !== inside) { inside = now; now ? goDown() : goUp(); }
+    });
+    el.addEventListener('pointerup', e => {
+      if (e.pointerId !== pid) return;
+      const ok = inside; pid = null;
+      try { el.releasePointerCapture(e.pointerId); } catch (_) {}
+      finish(ok);
+    });
+    const cancel = e => { if (e.pointerId !== pid) return; pid = null; finish(false); };
+    el.addEventListener('pointercancel', cancel);
+    el.addEventListener('lostpointercapture', cancel);
+
+    // 鍵盤：Space / Enter
+    el.addEventListener('keydown', e => {
+      if (e.key !== ' ' && e.key !== 'Enter') return;
+      e.preventDefault();
+      if (e.repeat || pid !== null || kbd) return;
+      kbd = e.key; begin();
+    });
+    el.addEventListener('keyup', e => {
+      if (e.key !== kbd) return;
+      e.preventDefault(); kbd = null; finish(true);
+    });
+    el.addEventListener('blur', () => { if (kbd) { kbd = null; finish(false); } });
+    // 輔助科技的虛擬點擊（detail === 0）
+    el.addEventListener('click', e => { if (e.detail === 0 && !kbd) o.onTap && o.onTap(); });
+    el.addEventListener('contextmenu', e => e.preventDefault());
+    el.addEventListener('dragstart', e => e.preventDefault());
+    return { spring: sp };
+  }
+
+  /* ---------- 讀數（驗證用） ---------- */
+  const rS = $('#rS'), rP = $('#rP'), rC = $('#rC');
+  let peak = 1, cancels = 0;
+  const hud = {
+    onDown() { peak = 1; rP.textContent = '1.000'; },
+    onFrame(s, pressed) { if (!pressed) peak = Math.max(peak, s); rS.textContent = s.toFixed(3); rP.textContent = peak.toFixed(3); },
+    onCancel() { rC.textContent = String(++cancels); },
+  };
+
+  /* ---------- toast ---------- */
+  const toastEl = $('#toast'); let toastT = 0;
+  function toast(msg) {
+    toastEl.textContent = msg; toastEl.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('show'), 1400);
+  }
+
+  /* ---------- 接上各元件 ---------- */
+  attachPress($('#cta'), { ...hud, onTap: () => toast('已啟動回家情境') });
+  attachPress($('#skip'), { ...hud, onTap: () => toast('今晚不會自動啟動') });
+  attachPress($('#edit'), { ...hud, onTap: () => toast('開啟情境編輯（示意）') });
+
+  $$('.round').forEach(b => attachPress(b, { ...hud, gain: 1.15, onTap: () => {
+    const on = b.classList.toggle('on'); b.setAttribute('aria-pressed', on);
+    toast(b.dataset.toast + (on ? '已開啟' : '已關閉'));
+  } }));
+
+  $$('.dev').forEach(card => {
+    const glow = $('.glow', card), st = $('.st', card);
+    const fade = new Spring(card.classList.contains('on') ? 1 : 0, x => { glow.style.opacity = clamp(x, 0, 1).toFixed(3); });
+    fade.cb(fade.x);
+    attachPress(card, { ...hud, onTap: () => {
+      const on = card.classList.toggle('on'); card.setAttribute('aria-pressed', on);
+      st.textContent = on ? card.dataset.onText : card.dataset.offText;
+      fade.go(on ? 1 : 0, 260, 26);
+      toast(card.dataset.name + (on ? '已開啟' : '已關閉'));
+    } });
+  });
+
+  const sw = $('#sw'), thumb = $('.thumb', sw), swGlow = $('.glow', sw);
+  const TRAVEL = 24;
+  let swOn = false;
+  const swSpring = new Spring(0, x => {
+    thumb.style.transform = 'translate3d(' + (x * TRAVEL).toFixed(2) + 'px,0,0)';
+    swGlow.style.opacity = clamp(x, 0, 1).toFixed(3);
+  });
+  swSpring.cb(0);
+  attachPress(sw, { ...hud, gain: 1.6, onTap: () => {
+    swOn = !swOn; sw.setAttribute('aria-checked', swOn);
+    swSpring.go(swOn ? 1 : 0, 520, 32);
+    toast(swOn ? '夜間自動調暗：開' : '夜間自動調暗：關');
+  } });
+
+  // 對照組
+  let nP = 0, nS = 0;
+  $('#plain').addEventListener('click', () => { $('#cPlain').textContent = '×' + (++nP); });
+  attachPress($('#spr'), { ...hud, onTap: () => { $('#cSpr').textContent = '×' + (++nS); } });
+
+  // 使用者切換 reduced-motion 時，讓未完成的彈簧直接收斂
+  reduceMQ.addEventListener && reduceMQ.addEventListener('change', () => { if (reduceMQ.matches) live.forEach(s => { s.x = s.t; s.v = 0; s.cb(s.x); }); live.clear(); });
+
+  /* ---------- 複製 ---------- */
+  const copyBtn = $('#copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    const text = $('#promptText').textContent.trim();
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (_) {}
+    if (!ok) {
+      try {
+        const r = document.createRange(); r.selectNodeContents($('#promptText'));
+        const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        ok = document.execCommand('copy');
+      } catch (_) {}
+    }
+    copyBtn.textContent = ok ? '已複製' : '請按 Ctrl+C';
+    copyBtn.classList.toggle('ok', ok);
+    setTimeout(() => { copyBtn.textContent = '複製'; copyBtn.classList.remove('ok'); }, 1600);
+  });
+
+  /* ---------- 深淺色手動切換 ---------- */
+  $('#themeBtn').addEventListener('click', () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- 版面喜好選單範例 VU04｜狀態徽章｜來源：講師範例庫 output範例/元件庫/VU04-狀態徽章.html；原始來源 https://github.com/Ashutoshx7/VengeanceUI（src/components/ui/badge.tsx），作者 None，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  VU04 狀態徽章（Badge）
+  來源：https://github.com/Ashutoshx7/VengeanceUI　src/components/ui/badge.tsx
+  原作者：原檔未標　授權：MIT
+  移植：原作 variant 只有 default／secondary／destructive／outline（單色主題）；改成綠／琥珀／紅／藍／灰淺底深字的語意色，加勾勾圖示；cva 與 Tailwind 改純 CSS。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>狀態徽章</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f6f7f9;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;color:#1f2937}
+.card{width:400px;background:#fff;border:1px solid #d4d4d8;border-radius:8px;overflow:hidden}
+.r{display:grid;grid-template-columns:1fr auto;align-items:center;padding:10px 14px;border-bottom:1px solid #e5e7eb;font-size:14px}
+.r:last-child{border-bottom:0}
+.r b{font-weight:500}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:99px;border:1px solid transparent;font-size:12px;font-weight:500;white-space:nowrap;transition:box-shadow .15s}
+.badge svg{width:12px;height:12px}
+.pass{background:#dcfce7;color:#166534}
+.wait{background:#fef3c7;color:#92400e}
+.fail{background:#fee2e2;color:#991b1b}
+.info{background:#dbeafe;color:#1e40af}
+.out{background:#fff;border-color:#a1a1aa;color:#3f3f46}
+.badge:hover{box-shadow:0 0 0 3px rgba(0,0,0,.08)}
+@media (prefers-reduced-motion:reduce){.badge{transition:none}}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="r"><b>營收數字比對</b><span class="badge pass"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6.5l2.5 2.5L10 3.5"/></svg>通過</span></div>
+<div class="r"><b>出處連結檢查</b><span class="badge wait">待查核</span></div>
+<div class="r"><b>圖表單位標示</b><span class="badge fail">未通過</span></div>
+<div class="r"><b>新增章節</b><span class="badge info">新</span></div>
+<div class="r"><b>附錄 A</b><span class="badge out">參考</span></div>
+</div>
+</body>
+</html>

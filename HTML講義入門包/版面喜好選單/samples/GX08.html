@@ -1,0 +1,20 @@
+<!doctype html><!-- 版面喜好選單範例 GX08｜彩虹字深色傾斜按鈕｜來源：講師範例庫 output範例/元件庫/GX08-彩虹字深色傾斜按鈕.html；原始來源 https://github.com/uiverse-io/galaxy（Buttons/JkHuger_loud-baboon-15.html），作者 JkHuger，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX08 彩虹字深色傾斜按鈕（Rainbow gradient 3D-tilt button）
+  來源：https://github.com/uiverse-io/galaxy　Buttons/JkHuger_loud-baboon-15.html
+  原作者：JkHuger　授權：MIT
+  移植：原作只有 CSS 變數 --rx/--ry/--s、沒有改變數的程式；補了約 6 行原生 JS（pointermove 設定傾斜），並在 reduced-motion 下不傾斜。顏色未改，保留深色底以呈現原作。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>demo</title><style>*{box-sizing:border-box}html,body{margin:0;height:100%}body{background:#f5f6f8;color:#1f2937;font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;display:flex;align-items:center;justify-content:center}.cap{font-size:12px;color:#6b7280;margin-top:14px;text-align:center}
+.btn{font:inherit;font-size:16px;font-weight:700;color:#ff7576;background:#2b3044;border:0;outline:0;cursor:pointer;padding:12px 28px;line-height:24px;border-radius:9px;box-shadow:0 1px 2px #2b3044,0 4px 16px rgba(43,48,68,.45);transform:scale(var(--s,1)) perspective(600px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .1s}
+.sp{display:block;background:linear-gradient(90deg,#866ee7,#ea60da,#ed8f57,#fbd41d,#2cca91);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.btn:active{transition:.3s;transform:scale(.93)}
+.btn:focus-visible{outline:2px solid #1d4ed8;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}}
+</style></head><body><div style="text-align:center"><button class="btn" id="b"><span class="sp">立即註冊</span></button><div class="cap">深色按鈕＋彩虹漸層字，滑鼠移動時按鈕會傾斜</div></div>
+<script>
+var b=document.getElementById('b'),m=matchMedia('(prefers-reduced-motion: reduce)');
+b.addEventListener('pointermove',function(e){if(m.matches)return;var r=b.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;b.style.setProperty('--ry',x*30+'deg');b.style.setProperty('--rx',-y*30+'deg');b.style.setProperty('--s','1.08')});
+b.addEventListener('pointerleave',function(){b.style.removeProperty('--ry');b.style.removeProperty('--rx');b.style.removeProperty('--s')});
+</script></body></html>

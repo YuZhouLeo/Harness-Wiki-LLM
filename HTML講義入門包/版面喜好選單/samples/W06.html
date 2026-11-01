@@ -1,0 +1,437 @@
+<!doctype html>
+<!-- 版面喜好選單範例 W06｜新擬態｜來源：講師範例庫 output範例/網頁設計風格/06-新擬態.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W06 新擬態 Neumorphism｜網頁設計風格</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=Playfair+Display:wght@600&family=Jost:wght@300;400;500&display=swap">')</script>
+<style>
+/* ===== 風格本體：所有規則都收在 .style 底下，不寫會漏進 .spec 的全域選擇器 ===== */
+:root { color-scheme: light; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: #e9ecf1; }
+.style {
+  --bg: #e9ecf1;
+  --hi: #ffffff;
+  --lo: #c3c8d4;
+  --ink: #22252b;
+  --muted: #555b67;
+  --dark: #2b2e35;
+  --line: #d3d7e0;
+  /* 凸起＝右下暗影＋左上亮影；凹陷＝同一組顏色改成 inset */
+  --up: 12px 12px 26px var(--lo), -12px -12px 26px var(--hi);
+  --up-s: 6px 6px 13px var(--lo), -6px -6px 13px var(--hi);
+  --down: inset 6px 6px 12px var(--lo), inset -6px -6px 12px var(--hi);
+  --down-s: inset 3px 3px 6px var(--lo), inset -3px -3px 6px var(--hi);
+  --face: linear-gradient(145deg, #eff2f6, #e3e6ec);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Jost", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  line-height: 1.7;
+  text-spacing-trim: space-first;
+}
+.style *, .style *::before, .style *::after { box-sizing: border-box; }
+.style h1, .style h2, .style h3 { text-wrap: balance; margin: 0; line-height: 1.3; }
+.style p { margin: 0; text-wrap: pretty; }
+.style a { color: inherit; text-decoration: none; }
+.style a:focus-visible { outline: 2px solid var(--dark); outline-offset: 4px; }
+.style .serif { font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; }
+
+.style .soft { background: var(--face); box-shadow: var(--up); border-radius: 30px; }
+.style .well { background: var(--bg); box-shadow: var(--down); border-radius: 26px; }
+.style .btn-soft, .style .btn-dark {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; border-radius: 999px;
+  font-weight: 500; line-height: 1.4; white-space: nowrap; transition: box-shadow .2s ease, transform .2s ease;
+}
+.style .btn-soft { background: var(--face); box-shadow: var(--up-s); color: var(--ink); }
+.style .btn-soft:hover { box-shadow: var(--down-s); }
+.style .btn-dark { background: linear-gradient(145deg, #3a3e46, var(--dark)); color: #fff; box-shadow: 7px 7px 16px #b4bac7, -7px -7px 16px var(--hi); }
+.style .btn-dark:hover { transform: translateY(1px); box-shadow: 3px 3px 8px #b4bac7, -3px -3px 8px var(--hi); }
+
+/* ---------- 第一屏 ---------- */
+.style .hero {
+  min-height: clamp(600px, 100svh, 860px);
+  display: flex; flex-direction: column;
+  padding: 0 max(clamp(20px, 4.4vw, 56px), calc((100% - 1400px) / 2));
+}
+.style .nav { display: flex; align-items: center; gap: 18px; padding: clamp(18px, 2.2vw, 28px) 0; }
+.style .brand { font-family: "Playfair Display", "Noto Serif TC", serif; font-size: 30px; font-weight: 600; line-height: 1; }
+.style .nav ul { display: flex; gap: clamp(22px, 4.4vw, 60px); list-style: none; margin: 0 clamp(20px, 6vw, 96px) 0 auto; padding: 0; font-size: 15.5px; font-weight: 500; }
+.style .nav .btn-soft, .style .nav .btn-dark { padding: 11px 28px; font-size: 15px; }
+
+.style .hero-body {
+  flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(22px, 2.4vw, 32px); align-items: center; padding: 8px 0 12px;
+}
+.style .hero h1 { font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; font-size: clamp(38px, 5.15vw, 66px); font-weight: 900; line-height: 1.28; }
+.style .lead { margin-top: clamp(16px, 2vw, 26px); font-size: clamp(16px, 1.5vw, 19px); color: var(--muted); line-height: 1.85; }
+.style .copy .btn-dark { margin-top: clamp(26px, 3vw, 40px); padding: 15px 34px; font-size: 16.5px; }
+
+.style .widgets { display: grid; grid-template-columns: auto auto auto; gap: clamp(16px, 2vw, 26px); align-items: center; }
+.style .weather {
+  width: clamp(140px, 13.3vw, 170px); padding: clamp(24px, 3.2vw, 42px) 12px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: clamp(18px, 2.8vw, 36px);
+}
+.style .weather svg { width: 58px; height: 58px; fill: none; stroke: #6b7180; stroke-width: 1.5; stroke-linecap: round; }
+.style .weather p { font-size: 14.5px; color: var(--muted); line-height: 1.9; }
+.style .timer { width: clamp(220px, 25vw, 320px); aspect-ratio: 1; border-radius: 27%; display: grid; place-items: center; }
+.style .dial { width: 80%; aspect-ratio: 1; border-radius: 50%; background: var(--face); box-shadow: var(--up-s); padding: 5.5%; }
+.style .dish {
+  position: relative; width: 100%; height: 100%; border-radius: 50%;
+  background: linear-gradient(145deg, #e0e3ea, #f1f3f7); box-shadow: var(--down);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.style .dish b { font-size: clamp(38px, 4.2vw, 54px); font-weight: 300; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.style .dish small { font-size: 14.5px; color: var(--muted); margin-top: 4px; }
+.style .orbit { position: absolute; inset: 0; transform: rotate(22deg); }
+.style .orbit::before {
+  content: ""; position: absolute; left: 50%; top: 7%; width: 17px; height: 17px; margin-left: -8.5px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #6a7080, #3b3f48); box-shadow: 2px 3px 6px #aeb4c1, -2px -2px 5px var(--hi);
+}
+.style .menu { width: clamp(150px, 14vw, 180px); list-style: none; margin: 0; padding: clamp(14px, 1.6vw, 20px) 14px; display: grid; gap: clamp(6px, 1vw, 12px); }
+.style .menu li { display: flex; align-items: center; gap: 14px; padding: clamp(12px, 1.3vw, 17px) 14px; border-radius: 16px; font-size: 15.5px; font-weight: 500; }
+.style .menu li.on { box-shadow: var(--down-s); background: var(--bg); }
+.style .menu svg { flex: none; width: 26px; height: 26px; fill: none; stroke: #4c525e; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+.style .hero-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 0 clamp(20px, 3vw, 34px); font-size: 15px; color: var(--muted); }
+.style .hero-foot p { grid-column: 2; }
+.style .pager { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 14px; font-variant-numeric: tabular-nums; }
+.style .pager small { font-size: 15px; margin-right: 6px; }
+.style .pager b { color: var(--ink); font-weight: 500; }
+.style .pager span { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--face); box-shadow: var(--up-s); color: var(--ink); font-size: 20px; line-height: 1; }
+
+/* ---------- 套到學校資料 ---------- */
+.style .school { padding: clamp(40px, 6vw, 76px) max(clamp(20px, 4.4vw, 56px), calc((100% - 1400px) / 2)) clamp(52px, 7vw, 96px); }
+.style .school > header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin-bottom: 30px; }
+.style .school h2 { font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; font-size: clamp(28px, 3.2vw, 40px); font-weight: 900; }
+.style .school > header p { color: var(--muted); font-size: 15.5px; }
+.style .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(20px, 2.4vw, 30px); }
+.style .card { padding: clamp(20px, 2.2vw, 28px); min-width: 0; }
+.style .t { font-size: 18px; font-weight: 700; }
+.style .label { font-size: 13.5px; color: var(--muted); }
+
+.style .course { grid-column: span 4; display: flex; flex-direction: column; gap: 12px; }
+.style .course .meta { display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.style .course .meta time { padding: 3px 14px; border-radius: 999px; box-shadow: var(--down-s); background: var(--bg); font-weight: 500; color: var(--muted); }
+.style .course h3 { font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; font-size: 20px; font-weight: 700; line-height: 1.5; }
+.style .course p { font-size: 15px; color: var(--muted); }
+.style .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 6px; }
+.style .tag { font-size: 13px; padding: 3px 14px; border-radius: 999px; background: var(--bg); box-shadow: var(--down-s); color: var(--muted); }
+.style .course .btn-soft { align-self: flex-start; margin-top: 10px; padding: 10px 22px; font-size: 14.5px; }
+
+.style .nums { grid-column: span 4; display: flex; flex-direction: column; gap: 16px; }
+.style .pair { flex: 1; display: grid; grid-template-columns: 1fr; gap: 16px; }
+.style .pair > div { border-radius: 22px; padding: 16px 22px; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 20px; align-content: center; }
+.style .pair .big { grid-row: 1 / 3; align-self: center; }
+.style .pair .meter { align-self: end; margin: 0 0 8px; }
+.style .pair .label { align-self: start; }
+.style .big { font-size: clamp(46px, 5vw, 66px); font-weight: 300; line-height: 1; font-variant-numeric: tabular-nums; }
+.style .big span { font-size: .42em; font-weight: 400; margin-left: 2px; }
+.style .meter { display: block; height: 12px; border-radius: 999px; background: var(--bg); box-shadow: var(--down-s); padding: 3px; }
+.style .meter i { display: block; height: 100%; width: var(--w); border-radius: 999px; background: var(--dark); }
+.style .nums p { font-size: 15px; }
+
+.style .tablecard { grid-column: span 8; }
+.style .table-wrap { overflow-x: auto; margin: 8px -8px -8px; padding: 8px; }
+.style table { width: 100%; min-width: 580px; border-collapse: separate; border-spacing: 0; font-size: 15px; }
+.style th, .style td { text-align: left; padding: 10px 12px; }
+.style thead th { padding: 4px 6px 12px; font-weight: 700; }
+.style thead th span { display: inline-block; padding: 5px 14px; border-radius: 999px; background: var(--bg); box-shadow: var(--down-s); }
+.style thead th:first-child span { box-shadow: none; background: none; color: var(--muted); padding-left: 6px; }
+.style tbody th { font-weight: 700; white-space: nowrap; }
+.style tbody th, .style tbody td { border-top: 1px solid var(--line); box-shadow: inset 0 1px 0 var(--hi); }
+.style tbody tr:first-child th, .style tbody tr:first-child td { border-top: 0; box-shadow: none; }
+
+.style .time { grid-column: span 12; }
+.style .line { list-style: none; margin: 22px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; position: relative; }
+.style .line::before { content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 12px; border-radius: 999px; background: var(--bg); box-shadow: var(--down-s); }
+.style .line li { position: relative; padding-top: 44px; font-size: 15px; color: var(--muted); }
+.style .line li::before {
+  content: ""; position: absolute; top: 0; left: 6px; width: 28px; height: 28px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, var(--dark) 0 4px, transparent 5px), var(--face); box-shadow: 4px 4px 9px #b4bac7, -3px -3px 8px var(--hi);
+}
+.style .line b { display: block; font-size: 30px; font-weight: 300; line-height: 1.2; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.style .quote { grid-column: span 5; margin: 0; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+.style .quote blockquote { margin: 0; font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; font-size: clamp(20px, 2vw, 25px); font-weight: 700; line-height: 1.65; }
+
+.style .keys { grid-column: span 7; }
+.style .keys ol { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 14px; counter-reset: k; }
+.style .keys li { counter-increment: k; display: flex; gap: 14px; align-items: center; padding: 10px 18px 10px 10px; border-radius: 999px; background: var(--face); box-shadow: var(--up-s); font-size: 15.5px; }
+.style .keys li::before { content: counter(k); flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--bg); box-shadow: var(--down-s); font-weight: 500; font-size: 15px; }
+
+@media (max-width: 1080px) {
+  .style .hero-body { grid-template-columns: 1fr; gap: 40px; padding: 20px 0 36px; }
+  .style .widgets { justify-content: center; }
+  .style .course, .style .nums, .style .tablecard, .style .quote, .style .keys { grid-column: span 12; }
+}
+@media (max-width: 820px) {
+  .style .nav ul { display: none; }
+  .style .nav .btn-soft { margin-left: auto; }
+  .style .hero-foot { grid-template-columns: 1fr; gap: 16px; justify-items: center; }
+  .style .hero-foot p, .style .pager { grid-column: 1; justify-self: center; }
+}
+@media (max-width: 620px) {
+  .style { --up: 8px 8px 18px var(--lo), -8px -8px 18px var(--hi); }
+  .style .nav .btn-soft, .style .nav .btn-dark { padding: 9px 18px; font-size: 14px; }
+  .style .widgets { grid-template-columns: 1fr 1fr; justify-items: center; gap: 22px 18px; }
+  .style .timer { grid-column: 1 / -1; grid-row: 1; width: min(100%, 280px); }
+  .style .weather, .style .menu { width: 100%; align-self: stretch; }
+  .style .weather { justify-content: center; }
+  .style .line { grid-template-columns: 1fr; gap: 18px; }
+  .style .line::before { left: 14px; right: auto; top: 0; bottom: 0; width: 12px; height: auto; }
+  .style .line li { padding: 0 0 0 52px; }
+  .style .keys li { border-radius: 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .style .btn-soft, .style .btn-dark { transition: none; }
+  .style .btn-dark:hover { transform: none; }
+  html { scroll-behavior: auto; }
+}
+@media print {
+  body { background: #fff; }
+  .style { background: #fff; --bg: #fff; --face: #fff; }
+  .style .hero { min-height: 0; }
+  .style .soft, .style .well, .style .btn-soft, .style .dial, .style .keys li, .style .pager span { box-shadow: none; border: 1px solid #b9bec9; }
+  .style .dish, .style .tag, .style .meter, .style .line::before, .style thead th span, .style .course .meta time, .style .menu li.on, .style .keys li::before { box-shadow: none; border: 1px solid #c9cdd6; background: #f3f4f7; }
+  .style .btn-dark, .style .line li::before { box-shadow: none; }
+  .style .card { break-inside: avoid; }
+}
+
+/* ===== 共用：風格規格面板（各頁相同，逐字複製，不要改） ===== */
+.spec { all: initial; display: block; background: #f6f5f1; color: #1c1b19; color-scheme: light; border-top: 1px solid #dcd9d0;
+  font: 400 15px/1.7 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; text-spacing-trim: space-first;
+  padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 48px) 64px; }
+.spec *, .spec *::before, .spec *::after { box-sizing: border-box; }
+.spec .spec-in { max-width: 1120px; margin: 0 auto; }
+.spec .spec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin: 0 0 6px; }
+.spec .spec-code { font: 700 13px/1 ui-monospace, Consolas, monospace; color: #fff; background: #1c1b19; padding: 5px 9px; border-radius: 6px; }
+.spec h2 { margin: 0; font-size: clamp(22px, 3vw, 30px); line-height: 1.3; font-weight: 700; text-wrap: balance; }
+.spec .spec-en { font: 500 14px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-def { margin: 0 0 22px; max-width: 46em; color: #3b3935; }
+.spec .spec-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.spec .spec-card { background: #fff; border: 1px solid #e4e1da; border-radius: 12px; padding: 16px 18px; min-width: 0; }
+.spec .spec-card.wide { grid-column: 1 / -1; }
+.spec h3 { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: #6b6862; }
+.spec ul, .spec ol { margin: 0; padding-left: 1.2em; }
+.spec li { margin: 2px 0; }
+.spec p { margin: 0; }
+.spec p + p { margin-top: 6px; }
+.spec code { font: 13px/1.5 ui-monospace, Consolas, monospace; background: #f0eee8; padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.spec .spec-traits { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 16px; }
+.spec .spec-traits small { display: block; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-sw { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.spec .spec-sw li { margin: 0; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #3b3935; }
+.spec .spec-sw i { display: block; height: 34px; border-radius: 8px; border: 1px solid rgba(0,0,0,.12); margin-bottom: 4px; }
+.spec .spec-fit b { display: inline-block; min-width: 4.2em; }
+.spec .spec-prompt { background: #efedff; border-color: #dcd8ff; }
+.spec .spec-back { display: inline-block; margin-top: 22px; color: #1c1b19; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 720px) { .spec .spec-grid { grid-template-columns: 1fr; } }
+@media print { .spec { border-top: 0; } .spec .spec-card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<main class="style">
+
+  <!-- ========== 第一屏：重現參考圖 ========== -->
+  <section class="hero" id="hero">
+    <nav class="nav" aria-label="主選單">
+      <a class="brand" href="#hero">Mellow</a>
+      <ul>
+        <li><a href="#school">產品</a></li>
+        <li><a href="#school">解決方案</a></li>
+        <li><a href="#school">價格</a></li>
+        <li><a href="#spec">關於</a></li>
+      </ul>
+      <a class="btn-soft" href="#spec">登入</a>
+      <a class="btn-dark" href="#school">開始使用</a>
+    </nav>
+
+    <div class="hero-body">
+      <div class="copy">
+        <h1>讓專注<br>成為一種日常</h1>
+        <p class="lead">簡潔的工具，安靜的體驗，<br>幫助你更好地管理時間與生活。</p>
+        <a class="btn-dark" href="#school">立即體驗 <span aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="widgets">
+        <div class="soft weather">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="8"/><path d="M24 5v6M24 37v6M5 24h6M37 24h6M10.6 10.6l4.2 4.2M33.2 33.2l4.2 4.2M10.6 37.4l4.2-4.2M33.2 14.8l4.2-4.2"/></svg>
+          <p>今天天氣不錯<br>保持好心情</p>
+        </div>
+
+        <div class="soft timer">
+          <div class="dial">
+            <div class="dish">
+              <span class="orbit" aria-hidden="true"></span>
+              <b>10:24</b>
+              <small>專注中</small>
+            </div>
+          </div>
+        </div>
+
+        <ul class="soft menu">
+          <li class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 2.5h4"/></svg>專注</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M8.5 12.2l2.4 2.4 4.6-5"/></svg>任務</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M10 20V4M15 20v-7M20 20V8"/></svg>統計</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>設定</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hero-foot">
+      <p>「更少干擾，更多可能」</p>
+      <div class="pager"><small><b>01</b> / 03</small><span aria-hidden="true">‹</span><span aria-hidden="true">›</span></div>
+    </div>
+  </section>
+
+  <!-- ========== 套到學校資料：各頁內容相同，只換風格 ========== -->
+  <section class="school" id="school">
+    <header>
+      <h2>套到學校資料</h2>
+      <p>同一份課堂內容，換上這個風格。</p>
+    </header>
+
+    <div class="grid">
+      <article class="soft card course">
+        <div class="meta"><span>策略管理</span><time datetime="2026-09-18">09/18</time></div>
+        <h3>外部分析：PESTEL・五力分析・策略群組</h3>
+        <p>五力分析說明的是產業的獲利潛力，不是某一家公司的獲利。</p>
+        <div class="tags"><span class="tag">課堂筆記</span><span class="tag">考點</span></div>
+        <a class="btn-soft" href="#school">打開講義 →</a>
+      </article>
+      <article class="soft card course">
+        <div class="meta"><span>日本史</span><time datetime="2026-09-21">09/21</time></div>
+        <h3>古代律令制國家的建構：大化改新・奈良時代</h3>
+        <p>律是刑法、令是行政法；法制真正完成要到大寶律令、養老律令。</p>
+        <div class="tags"><span class="tag">課堂筆記</span><span class="tag">補充</span></div>
+        <a class="btn-soft" href="#school">打開講義 →</a>
+      </article>
+      <article class="soft card course">
+        <div class="meta"><span>日文寫作（一）</span><time datetime="2026-09-16">09/16</time></div>
+        <h3>作文預備知識：原稿用紙・文体・書きことば</h3>
+        <p>一篇文章只能選一種文末形式，丁寧体或普通体，不能混用。</p>
+        <div class="tags"><span class="tag">課堂筆記</span><span class="tag">考點</span></div>
+        <a class="btn-soft" href="#school">打開講義 →</a>
+      </article>
+
+      <div class="soft card nums">
+        <span class="label">策略管理・投影片 2｜公司績效從哪裡來</span>
+        <div class="pair">
+          <div class="well"><div class="big">20<span>%</span></div><i class="meter" style="--w:20%" aria-hidden="true"><i></i></i><span class="label">產業效果（約）</span></div>
+          <div class="well"><div class="big">25<span>%</span></div><i class="meter" style="--w:25%" aria-hidden="true"><i></i></i><span class="label">景氣與運氣（約）</span></div>
+        </div>
+        <p>平均而言，廠商效果比產業效果大。</p>
+      </div>
+
+      <div class="soft card tablecard">
+        <h3 class="t">產業競爭結構的四種型態</h3>
+        <span class="label">策略管理・投影片 18</span>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col"><span>結構</span></th><th scope="col"><span>完全競爭</span></th><th scope="col"><span>獨占性競爭</span></th><th scope="col"><span>寡占</span></th><th scope="col"><span>獨占</span></th></tr></thead>
+            <tbody>
+              <tr><th scope="row">廠商</th><td>很多小廠</td><td>很多廠</td><td>少數大廠</td><td>一家</td></tr>
+              <tr><th scope="row">定價</th><td>只能接受市場價格</td><td>有一點定價能力</td><td>有一些定價能力</td><td>定價能力很大</td></tr>
+              <tr><th scope="row">產品</th><td>大宗商品</td><td>有差異化</td><td>有差異化</td><td>獨一無二</td></tr>
+              <tr><th scope="row">進入障礙</th><td>低</td><td>中</td><td>高</td><td>非常高</td></tr>
+              <tr><th scope="row">獲利潛力</th><td>低</td><td>→</td><td>→</td><td>高</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="soft card time">
+        <h3 class="t">律令制國家年表</h3>
+        <span class="label">日本史・09/21</span>
+        <ol class="line">
+          <li><b>645</b>改新之詔</li>
+          <li><b>663</b>白村江之戰</li>
+          <li><b>701</b>大寶律令</li>
+          <li><b>710</b>遷都平城京</li>
+          <li><b>794</b>遷都平安京</li>
+        </ol>
+      </div>
+
+      <figure class="well card quote">
+        <blockquote>「在古代社會，你沒有土地基本上就失去了生存的資格。」</blockquote>
+        <figcaption class="label">日本史・老師的話</figcaption>
+      </figure>
+
+      <div class="soft card keys">
+        <h3 class="t">記住三件事</h3>
+        <span class="label">日文寫作（一）・原稿用紙</span>
+        <ol>
+          <li>標題固定空三格，從第四格開始寫</li>
+          <li>名字前加系級，名字後空一格</li>
+          <li>格式錯誤扣兩分或五分，比文法錯誤（一分）重</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ========== 風格規格：給人挑、也給之後照這個風格實作的 AI 讀 ========== -->
+<section class="spec" id="spec">
+  <div class="spec-in">
+    <div class="spec-head">
+      <span class="spec-code">W06</span>
+      <h2>新擬態</h2>
+      <span class="spec-en">Neumorphism</span>
+    </div>
+    <p class="spec-def">元件與底色同一個淺灰，不靠邊框與色塊，只靠左上亮、右下暗的兩道陰影讓元件從底面凸起或凹陷。</p>
+
+    <div class="spec-grid">
+      <div class="spec-card">
+        <h3>關鍵特徵</h3>
+        <ul class="spec-traits">
+          <li>柔和<small>SOFT</small></li>
+          <li>層次<small>DEPTH</small></li>
+          <li>可觸感<small>TACTILE</small></li>
+          <li>單色極簡<small>MONOCHROME</small></li>
+        </ul>
+      </div>
+      <div class="spec-card">
+        <h3>字型</h3>
+        <p>標題 <code>Noto Serif TC</code> 900，內文 <code>Noto Sans TC</code>，品牌字 <code>Playfair Display</code>，數字 <code>Jost</code> 300（Google Fonts）；離線改用 Songti TC／PMingLiU 與 PingFang TC／Microsoft JhengHei。大數字用細字重，靠字級撐場。</p>
+      </div>
+      <div class="spec-card wide">
+        <h3>色票</h3>
+        <ul class="spec-sw">
+          <li><i style="background:#e9ecf1"></i>--bg #e9ecf1</li>
+          <li><i style="background:#ffffff"></i>--hi #ffffff</li>
+          <li><i style="background:#c3c8d4"></i>--lo #c3c8d4</li>
+          <li><i style="background:#d3d7e0"></i>--line #d3d7e0</li>
+          <li><i style="background:#555b67"></i>--muted #555b67</li>
+          <li><i style="background:#2b2e35"></i>--dark #2b2e35</li>
+          <li><i style="background:#22252b"></i>--ink #22252b</li>
+        </ul>
+      </div>
+      <div class="spec-card wide">
+        <h3>關鍵做法</h3>
+        <ol>
+          <li>頁面底色與元件底色同為 <code>#e9ecf1</code>；元件表面只加一層 <code>linear-gradient(145deg, #eff2f6, #e3e6ec)</code> 做微凸。</li>
+          <li>凸起：<code>box-shadow: 12px 12px 26px #c3c8d4, -12px -12px 26px #ffffff</code>。小元件用一半的位移與模糊（6px／13px）。光源固定在左上，全頁一致。</li>
+          <li>凹陷：同一組顏色加 <code>inset</code>（<code>inset 6px 6px 12px #c3c8d4, inset -6px -6px 12px #ffffff</code>）。標籤、進度槽、被選中的選單列、引言框都用凹陷。</li>
+          <li>不畫邊框、不用彩色。唯一的重色是深灰膠囊鈕（<code>#2b2e35</code>）與進度條填色，一個畫面放一到兩處。</li>
+          <li>文字不能跟著變淡：標題 <code>#22252b</code>、內文與說明 <code>#555b67</code>（對 <code>#e9ecf1</code> 約 5.7:1）。陰影只用在容器，不用在字上。</li>
+          <li>圓角要大：卡片 30px、按鈕與標籤 999px、計時盤是圓形。元件之間至少留 20–30px，陰影才不會互相疊到。</li>
+        </ol>
+      </div>
+      <div class="spec-card wide spec-fit">
+        <h3>套到學校資料</h3>
+        <p><b>適合</b>計時器、打卡、進度這類元件少、每個元件都能按的工具頁；重點數字放在凹槽裡很清楚。</p>
+        <p><b>不適合</b>資訊密的講義與大表格：沒有邊框與色塊可以分類，層級只剩凹凸兩種，列印後陰影幾乎看不見。</p>
+        <p><b>要改</b>用在 NCCU 交付物時在 <code>@media print</code> 把陰影換成 1px 灰邊框、底色改白；拿掉按鈕的 <code>transition</code>；需要分類時另外加一個強調色，不要只靠凹凸。</p>
+      </div>
+      <div class="spec-card wide spec-prompt">
+        <h3>AI 描述詞</h3>
+        <p>新擬態（Neumorphism）：整頁單一淺灰底（#e9ecf1），元件與背景同色，用左上白色高光與右下灰色陰影做出柔軟的凸起，凹槽用內陰影；大圓角卡片、圓形計時盤、膠囊按鈕，無邊框、無彩色，只有深灰按鈕一個重色；粗明體標題、細體數字，文字維持深灰以確保對比。</p>
+      </div>
+    </div>
+    <a class="spec-back" href="../index.html">← 回喜好選單</a>
+  </div>
+</section>
+</body>
+</html>

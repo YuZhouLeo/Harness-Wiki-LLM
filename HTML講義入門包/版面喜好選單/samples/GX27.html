@@ -1,0 +1,97 @@
+<!doctype html><!-- 版面喜好選單範例 GX27｜滑出說明作品卡｜來源：講師範例庫 output範例/元件庫/GX27-滑出說明作品卡.html；原始來源 https://github.com/uiverse-io/galaxy（Cards/imPradhyumn_nice-rattlesnake-46.html），作者 imPradhyumn，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX27 滑出說明作品卡（Card with caption panel that slides up on hover）
+  來源：https://github.com/uiverse-io/galaxy　Cards/imPradhyumn_nice-rattlesnake-46.html
+  原作者：imPradhyumn　授權：MIT (Copyright 2023 Uiverse.io)　commit：adbd2ad
+  移植：原作是單張 190×254 空白卡＋半透明黑色說明條，滑過時說明條高度由 2.6em 拉到 6.7em（.5s ease-in-out）；
+    保留這個「底部說明條往上長」的動作與時長，改成作品集的三張專案卡，卡面用 inline SVG 線稿代替照片；
+    配色換 P11 淺色主控台，說明條改成主字色半透明底、分類標籤只用 --accent 一色；
+    卡片加 tabindex＝0，鍵盤聚焦（:focus-within）與觸控點一下也會展開，補 focus-visible 外框與 prefers-reduced-motion。
+  2026-10-09 由子代理移植成純 HTML／CSS（必要時加少量原生 JS）
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>滑出說明作品卡</title>
+<style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px 16px;background:var(--bg);color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.wrap{width:100%;max-width:480px}
+.head{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 10px}
+.head h1{margin:0;font-size:15px;font-weight:700}
+.head span{font-size:12px;color:var(--ink-2)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:12px}
+
+/* 卡片：原作的 box-shadow 與相對定位 */
+.card{position:relative;height:228px;overflow:hidden;background:var(--surface-2);border-radius:4px;box-shadow:0 3px 10px rgb(17 24 31 / .16);outline:none;cursor:pointer}
+.card svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.card:focus-visible{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent),0 3px 10px rgb(17 24 31 / .16)}
+.s2{fill:var(--surface-2)}.sf{fill:var(--surface)}.ln{fill:var(--line)}.i2{fill:var(--ink-2)}.ac{fill:var(--accent)}.ls{fill:var(--line-strong)}.hl{fill:var(--hl)}
+.st-ac{fill:none;stroke:var(--accent)}.st-ln{fill:none;stroke:var(--line)}.bd{stroke:var(--line)}
+
+/* 說明條：原作 height 2.6em → 6.7em、.5s ease-in-out（中文兩行說明需要較高，展開到 8.4em） */
+.details{position:absolute;left:0;right:0;bottom:0;height:2.7em;padding:.55em .75em;overflow:hidden;color:var(--surface);background:color-mix(in srgb,var(--ink) 74%,transparent);box-shadow:0 -2px 10px rgb(17 24 31 / .18);transition:height .5s ease-in-out}
+.card:hover .details,.card:focus-within .details{height:8.4em}
+.details h2{margin:0;font-size:14px;font-weight:700;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.details p{margin:.35em 0 0;font-size:12px;line-height:1.55;color:color-mix(in srgb,var(--surface) 92%,transparent)}
+.details .meta{display:flex;align-items:center;gap:6px;white-space:nowrap;margin-top:.5em;font-size:12px;color:color-mix(in srgb,var(--surface) 80%,transparent)}
+.tag{display:inline-block;padding:0 6px;border-radius:3px;background:var(--accent);color:var(--on-accent);font-size:12px;line-height:1.6}
+.cap{margin-top:12px;font-size:12px;color:var(--ink-2);text-align:center}
+
+@media (max-width:440px){.card:last-child{grid-column:1/-1}}
+@media (prefers-reduced-motion:reduce){.details{transition:none}}
+</style></head><body>
+<div class="wrap">
+  <div class="head"><h1>作品集・近期專案</h1><span>3 件</span></div>
+  <div class="grid">
+    <article class="card" tabindex="0" aria-label="京都賞楓行程頁">
+      <svg viewBox="0 0 160 228" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+        <rect class="s2" width="160" height="228"/>
+        <circle class="sf" cx="118" cy="52" r="18"/>
+        <path class="ln" d="M0 150 L42 92 L70 128 L98 84 L160 156 L160 228 L0 228Z"/>
+        <path class="i2" opacity=".55" d="M0 176 L36 140 L72 170 L112 132 L160 172 L160 228 L0 228Z"/>
+        <path class="ac" d="M40 104 l7 -12 7 12 -7 -3z M28 122 l5 -9 5 9 -5 -2z"/>
+      </svg>
+      <div class="details">
+        <h2>京都賞楓行程頁</h2>
+        <p>五天路線與交通時間一頁看完，可列印。</p>
+        <div class="meta"><span class="tag">旅遊</span><span>單檔 HTML</span></div>
+      </div>
+    </article>
+    <article class="card" tabindex="0" aria-label="持股彙整儀表板">
+      <svg viewBox="0 0 160 228" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+        <rect class="sf" width="160" height="228"/>
+        <path class="st-ln" stroke-width="1" d="M18 40 h124 M18 76 h124 M18 112 h124 M18 148 h124"/>
+        <g class="i2" opacity=".35"><rect x="26" y="100" width="14" height="48"/><rect x="50" y="84" width="14" height="64"/><rect x="74" y="112" width="14" height="36"/><rect x="98" y="68" width="14" height="80"/><rect x="122" y="56" width="14" height="92"/></g>
+        <polyline class="st-ac" points="33,96 57,80 81,104 105,62 129,48" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle class="ac" cx="129" cy="48" r="4"/>
+      </svg>
+      <div class="details">
+        <h2>持股彙整儀表板</h2>
+        <p>持股、損益與股利一表彙整，數字可直接改。</p>
+        <div class="meta"><span class="tag">儀表板</span><span>可編輯</span></div>
+      </div>
+    </article>
+    <article class="card" tabindex="0" aria-label="策略管理課堂講義">
+      <svg viewBox="0 0 160 228" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+        <rect class="s2" width="160" height="228"/>
+        <rect class="sf bd" x="30" y="26" width="100" height="136" rx="2"/>
+        <rect class="ls" x="30" y="26" width="100" height="18"/>
+        <path class="st-ln" stroke-width="2" stroke-linecap="round" d="M42 62 h76 M42 74 h60 M42 86 h70 M42 110 h76 M42 122 h52"/>
+        <rect class="hl" x="40" y="94" width="48" height="8"/>
+        <path class="st-ac" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="M104 132 l6 6 12 -14"/>
+      </svg>
+      <div class="details">
+        <h2>策略管理課堂講義</h2>
+        <p>講義配錄音時間戳，匯出 PDF 手寫。</p>
+        <div class="meta"><span class="tag">講義</span><span>附 PDF</span></div>
+      </div>
+    </article>
+  </div>
+  <div class="cap">滑過卡片，或按 Tab 聚焦，底部說明條會往上展開</div>
+</div>
+</body></html>

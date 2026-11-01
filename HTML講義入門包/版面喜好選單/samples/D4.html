@@ -1,0 +1,395 @@
+<!doctype html>
+<!-- 版面喜好選單範例 D4｜流程畫布頁｜來源：講師範例庫 output範例/設計偏好選擇/samples/D4-流程畫布頁.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<!-- 範例 D4 流程畫布頁：整頁的主角是一張節點與連線的流程圖，鋪滿背景；資訊面板用毛玻璃浮在圖上（左邊一欄執行紀錄、節點旁的提示卡、底部兩張圖表）。頂列是頁籤，標題列放三個帶迷你長條的指標。綠色＝正常，紅色＝異常，藍色＝來源。文字與數字是示意內容。 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>知識庫管線</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">')</script>
+<style>
+/* 變數名與 配色/palettes.css 相同，換配色時整段蓋掉即可；--desk、--glass、--node-* 是這個版式自己的 */
+:root{
+  color-scheme:light;
+  --desk:#c7cace;
+  --bg:#eceef0;
+  --surface:#ffffff;
+  --surface-2:#e3e6e9;
+  --ink:#1b1e22;
+  --ink-2:#555b63;
+  --line:#d6dade;
+  --accent:#1f7a35;
+  --on-accent:#ffffff;
+  --accent-soft:#dff1e2;
+  --c1:#2f66cf; --c1-soft:#dfe9fb;
+  --ok:#1f7a35; --ok-soft:#dff1e2;
+  --bad:#c7332a; --bad-soft:#fbe4e2;
+  --node-ok:#2f9e44;
+  --node-bad:#e0463c;
+  --glass:linear-gradient(180deg,rgba(255,255,255,.74),rgba(255,255,255,.5));
+  --sans:"Outfit","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --sh:0 1px 2px rgba(40,50,60,.06),0 6px 14px -8px rgba(40,50,60,.3);
+}
+*{box-sizing:border-box}
+html{background:var(--desk)}
+body{margin:0;background:var(--desk);color:var(--ink);font:400 13px/1.55 var(--sans);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+h1,h2,h3,p,ul{margin:0;padding:0}
+h1,h2,h3{text-wrap:balance}
+ul{list-style:none}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+
+.app{max-width:1200px;margin:36px auto;border-radius:14px;overflow:hidden;background:var(--bg);box-shadow:0 30px 70px -40px rgba(30,40,50,.6)}
+.tile{position:relative;display:grid;place-items:center;width:32px;height:32px;border-radius:9px;border:0;background:rgba(255,255,255,.75);box-shadow:var(--sh)}
+.tile.flat{background:var(--surface-2);box-shadow:none}
+.tile .pip{position:absolute;right:8px;top:7px;width:6px;height:6px;border-radius:50%;background:var(--node-bad)}
+
+/* 頂列與標題列 */
+.bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:18px 20px 0}
+.logo{display:inline-flex;align-items:center;gap:8px;line-height:1.2}
+.logo b{display:block;font-size:13px;font-weight:600}
+.logo span{display:block;font-size:12px;color:var(--ink-2)}
+.tabs{display:flex;gap:4px}
+.tabs a{display:inline-flex;align-items:center;height:30px;padding:0 12px;border-radius:9px;background:var(--surface-2);font-size:13px;white-space:nowrap}
+.tabs a.on{background:var(--surface);box-shadow:var(--sh);font-weight:500}
+.bar-r{display:flex;justify-content:flex-end;gap:8px}
+.head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:24px;padding:18px 20px 22px}
+.title{display:flex;align-items:center;gap:14px}
+.title h1{font-size:clamp(20px,2.2vw,26px);font-weight:500;line-height:1.25}
+.title p{font-size:12px;color:var(--ink-2)}
+.kpis{display:flex;justify-content:center;gap:44px}
+.kpi{display:flex;align-items:flex-end;gap:14px}
+.kpi b{display:flex;align-items:center;gap:6px;font-size:25px;font-weight:500;line-height:1.1}
+.kpi div>span{display:block;font-size:12px;color:var(--ink-2)}
+.tag{display:grid;place-items:center;width:13px;height:13px;border-radius:3px;background:var(--node-ok);color:#fff}
+.tag.bad{background:var(--node-bad)}
+.tag .i{width:9px;height:9px;stroke-width:3}
+.spark{display:flex;align-items:flex-end;gap:3px;height:36px}
+.spark i{width:3px;border-radius:1px;background:#cfd3d8}
+.spark i.g{background:var(--node-ok)}
+.spark i.r{background:var(--node-bad)}
+.head-r{display:flex;align-items:center;gap:8px}
+.swap{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;border-radius:9px;background:var(--surface-2);font-size:12px;color:var(--ink-2);white-space:nowrap}
+.swap b{font-weight:500;color:var(--ink)}
+
+/* 畫布與浮在上面的面板 */
+.stage{position:relative;display:grid;grid-template-columns:256px minmax(0,1fr);gap:20px;padding:0 18px}
+.canvas{position:absolute;inset:0;overflow:hidden}
+.canvas svg{display:block;width:1200px;height:660px;max-width:none}
+.canvas text{font:500 12px var(--sans);fill:var(--ink-2)}
+.glass{position:relative;z-index:1;background:var(--glass);-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);border:1px solid rgba(255,255,255,.85);box-shadow:0 14px 34px -18px rgba(40,50,70,.4)}
+
+.panel{border-radius:16px 16px 0 0;border-bottom:0;padding:16px 12px 14px;
+  background:radial-gradient(130px 150px at 100% 16%,rgba(96,146,255,.42),transparent 70%),var(--glass)}
+.panel-h{display:flex;align-items:center;gap:8px;padding:0 2px}
+.panel-h h2{font-size:14px;font-weight:500;margin-right:auto}
+.chips{display:flex;gap:6px;margin:16px 0 14px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border:0;border-radius:8px;background:rgba(255,255,255,.8);box-shadow:var(--sh);font-size:12px;white-space:nowrap}
+.pt{width:6px;height:6px;border-radius:50%;background:var(--node-ok);flex:none}
+.pt.r{background:var(--node-bad)} .pt.b{background:var(--c1)} .pt.n{background:#9aa0a8} .pt.k{background:var(--ink)}
+.unit{margin-top:8px;padding:10px;border-radius:12px;background:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.9)}
+.unit-h{display:grid;grid-template-columns:34px minmax(0,1fr) 28px;gap:10px;align-items:center}
+.unit-h>i{display:grid;place-items:center;width:34px;height:28px;border-radius:8px;background:var(--surface);box-shadow:var(--sh)}
+.unit-h b{display:block;font-size:13px;font-weight:500;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.unit-h b small{font-size:12px;font-weight:400;color:var(--ink-2)}
+.unit-h span{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2)}
+.unit-h .tile{width:28px;height:28px}
+.life{display:flex;gap:8px;margin-top:12px;font-size:12px}
+.life b{font-weight:400;color:var(--ink-2)}
+.track{position:relative;height:2px;margin:5px 0 14px;background:#cdd2d7;border-radius:2px}
+.track i{position:absolute;left:0;top:0;height:100%;border-radius:2px;background:var(--node-ok)}
+.track.r i{background:var(--node-bad)}
+.track i::after{content:"";position:absolute;right:-4px;top:2px;border:4px solid transparent;border-top-color:var(--ink);border-bottom:0}
+.mini{width:100%;border-collapse:collapse;background:var(--surface);border-radius:10px;overflow:hidden}
+.mini th{padding:6px 4px 2px;font-size:12px;font-weight:400;color:var(--ink-2);text-align:left}
+.mini td{padding:4px;font-size:12px;white-space:nowrap}
+.mini th:first-child,.mini td:first-child{padding-left:8px}
+.mini td:first-child{display:flex;align-items:center;gap:5px}
+.mini .no{color:var(--ink-2)}
+.done{display:inline-block;padding:0 6px;border-radius:5px;background:var(--ok);color:#fff;font-size:12px;font-weight:500;line-height:18px}
+.done.err{background:var(--bad)}
+.done.wait{background:var(--surface-2);color:var(--ink-2)}
+
+.float{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:644px}
+.tip{position:absolute;left:440px;top:138px;width:152px;padding:10px 12px 12px;border-radius:12px}
+.tip-h{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;align-items:center}
+.tip-h>i{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--ink);color:#fff}
+.tip-h b{display:block;font-size:12px;font-weight:500;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tip-h span{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2)}
+.tip .life{margin-top:10px}
+.tip button{display:block;width:100%;height:30px;border:0;border-radius:8px;background:rgba(255,255,255,.85);box-shadow:var(--sh);font-size:12px}
+.zoom{position:absolute;right:0;top:170px;display:grid;gap:6px;z-index:1}
+.zoom .tile{width:30px;height:30px;background:rgba(255,255,255,.6)}
+.charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-right:-18px}
+.cp{border-radius:16px 16px 0 0;border-bottom:0;padding:14px 16px 0}
+.cp:first-child{background:radial-gradient(160px 70px at 100% 0,rgba(110,200,120,.35),transparent 75%),var(--glass)}
+.cp:last-child{border-radius:16px 0 0 0;border-right:0;background:radial-gradient(160px 70px at 0 0,rgba(110,200,120,.35),transparent 75%),var(--glass)}
+.cp-h{display:flex;align-items:center;gap:8px}
+.cp-h h2{font-size:14px;font-weight:500;margin-right:auto}
+.cp-b{display:flex;align-items:flex-end;gap:16px;margin-top:10px}
+.cp-b strong{display:flex;align-items:center;gap:6px;font-size:25px;font-weight:500;line-height:1.1;white-space:nowrap}
+.cp-b strong small{font-size:12px;font-weight:400;color:var(--ink-2);margin-left:2px}
+.cp-b .slider{flex:1;min-width:0;max-width:150px;margin-left:auto}
+.cp-b .life{margin-top:0;justify-content:space-between}
+.cp-b .track{margin-bottom:6px}
+.graph{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;margin-top:10px;grid-template-rows:84px;padding-bottom:10px}
+.graph ol{display:flex;flex-direction:column;justify-content:space-between;margin:0;padding:0;list-style:none;font-size:12px;color:var(--ink-2);line-height:1}
+.graph svg{display:block;width:100%;height:84px;overflow:visible}
+.graph path,.graph line{vector-effect:non-scaling-stroke}
+
+a:focus-visible,button:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+.tile,.chip{transition:transform .15s}
+.tile:active,.chip:active{transform:scale(.95)}
+
+@media (max-width:1100px){
+  .app{margin:0;border-radius:0}
+  .bar{grid-template-columns:auto 1fr}
+  .tabs{grid-column:1 / -1;grid-row:2;overflow-x:auto;padding-bottom:2px}
+  .head{grid-template-columns:minmax(0,1fr) auto}
+  .kpis{grid-column:1 / -1;grid-row:2;justify-content:flex-start;flex-wrap:wrap;gap:16px 36px}
+  .stage{grid-template-columns:minmax(0,1fr);gap:12px;padding:0 16px 16px}
+  .panel{order:1;border-radius:16px;border-bottom:1px solid rgba(255,255,255,.85)}
+  .canvas{order:2;position:relative;inset:auto;height:440px;overflow-x:auto;overflow-y:hidden;border-radius:14px;border:1px solid var(--line);background:var(--bg)}
+  .canvas svg{margin-left:-250px}
+  .float{order:3;min-height:0;gap:12px}
+  .tip{position:relative;left:auto;top:auto;width:auto}
+  .zoom{display:none}
+  .charts{margin-right:0;gap:12px}
+  .cp,.cp:last-child{border-radius:16px;border:1px solid rgba(255,255,255,.85);padding-bottom:12px}
+}
+@media (max-width:680px){
+  .bar{padding:14px 16px 0}
+  .head{padding:14px 16px 16px;gap:14px}
+  .head-r .swap{display:none}
+  .charts{grid-template-columns:minmax(0,1fr)}
+  .cp-b{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion:reduce){ *{transition:none !important} }
+@media print{
+  html,body{background:#fff}
+  .app{margin:0;box-shadow:none;border-radius:0}
+  .glass,.panel,.cp{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid var(--line);box-shadow:none}
+  .unit,.cp{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15zM10 21h4"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.2-5.5 7-5.500s6.2 1.9 7 5.5"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H6M11 7l-5 5 5 5"/></symbol>
+  <symbol id="i-ne" viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></symbol>
+  <symbol id="i-se" viewBox="0 0 24 24"><path d="M7 7l10 10M17 9v8H9"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 9h15l-3-3M20 15H5l3 3"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><path d="M12 3l7.8 4.500v9L12 21l-7.8-4.500v-9z"/><circle cx="12" cy="12" r="2.6"/></symbol>
+  <symbol id="i-mark" viewBox="0 0 24 24"><path d="M7 4h10v16l-5-3.500L7 20zM10 9h4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.2"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-fit" viewBox="0 0 24 24"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></symbol>
+  <symbol id="i-tune" viewBox="0 0 24 24"><path d="M7 4v16M12 4v16M17 4v16M5 9h4M10 14h4M15 8h4"/></symbol>
+  <symbol id="i-bot" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="8" rx="2"/><path d="M8 12h2M14 12h2M11 10v4M13 10v4"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM14 3v4h4M10 12h5M10 16h5"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="bar">
+    <a class="logo" href="#">
+      <svg width="36" height="18" viewBox="0 0 36 18" aria-hidden="true"><path d="M0 0h9l4 18H4zM11 0h9l4 18h-9zM24 0h10l-6 18h-2z" fill="#2f66cf"/></svg>
+      <span><b>Vault</b><span>知識庫</span></span>
+    </a>
+    <nav class="tabs" aria-label="分頁">
+      <a class="on" href="#" aria-current="page">管線</a><a href="#">分析</a><a href="#">Skill</a><a href="#">編譯量</a><a href="#">腳本</a><a href="#">資產</a>
+    </nav>
+    <div class="bar-r">
+      <button class="tile" type="button" aria-label="搜尋"><svg class="i"><use href="#i-search"/></svg></button>
+      <button class="tile" type="button" aria-label="通知，有新項目"><svg class="i"><use href="#i-bell"/></svg><span class="pip"></span></button>
+      <button class="tile" type="button" aria-label="帳號"><svg class="i"><use href="#i-user"/></svg></button>
+    </div>
+  </header>
+
+  <div class="head">
+    <div class="title">
+      <button class="tile flat" type="button" aria-label="返回"><svg class="i"><use href="#i-back"/></svg></button>
+      <div><h1>知識庫管線</h1><p>№ 2026-10-02</p></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div><b>72<i class="tag"><svg class="i"><use href="#i-ne"/></svg></i></b><span>原料檔</span></div>
+        <span class="spark" aria-hidden="true"><i style="height:30%"></i><i style="height:36%"></i><i style="height:28%"></i><i style="height:44%"></i><i class="g" style="height:92%"></i><i class="g" style="height:100%"></i><i style="height:40%"></i><i style="height:52%"></i><i style="height:34%"></i></span></div>
+      <div class="kpi"><div><b>30<i class="tag"><svg class="i"><use href="#i-ne"/></svg></i></b><span>wiki 頁</span></div>
+        <span class="spark" aria-hidden="true"><i style="height:26%"></i><i style="height:40%"></i><i style="height:48%"></i><i style="height:38%"></i><i style="height:58%"></i><i style="height:46%"></i><i class="g" style="height:96%"></i><i class="g" style="height:100%"></i></span></div>
+      <div class="kpi"><div><b>345<i class="tag bad"><svg class="i"><use href="#i-se"/></svg></i></b><span>待處理</span></div>
+        <span class="spark" aria-hidden="true"><i style="height:44%"></i><i style="height:36%"></i><i class="r" style="height:92%"></i><i class="r" style="height:100%"></i><i style="height:34%"></i><i style="height:48%"></i><i style="height:56%"></i><i style="height:42%"></i><i style="height:60%"></i></span></div>
+    </div>
+    <div class="head-r">
+      <span class="swap">本機<svg class="i"><use href="#i-swap"/></svg><b>遠端</b></span>
+      <button class="tile flat" type="button" aria-label="設定"><svg class="i"><use href="#i-gear"/></svg></button>
+      <button class="tile" type="button" aria-label="書籤"><svg class="i"><use href="#i-mark"/></svg></button>
+    </div>
+  </div>
+
+  <div class="stage">
+    <!-- 流程圖：座標以 .stage 左上為原點、不縮放。x<274 會被左邊面板蓋住，y>450 會被底部圖表蓋住 -->
+    <div class="canvas scrollx" tabindex="0" role="img" aria-label="流程圖：三個來源資料夾經編譯節點接到 wiki 頁，再接到交付區；其中兩條連線為紅色，表示有待處理的錯誤">
+      <svg viewBox="0 0 1200 660" aria-hidden="true">
+        <defs>
+          <pattern id="pb" width="13" height="13" patternUnits="userSpaceOnUse"><rect width="13" height="13" fill="#9dbcf4"/><rect x="1" y="1" width="11.5" height="11.5" fill="#3f76de"/></pattern>
+          <pattern id="pg" width="11" height="11" patternUnits="userSpaceOnUse"><rect width="11" height="11" fill="#2f9e44"/><rect x="1.5" y="1.5" width="8" height="8" rx="1" fill="#143a1e"/></pattern>
+          <filter id="ns" x="-30%" y="-30%" width="170%" height="180%"><feDropShadow dx="3" dy="7" stdDeviation="5" flood-color="#566170" flood-opacity=".32"/></filter>
+          <g id="src"><rect width="114" height="101" rx="5" fill="#f3f5f8" stroke="#fff" stroke-width="1.5" filter="url(#ns)"/><rect x="5" y="5" width="104" height="91" fill="url(#pb)"/></g>
+          <g id="wiki"><rect width="56" height="56" rx="5" fill="#2a9440" filter="url(#ns)"/><rect x="6" y="6" width="44" height="44" fill="url(#pg)"/></g>
+          <g id="dev"><rect width="30" height="56" rx="5" fill="#fbfcfd" stroke="#fff" stroke-width="1.5" filter="url(#ns)"/><rect x="8" y="10" width="14" height="6" rx="1.5" fill="#c6ccd3"/><rect x="8" y="22" width="14" height="6" rx="1.5" fill="#c6ccd3"/><rect x="8" y="34" width="14" height="6" rx="1.5" fill="#1b1e22"/></g>
+          <g id="hub"><rect width="40" height="22" rx="7" fill="#2f9e44" filter="url(#ns)"/><path d="M8 11h24" stroke="#bfe8c7" stroke-width="2" stroke-linecap="round"/><circle cx="20" cy="11" r="3" fill="#143a1e"/></g>
+          <g id="alarm"><rect width="22" height="22" rx="6" fill="#fff" filter="url(#ns)"/><path d="M11 6l6 10H5z" fill="#e0463c"/></g>
+          <g id="lot"><rect width="72" height="22" rx="4" fill="#fbfcfd" stroke="#fff" stroke-width="1.5" filter="url(#ns)"/><g fill="#c6ccd3"><rect x="6" y="6" width="17" height="10" rx="1.5"/><rect x="27.5" y="6" width="17" height="10" rx="1.5"/><rect x="49" y="6" width="17" height="10" rx="1.5"/></g></g>
+        </defs>
+
+        <!-- 連線：綠＝正常，紅＝異常 -->
+        <g fill="none" stroke="#2f9e44" stroke-width="1.5">
+          <path d="M376 98H456Q470 98 470 112V660"/>
+          <path d="M560 98H484Q470 98 470 112"/>
+          <path d="M674 98H716Q730 98 730 112V286Q730 300 744 300"/>
+          <path d="M274 196H800"/>
+          <path d="M398 149V221"/>
+          <path d="M418 232H660"/>
+          <path d="M610 232Q596 232 596 246V286Q596 300 610 300"/>
+          <path d="M274 300H916V340"/>
+          <path d="M342 300V330M518 300V346M593 300V346M668 300V346M788 300V346"/>
+          <path d="M952 98H1018"/>
+          <path d="M852 300V660"/>
+        </g>
+        <g fill="none" stroke="#e0463c" stroke-width="1.5">
+          <path d="M838 74H818Q806 74 806 86V184Q806 196 818 196H1200"/>
+          <path d="M1054 100H1076Q1088 100 1088 112V196"/>
+          <path d="M1020 346V312Q1020 300 1032 300H1200"/>
+        </g>
+        <g fill="#1b1e22"><rect x="449" y="192" width="12" height="8" rx="2"/><rect x="690" y="192" width="12" height="8" rx="2"/><rect x="960" y="192" width="12" height="8" rx="2"/><rect x="380" y="296" width="12" height="8" rx="2"/><rect x="846" y="398" width="12" height="8" rx="2"/><rect x="464" y="418" width="12" height="8" rx="2"/></g>
+        <rect x="724" y="134" width="12" height="14" rx="3" fill="#2f9e44"/><rect x="1082" y="140" width="12" height="14" rx="3" fill="#e0463c"/>
+
+        <!-- 節點 -->
+        <use href="#src" x="262" y="48"/><use href="#src" x="560" y="48"/><use href="#src" x="838" y="48"/><use href="#src" x="1110" y="48"/>
+        <use href="#dev" x="764" y="70"/><use href="#dev" x="1018" y="72"/>
+        <path d="M1033 80l6 10h-12z" fill="#e0463c"/>
+        <use href="#hub" x="378" y="221"/><use href="#hub" x="660" y="221"/>
+        <use href="#alarm" x="436" y="221"/>
+        <g filter="url(#ns)"><rect x="290" y="330" width="104" height="36" rx="5" fill="#2a9440"/><path d="M300 348h84" stroke="#eaf7ec" stroke-width="5" stroke-dasharray="9 5"/></g>
+        <use href="#wiki" x="490" y="346"/><use href="#wiki" x="565" y="346"/><use href="#wiki" x="640" y="346"/><use href="#wiki" x="760" y="346"/><use href="#wiki" x="992" y="346"/>
+        <use href="#lot" x="880" y="340"/><use href="#lot" x="880" y="370"/>
+
+        <!-- 端點 -->
+        <g fill="#2f9e44" stroke="#fff" stroke-width="1.5"><circle cx="376" cy="98" r="3.5"/><circle cx="560" cy="98" r="3.5"/><circle cx="674" cy="98" r="3.5"/><circle cx="952" cy="98" r="3.5"/><circle cx="398" cy="149" r="3.5"/><circle cx="518" cy="346" r="3.5"/><circle cx="593" cy="346" r="3.5"/><circle cx="668" cy="346" r="3.5"/><circle cx="788" cy="346" r="3.5"/><circle cx="342" cy="330" r="3.5"/></g>
+        <g fill="#e0463c" stroke="#fff" stroke-width="1.5"><circle cx="838" cy="74" r="3.5"/><circle cx="1054" cy="100" r="3.5"/><circle cx="1020" cy="346" r="3.5"/></g>
+
+        <!-- 標籤 -->
+        <g text-anchor="middle">
+          <text x="617" y="38">1-raw/日本</text><text x="895" y="38">1-raw/NCCU</text><text x="1150" y="38">1-raw/chats</text>
+          <text x="1033" y="62">sync.sh</text>
+          <text x="342" y="384">wiki-compile</text>
+          <text x="518" y="420">日本旅遊</text><text x="593" y="420">面試準備</text><text x="668" y="420">策略管理</text><text x="788" y="420">Github</text>
+          <text x="916" y="410">3-output</text><text x="1020" y="420">學習筆記</text>
+        </g>
+      </svg>
+    </div>
+
+    <aside class="panel glass">
+      <div class="panel-h">
+        <h2>執行紀錄</h2>
+        <button class="tile" type="button" aria-label="搜尋紀錄"><svg class="i"><use href="#i-search"/></svg></button>
+        <button class="tile" type="button" aria-label="在圖上定位"><svg class="i"><use href="#i-pin"/></svg></button>
+      </div>
+      <div class="chips" role="group" aria-label="篩選">
+        <button class="chip" type="button" aria-pressed="true">全部</button>
+        <button class="chip" type="button" aria-pressed="false"><i class="pt"></i>可用</button>
+        <button class="chip" type="button" aria-pressed="false"><i class="pt r"></i>執行中</button>
+      </div>
+
+      <section class="unit">
+        <div class="unit-h"><i><svg class="i"><use href="#i-bot"/></svg></i><div><b>wiki-compile <small>№52561</small></b><span><i class="pt"></i>可用</span></div><button class="tile" type="button" aria-label="收合"><svg class="i"><use href="#i-down"/></svg></button></div>
+        <p class="life">完成度<b>72%</b></p>
+        <div class="track" role="img" aria-label="完成度 72%"><i style="width:72%"></i></div>
+        <table class="mini">
+          <thead><tr><th>來源</th><th>編號</th><th>頁數</th><th>狀態</th></tr></thead>
+          <tbody>
+            <tr><td><i class="pt"></i>日本</td><td class="no">№542511</td><td>120</td><td><span class="done">完成</span></td></tr>
+            <tr><td><i class="pt n"></i>NCCU</td><td class="no">№674314</td><td>320</td><td><span class="done">完成</span></td></tr>
+            <tr><td><i class="pt b"></i>chats</td><td class="no">№753215</td><td>54</td><td><span class="done err">錯誤</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="unit">
+        <div class="unit-h"><i><svg class="i"><use href="#i-bot"/></svg></i><div><b>raw-capture <small>№98645</small></b><span><i class="pt r"></i>執行中</span></div><button class="tile" type="button" aria-label="收合"><svg class="i"><use href="#i-down"/></svg></button></div>
+        <p class="life">完成度<b>34%</b></p>
+        <div class="track r" role="img" aria-label="完成度 34%"><i style="width:34%"></i></div>
+        <table class="mini">
+          <thead><tr><th>來源</th><th>編號</th><th>頁數</th><th>狀態</th></tr></thead>
+          <tbody>
+            <tr><td><i class="pt"></i>日本</td><td class="no">№984532</td><td>244</td><td><span class="done wait">等待</span></td></tr>
+            <tr><td><i class="pt k"></i>面試</td><td class="no">№745888</td><td>20</td><td><span class="done">完成</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="unit">
+        <div class="unit-h"><i><svg class="i"><use href="#i-bot"/></svg></i><div><b>wiki-healthcheck <small>№57215</small></b><span><i class="pt"></i>可用</span></div><button class="tile" type="button" aria-label="展開"><svg class="i"><use href="#i-up"/></svg></button></div>
+      </section>
+      <section class="unit">
+        <div class="unit-h"><i><svg class="i"><use href="#i-bot"/></svg></i><div><b>wiki-output <small>№28941</small></b><span><i class="pt r"></i>執行中</span></div><button class="tile" type="button" aria-label="展開"><svg class="i"><use href="#i-up"/></svg></button></div>
+      </section>
+    </aside>
+
+    <div class="float">
+      <div class="tip glass">
+        <div class="tip-h"><i><svg class="i"><use href="#i-file"/></svg></i><div><b>wiki_index.py</b><span><i class="pt"></i>可用</span></div></div>
+        <p class="life">完成度<b>54%</b></p>
+        <div class="track" role="img" aria-label="完成度 54%"><i style="width:54%"></i></div>
+        <button type="button">重建索引</button>
+      </div>
+      <div class="zoom" aria-label="縮放">
+        <button class="tile" type="button" aria-label="放大"><svg class="i"><use href="#i-plus"/></svg></button>
+        <button class="tile" type="button" aria-label="縮小"><svg class="i"><use href="#i-minus"/></svg></button>
+        <button class="tile" type="button" aria-label="符合畫面"><svg class="i"><use href="#i-fit"/></svg></button>
+      </div>
+
+      <div class="charts">
+        <article class="cp glass">
+          <div class="cp-h"><h2>本週編譯量</h2><button class="tile" type="button" aria-label="調整"><svg class="i"><use href="#i-tune"/></svg></button><button class="tile" type="button" aria-label="開啟"><svg class="i"><use href="#i-ne"/></svg></button></div>
+          <div class="cp-b">
+            <strong><i class="tag"><svg class="i"><use href="#i-ne"/></svg></i>5,867<small>／行</small></strong>
+            <div class="slider"><p class="life">wiki<b>84%</b></p><div class="track" role="img" aria-label="wiki 佔 84%"><i style="width:84%"></i></div></div>
+          </div>
+          <div class="graph" role="img" aria-label="本週每日編譯行數長條圖，週四最高">
+            <ol aria-hidden="true"><li>6k</li><li>5k</li><li>4k</li></ol>
+            <svg viewBox="0 0 300 84" preserveAspectRatio="none" aria-hidden="true">
+              <g stroke="#d6dade" stroke-width="1"><line x1="0" y1="6" x2="300" y2="6"/><line x1="0" y1="42" x2="300" y2="42"/><line x1="0" y1="78" x2="300" y2="78"/></g>
+              <g fill="#2f9e44"><rect x="10" y="30" width="3" height="54"/><rect x="48" y="40" width="3" height="44"/><rect x="86" y="24" width="3" height="60"/><rect x="124" y="8" width="3" height="76"/><rect x="162" y="34" width="3" height="50"/><rect x="200" y="20" width="3" height="64"/><rect x="238" y="12" width="3" height="72"/><rect x="276" y="28" width="3" height="56"/></g>
+              <g fill="#fff"><rect x="17" y="46" width="3" height="38"/><rect x="55" y="52" width="3" height="32"/><rect x="93" y="44" width="3" height="40"/><rect x="131" y="30" width="3" height="54"/><rect x="169" y="50" width="3" height="34"/><rect x="207" y="38" width="3" height="46"/><rect x="245" y="26" width="3" height="58"/><rect x="283" y="44" width="3" height="40"/></g>
+            </svg>
+          </div>
+        </article>
+        <article class="cp glass">
+          <div class="cp-h"><h2>每日新增頁</h2><button class="tile" type="button" aria-label="調整"><svg class="i"><use href="#i-tune"/></svg></button><button class="tile" type="button" aria-label="開啟"><svg class="i"><use href="#i-ne"/></svg></button></div>
+          <div class="cp-b">
+            <strong><i class="tag"><svg class="i"><use href="#i-ne"/></svg></i>125<small>／頁</small></strong>
+            <div class="slider"><p class="life">已處理<b>62%</b></p><div class="track" role="img" aria-label="已處理 62%"><i style="width:62%"></i></div></div>
+          </div>
+          <div class="graph" role="img" aria-label="每日新增頁數折線，後半週上升">
+            <ol aria-hidden="true"><li>140</li><li>100</li><li>60</li></ol>
+            <svg viewBox="0 0 300 84" preserveAspectRatio="none" aria-hidden="true">
+              <g stroke="#d6dade" stroke-width="1"><line x1="0" y1="6" x2="300" y2="6"/><line x1="0" y1="42" x2="300" y2="42"/><line x1="0" y1="78" x2="300" y2="78"/></g>
+              <path d="M0 70C30 68 40 60 60 62S90 74 110 66 140 40 160 42 190 60 210 58 250 46 300 50" fill="none" stroke="#fff" stroke-width="2"/>
+              <path d="M0 78C30 74 50 66 70 64S100 52 120 46 150 20 168 12 200 30 220 26 260 34 300 18" fill="none" stroke="#2f9e44" stroke-width="2"/>
+            </svg>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

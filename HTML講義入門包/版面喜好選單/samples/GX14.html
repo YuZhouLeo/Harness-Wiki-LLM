@@ -1,0 +1,66 @@
+<!doctype html><!-- 版面喜好選單範例 GX14｜描邊膠囊開關｜來源：講師範例庫 output範例/元件庫/GX14-描邊膠囊開關.html；原始來源 https://github.com/uiverse-io/galaxy（Toggle-switches/Shoh2008_light-shrimp-88.html），作者 Shoh2008，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX14 描邊膠囊開關（Flat outlined toggle with a half-width pill knob）
+  來源：https://github.com/uiverse-io/galaxy　Toggle-switches/Shoh2008_light-shrimp-88.html
+  原作者：Shoh2008　授權：MIT（Copyright 2023 Uiverse.io）　commit adbd2ad
+  （替代入選的 The-Best-Codes_bright-rabbit-33：那支是灰軌綠底白圓鈕的標準開關，和元件庫的 VU03 開關同一種；
+    下一個備選 iSweat-exe_unlucky-wasp-16 也只是把 VU03 改成方角，一樣太像，所以再往下取這支。）
+  移植：原作是白底粗框（4px）的扁平開關，圓鈕是佔一半寬的膠囊，開啟時外框與膠囊一起變成薄荷綠，0.2 秒滑動。
+    原作的 checkbox 用 display:none，鍵盤按不到，改成視覺隱藏＋role="switch"＋focus-visible 外框；
+    關閉色由幾乎看不見的 #f2f2f2 加深成 P11 細線色與灰膠囊，開啟色換成 P11 強調色；
+    改成匯出選項三列；補 prefers-reduced-motion（不滑動，直接切換）。
+  2026-10-09 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>描邊膠囊開關</title><style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--bg);color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.wrap{width:min(400px,100%)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.hd{display:flex;justify-content:space-between;align-items:baseline;padding:10px 16px;border-bottom:1px solid var(--line)}
+.hd b{font-size:15px}
+.hd span{font-size:12px;color:var(--ink-2)}
+.row{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid var(--surface-2)}
+.row:last-child{border:0}
+.nm{flex:1;min-width:0;cursor:pointer}
+.nm small{display:block;font-size:12px;color:var(--ink-2)}
+.cap{margin-top:12px;font-size:12px;color:var(--ink-2);text-align:center}
+
+/* ── 原作開關（配色換成 P11 變數） ── */
+.checkbox-wrapper-9{flex:none;font-size:15px;position:relative}
+.checkbox-wrapper-9 .tgl{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.checkbox-wrapper-9 .tgl + .tgl-btn{
+  outline:0;display:block;width:4em;height:2em;position:relative;cursor:pointer;user-select:none;-webkit-user-select:none;
+  box-sizing:border-box;
+}
+.checkbox-wrapper-9 .tgl + .tgl-btn:after{position:relative;display:block;content:"";width:50%;height:100%;left:0}
+.checkbox-wrapper-9 .tgl:checked + .tgl-btn:after{left:50%}
+.checkbox-wrapper-9 .tgl-flat + .tgl-btn{
+  padding:2px;transition:border-color .2s ease;background:var(--surface);
+  border:4px solid var(--line);border-radius:2em;
+}
+.checkbox-wrapper-9 .tgl-flat + .tgl-btn:after{
+  transition:left .2s ease,background-color .2s ease;background:color-mix(in srgb,var(--ink-2) 35%,var(--surface));border-radius:1em;
+}
+.checkbox-wrapper-9 .tgl-flat:checked + .tgl-btn{border:4px solid var(--accent)}
+.checkbox-wrapper-9 .tgl-flat:checked + .tgl-btn:after{left:50%;background:var(--accent)}
+.checkbox-wrapper-9 .tgl:focus-visible + .tgl-btn{outline:2px solid var(--accent);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){
+  .checkbox-wrapper-9 .tgl-flat + .tgl-btn,.checkbox-wrapper-9 .tgl-flat + .tgl-btn:after{transition:none}
+}
+</style></head><body><div class="wrap">
+<div class="card">
+  <div class="hd"><b>匯出選項</b><span>使用習慣分析.html</span></div>
+  <div class="row"><label class="nm" for="t1">附上圖片<small>壓到 500KB 以下再放進去</small></label><span class="checkbox-wrapper-9"><input type="checkbox" id="t1" class="tgl tgl-flat" role="switch" checked><label for="t1" class="tgl-btn" aria-hidden="true"></label></span></div>
+  <div class="row"><label class="nm" for="t2">附上來源清單<small>寫進 &lt;head&gt; 的 sources meta</small></label><span class="checkbox-wrapper-9"><input type="checkbox" id="t2" class="tgl tgl-flat" role="switch"><label for="t2" class="tgl-btn" aria-hidden="true"></label></span></div>
+  <div class="row"><label class="nm" for="t3">同時匯出 PDF<small>同名、同資料夾</small></label><span class="checkbox-wrapper-9"><input type="checkbox" id="t3" class="tgl tgl-flat" role="switch"><label for="t3" class="tgl-btn" aria-hidden="true"></label></span></div>
+</div>
+<div class="cap">開啟時外框和膠囊一起變色，膠囊滑到右半邊</div>
+</div>
+</body></html>

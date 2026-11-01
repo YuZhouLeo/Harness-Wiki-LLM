@@ -1,0 +1,104 @@
+<!doctype html><!-- 版面喜好選單範例 GX11｜拇指按讚按鈕｜來源：講師範例庫 output範例/元件庫/GX11-拇指按讚按鈕.html；原始來源 https://github.com/uiverse-io/galaxy（Buttons/ilkhoeri_honest-panther-87.html），作者 ilkhoeri，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX11 拇指按讚按鈕（Like icon button: thumb zooms, tilts and wobbles on hover）
+  來源：https://github.com/uiverse-io/galaxy　Buttons/ilkhoeri_honest-panther-87.html
+  原作者：ilkhoeri　授權：MIT（Copyright 2023 Uiverse.io）　commit adbd2ad
+  移植：原作只有一顆圖示按鈕，懸停時拇指放大、左右擺、袖口錯開，拇指外形也跟著鼓起再回復。改成說明頁底部的「有幫助嗎？」回饋列，
+    點擊切換已按讚（aria-pressed、拇指實心、人數＋1，再按取消；人數欄固定寬，按鈕不會被推動）。原作的藍色換成 P11 強調色；動畫路徑照原作，
+    時長由 1 秒收到 0.8 秒；鍵盤聚焦也會播放；補 focus-visible 外框與 prefers-reduced-motion（只留顏色變化）。
+  2026-10-09 由子代理移植成純 HTML／CSS（加少量原生 JS）
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>拇指按讚按鈕</title><style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--bg);color:var(--ink);font:14px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.wrap{width:min(420px,100%)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.body{padding:14px 18px 6px}
+h1{margin:0 0 6px;font-size:16px}
+ol{margin:0;padding-left:1.4em;color:var(--ink-2)}
+ol li{margin:2px 0}
+code{font-family:"Cascadia Mono",Consolas,Menlo,monospace;font-size:13px;background:var(--surface-2);padding:0 4px;border-radius:3px;color:var(--ink)}
+.fb{display:flex;align-items:center;gap:12px 20px;margin-top:12px;padding:12px 18px;border-top:1px solid var(--line)}
+.fb .q{flex:1;font-weight:500}
+.cnt{font-size:12px;color:var(--ink-2);min-width:6.5em}
+.cap{margin-top:12px;font-size:12px;color:var(--ink-2);text-align:center}
+
+/* ── 原作按鈕（配色換成 P11 變數） ── */
+.action_has{
+  --sz:1rem;
+  flex:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  height:calc(var(--sz) * 2.5);width:calc(var(--sz) * 2.5);padding:.4rem .5rem;
+  border-radius:.375rem;border:1px solid color-mix(in srgb,var(--ink-2) 55%,var(--surface));
+  background:var(--surface);color:var(--ink-2);
+}
+.action_has [data-icon]{display:flex}
+.action_has:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.has_liked svg{
+  overflow:visible;height:calc(var(--sz) * 1.75);width:calc(var(--sz) * 1.75);
+  --ease:cubic-bezier(0.5,0,0.25,1);--zoom-from:1.75;--zoom-via:0.75;--zoom-to:1;
+  --duration:.8s;
+}
+.has_liked:is(:hover,:focus-visible){transition:border-color var(--duration) var(--ease);border-color:var(--accent)}
+.has_liked:is(:hover,:focus-visible) svg{fill:color-mix(in srgb,var(--accent) 50%,transparent);color:var(--accent)}
+.has_liked[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.has_liked[aria-pressed="true"] svg{color:var(--accent);fill:var(--accent)}
+.has_liked:is(:hover,:focus-visible) [data-d="thumb"]{animation:has-liked-thumb var(--duration) var(--ease) forwards}
+.has_liked:is(:hover,:focus-visible) [data-d="sleeves"]{animation:has-liked-sleeves var(--duration) var(--ease) forwards}
+@keyframes has-liked-thumb{
+  33.333%{transform:rotate(-20deg) translate(1px,2px) scale(var(--zoom-from))}
+  66.666%{
+    transform:rotate(20deg) translate(2px,-2px) scale(var(--zoom-via));
+    d:path("m8.05,11.99c0-.84.28-1.07,1.2-1.25,1.6-.31,2.3-.64,2.9-1.09,0,0,1.64-1.31,2.21-3.11,1.12-3.59,2.11-4.85,3.72-4.85,2.27,0,2.96,2.22,2.55,3.54-.6,1.97-3.81,4.09-3.94,4.99-.07.49.76.72,1.16.72h2.5c1.2,0,2.2,1,2.2,2.2l-1.1,5.6c-.3,1.5-1.02,2.23-2.2,2.2h-7.6c-2,0-3.6-1.6-3.6-3.6v-5.35Z");
+  }
+  99.999%{transform:rotate(0deg) translate(0px,0px) scale(var(--zoom-to))}
+}
+@keyframes has-liked-sleeves{
+  33.333%{transform:rotate(10deg) translate(6px,-2px) scale(var(--zoom-from))}
+  66.666%{transform:rotate(-10deg) translate(-6px,0px) scale(var(--zoom-via))}
+  99.999%{transform:rotate(0deg) translate(0px,0px) scale(var(--zoom-to))}
+}
+@media (prefers-reduced-motion:reduce){
+  .has_liked path{animation:none!important}
+  .has_liked{transition:none!important}
+}
+</style></head><body><div class="wrap">
+<article class="card">
+  <div class="body">
+    <h1>錄音轉逐字稿：三個步驟</h1>
+    <ol>
+      <li>把音檔放進 <code>_inbox/</code></li>
+      <li>執行 <code>轉錄.ps1</code>，選擇中文或中日夾雜</li>
+      <li>用術語表校正專有名詞，再存進 1-raw</li>
+    </ol>
+  </div>
+  <div class="fb">
+    <span class="q" id="q">這頁有幫到你嗎？</span>
+    <button class="action_has has_liked" id="like" type="button" aria-pressed="false" aria-label="有幫助" aria-describedby="q">
+      <span data-icon=""><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+        <path d="m8.05,11.99c0-.84.28-1.07,1.2-1.25,1.6-.31,2.35-.74,3.14-1.54,1.19-1.21,1.58-1.97,2.18-3.24.66-1.69,1.55-2.82,3.04-2.76.9.03,2.33.8,1.67,2.72-.31.9-1.98,3.61-2.23,4.23-.18.46.4.8.8.8h2.5c1.2,0,2.2,1,2.2,2.2l-1.1,5.6c-.3,1.5-1.02,2.23-2.2,2.2h-7.6c-2,0-3.6-1.6-3.6-3.6v-5.35Z" data-d="thumb"></path>
+        <path d="m5.4,19.9c0,.6-.5,1.1-1.1,1.1h-1c-1,0-1.9-.9-1.9-1.9v-6.3c0-1,.9-1.9,1.9-1.9h.9c.7,0,1.2.6,1.2,1.2v7.7Z" data-d="sleeves"></path>
+      </svg></span>
+    </button>
+    <span class="cnt" id="cnt" aria-live="polite">12 人覺得有用</span>
+  </div>
+</article>
+<div class="cap">滑過或聚焦：拇指放大、左右擺一下；點一下切換已按讚</div>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('like'),cnt=document.getElementById('cnt'),base=12;
+  btn.addEventListener('click',function(){
+    var on=btn.getAttribute('aria-pressed')!=='true';
+    btn.setAttribute('aria-pressed',on?'true':'false');
+    cnt.textContent=(on?base+1:base)+' 人覺得有用';
+  });
+})();
+</script>
+</body></html>

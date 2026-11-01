@@ -1,0 +1,43 @@
+<!doctype html>
+<!-- 版面喜好選單範例 VU07｜邊框光束卡片｜來源：講師範例庫 output範例/元件庫/VU07-邊框光束卡片.html；原始來源 https://github.com/Ashutoshx7/VengeanceUI（src/components/ui/border-beam.tsx），作者 None，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  VU07 邊框光束卡片（BorderBeam）
+  來源：https://github.com/Ashutoshx7/VengeanceUI　src/components/ui/border-beam.tsx
+  原作者：原檔未標　授權：MIT
+  移植：原作預設橘到紫、15 秒一圈；改成琥珀到藍，6 秒方便預覽；styled-jsx 與 Tailwind 任意值改純 CSS（offset-path＋mask-composite）；reduced-motion 時光束停在起點。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>邊框光束卡片</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f6f7f9;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;color:#1f2937}
+.card{position:relative;width:290px;padding:20px 22px;background:#fff;border:1px solid #e4e4e7;border-radius:12px;overflow:hidden}
+.card h3{margin:0 0 4px;font-size:16px}
+.card p{margin:0;font-size:13px;color:#4b5563;line-height:1.6}
+.card b{display:block;margin-top:10px;font-size:26px;color:#16a34a}
+.beam{position:absolute;inset:0;border-radius:inherit;border:2px solid transparent;
+ -webkit-mask:linear-gradient(transparent,transparent),linear-gradient(#fff,#fff);
+ -webkit-mask-clip:padding-box,border-box;-webkit-mask-composite:source-in;
+ mask:linear-gradient(transparent,transparent),linear-gradient(#fff,#fff);
+ mask-clip:padding-box,border-box;mask-composite:intersect;pointer-events:none}
+.beam::after{content:"";position:absolute;width:120px;aspect-ratio:1;
+ background:linear-gradient(to left,#f59e0b,#2563eb,transparent);
+ offset-anchor:90% 50%;offset-path:rect(0 auto auto 0 round 120px);
+ animation:beam 6s linear infinite}
+@keyframes beam{to{offset-distance:100%}}
+@media (prefers-reduced-motion:reduce){.beam::after{animation:none;offset-distance:0%}}
+</style>
+</head>
+<body>
+<div class="card">
+<h3>查核結果</h3>
+<p>12 項數字全部對得上來源，最後比對於今天上午完成。</p>
+<b>通過</b>
+<div class="beam"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,1100 @@
+<!doctype html>
+<!-- 版面喜好選單範例 F3｜雜誌拼貼講義｜來源：講師範例庫 output範例/網頁設計風格/F3-編輯拼貼年表.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F3 雜誌編輯×拼貼｜日本史：律令制國家</title>
+<style>
+/* ===== 風格本體：所有規則都收在 .style 底下。照 3-output/NCCU/製作規範.md：
+   淺色紙、系統字型、全部靜態、一般文流、高度跟著內容，列印是無縫直式（182×243mm，文字跨頁接續） ===== */
+:root { color-scheme: light; }
+body { margin: 0; background: #e7e2d6; }
+.style {
+  --paper: #fbf8f1;
+  --slip: #fffdf8;
+  --ink: #221f1a;
+  --ink-2: #5a5347;
+  --hair: rgba(34,31,26,.24);
+  /* 每個顏色綁一件事，整頁不換 */
+  --tape: rgba(203,190,158,.9);     /* 米色膠帶＝講義原文（逐字） */
+  --c-teacher: #b5271d;             /* 朱紅＝老師口述、紅筆 */
+  --c-extra: #7a4e12;               /* 牛皮棕＝補充（不是老師的話） */
+  --kraft: #efe0c2;
+  --c-tang: #1f4f8f;                /* 靛藍章＝仿唐 */
+  --c-key: #ffe169;                 /* 螢光黃＝必記的詞 */
+  --c-next: #4f6157;                /* 灰綠虛線＝本堂沒講 */
+  --sans: "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+  --serif: Georgia, "Songti TC", "PMingLiU", "Noto Serif TC", serif;
+  --kai: "BiauKai", "DFKai-SB", "Kaiti TC", "KaiTi", serif;
+  color: var(--ink);
+  font: 400 14.5px/1.6 var(--sans);
+  text-spacing-trim: space-first;
+}
+.style *, .style *::before, .style *::after { box-sizing: border-box; }
+.style h1, .style h2, .style h3, .style h4 { margin: 0; line-height: 1.3; text-wrap: balance; }
+.style p { margin: 0; text-wrap: pretty; }
+.style ul, .style ol { margin: 0; padding: 0; list-style: none; }
+.style a { color: inherit; text-underline-offset: 3px; }
+
+/* 工具列：只在螢幕上出現 */
+.style .bar { width: 182mm; max-width: 100%; margin: 0 auto; padding: 12px 8mm 0; display: flex; align-items: center; gap: 12px; font-size: 13.5px; color: var(--ink-2); }
+.style .bar button { font: inherit; font-weight: 700; color: #fff; background: var(--ink); border: 0; border-radius: 999px; padding: 7px 18px; cursor: pointer; }
+.style .bar button:focus-visible, .style a:focus-visible { outline: 2px solid var(--c-tang); outline-offset: 2px; }
+
+/* 紙：螢幕上寬 182mm、左右留白 8mm，跟 @page 一樣（內容寬 166mm），所以螢幕上的換行跟 PDF 一致 */
+.style .sheet { width: 182mm; max-width: 100%; margin: 12px auto 0; padding: 4mm 8mm 8mm; background: var(--paper); }
+
+/* ---------- 雜誌的骨架：刊頭、明體大標、導言、雙線欄頭、欄間細線 ---------- */
+.style .mast { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 16px; padding: 5px 0; font-size: 13.5px; color: var(--ink-2);
+  border-top: 3px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.style .mast b { color: var(--ink); }
+.style .hero { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 26px; padding: 18px 0 16px; }
+.style .hero h1 { font: 700 62px/1.16 var(--serif); }
+.style .hero .sub { margin-top: 8px; font: 700 17px/1.5 var(--serif); }
+.style .lead { margin-top: 12px; font-size: 15.5px; line-height: 1.78; }
+.style .lead::first-letter { float: left; font: 700 54px/.92 var(--serif); padding: 5px 9px 0 0; }
+.style .range { font: 400 40px/1 var(--serif); font-variant-numeric: lining-nums; white-space: nowrap; }
+.style .range i { font-style: normal; color: var(--ink-2); padding: 0 4px; }
+.style .cap { font-size: 13.5px; color: var(--ink-2); line-height: 1.55; }
+
+/* 讀之前先記三個詞：一張方格紙 */
+.style .gridpaper { position: relative; margin-top: 14px; padding: 12px 14px 14px; transform: rotate(.7deg); background: var(--slip);
+  border: 1px solid var(--hair); box-shadow: 2px 3px 0 rgba(60,45,20,.09); color: var(--ink); }
+.style .gridpaper > :not(svg) { position: relative; }
+/* 格線：inline SVG 的實線（<use> 重複一組線），匯出 PDF 後仍是向量細線。漸層鋪的格線在 PDF 裡會糊掉或缺線 */
+.style .defs { position: absolute; width: 0; height: 0; }
+.style svg.grid { position: absolute; left: 0; top: 0; width: 100%; height: 100%; color: var(--ink); opacity: .2; }
+.style .gridpaper svg.grid { color: var(--c-tang); opacity: .22; }
+.style .gridpaper h3 { font: 400 17px/1.4 var(--kai); margin-bottom: 4px; }
+.style .gridpaper dl { margin: 0; display: grid; gap: 7px; }
+.style .gridpaper dt { font: 700 18px/1.3 var(--serif); }
+.style .gridpaper dd { margin: 0; font-size: 14px; line-height: 1.55; }
+
+/* 圖例 */
+.style .legend { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px 16px; padding: 9px 0 10px; font-size: 14px; line-height: 1.45;
+  border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.style .legend li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 8px; align-items: center; }
+.style .legend b { display: block; }
+.style .legend .sw { height: 16px; }
+.style .legend .sw.src { background: var(--tape); transform: rotate(-3deg); }
+.style .legend .sw.tch { background: rgba(200,70,55,.6); transform: rotate(-3deg); }
+.style .legend .sw.ext { background: var(--kraft); }
+.style .legend .sw.key { height: 11px; background: var(--c-key); }
+.style .legend .sw.tng { height: auto; }
+.style .legend .sw.nxt { border: 1.5px dashed var(--c-next); }
+
+/* 手繪記號 */
+.style .hl { box-shadow: inset 0 -.6em 0 var(--c-key); padding: 0 1px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.style .circ { position: relative; display: inline-block; padding: 0 .4em; color: var(--c-teacher); font-weight: 700; }
+.style .circ svg { position: absolute; left: -2px; top: -4px; width: calc(100% + 4px); height: calc(100% + 8px); overflow: visible; }
+.style .circ path, .style .pen { fill: none; stroke: var(--c-teacher); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.style .tang { display: inline-block; font-size: 13px; font-weight: 700; line-height: 1.5; color: var(--c-tang); border: 1.5px solid var(--c-tang); border-radius: 3px; padding: 0 6px; transform: rotate(-2.5deg); white-space: nowrap; }
+.style .star { color: var(--c-teacher); }
+.style .ts { font: 13px/1 Consolas, "SF Mono", Menlo, monospace; color: var(--ink-2); white-space: nowrap; }
+.style .yr { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* 時代軸 */
+.style .axis { padding: 14px 0 18px; }
+.style .axis h2 { font: 700 15px/1.3 var(--sans); margin-bottom: 20px; }
+.style .axis h2 span { font-weight: 400; color: var(--ink-2); }
+.style .axis ol { position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.style .axis li { padding: 8px 8px 9px; border-left: 1px solid var(--hair); font-size: 14px; line-height: 1.45; color: var(--ink-2); }
+.style .axis li:first-child { border-left: 0; }
+.style .axis li b { display: block; font: 700 17px/1.3 var(--serif); color: var(--ink); white-space: nowrap; }
+.style .axis li em { display: block; font-style: normal; font-variant-numeric: tabular-nums; }
+.style .axis li.now { background: var(--slip); color: var(--ink); }
+.style .axis li.now span { font-weight: 700; }
+.style .axis .brk { position: absolute; left: calc(100% / 7 * 3 - 5px); width: calc(100% / 7 * 2 + 10px); top: -9px; height: calc(100% + 18px); overflow: visible; }
+.style .axis .brk path { fill: none; stroke: var(--ink); stroke-width: 1.7; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.style .axis .tag { position: absolute; left: calc(100% / 7 * 3 + 2px); top: -31px; font: 400 17px/1.2 var(--kai); }
+
+/* 正文列：左邊內容、右邊一整欄「我的筆記」 */
+.style .blk { display: grid; grid-template-columns: minmax(0, 1fr) 32mm; }
+.style .blk > .main { min-width: 0; padding: 0 16px 20px 0; }
+.style .note { position: relative; border-left: 1px solid var(--ink); padding: 8px 0 0 8px; font-size: 13px; color: var(--ink-2); }
+.style .note span { position: relative; background: var(--paper); padding: 1px 5px 1px 0; }
+.style .sec { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; padding-top: 13px; margin-bottom: 14px;
+  background: linear-gradient(var(--ink), var(--ink)) 0 0 / 100% 3px no-repeat, linear-gradient(var(--ink), var(--ink)) 0 6px / 100% 1px no-repeat; }
+.style .sec .no { font: italic 400 26px/1 Georgia, "Times New Roman", serif; color: var(--ink-2); }
+.style .sec h2 { font: 700 25px/1.25 var(--serif); }
+.style .sec p { flex: 1 1 14em; font-size: 14px; color: var(--ink-2); }
+.style h3.h { font: 700 16.5px/1.35 var(--sans); margin-bottom: 4px; }
+.style .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.style .two > * { min-width: 0; }
+.style .two > :first-child { padding-right: 16px; }
+.style .two > :last-child { padding-left: 16px; border-left: 1px solid var(--hair); }
+.style .stack > * + * { margin-top: 9px; }   /* 一般區塊流，不用 grid：分頁時每一塊各自決定留在這頁或下一頁 */
+.style .dots li { position: relative; padding-left: 13px; }
+.style .dots li::before { content: ""; position: absolute; left: 1px; top: .72em; width: 5px; height: 5px; background: var(--ink); }
+.style .dots li + li { margin-top: 3px; }
+
+/* ---------- 拼貼的紙片 ---------- */
+/* 米色膠帶＝講義原文；紅膠帶＋楷體＝老師；撕邊牛皮紙＝補充；灰綠虛線＝本堂沒講 */
+/* 紙本身畫在 ::after，盒子上緣多留 12px 給膠帶、下緣留 6px 給陰影：旋轉後的角、膠帶、陰影都在盒子裡面。紙片跨頁時會斷成上下兩段（看起來是同一張紙延續），膠帶跟著第一行，不會單獨留在頁尾 */
+.style .pin { position: relative; z-index: 0; padding: 27px 13px 16px; }
+.style .pin::after { content: ""; position: absolute; z-index: -1; left: 0; right: 0; top: 12px; bottom: 6px; background: var(--slip); border: 1px solid var(--hair); box-shadow: 2px 3px 0 rgba(60,45,20,.09); }
+.style .pin::before { content: ""; position: absolute; top: 4px; left: 20px; width: 68px; height: 18px; background: var(--tape); transform: rotate(-3deg);
+  clip-path: polygon(0 0, 3% 25%, 0 50%, 3% 75%, 0 100%, 100% 100%, 97% 75%, 100% 50%, 97% 25%, 100% 0); }
+.style .pin.rt::before { left: auto; right: 18px; transform: rotate(4deg); }
+.style .who { display: block; font: 700 13px/1.4 var(--sans); margin-bottom: 2px; }
+.style .src .who { color: var(--ink-2); }
+.style .src p { font-size: 15px; line-height: 1.62; text-wrap: wrap; }
+.style .tch { font: 400 16px/1.5 var(--kai); }
+.style .tch::before { background: rgba(200,70,55,.6); }
+.style .tch .who { color: var(--c-teacher); }
+.style .ext { background: var(--kraft); padding: 10px 13px 16px; font-size: 14px; line-height: 1.6;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), 94% 100%, 87% calc(100% - 5px), 79% calc(100% - 1px), 71% calc(100% - 6px), 62% calc(100% - 2px), 53% calc(100% - 6px), 44% 100%, 35% calc(100% - 5px), 26% calc(100% - 1px), 17% calc(100% - 6px), 8% 100%, 0 calc(100% - 4px)); }
+.style .ext .who { color: var(--c-extra); }
+.style .nxt { border: 1.5px dashed var(--c-next); padding: 10px 13px 12px; }
+.style .nxt .who { color: var(--c-next); }
+.style .cols2 { column-count: 2; column-gap: 28px; column-rule: 1px solid var(--hair); }
+.style .cols2 li { break-inside: avoid; }
+.style .tag-nxt { display: inline-block; font-size: 13px; font-weight: 700; color: var(--c-next); border: 1.5px dashed var(--c-next); padding: 0 5px; line-height: 1.5; white-space: nowrap; }
+.style .r1 { transform: rotate(-.8deg); } .style .r2 { transform: rotate(.7deg); } .style .r3 { transform: rotate(-1.3deg); } .style .r4 { transform: rotate(1.2deg); }
+
+/* 01 因果鏈：兩欄＋欄間細線 */
+.style .chain { column-count: 2; column-gap: 32px; column-rule: 1px solid var(--hair); counter-reset: c; }
+.style .chain li { counter-increment: c; break-inside: avoid; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 6px; padding: 5px 0 6px; }
+.style .chain li::before { content: counter(c); font: italic 400 22px/1.15 Georgia, "Times New Roman", serif; color: var(--ink-2); }
+
+/* 03 人物 */
+.style .cast { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 20px; }
+.style .who-card h3 { font: 700 21px/1.3 var(--serif); }
+.style .who-card h3 small { display: block; font: 400 14px/1.4 var(--sans); color: var(--ink-2); }
+.style .who-card .role { display: inline-block; margin: 3px 0 5px; font-size: 13px; font-weight: 700; border: 1px solid var(--ink); padding: 0 6px; }
+.style .who-card::before, .style .map::before { display: none; }   /* 人物卡與示意圖不是講義原文，不貼米色膠帶 */
+.style .who-card { padding-top: 15px; }
+.style .who-card::after { top: 0; }
+.style .map::after { top: 4px; }
+.style .who-card.vs::after { background: var(--paper); border-style: dashed; box-shadow: none; }
+
+/* 04 改新之詔：史料卡橫放一整條（字母在左、原文在右），解說在下面 */
+.style .jo { padding: 12px 0 14px; border-top: 1px solid var(--hair); }
+.style .flow + .jo { border-top: 0; padding-top: 0; }
+.style .jo > .stack, .style .jo > .two { margin-top: 8px; }
+.style .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 4px; margin-bottom: 14px; font-size: 14px; line-height: 1.4; }
+.style .flow span { border: 1px solid var(--ink); background: var(--slip); padding: 3px 8px 4px; }
+.style .flow b { font: 700 18px/1 var(--serif); margin-right: 5px; }
+.style .flow svg { width: 34px; height: 14px; flex: none; }
+.style .flow svg path { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.style .flow .side { border-style: dashed; margin-left: 10px; }
+.style .card { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 16px; align-content: start; }
+.style .card .hd { grid-row: 1 / span 8; display: flex; flex-direction: column; gap: 4px; padding-right: 14px; border-right: 1px solid var(--hair); }
+.style .card .hd .who { margin: 0; }
+.style .card .ltr { font: 700 50px/1 var(--serif); }
+.style .card > p { grid-column: 2; }
+.style .card .tang { margin-top: 6px; }
+.style .org { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.style .org > div { border: 1px solid var(--ink); padding: 8px 10px 9px; }
+.style .org h4 { font: 700 18px/1.3 var(--serif); }
+.style .org h4 small { font: 400 14px/1.3 var(--sans); color: var(--ink-2); margin-left: 4px; }
+.style .ladder li { padding: 1px 0; }
+.style .ladder li + li::before { content: "↓"; display: block; line-height: 1; color: var(--ink-2); }
+.style .tier { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--ink); }
+.style .tier li { padding: 6px 8px 7px; border-left: 1px solid var(--ink); font-size: 14px; line-height: 1.5; }
+.style .tier li:first-child { border-left: 0; }
+.style .tier b { display: block; font: 700 19px/1.3 var(--serif); }
+.style .pyr { display: grid; gap: 4px; justify-items: center; }
+.style .pyr li { border: 1px solid var(--ink); padding: 4px 8px 5px; text-align: center; font-size: 14px; line-height: 1.5; background: var(--slip); }
+.style .pyr li:nth-child(1) { width: 46%; } .style .pyr li:nth-child(2) { width: 84%; } .style .pyr li:nth-child(3) { width: 100%; }
+.style .pyr b { font-family: var(--serif); font-size: 16px; }
+.style table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.5; }
+.style th, .style td { text-align: left; vertical-align: top; padding: 5px 8px; border-top: 1px solid var(--hair); }
+.style thead th { border-top: 2px solid var(--ink); border-bottom: 1px solid var(--ink); font-size: 13.5px; }
+.style tbody tr:last-child > * { border-bottom: 2px solid var(--ink); }
+.style tbody th { white-space: nowrap; }
+.style .in th, .style .in td { white-space: normal; }
+.style .in td { width: 5.6em; }
+.style td.grp { font: 700 16px/1.4 var(--serif); white-space: nowrap; border-right: 1px solid var(--hair); }
+.style tr.g > * { border-top: 1px solid var(--ink); }
+.style .ext table { font-size: 14px; }
+.style .ext th, .style .ext td { border-top-color: rgba(122,78,18,.35); padding: 3px 6px; }
+.style .ext thead th { border-top: 0; border-bottom: 1px solid var(--c-extra); }
+.style .ext tbody tr:last-child > * { border-bottom: 0; }
+
+/* 05 兩個大數字 */
+.style .fig-num { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; }
+.style .fig-num b { font: 400 38px/1.05 var(--serif); font-variant-numeric: lining-nums; }
+.style .versus { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 8px; text-align: center; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 7px 0; }
+.style .versus b { font: 700 19px/1.3 var(--serif); }
+.style .versus i { font: italic 400 20px/1 Georgia, serif; color: var(--ink-2); }
+.style .routes li { display: grid; grid-template-columns: 4.2em minmax(0, 1fr); gap: 8px; padding: 4px 0; border-top: 1px solid var(--hair); }
+.style .routes li:first-child { border-top: 0; }
+.style .routes b { font-family: var(--serif); font-size: 16px; }
+
+/* 06 平城京示意圖 */
+.style .fig-row { display: grid; grid-template-columns: 238px minmax(0, 1fr); gap: 18px; }
+.style .map { padding: 20px 8px 14px; align-self: start; }
+.style .map svg { display: block; width: 222px; max-width: 100%; height: auto; margin: 0 auto; }
+.style .map text { font-family: var(--sans); font-size: 13px; fill: var(--ink); }
+.style .map .cap { padding: 4px 6px 0; }
+.style .parts li { display: grid; grid-template-columns: 6.6em minmax(0, 1fr); gap: 8px; padding: 4px 0; border-top: 1px solid var(--hair); }
+.style .parts li:first-child { border-top: 0; padding-top: 0; }
+.style .parts b { font-family: var(--serif); font-size: 16px; }
+.style .parts.one { margin-top: 8px; border-top: 1px solid var(--hair); }
+.style .parts.one li:first-child { padding-top: 4px; }
+.style .two.wide-l { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
+
+/* 07 記住三件事 */
+.style .recap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 28px; }
+.style .recap section { padding: 8px 0 12px; border-top: 1px solid var(--ink); }
+.style .recap h3 { font: 700 16.5px/1.4 var(--serif); margin-bottom: 4px; }
+.style .checks li { display: grid; grid-template-columns: 17px minmax(0, 1fr); gap: 8px; padding: 2px 0; }
+.style .checks li::before { content: ""; width: 15px; height: 15px; margin-top: 4px; border: 1.5px solid var(--ink); background: var(--slip); }
+
+/* 08 年表：每一列後面留一格手寫 */
+.style .years { padding-top: 2px; }
+.style .yl li { display: grid; grid-template-columns: 58px minmax(0, 1fr) 150px 42mm; border-top: 1px solid var(--hair); }
+.style .yl li:first-child { border-top: 1px solid var(--ink); }
+.style .yl li:last-child { border-bottom: 2px solid var(--ink); }
+.style .yl li > * { padding: 4px 8px 5px; }
+.style .yl .y { padding-left: 0; font: 700 20px/1.25 var(--serif); font-variant-numeric: lining-nums tabular-nums; }
+.style .yl .from { font-size: 14px; line-height: 1.5; border-left: 1px solid var(--hair); }
+.style .yl .from.l { color: var(--ink); } .style .yl .from.t { color: var(--c-teacher); } .style .yl .from.e { color: var(--c-extra); } .style .yl .from.n { color: var(--c-next); }
+.style .yl .from i { font-style: normal; display: inline-block; width: 9px; height: 9px; margin-right: 5px; }
+.style .yl .from.l i { background: var(--tape); } .style .yl .from.t i { background: var(--c-teacher); }
+.style .yl .from.e i { background: var(--c-extra); } .style .yl .from.n i { border: 1.5px dashed var(--c-next); }
+.style .yl .w { border-left: 1px solid var(--ink); min-height: 34px; display: flex; align-items: flex-end; }
+.style .yl .w::after { content: ""; flex: 1; margin-bottom: 2px; border-bottom: 1px solid rgba(34,31,26,.3); }
+.style .yhead { display: grid; grid-template-columns: 58px minmax(0, 1fr) 150px 42mm; font-size: 13px; font-weight: 700; color: var(--ink-2); padding-bottom: 3px; }
+.style .yhead span:nth-child(n+2) { padding-left: 8px; }
+.style .foot { margin-top: 14px; padding-top: 8px; border-top: 1px solid var(--ink); font-size: 13.5px; color: var(--ink-2); }
+
+@media (max-width: 640px) {
+  .style .sheet { padding: 16px; }
+  .style .hero, .style .two, .style .two.wide-l, .style .cast, .style .org, .style .fig-row, .style .recap { grid-template-columns: minmax(0, 1fr); }
+  .style .hero h1 { font-size: 44px; }
+  .style .legend { grid-template-columns: minmax(0, 1fr); }
+  .style .axis ol { grid-template-columns: minmax(0, 1fr); }
+  .style .axis li { border-left: 0; border-top: 1px solid var(--hair); padding: 6px 8px; font-size: 14px; }
+  .style .axis li:first-child { border-top: 0; }
+  .style .axis li b { display: inline-block; min-width: 4.6em; }
+  .style .axis li em { display: inline; margin-right: 8px; }
+  .style .axis .brk, .style .axis .tag { display: none; }
+  .style .axis h2 { margin-bottom: 8px; }
+  .style .blk { grid-template-columns: minmax(0, 1fr); }
+  .style .blk > .main { padding: 0 0 14px; }
+  .style .note { border-left: 0; border-top: 1px solid var(--ink); min-height: 30mm; margin-bottom: 22px; }
+  .style .two > :first-child { padding-right: 0; padding-bottom: 12px; }
+  .style .two > :last-child { padding-left: 0; padding-top: 12px; border-left: 0; border-top: 1px solid var(--hair); }
+  .style .chain, .style .cols2 { column-count: 1; }
+  .style .tier { grid-template-columns: minmax(0, 1fr); }
+  .style .tier li { border-left: 0; border-top: 1px solid var(--ink); }
+  .style .tier li:first-child { border-top: 0; }
+  .style .yhead { display: none; }
+  .style .yl li { grid-template-columns: 58px minmax(0, 1fr); }
+  .style .yl .from { grid-column: 2; border-left: 0; padding-top: 0; }
+  .style .yl .w { grid-column: 1 / -1; border-left: 0; }
+}
+/* 列印：無縫直式（照 3-output/NCCU/製作規範.md 第 1 節）：182×243mm、上下 4mm 左右 8mm、不印頁碼。
+   六個邊界框都給空字串，Chrome 才不會印自己的頁首頁尾（日期、標題、網址） */
+@page {
+  size: 182mm 243mm; margin: 4mm 8mm 4mm;
+  @top-left { content: "" } @top-center { content: "" } @top-right { content: "" }
+  @bottom-left { content: "" } @bottom-center { content: "" } @bottom-right { content: "" }
+}
+@media print {
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { background: #fff; }             /* Chrome 不會把底色鋪到 @page 的邊界，所以頁面留白底 */
+  .style .bar, .spec { display: none !important; }
+  /* 米色紙只在螢幕上；列印改白底，紙片、膠帶、牛皮紙的顏色照留。寬度跟螢幕上的內容區一樣（166mm） */
+  .style { --paper: #fff; }
+  .style .sheet { width: auto; max-width: none; margin: 0; padding: 0; background: #fff; }
+
+  /* 版面：螢幕上的兩欄 grid 在紙本上一律改單欄，分頁最穩定 */
+  .style .hero, .style .two, .style .two.wide-l, .style .cast, .style .fig-row, .style .recap, .style .blk { display: block; }
+  .style .hero > div + div { margin-top: 12px; }
+  .style .two > :first-child { padding-right: 0; }
+  .style .two > :last-child { padding-left: 0; border-left: 0; margin-top: 9px; }
+  .style .cast > * + *, .style .fig-row > * + * { margin-top: 12px; }
+  .style .fig-row > .map { max-width: 100mm; }
+  .style .recap section + section { margin-top: 4px; }
+  .style .blk > .main { padding: 0 0 8px; }
+  /* 右側筆記欄 → 每一節結尾一格方格紙（高度固定、不拆） */
+  .style .blk > .note { display: block; height: 24mm; margin: 0 0 14px; padding: 4px 0 0; border-left: 0; border-top: 1px solid var(--ink); break-inside: avoid; }
+  /* 史料卡：甲乙丙丁改放在原文上方同一行，卡片變成一般文字區塊，可以跨頁 */
+  .style .card { display: block; }
+  .style .card .hd { flex-direction: row; align-items: baseline; gap: 10px; padding-right: 0; border-right: 0; margin-bottom: 2px; }
+  .style .card .ltr { font-size: 34px; }
+  /* 牛皮紙的撕邊：整塊 clip-path 在跨頁時不可靠，改成蓋在底部的一條白色鋸齒，只出現在最後一段 */
+  .style .ext { clip-path: none; position: relative; }
+  .style .ext::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: #fff;
+    clip-path: polygon(100% 0, 94% 100%, 87% 1px, 79% 5px, 71% 0, 62% 4px, 53% 0, 44% 100%, 35% 1px, 26% 5px, 17% 0, 8% 100%, 0 2px, 0 100%, 100% 100%); }
+
+  /* 分頁點：文字一律可以跨頁（紙片、牛皮紙、虛線框、條列都在頁尾接著寫下去），每頁填到底；
+     不拆的只有圖、表格列、年表列，與高度遠小於一頁的小格子（時代軸、圖例、方格紙、組織圖、金字塔、流程、對比列、因果鏈的每一格） */
+  .style figure, .style tr, .style .yl li, .style .axis ol, .style .legend, .style .gridpaper, .style .org > div, .style .tier,
+  .style .pyr li, .style .flow, .style .versus, .style .fig-num, .style .chain li, .style .cols2 li, .style .routes li { break-inside: avoid; }
+  /* 標題、欄頭、標籤不落單在頁尾；紙片的第一行跟膠帶在同一頁（膠帶不單獨留在頁尾） */
+  .style h1, .style h2, .style h3, .style h4, .style .sec, .style .yhead, .style .who, .style .card .hd { break-after: avoid; }
+  .style .pin > :first-child, .style .ext > :first-child, .style .nxt > :first-child { break-before: avoid; }
+  .style figcaption, .style .foot { break-before: avoid; }
+  .style svg.grid { opacity: .32; }            /* 白底上格線印深一點，手寫時才看得到 */
+  .style p, .style li { orphans: 1; widows: 1; }   /* 段落在哪一行換頁都可以，頁尾不留空 */
+}
+
+/* ===== 共用：風格規格面板（各頁相同，逐字複製，不要改） ===== */
+.spec { all: initial; display: block; background: #f6f5f1; color: #1c1b19; color-scheme: light; border-top: 1px solid #dcd9d0;
+  font: 400 15px/1.7 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; text-spacing-trim: space-first;
+  padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 48px) 64px; }
+.spec *, .spec *::before, .spec *::after { box-sizing: border-box; }
+.spec .spec-in { max-width: 1120px; margin: 0 auto; }
+.spec .spec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin: 0 0 6px; }
+.spec .spec-code { font: 700 13px/1 ui-monospace, Consolas, monospace; color: #fff; background: #1c1b19; padding: 5px 9px; border-radius: 6px; }
+.spec h2 { margin: 0; font-size: clamp(22px, 3vw, 30px); line-height: 1.3; font-weight: 700; text-wrap: balance; }
+.spec .spec-en { font: 500 14px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-def { margin: 0 0 22px; max-width: 46em; color: #3b3935; }
+.spec .spec-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.spec .spec-card { background: #fff; border: 1px solid #e4e1da; border-radius: 12px; padding: 16px 18px; min-width: 0; }
+.spec .spec-card.wide { grid-column: 1 / -1; }
+.spec h3 { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: #6b6862; }
+.spec ul, .spec ol { margin: 0; padding-left: 1.2em; }
+.spec li { margin: 2px 0; }
+.spec p { margin: 0; }
+.spec p + p { margin-top: 6px; }
+.spec code { font: 13px/1.5 ui-monospace, Consolas, monospace; background: #f0eee8; padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.spec .spec-traits { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 16px; }
+.spec .spec-traits small { display: block; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-sw { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.spec .spec-sw li { margin: 0; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #3b3935; }
+.spec .spec-sw i { display: block; height: 34px; border-radius: 8px; border: 1px solid rgba(0,0,0,.12); margin-bottom: 4px; }
+.spec .spec-fit b { display: inline-block; min-width: 4.2em; }
+.spec .spec-prompt { background: #efedff; border-color: #dcd8ff; }
+.spec .spec-back { display: inline-block; margin-top: 22px; color: #1c1b19; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 720px) { .spec .spec-grid { grid-template-columns: 1fr; } }
+@media print { .spec { border-top: 0; } .spec .spec-card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<main class="style">
+  <div class="bar">
+    <button type="button" id="pdf" title="iPad 直式、無縫分頁（182×243mm，文字跨頁接續），給 GoodNotes 垂直捲動閱讀；在列印視窗的目的地選「另存為 PDF」，其他設定不用動">匯出 PDF（GoodNotes 直式）</button>
+    <span>輸出成 iPad 直式的無縫分頁 PDF（182×243mm），匯進 GoodNotes 垂直捲動閱讀、手寫。</span>
+  </div>
+
+  <div class="sheet" id="sheet">
+    <svg class="defs" aria-hidden="true"><defs>
+      <g id="gh10" stroke="currentColor" stroke-width="1" shape-rendering="crispEdges"><line x1="0" x2="100%" y1="18.5" y2="18.5"/><line x1="0" x2="100%" y1="37.5" y2="37.5"/><line x1="0" x2="100%" y1="56.5" y2="56.5"/><line x1="0" x2="100%" y1="75.5" y2="75.5"/><line x1="0" x2="100%" y1="94.5" y2="94.5"/><line x1="0" x2="100%" y1="113.5" y2="113.5"/><line x1="0" x2="100%" y1="132.5" y2="132.5"/><line x1="0" x2="100%" y1="151.5" y2="151.5"/><line x1="0" x2="100%" y1="170.5" y2="170.5"/><line x1="0" x2="100%" y1="189.5" y2="189.5"/></g>
+      <g id="gh100"><use href="#gh10" y="0"/><use href="#gh10" y="190"/><use href="#gh10" y="380"/><use href="#gh10" y="570"/><use href="#gh10" y="760"/><use href="#gh10" y="950"/><use href="#gh10" y="1140"/><use href="#gh10" y="1330"/><use href="#gh10" y="1520"/><use href="#gh10" y="1710"/></g>
+      <g id="gh"><use href="#gh100" y="0"/><use href="#gh100" y="1900"/><use href="#gh100" y="3800"/><use href="#gh100" y="5700"/><use href="#gh100" y="7600"/><use href="#gh100" y="9500"/><use href="#gh100" y="11400"/><use href="#gh100" y="13300"/></g>
+      <g id="gv" stroke="currentColor" stroke-width="1" shape-rendering="crispEdges"><line y1="0" y2="100%" x1="18.5" x2="18.5"/><line y1="0" y2="100%" x1="37.5" x2="37.5"/><line y1="0" y2="100%" x1="56.5" x2="56.5"/><line y1="0" y2="100%" x1="75.5" x2="75.5"/><line y1="0" y2="100%" x1="94.5" x2="94.5"/><line y1="0" y2="100%" x1="113.5" x2="113.5"/><line y1="0" y2="100%" x1="132.5" x2="132.5"/><line y1="0" y2="100%" x1="151.5" x2="151.5"/><line y1="0" y2="100%" x1="170.5" x2="170.5"/><line y1="0" y2="100%" x1="189.5" x2="189.5"/><line y1="0" y2="100%" x1="208.5" x2="208.5"/><line y1="0" y2="100%" x1="227.5" x2="227.5"/><line y1="0" y2="100%" x1="246.5" x2="246.5"/><line y1="0" y2="100%" x1="265.5" x2="265.5"/><line y1="0" y2="100%" x1="284.5" x2="284.5"/><line y1="0" y2="100%" x1="303.5" x2="303.5"/><line y1="0" y2="100%" x1="322.5" x2="322.5"/><line y1="0" y2="100%" x1="341.5" x2="341.5"/><line y1="0" y2="100%" x1="360.5" x2="360.5"/><line y1="0" y2="100%" x1="379.5" x2="379.5"/><line y1="0" y2="100%" x1="398.5" x2="398.5"/></g>
+    </defs></svg>
+
+    <div class="mast">
+      <span><b>日本史</b>（國立政治大學）</span>
+      <span>帶筆記講義</span>
+      <span>2026-09-21</span>
+    </div>
+
+    <header class="hero">
+      <div>
+        <h1>古代<span class="hl">律令制</span><br>國家的建構</h1>
+        <p class="sub">－大和時代飛鳥時期（大化改新）、奈良時代－</p>
+        <p class="lead">上一堂課停在飛鳥時期的推古朝新政：理念喊出來了（以天皇為中心的中央集權國家），但沒落實。這堂課講的就是「落實」的過程——從 645 年的大化改新開始，日本用兩、三代人的時間把唐朝那一整套律令制搬進來，變成一個有法典、有官僚、有戶籍、有稅制、有常備兵的國家；接著 710 年遷都平城京，進入奈良時代，看這套制度運作起來長什麼樣、又怎麼開始鬆動。</p>
+      </div>
+      <div>
+        <p class="range">645<i>—</i>794</p>
+        <p class="cap">645 頒「改新之詔」，教科書以此為大化改新的起點；794 遷都平安京，奈良時代結束。</p>
+        <div class="gridpaper">
+          <svg class="grid" aria-hidden="true"><use href="#gh"/><use href="#gv"/></svg>
+          <h3>讀之前先記三個詞</h3>
+          <dl>
+            <div><dt><span class="hl">律令</span></dt><dd>律是刑法、令是行政法，合起來就是整套國家運作的成文規則。</dd></div>
+            <div><dt><span class="hl">公地公民</span></dt><dd>土地和人民名義上全部收歸天皇（國家）所有，改新之詔最核心的一刀。</dd></div>
+            <div><dt><span class="hl">平城京</span></dt><dd>仿長安蓋的新都城（今奈良市），710 到 794 年的首都。</dd></div>
+          </dl>
+        </div>
+      </div>
+    </header>
+
+    <ul class="legend" aria-label="圖例：每個顏色只代表一件事">
+      <li><span class="sw src"></span><span><b>米色膠帶</b>講義原文，逐字照抄</span></li>
+      <li><span class="sw tch"></span><span><b>紅膠帶・紅筆・楷體</b>老師口述，★＝老師強調</span></li>
+      <li><span class="sw ext"></span><span><b>牛皮紙</b>補充：講義和老師都沒講的背景</span></li>
+      <li><span class="sw tng"><span class="tang">仿唐</span></span><span><b>藍章</b>這一項是照唐朝哪一套改的</span></li>
+      <li><span class="sw key"></span><span><b>螢光筆</b>要記起來的詞與年份</span></li>
+      <li><span class="sw nxt"></span><span><b>灰綠虛線</b>本堂沒講：下週才講，或錄音沒收到</span></li>
+    </ul>
+
+    <section class="axis" aria-label="時代軸">
+      <h2>時代軸　<span>框起來的兩格是這堂課的範圍</span></h2>
+      <ol>
+        <li><b>繩文</b><em>約前 1 萬年～前 3 世紀</em>上古</li>
+        <li><b>彌生</b><em>約前 3 世紀～3 世紀</em>上古</li>
+        <li><b>古墳</b><em>3～6 世紀</em>上古（大和政權）</li>
+        <li class="now"><b>飛鳥</b><em>592～710</em>古代｜<span>本堂（後半：大化改新起）</span></li>
+        <li class="now"><b>奈良</b><em>710～794</em>古代｜<span>本堂</span></li>
+        <li><b>平安</b><em>794～1185</em>古代</li>
+        <li><b>鎌倉以後</b><em>1185～</em>中世（武士政權）</li>
+        <svg class="brk" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><path d="M5,6 C40,2 120,5 196,3 C198,30 195,70 197,96 C140,99 60,95 4,98 C2,70 6,30 3,8 C20,4 40,6 60,3"/></svg>
+        <span class="tag" aria-hidden="true">本堂</span>
+      </ol>
+    </section>
+
+    <!-- 01 -->
+    <section class="blk">
+      <div class="main">
+        <header class="sec"><span class="no">01</span><h2>本堂因果鏈</h2><p>照編號順序讀。</p></header>
+        <ol class="chain">
+          <li><span>推古朝喊出「以天皇為中心的中央集權」，但蘇我氏坐大、社會階層矛盾嚴重，理念沒落實</span></li>
+          <li><span><span class="yr">645</span> 年中大兄皇子與中臣鎌足除掉蘇我氏，孝德天皇即位，改元大化，遷都難波宮</span></li>
+          <li><span>頒布「<span class="hl">改新之詔</span>」：公地公民、二官八省與國郡里、戶籍與班田收授、租庸調</span></li>
+          <li><span>制度全面仿唐（618 年建國的唐朝），但法制真正完成要等到律令頒布之後</span></li>
+          <li><span><span class="yr">663</span> 年<span class="hl">白村江之戰</span>敗給唐・新羅，日本退出朝鮮半島，改在北九州設防人與山城</span></li>
+          <li><span>對外收縮、對內強化，同時靠遣唐使繼續吸收中國制度與文物</span></li>
+          <li><span><span class="yr">710</span> 年遷都<span class="hl">平城京</span>（仿長安），進入奈良時代</span></li>
+          <li><span>佛教被國家收編為「鎮護國家」的工具：東大寺＋國分寺體系　<span class="tag-nxt">下週</span></span></li>
+          <li><span>收編過頭，僧人道鏡差點篡位（宇佐八幡宮神託事件）→ <span class="yr">794</span> 年遷都平安京，逃離奈良佛教勢力　<span class="tag-nxt">下週</span></span></li>
+        </ol>
+      </div>
+      <aside class="note"><svg class="grid" aria-hidden="true"><use href="#gh"/><use href="#gv"/></svg><span>我的筆記</span></aside>
+    </section>
+
+    <!-- 02 -->
+    <section class="blk">
+      <div class="main">
+        <header class="sec"><span class="no">02</span><h2>總論：645 年，大化改新</h2><p>不是一年做完的一場改革，是 645 年起陸續推出的一整串。</p></header>
+        <div class="two">
+          <div class="stack">
+            <div class="pin src r1">
+              <span class="who">講義</span>
+              <p>○645，<span class="tang">仿唐（618年）</span><span class="circ">強盛<svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path d="M8,24 C3,10 28,3 54,4 C80,5 97,11 95,22 C93,33 68,37 44,36 C22,35 6,31 9,17"/></svg></span>＆ 社會階層矛盾嚴重、蘇我氏跋扈等問題；旨在建設中央集權國家。</p>
+              <p class="cap" style="color:var(--c-teacher)">紅圈＝課堂填空的答案</p>
+            </div>
+            <div>
+              <h3 class="h">為什麼要改：兩邊的動機</h3>
+              <ul class="dots">
+                <li><b>外面</b>　唐朝 618 年建國後極為強盛（盛唐），日本想照抄一套成功的制度。 <span class="tang">仿唐</span></li>
+                <li><b>裡面</b>　7 世紀前半土地兼併嚴重，豪族佔走大量土地，底層百姓淪為佃農甚至奴隸；加上蘇我氏專權跋扈。</li>
+                <li><b>目標</b>　推古朝喊過、卻沒做到的那句話：建立以天皇為中心的中央集權國家。</li>
+              </ul>
+            </div>
+            <div class="pin tch r4">
+              <span class="who">老師</span>
+              <p><span class="star">★</span> 在古代社會，你沒有土地基本上就失去了生存的資格——土地是一個家庭、一個人最重要的生活工具。<span class="ts">〔1-02:53〕</span></p>
+            </div>
+          </div>
+          <div class="stack">
+            <div class="pin src r2 rt">
+              <span class="who">講義</span>
+              <p>律（刑罰法規）、令（行政法規）。</p>
+              <p>※645年頒布「改新之詔」，但法制的建構是在律令制定後才完成。</p>
+            </div>
+            <div>
+              <h3 class="h">律令是兩種法</h3>
+              <ul class="dots">
+                <li><b><span class="hl">律</span>＝刑法</b>　犯了什麼罪、判什麼刑。日本的律幾乎照搬唐律。 <span class="tang">仿唐・律典</span></li>
+                <li><b><span class="hl">令</span>＝行政法</b>　政府怎麼組織、官怎麼設、稅怎麼收。令依日本國情改寫較多。</li>
+                <li>645 年只是頒了一份「施政方針」，還不是法律；寫成可執行的條文要等到<span class="hl">大寶律令</span>、<span class="hl">養老律令</span>。</li>
+              </ul>
+            </div>
+            <div class="pin tch r1">
+              <span class="who">老師</span>
+              <p>實際上改革是 645 年之後陸續推出的，不是一次做完。不過考試還是跟著教科書走，起點寫 645 年。<span class="ts">〔1-01:43〕</span></p>
+            </div>
+            <div class="ext">
+              <span class="who">補充</span>
+              <p>668 近江令（存疑）→ 689 飛鳥淨御原令 → <b>701 大寶律令</b>（律令完備，首部真正施行的）→ 718 編成、757 施行的<b>養老律令</b>。</p>
+              <p>645 年的政變本身叫<b>乙巳之變</b>；「大化改新」指政變之後展開的一連串改革。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside class="note"><svg class="grid" aria-hidden="true"><use href="#gh"/><use href="#gv"/></svg><span>筆記｜總論</span></aside>
+    </section>
+
+    <!-- 03 -->
+    <section class="blk">
+      <div class="main">
+        <header class="sec"><span class="no">03</span><h2>主力：誰做的</h2><p>大化改新的人事表：招牌、引擎、幕僚，和被清算的人。</p></header>
+        <div class="pin src r2" style="margin-bottom:18px">
+          <span class="who">講義</span>
+          <p>○主力：孝徳天皇（36）；中大兄皇子（→天智天皇，38）＋內臣－中臣鎌足（→藤原，平安時代貴族的始祖） vs. 蘇我氏。左、右大臣－舊豪族。 國博士－遣隋、遣唐使。</p>
+          <p>○年號：大化（第一個年號）；遷都難波宮（大阪）；為了遠離蘇我氏等豪族及出港方便。</p>
+        </div>
+        <div class="cast">
+          <div class="pin who-card">
+            <h3>孝德天皇 <small>第 36 代</small></h3>
+            <span class="role">檯面上的招牌</span>
+            <ul class="dots">
+              <li>645 年政變後即位；改革在他即位下推動。</li>
+              <li>開始使用年號，第一個年號就叫「<span class="hl">大化</span>」。</li>
+              <li style="font-family:var(--kai);font-size:16px">老師：中臣鎌足本來想找他合作，但覺得他不夠勇猛、有點軟弱，才改找中大兄皇子。<span class="ts">〔1-05:31〕</span></li>
+            </ul>
+          </div>
+          <div class="pin who-card rt">
+            <h3>中大兄皇子 <small>→ 天智天皇，第 38 代</small></h3>
+            <span class="role">引擎</span>
+            <ul class="dots">
+              <li>當時是皇太子，真正推動改革的人。</li>
+              <li>和中臣鎌足聯手暗殺蘇我入鹿。</li>
+              <li>663 年的白村江之戰是同一個人的後半場。</li>
+            </ul>
+          </div>
+          <div class="pin who-card">
+            <h3>中臣鎌足 <small>→ 藤原</small></h3>
+            <span class="role">內臣</span>
+            <ul class="dots">
+              <li>內臣＝天皇旁邊的重臣、參謀，主要管軍事相關的事務。</li>
+              <li>去世前，天智天皇賜姓「<span class="hl">藤原</span>」。</li>
+              <li>藤原氏靠這套制度成為平安時代最大的貴族。</li>
+            </ul>
+          </div>
+          <div class="pin who-card vs">
+            <h3>vs. 蘇我氏</h3>
+            <span class="role">被清算</span>
+            <ul class="dots">
+              <li>蘇我蝦夷讓兒子蘇我入鹿專政，滅掉聖德太子之子山背大兄王一族。</li>
+              <li>入鹿被暗殺；隔天蝦夷知道大勢已去，在家自殺。</li>
+              <li>前提：先把蘇我氏排除掉，改革才做得下去。</li>
+            </ul>
+          </div>
+        </div>
+        <div class="two" style="margin-top:18px">
+          <div class="stack">
+            <div>
+              <h3 class="h">用舊勢力推新制度</h3>
+              <ul class="dots">
+                <li><b>左、右大臣</b>　都由舊豪族出任，避免推動新改革時遭既有勢力反撲。</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="h">顧問：國博士</h3>
+              <ul class="dots">
+                <li>用了旻（留學僧）與高向玄理（留學生），兩人都是跟著遣隋使小野妹子入隋的隨行者。</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="h">遷都難波宮</h3>
+              <ul class="dots">
+                <li>在大阪、面臨大阪灣。遷都原因：遠離奈良當地蘇我氏等豪族的殘餘勢力；持續派使節到中國，出港方便。</li>
+              </ul>
+            </div>
+            <div class="ext">
+              <span class="who">補充</span>
+              <p>孝德天皇是中大兄皇子的舅舅。中大兄皇子政變後沒有立刻即位，668 年才登基為天智天皇。</p>
+              <p>蘇我氏世系：稻目 → 馬子 → 蝦夷 → 入鹿。</p>
+            </div>
+          </div>
+          <div class="stack">
+            <div class="pin tch r2">
+              <span class="who">老師｜上週加分題的答案</span>
+              <p>問：推古朝新政是蘇我氏和聖德太子共同主導的，為什麼後世只記得聖德太子？</p>
+              <p>答：大化改新是中大兄皇子滅掉蘇我氏之後推動的，自然要把蘇我氏的功績抹掉；後世的歷史書基本上是以天皇家為中心寫的。<span class="ts">〔1-14:08〕</span></p>
+            </div>
+            <div class="pin tch r3 rt">
+              <span class="who">老師</span>
+              <p>難波宮用了一陣子就不再當首都，因為首都設在港口邊容易遭外敵入侵。此後日本又遷都六次——「這之後再說」。<span class="ts">〔1-21:43〕</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside class="note"><svg class="grid" aria-hidden="true"><use href="#gh"/><use href="#gv"/></svg><span>筆記｜人物</span></aside>
+    </section>
+
+    <!-- 04 -->
+    <section class="blk">
+      <div class="main">
+        <header class="sec"><span class="no">04</span><h2>「改新之詔」甲・乙・丙・丁</h2><p>四條有先後：先把土地收歸國有，才能編戶籍、分田，才能按田收租、按人徵役。</p></header>
+
+        <div class="flow" aria-label="四條的先後">
+          <span><b>甲</b>土地與人民歸誰</span><svg viewBox="0 0 34 14" aria-hidden="true"><path d="M2,8 C9,5 19,9 30,7 M24,2 L31,7 L25,12"/></svg><span><b>丙</b>人怎麼登記與分田</span><svg viewBox="0 0 34 14" aria-hidden="true"><path d="M2,8 C9,5 19,9 30,7 M24,2 L31,7 L25,12"/></svg><span><b>丁</b>怎麼收稅與徵兵</span><span class="side"><b>乙</b>政府怎麼組</span>
+        </div>
+
+        <div class="jo">
+          <div class="pin src card r1">
+            <div class="hd"><span class="ltr">甲</span><span class="who">講義｜史料卡</span></div>
+            <p>私地私民制改成公地公民制；舊豪族給予食封（俸祿）。</p>
+          </div>
+          <div class="two">
+            <div>
+              <h3 class="h">土地與人民歸誰：<span class="hl">公地公民</span></h3>
+              <ul class="dots">
+                <li>以前土地和人民是豪族的私產（私地私民），現在名義上全部收歸天皇（國家）所有。</li>
+                <li>豪族必然反抗，所以給「<span class="hl">食封</span>」（俸祿），性質類似賠償金。等於把「地主」改造成「領薪水的官」。</li>
+                <li>這是丙、丁兩條的地基：國家先擁有土地和人，才有資格編戶籍、分口分田、收租庸調。</li>
+              </ul>
+            </div>
+            <div class="stack">
+              <div class="ext">
+                <span class="who">補充</span>
+                <p>食封（じきふ）／封戶：指定若干戶人家，把他們該繳的租稅撥給某位貴族或官員。豪族拿到的是「收益」，不是「所有權」。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="jo">
+          <div class="pin src card r2">
+            <div class="hd"><span class="ltr">乙</span><span class="who">講義｜史料卡</span></div>
+            <p>中央及地方官制：</p>
+            <p>中央＝二官八省；太政官：太政大臣→ 左右大臣→……→大藏省等八省。</p>
+            <p>神祇官（宮中農耕儀式）。 ※新嘗祭（戰後→ 11/23勤勞感謝日）、大嘗祭。</p>
+            <p>地方：國（司）－中央指派、郡（司）＆里（長）－地方豪族擔任。九州－大宰府、國郡里。</p>
+            <p>※畿内、七道（東海、山陽、山陰、北陸、東山、南海、西海）。</p>
+          </div>
+          <div class="stack">
+            <div>
+              <h3 class="h">中央：<span class="hl">二官八省</span></h3>
+              <div class="org">
+                <div>
+                  <h4>太政官<small>主管政治</small></h4>
+                  <ol class="ladder">
+                    <li>太政大臣（長官）</li>
+                    <li>左大臣・右大臣</li>
+                    <li>大納言等</li>
+                    <li>八省（大藏省等）</li>
+                  </ol>
+                </div>
+                <div>
+                  <h4>神祇官<small>主管祭祀</small></h4>
+                  <ul class="dots">
+                    <li><b>新嘗祭</b>　每年 11 月 23 日左右，收成後感謝神明、祈求隔年豐收；戰後改為「勤勞感謝日」。</li>
+                    <li><b>大嘗祭</b>　新任天皇就任時舉行。</li>
+                  </ul>
+                </div>
+              </div>
+              <p style="margin-top:6px">兩官並列是日本和唐朝最大的不同：當時是農業社會，年貢是中央主要的財政收入；天皇是國家最高神官。留到今天的痕跡是大藏省（現已改制為財務省）與宮內省（現在叫宮內廳）。</p>
+            </div>
+            <div class="two">
+            <div class="stack">
+            <div class="pin tch r4">
+              <span class="who">老師</span>
+              <p><span class="star">★</span> 當時的宮中祭祀不強制一般民眾參拜，跟二戰前「國家神道」要求民眾參拜神社的做法不一樣。<span class="ts">〔1-29:03〕</span></p>
+            </div>
+            </div>
+            <div class="stack">
+            <div class="ext">
+              <span class="who">補充｜八省名稱（錄音辨識不清，取自通行說法，不是老師的原話）</span>
+              <p>中務省（詔書文書）、式部省（文官人事）、治部省（禮儀外交）、民部省（戶籍租稅）、兵部省（武官軍事）、刑部省（司法）、大藏省（財政出納）、宮內省（皇室事務）。</p>
+            </div>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stack" style="padding:2px 0 20px">
+          <div>
+            <h3 class="h">乙・地方：<span class="hl">國 → 郡 → 里</span></h3>
+            <ol class="tier">
+              <li><b>國</b>長官是國司，<strong>由中央指派</strong>（這就是中央集權的實體）。</li>
+              <li><b>郡</b>長官是郡司，由地方豪族擔任，聽命於國司。</li>
+              <li><b>里</b>長官是里長，由地方豪族擔任，聽命於國司。</li>
+            </ol>
+          </div>
+          <div class="two">
+            <div class="stack">
+              <ul class="dots">
+                <li><b>大宰府</b>　九州特設的行政機關，在北九州：古代日本對外交流的門戶，肩負國防與外交；底下同樣設有國、郡、里。</li>
+                <li><b>畿內＋七道</b>　畿內是京城周邊（現在的京都、部分大阪、兵庫、奈良）；畿內以外分成七道。當時東北北部、北海道、沖繩都還不在支配範圍內。</li>
+              </ul>
+            </div>
+            <div class="stack">
+              <div class="pin tch r3">
+                <span class="who">老師</span>
+                <p><span class="star">★</span> 「大宰府」是古代行政機關，「太宰府」是現在的地名（太宰府市），寫法不同。<span class="ts">〔1-35:15〕</span></p>
+                <p>東海道新幹線（東京－新大阪）就是東海道；山陽新幹線（新大阪－博多）就是山陽道。<span class="ts">〔1-40:41〕</span>「讚岐」是大化改新時期的國名，指今天四國的香川縣。<span class="ts">〔1-43:35〕</span></p>
+              </div>
+            </div>
+          </div>
+          <div class="ext">
+              <span class="who">補充｜七道對照（老師只細講了其中五條，這裡補齊）</span>
+              <table>
+                <thead><tr><th>道</th><th>大致範圍</th><th>今天</th></tr></thead>
+                <tbody>
+                  <tr><th>東海道</th><td>本州太平洋側東半</td><td>關東＋部分中部、關西</td></tr>
+                  <tr><th>東山道</th><td>本州內陸山區</td><td>長野、群馬、栃木、東北南部</td></tr>
+                  <tr><th>北陸道</th><td>日本海側中部</td><td>新潟、富山、石川、福井</td></tr>
+                  <tr><th>山陰道</th><td>本州日本海側西半</td><td>鳥取、島根、京都北部</td></tr>
+                  <tr><th>山陽道</th><td>本州瀨戶內海側</td><td>岡山、廣島、山口、兵庫南部</td></tr>
+                  <tr><th>南海道</th><td>四國＋紀伊半島</td><td>四國四縣、和歌山</td></tr>
+                  <tr><th>西海道</th><td>九州及周邊離島</td><td>九州七縣＋壹岐、對馬</td></tr>
+                </tbody>
+              </table>
+          </div>
+        </div>
+
+        <div class="jo">
+          <div class="pin src card r3">
+            <div class="hd"><span class="ltr">丙</span><span class="who">講義｜史料卡</span></div>
+            <p>戶籍＆班田収授法：口分田（良民及賤民）。 <span class="tang">※唐朝均田制。</span></p>
+            <p>vs. 特權－上級官員、寺廟或神社 →貴族、莊園、僧兵。</p>
+            <p>※身分制：天皇、皇族→ 良民（上級官員＝貴族、下級官員、公民等）→ 賤民。</p>
+            <p>官階－貴族（上級官員，從五位下以上）－蔭位制，敘位。</p>
+          </div>
+          <div class="stack">
+            <div class="nxt">
+              <span class="who">錄音未涵蓋｜戶籍、班田收授法、口分田、均田制、特權這幾條落在兩段錄音之間，下面是補充，不是老師的話</span>
+              <ul class="dots">
+                <li>先編<span class="hl">戶籍</span>，再按戶籍<span class="hl">班田</span>：每個滿六歲的良民與賤民分到一塊「<span class="hl">口分田</span>」；人死了田收回國家，六年一次重新分配。</li>
+                <li>良民男子分 2 段（約 23 公畝）、女子分男子的 2/3；賤民再減。</li>
+                <li>例外：上級官員、寺廟、神社拿得到特權田（位田、職田、寺田、神田），不受收回規則管 → 越滾越大變成<span class="hl">莊園</span> → 寺院養得起武裝，有了<span class="hl">僧兵</span>。</li>
+                <li>瓦解時間表：723 年三世一身法 → 743 年墾田永年私財法 → 公地公民名存實亡。</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="h">身分制</h3>
+              <ol class="pyr">
+                <li><b>天皇、皇族</b></li>
+                <li><b>良民</b>　上級官員（五位以上，會發展成貴族）・下級官員・公民（農民與手工業者）</li>
+                <li><b>賤民</b>　陵戶・官戶・公奴婢・家人・私奴婢。原則上「民有」的地位不如「官有」的；分到的口分田比良民男性少。</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div class="two" style="padding-bottom:20px">
+          <div>
+            <h3 class="h"><span class="hl">蔭位制</span>：父祖的官位「蔭」到子孫</h3>
+            <table class="in">
+              <thead><tr><th>父祖</th><th>嫡子</th><th>庶子</th></tr></thead>
+              <tbody>
+                <tr><th>官階高</th><td>從五位下</td><td>正六位上</td></tr>
+                <tr><th>只是從五位（上級官員最低階）</th><td>從八位上</td><td>從八位下</td></tr>
+              </tbody>
+            </table>
+            <p style="margin-top:6px">父祖只是從五位的，孫輩甚至沒有位階可敘。蔭位制學自中國，但日本符合資格的人範圍比中國窄、子孫敘位卻相對較高 → 貴族比例小、格外重視家族血緣。藤原家是最好的例子。</p>
+          </div>
+          <div class="stack">
+            <div class="pin tch r2 rt">
+              <span class="who">老師</span>
+              <p><span class="star">★</span> 三位以上官員的後代，等於「起跑點已經不在起跑點上」。<span class="ts">〔2-05:06〕</span></p>
+            </div>
+            <div class="ext">
+              <span class="who">補充</span>
+              <p>「位」是官階，從一位到初位共三十階；五位是關鍵門檻。唐朝的門蔭制要三品以上才蔭得到子孫，日本降到五位。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="jo" style="border-top:1px solid var(--hair)">
+          <div class="pin src card r4">
+            <div class="hd"><span class="ltr">丁</span><span class="who">講義｜史料卡</span></div>
+            <p>統一稅制： <span class="tang">※唐朝租庸調法</span></p>
+            <p>物納：租（田租－班田收授法）、庸（勞役→布）、調（特產品）。</p>
+            <p>其他：勞役－歲役（京城） ＆ 雜徭（各國）。</p>
+            <p>兵役－各國軍團 <span class="tang">※唐朝府兵制</span></p>
+            <p>＆ 衛士（京城） ＆防人（北九州沿岸）。</p>
+          </div>
+          <div class="stack">
+            <table>
+              <thead><tr><th>類</th><th>名稱</th><th>內容</th></tr></thead>
+              <tbody>
+                <tr class="g"><td class="grp" rowspan="3">物納</td><th><span class="hl">租</span></th><td>依班田收授法分到的田地繳納田租。</td></tr>
+                <tr><th><span class="hl">庸</span></th><td>原本應服勞役，改為繳布、棉等物資折抵。</td></tr>
+                <tr><th><span class="hl">調</span></th><td>繳各地特產品，而且須自行運送。</td></tr>
+                <tr class="g"><td class="grp" rowspan="2">勞役</td><th>歲役</th><td>每年到京城服十天苦力勞役。</td></tr>
+                <tr><th>雜徭</th><td>21 至 60 歲男子，由國司視需要調度，一年最長六十天，在自己所屬的「國」內服。</td></tr>
+                <tr class="g"><td class="grp" rowspan="3">兵役</td><th>軍團</th><td>各國都設；約二十到四十歲的男子須服兵役。</td></tr>
+                <tr><th>衛士</th><td>徵調到京城戍守一年。</td></tr>
+                <tr><th><span class="hl">防人</span></th><td>多半調往北九州沿岸，戍守三年。</td></tr>
+              </tbody>
+            </table>
+            <div class="pin tch r1">
+              <span class="who">老師</span>
+              <p><span class="star">★</span> 衛士、防人雖可免除租庸調，但武器與伙食費須自行負擔；加上家中壯丁被徵召造成勞動力短缺，對一般家庭是沉重負擔。<span class="ts">〔2-13:06〕</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside class="note"><svg class="grid" aria-hidden="true"><use href="#gh"/><use href="#gv"/></svg><span>筆記｜改新之詔</span></aside>
+    </section>
+
+    <!-- 05 -->
+    <section class="blk">
+      <div class="main">
+        <header class="sec"><span class="no">05</span><h2>白村江之戰與遣唐使</h2><p>打輸之後對外收縮、對內強化；遣唐使變成單純去取經。</p></header>
+        <div class="two">
+          <div class="stack">
+            <div class="pin src r1">
+              <span class="who">講義</span>
+              <p>※663天智天皇－白江口之戰（白村江之戰）、日本・百濟 vs. 唐・新羅。「東夷小帝國」。</p>
+              <p>設山城（北九州、瀨戶內海沿岸），防唐朝與新羅來犯。</p>
+            </div>
+            <div class="fig-num"><b>663</b><span>年　<span class="hl">白村江之戰</span>，日本戰敗</span></div>
+            <div class="versus"><b>日本・百濟</b><i>vs.</i><b>唐・新羅</b></div>
+            <ul class="dots">
+              <li><b>背景</b>　百濟 660 年被新羅所滅，遺民向交好的日本求援；新羅則向唐朝求救出兵。</li>
+              <li><b><span class="hl">東夷小帝國</span></b>　對中國採朝貢貿易、學習文物制度，卻沒有向中國稱臣，希望在東方另立一個與唐朝分庭抗禮的小帝國。</li>
+              <li><b>戰後</b>　擔心新羅、唐朝來犯，在北九州、對馬及瀨戶內海沿岸設山城、設瞭望臺。這也是防人須戍守三年的原因。</li>
+            </ul>
+            <div class="pin tch r2">
+              <span class="who">老師</span>
+              <p><span class="star">★</span> 課本用語是「白江口之戰」，正式名稱應該是「白村江之戰」。<span class="ts">〔2-14:37〕</span></p>
+              <p>這一戰是明治維新以前，日本史上少見的對外戰爭之一。<span class="ts">〔2-16:51〕</span></p>
+            </div>
+            <div class="ext">
+              <span class="who">補充</span>
+              <p>講義寫「663 天智天皇」，但嚴格說當時中大兄皇子還在稱制（未正式即位），668 年才登基。</p>
+            </div>
+          </div>
+          <div class="stack">
+            <div class="pin src r2 rt">
+              <span class="who">講義</span>
+              <p>○遣唐使：630～894，北路、南路、南島路；旨收集海外情勢及中國文物。※只朝貢。</p>
+            </div>
+            <div class="fig-num"><b>630—894</b><span><span class="hl">遣唐使</span></span></div>
+            <ul class="dots">
+              <li><b>目的</b>　取經：收集海外情報與中國文物、佛教經驗。</li>
+              <li><b>只朝貢</b>　維持朝貢的形式，但不接受冊封、不稱臣。</li>
+              <li><b>次數</b>　眾說紛紜；比較可靠的說法是嘗試約二十次，成功抵達的約十六回。</li>
+              <li><b>規模</b>　初期一、兩艘船，中後期最多四艘同行，一團可達五、六百人。</li>
+            </ul>
+            <ul class="routes" aria-label="三條航線">
+              <li><b>北路</b><span>沿朝鮮半島、經山東半島到長安。最安全，但百濟滅亡後走不了。</span></li>
+              <li><b>南路</b><span>渡海到揚州一帶再北上長安。</span></li>
+              <li><b>南島路</b><span>經種子島南下再西渡。</span></li>
+            </ul>
+            <div class="pin tch r3">
+              <span class="who">老師</span>
+              <p>遣唐使船是平底箱型、用卡榫工法造的。翻船的關鍵常常不是風浪，而是超載人員或貨物。<span class="ts">〔2-21:10〕</span></p>
+              <p>「如果你是當事人，會想報名遣唐使嗎？」——沒人敢舉手。<span class="ts">〔2-22:30〕</span></p>
+            </div>
+            <div class="ext">
+              <span class="who">補充</span>
+              <p>894 年菅原道真以「唐朝已衰、航路太危險」為由建議停派，遣唐使就此結束。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside class="note"><svg class="grid" aria-hidden="true"><use href="#gh"/><use href="#gv"/></svg><span>筆記｜對外</span></aside>
+    </section>
+
+    <!-- 06 -->
+    <section class="blk">
+      <div class="main">
+        <header class="sec"><span class="no">06</span><h2>奈良時代：平城京</h2><p>710 遷都平城京 → 794 遷都平安京。兩個時代的分界看首都在哪。</p></header>
+        <div class="pin src r1" style="margin-bottom:18px">
+          <span class="who">講義</span>
+          <p>○710～794，平城京（奈良）→794，平安京（京都），平安時代。　○平城京<span class="tang">（仿長安城）</span></p>
+          <p>・朱雀大路（右京＋左京＆外京）；條坊；大內裏（＝平城宮）；東、西市（官營市場）。</p>
+        </div>
+        <div class="fig-row">
+          <figure class="pin map r3" style="margin:0">
+            <svg viewBox="0 0 250 268" role="img" aria-label="平城京示意圖：大內裏在北邊正中，朱雀大路往南，西半是右京、東半是左京，左京東側多出外京">
+              <g fill="none" stroke="#221f1a" stroke-opacity=".2" stroke-width="1">
+                <path d="M51,60V249M70,60V249M89,60V249M127,60V249M146,60V249M165,60V249"/>
+                <path d="M32,81H184M32,102H184M32,123H184M32,144H184M32,165H184M32,186H184M32,207H184M32,228H184"/>
+                <path d="M203,81V165M222,81V165M184,102H241M184,123H241M184,144H241"/>
+              </g>
+              <rect x="32" y="60" width="152" height="189" fill="none" stroke="#221f1a" stroke-width="1.6"/>
+              <rect x="184" y="81" width="57" height="84" fill="#fffdf8" fill-opacity=".6" stroke="#221f1a" stroke-width="1.6"/>
+              <path d="M108,102V249" stroke="#221f1a" stroke-width="4"/>
+              <rect x="89" y="60" width="38" height="42" fill="#221f1a"/>
+              <path d="M108,47V58" stroke="#221f1a" stroke-width="1"/>
+              <text x="108" y="42" text-anchor="middle" font-weight="700">大內裏（＝平城宮）</text>
+              <text x="12" y="20" font-weight="700">北</text><path d="M18,48V26M13,32L18,25L23,32" fill="none" stroke="#221f1a" stroke-width="1.4"/>
+              <text x="63" y="160" text-anchor="middle" font-weight="700" font-size="15">右京</text>
+              <text x="153" y="210" text-anchor="middle" font-weight="700" font-size="15">左京</text>
+              <text x="212" y="100" text-anchor="middle" font-weight="700" font-size="14">外京</text>
+              <text x="212" y="121" text-anchor="middle">東大寺</text>
+              <text x="212" y="140" text-anchor="middle">興福寺</text>
+              <text font-weight="700"><tspan x="118" y="150">朱</tspan><tspan x="118" dy="16">雀</tspan><tspan x="118" dy="16">大</tspan><tspan x="118" dy="16">路</tspan></text>
+              <text x="2" y="75">一條</text><text x="2" y="244">九條</text>
+              <path d="M14,84V226M10,220L14,227L18,220" fill="none" stroke="#221f1a" stroke-width="1"/>
+              <text x="108" y="264" text-anchor="middle">坊（一坊到四坊）</text>
+            </svg>
+            <figcaption class="cap">示意圖：依筆記的文字畫，不是實測比例；外京範圍、大內裏大小、兩寺位置皆為示意。地圖的左邊是右京。</figcaption>
+          </figure>
+          <ul class="parts">
+            <li><b>大內裏</b><span>＝<span class="hl">平城宮</span>。城北正中央，天皇與官員辦公起居的地方，對應長安城的宮城。</span></li>
+            <li><b><span class="hl">條坊</span></b><span>棋盤格的街道。縱向稱「坊」（一坊到四坊），橫向稱「條」（一條到九條）。</span></li>
+            <li><b>朱雀大路</b><span>貫穿條坊中央的南北大道，直通大內。</span></li>
+            <li><b>左京・右京</b><span>以平城宮面向朱雀大路的方向來分，所以看平面圖會覺得左右相反。</span></li>
+            <li><b><span class="hl">外京</span></b><span>長安城沒有。裡面有東大寺、興福寺等多座寺廟。</span></li>
+            <li><b>東市・西市</b><span>兩處官營市場，不是每天開。</span></li>
+          </ul>
+        </div>
+        <ul class="parts one">
+          <li><b>和長安比</b><span>長安城東西較寬、南北較窄，平城京相反（東西窄、南北長）；道路都呈棋盤狀。</span></li>
+        </ul>
+        <div class="two wide-l" style="margin-top:12px">
+          <div class="stack">
+            <div class="pin tch r2">
+              <span class="who">老師</span>
+              <p>據學者推測，興福寺是當時最有權勢的藤原家的氏寺（家族寺廟），附近的莊園也是藤原家的領地。<span class="ts">〔2-33:18〕</span></p>
+              <p>平城京人口估計高達十萬人左右，其中豪族、貴族只有數百人。住得離大內越遠（條數越大，像八條、九條），身分地位就越低。<span class="ts">〔2-34:33〕</span></p>
+            </div>
+          </div>
+          <div class="stack">
+            <div class="pin tch r3 rt">
+              <span class="who">老師</span>
+              <p>平城京位在盆地又沒有下水道，只能挖井取水、挖側溝排水，結果污水反而流向天皇所在的大內一帶。排水不良後來也成為遷都的原因之一。<span class="ts">〔2-36:04〕</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="nxt" style="margin-top:14px">
+            <span class="who">本堂沒講，下週｜講義從這裡到最後都沒講；「預習」是補充，不是老師的話</span>
+            <ul class="dots cols2">
+              <li><b>講義</b>　東大寺（總國分寺）＆國分寺－佛教鎮護國家＝國家控制及保護。</li>
+              <li><b>講義</b>　南都七大寺（東大寺等平城京附近寺廟），重學理研究，被禁止向民眾傳教。</li>
+              <li><b>講義</b>　※南都－平城京 vs. 北都－平安京。</li>
+              <li><b>講義</b>　孝謙上皇46（稱德天皇48）＋道鏡 vs. 藤原氏；宇佐八幡宮神託事件。</li>
+              <li><b>預習</b>　鎮護國家＝用佛法保護國家的思想。聖武天皇 741 年下詔在每個「國」蓋國分寺與國分尼寺，743 年下詔造東大寺大佛（752 年開眼）。</li>
+              <li><b>預習</b>　769 年宇佐八幡宮神託事件：有神諭說「讓道鏡當天皇」，和氣清麻呂再去確認，帶回相反的神諭，道鏡篡位失敗。</li>
+            </ul>
+        </div>
+      </div>
+      <aside class="note"><svg class="grid" aria-hidden="true"><use href="#gh"/><use href="#gv"/></svg><span>筆記｜奈良時代</span></aside>
+    </section>
+
+    <!-- 07 -->
+    <section class="blk">
+      <div class="main">
+        <header class="sec"><span class="no">07</span><h2>記住三件事</h2><p>每一節三件。記起來的在方格打勾。</p></header>
+        <div class="recap">
+          <section>
+            <h3>總論</h3>
+            <ul class="checks">
+              <li><span>645＝改新之詔頒布年，教科書以此為大化改新起點；但改革是陸續推出的。</span></li>
+              <li><span>動機兩邊：唐朝強盛（想抄）＋國內土地兼併與蘇我氏跋扈（不得不改）。</span></li>
+              <li><span>律＝刑法、令＝行政法；法制真正完成要到大寶律令、養老律令。</span></li>
+            </ul>
+          </section>
+          <section>
+            <h3>主力</h3>
+            <ul class="checks">
+              <li><span>檯面上是孝德天皇（36），引擎是中大兄皇子（→天智天皇，38）＋內臣中臣鎌足（→藤原）。</span></li>
+              <li><span>前提是先清算蘇我氏：入鹿被殺、蝦夷自殺，蘇我家專制瓦解。</span></li>
+              <li><span>大化＝日本第一個年號；遷都難波宮＝躲豪族＋方便出海。</span></li>
+            </ul>
+          </section>
+          <section>
+            <h3>改新之詔 甲・乙</h3>
+            <ul class="checks">
+              <li><span>甲＝公地公民（土地人民收歸國有），豪族拿食封當補償。</span></li>
+              <li><span>乙中央＝二官八省：太政官（政治）＋神祇官（祭祀）並列，這是日本特色；痕跡留到今天的是大藏省、宮內廳。</span></li>
+              <li><span>乙地方＝國郡里三層，國司中央派、郡司里長用地方豪族；九州另設大宰府；全國分畿內＋七道。</span></li>
+            </ul>
+          </section>
+          <section>
+            <h3>改新之詔 丙・丁</h3>
+            <ul class="checks">
+              <li><span>丙：戶籍 → 班田收授 → 口分田（六年一班，仿唐均田制）；但特權田開了後門，長出莊園與僧兵。</span></li>
+              <li><span>蔭位制＝父祖官位蔭到子孫，日本版比唐朝更有利於世襲，這是日本貴族社會與藤原氏的制度根源。</span></li>
+              <li><span>丁：租庸調＋歲役雜徭＋軍團衛士防人；663 白村江戰敗（東夷小帝國的代價）→ 北九州設山城、派防人。</span></li>
+            </ul>
+          </section>
+          <section>
+            <h3>遣唐使</h3>
+            <ul class="checks">
+              <li><span>630～894，目的是取經（情勢＋文物），對唐只朝貢、不稱臣。</span></li>
+              <li><span>三條航線：北路（沿半島，最安全）→ 南路、南島路（半島局勢變了只好橫渡外海）。</span></li>
+              <li><span>約二十次嘗試、十六次成功；一團可達五、六百人，翻船多半因為超載。</span></li>
+            </ul>
+          </section>
+          <section>
+            <h3>奈良時代</h3>
+            <ul class="checks">
+              <li><span>710 平城京（奈良時代）→ 794 平安京（平安時代），分界看首都。</span></li>
+              <li><span>平城京仿長安但東西窄、南北長；零件＝大內裏＋條坊＋朱雀大路＋左京右京＋外京（長安沒有）＋東西市。</span></li>
+              <li><span>左京右京以大內裏朝南的視角分（看地圖會覺得相反）；外京裡的興福寺是藤原氏氏寺（學者推測）。</span></li>
+            </ul>
+          </section>
+        </div>
+      </div>
+      <aside class="note"><svg class="grid" aria-hidden="true"><use href="#gh"/><use href="#gv"/></svg><span>筆記｜還不熟的</span></aside>
+    </section>
+
+    <!-- 08 -->
+    <section class="years">
+      <header class="sec"><span class="no">08</span><h2>本堂年表</h2><p>出處照筆記的標註。標「補」的年份不是老師講的；右邊的空格自己寫。</p></header>
+      <div class="yhead"><span>年</span><span>事件</span><span>出處</span><span>我的筆記</span></div>
+      <ol class="yl">
+        <li><span class="y">618</span><span>唐朝建立（盛唐是大化改新的範本）</span><span class="from l"><i></i>講義</span><span class="w"></span></li>
+        <li><span class="y">630</span><span>第一次遣唐使</span><span class="from l"><i></i>講義</span><span class="w"></span></li>
+        <li><span class="y">643</span><span>蘇我入鹿滅聖德太子之子山背大兄王一族</span><span class="from t"><i></i>老師說事件；年份（補）</span><span class="w"></span></li>
+        <li><span class="y"><span class="hl">645</span></span><span>乙巳之變：中大兄皇子與中臣鎌足誅蘇我入鹿、蘇我蝦夷自殺；孝德天皇即位，改元大化，頒「改新之詔」，遷都難波宮</span><span class="from l"><i></i>講義＋老師</span><span class="w"></span></li>
+        <li><span class="y">660</span><span>百濟被新羅（唐支援）所滅，遺民向日本求援</span><span class="from t"><i></i>老師</span><span class="w"></span></li>
+        <li><span class="y"><span class="hl">663</span></span><span>白村江之戰，日本・百濟敗給唐・新羅</span><span class="from l"><i></i>講義</span><span class="w"></span></li>
+        <li><span class="y">668</span><span>中大兄皇子即位為天智天皇</span><span class="from e"><i></i>補</span><span class="w"></span></li>
+        <li><span class="y">669</span><span>中臣鎌足臨終受賜姓「藤原」</span><span class="from t"><i></i>老師說事件；年份（補）</span><span class="w"></span></li>
+        <li><span class="y">701</span><span>大寶律令頒布，律令制完備</span><span class="from t"><i></i>老師說有此法典；年份（補）</span><span class="w"></span></li>
+        <li><span class="y">708</span><span>鑄和同開珎</span><span class="from e"><i></i>補</span><span class="w"></span></li>
+        <li><span class="y"><span class="hl">710</span></span><span>遷都平城京，奈良時代開始</span><span class="from l"><i></i>講義</span><span class="w"></span></li>
+        <li><span class="y">718</span><span>養老律令編成（757 施行）</span><span class="from t"><i></i>老師說有此法典；年份（補）</span><span class="w"></span></li>
+        <li><span class="y">723</span><span>三世一身法</span><span class="from e"><i></i>補</span><span class="w"></span></li>
+        <li><span class="y">741</span><span>國分寺建立之詔</span><span class="from n"><i></i>補（下週）</span><span class="w"></span></li>
+        <li><span class="y">743</span><span>墾田永年私財法；大佛造立之詔</span><span class="from n"><i></i>補（下週）</span><span class="w"></span></li>
+        <li><span class="y">752</span><span>東大寺大佛開眼</span><span class="from n"><i></i>補（下週）</span><span class="w"></span></li>
+        <li><span class="y">769</span><span>宇佐八幡宮神託事件，道鏡篡位失敗</span><span class="from n"><i></i>講義（下週）</span><span class="w"></span></li>
+        <li><span class="y"><span class="hl">794</span></span><span>遷都平安京，平安時代開始</span><span class="from l"><i></i>講義</span><span class="w"></span></li>
+        <li><span class="y">894</span><span>菅原道真建議停派遣唐使</span><span class="from l"><i></i>講義</span><span class="w"></span></li>
+        <li><span class="y">1871</span><span>明治廢藩置縣，古國名改為縣名</span><span class="from t"><i></i>老師</span><span class="w"></span></li>
+      </ol>
+    </section>
+
+    <p class="foot">內容取自 2-wiki／日本史／日本史-律令制國家（大化改新・奈良時代）。〔1-02:53〕表示第 1 段錄音 02:53，要回查逐字稿才用得到。</p>
+  </div>
+</main>
+
+<!-- ========== 風格規格：給人挑、也給之後照這個風格實作的 AI 讀（不進 PDF） ========== -->
+<section class="spec" id="spec">
+  <div class="spec-in">
+    <div class="spec-head">
+      <span class="spec-code">F3</span>
+      <h2>編輯拼貼年表</h2>
+      <span class="spec-en">Editorial × Collage</span>
+    </div>
+    <p class="spec-def">用雜誌的明體大標、導言、分欄與細線排正文，再把講義原文、老師的話、補充各做成一種紙片貼上去；看紙片的顏色就知道這一句是誰說的。</p>
+
+    <div class="spec-grid">
+      <div class="spec-card">
+        <h3>從兩個風格各拿什麼</h3>
+        <ul>
+          <li><b>W03 雜誌編輯風</b>：明體大標、首字放大的導言、3px＋1px 雙線欄頭配斜體編號、欄間 1px 細線、圖說式小字。</li>
+          <li><b>W18 拼貼風</b>：紙膠帶貼住的史料卡、轉 0.7–1.3 度的便條、撕邊牛皮紙、方格紙、紅筆圈、螢光筆。</li>
+          <li><b>沒有拿的</b>：照片與靜物圖、整頁紙紋、手寫毛筆大標、壓花與郵票、導覽列。</li>
+        </ul>
+      </div>
+      <div class="spec-card">
+        <h3>字型</h3>
+        <p>只用系統字型。內文黑體 <code>PingFang TC</code>／<code>Microsoft JhengHei</code> 14.5px；明體 <code>Songti TC</code>／<code>PMingLiU</code> 只用在大標、欄頭、年份與史料卡的甲乙丙丁；老師的話用楷體 <code>BiauKai</code>／<code>DFKai-SB</code> 16px；數字與編號用 <code>Georgia</code>。</p>
+      </div>
+      <div class="spec-card wide">
+        <h3>色票（每個顏色綁一件事）</h3>
+        <ul class="spec-sw">
+          <li><i style="background:#cbbe9e"></i>米色膠帶＝講義原文 #cbbe9e</li>
+          <li><i style="background:#b5271d"></i>老師口述、紅筆 #b5271d</li>
+          <li><i style="background:#efe0c2"></i>牛皮紙＝補充 #efe0c2</li>
+          <li><i style="background:#7a4e12"></i>補充的標籤字 #7a4e12</li>
+          <li><i style="background:#1f4f8f"></i>藍章＝仿唐 #1f4f8f</li>
+          <li><i style="background:#ffe169"></i>螢光筆＝必記 #ffe169</li>
+          <li><i style="background:#4f6157"></i>虛線＝本堂沒講 #4f6157</li>
+          <li><i style="background:#fbf8f1"></i>紙 #fbf8f1／墨 #221f1a</li>
+        </ul>
+      </div>
+      <div class="spec-card wide">
+        <h3>關鍵做法</h3>
+        <ol>
+          <li>紙寬 <code>182mm</code>、左右留白 8mm，與 <code>@page</code> 的邊界相同（內容寬 166mm），螢幕上的換行跟 PDF 一致。螢幕上正文每一節是一列 <code>grid-template-columns: 1fr 32mm</code>，右邊 32mm 是畫了 19px 淡格線的筆記欄；列印時改單欄，筆記欄變成每節結尾一格 24mm 高的方格紙。格線是 inline SVG 的 <code>&lt;line&gt;</code> 加 <code>&lt;use&gt;</code> 重複，用漸層鋪的格線在 PDF 裡會糊掉或缺線。</li>
+          <li>紙片 <code>.pin</code>：紙畫在 <code>::after</code>（底 <code>#fffdf8</code>、1px 細框、<code>box-shadow: 2px 3px 0</code> 不模糊），膠帶是 <code>::before</code> 一塊 68×18px 色塊、用 <code>clip-path</code> 切出鋸齒兩端；整片 <code>transform: rotate()</code> 不超過 1.3 度。盒子上緣留 12px、下緣留 6px，膠帶、陰影、轉出去的角都在盒子裡，分頁時不會有一截留在隔壁頁。膠帶換色就換來源。</li>
+          <li>補充是牛皮紙色塊，下緣用 <code>clip-path: polygon()</code> 切成撕邊，不加框、不加膠帶。</li>
+          <li>紅筆圈是一條 inline SVG 路徑，<code>preserveAspectRatio="none"</code> 撐滿那個詞，<code>vector-effect: non-scaling-stroke</code> 讓線寬不變形；螢光筆是 <code>box-shadow: inset 0 -.6em 0</code> 的實心色塊（漸層在部分 PDF 閱讀器會畫成一條細線）。</li>
+          <li>史料卡橫放一整條（甲乙丙丁在左、原文在右），解說在下面分兩欄加欄間細線。表格不包捲動容器，讓字自動換行。</li>
+          <li>年表每列四格：年份、事件、出處、42mm 的空格；空格底部畫一條線給手寫。</li>
+          <li>列印是無縫直式、白底：<code>@page { size: 182mm 243mm; margin: 4mm 8mm 4mm }</code>，六個邊界框給空字串、不印頁碼。兩欄版面一律改單欄；紙片、牛皮紙、虛線框、條列都可以跨頁（跨頁的紙片斷成上下兩段，膠帶跟著第一行）；不拆的只有圖、表格列、年表列和小格子（時代軸、圖例、方格紙、組織圖、因果鏈的每一格），標題、欄頭、標籤 <code>break-after: avoid</code>。牛皮紙的撕邊在列印時改成蓋在底部的一條白色鋸齒，不用整塊 <code>clip-path</code>。</li>
+        </ol>
+      </div>
+      <div class="spec-card wide spec-fit">
+        <h3>套到學校資料</h3>
+        <p><b>適合</b>歷史、文學這類「有原文、有老師解說、有補充」三層來源的課堂講義：一頁裡要分得出誰說的。</p>
+        <p><b>不適合</b>公式推導、長篇條列的規則整理：紙片太多會蓋掉順序，改用 F2、F4。</p>
+        <p><b>規範</b>符合 NCCU 製作規範：淺色底、全部靜態、一般文流、高度跟著內容、系統字型、無縫直式分頁（182×243mm，文字跨頁接續，圖、表格列與小格子不被切開；規格面板與工具列不進 PDF）。列印時底改白色，紙片的顏色照留；紙片的旋轉在 PDF 裡是向量，不會糊。</p>
+      </div>
+      <div class="spec-card wide spec-prompt">
+        <h3>AI 描述詞</h3>
+        <p>編輯拼貼年表（Editorial × Collage）：米白紙色，雜誌式版面——明體大標、首字放大的導言、雙線欄頭、兩欄加欄間細線；講義原文做成紙膠帶貼住的史料卡，老師的話是紅膠帶楷體便條，補充是撕邊牛皮紙，仿唐蓋藍章，必記的詞畫黃色螢光筆；紙片微微旋轉、不模糊的淡影；右側一整欄淡格線筆記欄，年表每列留手寫空格；黑體內文、系統字型、靜態，列印成 182×243mm 無縫直式，文字跨頁接續、表格列與小格子不拆。</p>
+      </div>
+    </div>
+    <a class="spec-back" href="../index.html">← 回喜好選單</a>
+  </div>
+</section>
+
+<script>
+/* 匯出 PDF：分頁與邊界都寫在上面的 @page，這裡只開列印視窗（照 3-output/NCCU/製作規範.md 第 1 節） */
+document.getElementById('pdf').addEventListener('click', function () { window.print(); });
+</script>
+</body>
+</html>

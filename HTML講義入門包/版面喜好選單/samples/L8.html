@@ -1,0 +1,188 @@
+<!doctype html>
+<!-- 版面喜好選單範例 L8｜年表加拼貼｜來源：講師範例庫 output範例/設計偏好選擇/samples/L8-年表拼貼.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L8｜年表×拼貼（複習頁）</title>
+<style>
+
+:root { color-scheme: light; }
+body { margin: 0; background: #e7e2d6; }
+.style {
+  /* 顏色角色：紙＝米白（列印改白）；墨＝主字與線；朱紅＝唯一強調色（★、重點年代的圓點、老師強調）；米色膠帶與牛皮紙＝中性材質（原稿／補充），不是強調 */
+  --paper: #fbf8f1; --slip: #fffdf8; --ink: #221f1a; --ink2: #5a5347; --hair: rgba(34,31,26,.24);
+  --red: #b5271d; --tape: rgba(203,190,158,.9); --kraft: #efe0c2;
+  --sans: "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+  --serif: Georgia, "Songti TC", "PMingLiU", "Noto Serif TC", serif;
+  --kai: "BiauKai", "DFKai-SB", "Kaiti TC", "KaiTi", serif;
+  color: var(--ink); font: 400 14px/1.6 var(--sans); text-spacing-trim: space-first;
+}
+.style *, .style *::before, .style *::after { box-sizing: border-box; }
+.style h1, .style h2, .style h3, .style h4, .style p, .style ul, .style ol, .style dl, .style dd { margin: 0; padding: 0; }
+.style ul, .style ol { list-style: none; }
+.style h1, .style h2, .style h3 { line-height: 1.3; text-wrap: balance; }
+.style p { text-wrap: pretty; }
+
+.style .bar { width: 182mm; max-width: 100%; margin: 0 auto; padding: 12px 8mm 0; display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--ink2); }
+.style .bar button { flex: none; font: inherit; font-weight: 700; color: #fff; background: var(--ink); border: 0; border-radius: 999px; padding: 7px 18px; cursor: pointer; white-space: nowrap; }
+.style .bar button:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.style .sheet { width: 182mm; max-width: 100%; margin: 12px auto 28px; padding: 4mm 8mm 10mm; background: var(--paper); }
+
+.style .k { font-weight: 700; box-shadow: inset 0 -.5em 0 rgba(203,190,158,.75); padding: 0 1px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.style .star { color: var(--red); font-weight: 900; }
+
+/* 雜誌骨架 */
+.style .mast { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 16px; padding: 5px 0; font-size: 13.5px; color: var(--ink2); border-top: 3px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.style .mast b { color: var(--ink); }
+.style .hero { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 24px; padding: 16px 0 14px; }
+.style .hero h1 { font: 700 60px/1.12 var(--serif); }
+.style .hero .sub { margin-top: 6px; font: 700 17px/1.5 var(--serif); }
+.style .lead { margin-top: 12px; font-size: 15px; line-height: 1.75; }
+.style .range { font: 400 38px/1 var(--serif); font-variant-numeric: lining-nums; white-space: nowrap; }
+.style .range i { font-style: normal; color: var(--ink2); padding: 0 4px; }
+.style .cap { font-size: 13px; color: var(--ink2); line-height: 1.55; margin-top: 4px; }
+.style .gridpaper { position: relative; margin-top: 12px; padding: 10px 14px 12px; transform: rotate(.7deg); background: var(--slip); border: 1px solid var(--hair); box-shadow: 2px 3px 0 rgba(60,45,20,.09); }
+.style .gridpaper > :not(svg) { position: relative; }
+.style svg.grid { position: absolute; left: 0; top: 0; width: 100%; height: 100%; color: var(--ink); opacity: .2; }
+.style .gridpaper h3 { font: 400 17px/1.4 var(--kai); margin-bottom: 4px; }
+.style .gridpaper dt { font: 700 17px/1.3 var(--serif); }
+.style .gridpaper dd { margin: 0 0 6px; font-size: 14px; line-height: 1.5; }
+
+.style .legend { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px 16px; padding: 8px 0 9px; font-size: 13.5px; line-height: 1.45; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.style .legend li { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 8px; align-items: center; }
+.style .legend b { display: block; }
+.style .legend .sw { height: 15px; }
+.style .legend .sw.src { background: var(--tape); transform: rotate(-3deg); }
+.style .legend .sw.tch { background: var(--red); transform: rotate(-3deg); opacity: .8; }
+.style .legend .sw.ext { background: var(--kraft); }
+
+.style .sec { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin: 26px 0 12px; padding-top: 12px; border-top: 3px double var(--ink); }
+.style .sec .no { font: italic 400 25px/1 Georgia, "Times New Roman", serif; color: var(--ink2); }
+.style .sec h2 { font: 700 24px/1.25 var(--serif); }
+.style .sec p { flex: 1 1 12em; font-size: 14px; color: var(--ink2); }
+
+/* 材質紙片 */
+.style .pin { position: relative; z-index: 0; padding: 26px 13px 14px; }
+.style .pin::after { content: ""; position: absolute; z-index: -1; left: 0; right: 0; top: 12px; bottom: 5px; background: var(--slip); border: 1px solid var(--hair); box-shadow: 2px 3px 0 rgba(60,45,20,.09); }
+.style .pin::before { content: ""; position: absolute; top: 4px; left: 20px; width: 66px; height: 17px; background: var(--tape); transform: rotate(-3deg);
+  clip-path: polygon(0 0, 3% 25%, 0 50%, 3% 75%, 0 100%, 100% 100%, 97% 75%, 100% 50%, 97% 25%, 100% 0); }
+.style .pin.rt::before { left: auto; right: 18px; transform: rotate(4deg); }
+.style .pin.tch::before { background: var(--red); opacity: .75; }
+.style .who { display: block; font: 700 13px/1.4 var(--sans); margin-bottom: 2px; color: var(--ink2); }
+.style .tch .who { color: var(--red); }
+.style .clip p { font-size: 15px; line-height: 1.62; }
+.style .clip p + p { margin-top: 3px; }
+.style .clip .poem { font: 400 16px/1.7 var(--kai); }
+.style .clip .poem + .tr { font-size: 13.5px; color: var(--ink2); }
+.style .ext { background: var(--kraft); padding: 10px 13px 14px; font-size: 14px; line-height: 1.6; }
+.style .ext .who { color: #7a4e12; }
+.style .r1 { transform: rotate(-.8deg); } .style .r2 { transform: rotate(.7deg); } .style .r3 { transform: rotate(-1.2deg); } .style .r4 { transform: rotate(1.1deg); }
+
+/* 時代主軸 */
+.style .era { margin-top: 22px; }
+.style .era-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 14px; margin-bottom: 8px; }
+.style .era-h .rn { font: italic 400 38px/1 Georgia, "Times New Roman", serif; color: var(--ink2); }
+.style .era-h h3 { font: 700 21px/1.3 var(--serif); }
+.style .era-h span.rg { font-size: 13.5px; color: var(--ink2); }
+.style .clips { display: grid; gap: 8px 18px; margin: 4px 0 10px; }
+.style .clips.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.style .tl > li { display: grid; grid-template-columns: 27mm 18px minmax(0, 1fr); gap: 0 6px; }
+.style .tl .yr { padding-top: 3px; font: 700 21px/1.2 var(--serif); font-variant-numeric: lining-nums tabular-nums; text-align: right; }
+.style .tl .yr small { display: block; font: 700 14px/1.3 var(--serif); }
+.style .tl .sp { position: relative; }
+.style .tl .sp::before { content: ""; position: absolute; left: 7px; top: 0; bottom: 0; border-left: 2px solid var(--ink); }
+.style .tl .sp i { position: absolute; left: 1px; top: 9px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); background: var(--paper); }
+.style .tl .key .sp i { background: var(--red); border-color: var(--red); }
+.style .tl .key .yr { color: var(--red); }
+.style .tl .tx { padding: 3px 0 11px; }
+.style .tl .tx b { font-size: 15.5px; font-weight: 700; }
+.style .tl .tg { display: inline-block; margin-left: 8px; padding: 0 5px; border: 1px solid var(--ink2); color: var(--ink2); font-size: 12.5px; line-height: 1.45; font-weight: 400; }
+.style .tl .tx p { font-size: 14px; color: var(--ink2); line-height: 1.55; }
+.style .wnote { position: relative; margin-top: 14px; height: 22mm; border: 1px solid var(--ink); background: var(--slip); }
+.style .wnote svg { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--ink); opacity: .2; }
+.style .wnote span { position: absolute; left: 6px; top: -9px; background: var(--paper); padding: 0 6px; font-size: 13px; color: var(--ink2); }
+
+/* 其他區塊 */
+.style .stars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 14px; }
+.style .stars p { font-size: 14px; line-height: 1.55; }
+.style .stars b { display: block; font: 700 17px/1.4 var(--serif); }
+.style .chain { column-count: 2; column-gap: 30px; column-rule: 1px solid var(--hair); counter-reset: c; }
+.style .chain li { counter-increment: c; break-inside: avoid; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 4px; padding: 3px 0 5px; }
+.style .chain li::before { content: counter(c); font: italic 400 21px/1.2 Georgia, "Times New Roman", serif; color: var(--ink2); }
+.style table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.55; }
+.style th, .style td { text-align: left; vertical-align: top; padding: 5px 8px 5px 0; border-top: 1px solid var(--hair); }
+.style thead th { border-top: 2px solid var(--ink); border-bottom: 1px solid var(--ink); font-size: 13.5px; }
+.style tbody tr:last-child > * { border-bottom: 2px solid var(--ink); }
+.style tbody th { font: 700 15.5px/1.5 var(--serif); white-space: nowrap; padding-right: 10px; }
+.style td.ne { color: var(--red); font-weight: 900; text-align: center; padding: 5px 4px; }
+.style .cluster { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 18px; }
+.style .cluster .pin p { font-size: 14px; line-height: 1.55; }
+.style .cluster .pin .who { font: 700 15.5px/1.4 var(--serif); color: var(--ink); }
+.style .vs { border: 1.5px dashed var(--ink2); padding: 8px 12px 6px; }
+.style .foot { margin-top: 18px; padding-top: 8px; border-top: 1px solid var(--ink); font-size: 13.5px; color: var(--ink2); }
+
+@media (max-width: 640px) {
+  .style .sheet { padding: 16px; }
+  .style .hero, .style .clips.two, .style .cluster, .style .stars { grid-template-columns: minmax(0, 1fr); }
+  .style .hero h1 { font-size: 46px; }
+  .style .legend { grid-template-columns: minmax(0, 1fr); }
+  .style .chain { column-count: 1; }
+  .style .tl > li { grid-template-columns: 20mm 18px minmax(0, 1fr); }
+  .style .tl .yr { font-size: 17px; }
+}
+@page {
+  size: 182mm 243mm; margin: 4mm 8mm 4mm;
+  @top-left { content: "" } @top-center { content: "" } @top-right { content: "" }
+  @bottom-left { content: "" } @bottom-center { content: "" } @bottom-right { content: "" }
+}
+@media print {
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { background: #fff; }
+  .style .bar { display: none !important; }
+  .style { --paper: #fff; }
+  .style .sheet { width: auto; max-width: none; margin: 0; padding: 0; background: #fff; }
+  .style .hero, .style .clips.two, .style .stars { display: block; }
+  .style .cluster { display: block; }
+  .style .cluster .pin { display: inline-block; vertical-align: top; width: calc(50% - 6px); margin: 0 12px 6px 0; }
+  .style .cluster .pin:nth-child(2n) { margin-right: 0; }
+  .style .r1, .style .r2, .style .r3, .style .r4, .style .gridpaper { transform: none; }
+  .style .gridpaper { box-shadow: none; }
+  .style .hero > div + div { margin-top: 12px; }
+  .style .stars > * + * { margin-top: 10px; }
+  .style .clips.two > * + * { margin-top: 12px; }
+  .style .ext { clip-path: none; }
+  .style tr, .style .tl > li, .style .legend, .style .gridpaper, .style .chain li, .style .wnote, .style .clip, .style .cluster .pin, .style .stars p { break-inside: avoid; }
+  .style h1, .style h2, .style h3, .style .sec, .style .era-h, .style .who { break-after: avoid; }
+  .style .pin > :first-child { break-before: avoid; }
+  .style p, .style li { orphans: 1; widows: 1; }
+}
+
+</style>
+</head>
+<body>
+<main class="style">
+<div class="bar">
+    <button type="button" id="pdf" title="iPad 直式、無縫分頁（182×243mm，文字跨頁接續），給 GoodNotes 垂直捲動閱讀；在列印視窗的目的地選「另存為 PDF」，其他設定不用動">存成 PDF（GoodNotes 直式）</button>
+    <span>樣張 L8 年表×拼貼｜母版：2-wiki/日本史/日本史-平安時代（攝關政治）.md</span>
+  </div>
+<div class="sheet">
+<div class="mast"><span><b>日本史</b>（國立政治大學）</span><span>複習頁・年表</span><span>2026-10-05</span></div>
+<header class="hero"><div><h1>攝關<br>政治</h1><p class="sub">古代律令制國家的轉型</p><p class="lead">794 年桓武天皇遷都平安京，894 年停派遣唐使；朝廷實權從天皇手上滑到外戚藤原氏手中，進入<span class="k">攝關政治</span>。律令條文跟著修補，佛教也從替國家祈福，變成替貴族求現世利益的密教。</p></div><div><p class="range">794<i>—</i>1192</p><p class="cap">794 桓武天皇遷都平安京；1192 源賴朝創鎌倉幕府（講義說法），平安時代結束。</p><div class="gridpaper"><svg class="grid" viewBox="0 0 60 60" preserveAspectRatio="none" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1"><g vector-effect="non-scaling-stroke"><line vector-effect="non-scaling-stroke" x1="6" x2="6" y1="0" y2="60"/><line vector-effect="non-scaling-stroke" x1="12" x2="12" y1="0" y2="60"/><line vector-effect="non-scaling-stroke" x1="18" x2="18" y1="0" y2="60"/><line vector-effect="non-scaling-stroke" x1="24" x2="24" y1="0" y2="60"/><line vector-effect="non-scaling-stroke" x1="30" x2="30" y1="0" y2="60"/><line vector-effect="non-scaling-stroke" x1="36" x2="36" y1="0" y2="60"/><line vector-effect="non-scaling-stroke" x1="42" x2="42" y1="0" y2="60"/><line vector-effect="non-scaling-stroke" x1="48" x2="48" y1="0" y2="60"/><line vector-effect="non-scaling-stroke" x1="54" x2="54" y1="0" y2="60"/><line vector-effect="non-scaling-stroke" x1="0" x2="60" y1="6" y2="6"/><line vector-effect="non-scaling-stroke" x1="0" x2="60" y1="12" y2="12"/><line vector-effect="non-scaling-stroke" x1="0" x2="60" y1="18" y2="18"/><line vector-effect="non-scaling-stroke" x1="0" x2="60" y1="24" y2="24"/><line vector-effect="non-scaling-stroke" x1="0" x2="60" y1="30" y2="30"/><line vector-effect="non-scaling-stroke" x1="0" x2="60" y1="36" y2="36"/><line vector-effect="non-scaling-stroke" x1="0" x2="60" y1="42" y2="42"/><line vector-effect="non-scaling-stroke" x1="0" x2="60" y1="48" y2="48"/><line vector-effect="non-scaling-stroke" x1="0" x2="60" y1="54" y2="54"/></g></svg><h3>讀之前先記三個詞</h3><dl><dt><span class="k">攝政</span></dt><dd>天皇年幼、生病等「有理由」時，代理天皇。</dd><dt><span class="k">關白</span></dt><dd>天皇成年後「沒有特別理由」也在旁輔佐，實權比攝政更大。</dd><dt><span class="k">外戚</span></dt><dd>天皇母親或皇后的娘家；藤原氏靠把女兒嫁進皇室當上外戚，再以攝政、關白的身分掌權。</dd></dl></div></div></header>
+<ul class="legend" aria-label="圖例"><li><span class="sw src"></span><span><b>米色膠帶</b>講義原文，逐字照抄</span></li><li><span class="sw tch"></span><span><b>紅膠帶・紅字</b>老師強調（★）；年表上的紅點＝講義的年代</span></li><li><span class="sw ext"></span><span><b>牛皮紙</b>母版補充：講義與老師都沒講</span></li></ul>
+<section><header class="sec"><span class="no">01</span><h2>老師強調的三件事</h2><p>紅色的★是老師口頭特別說的。</p></header><div class="stars"><p><b><span class="star">★</span> 攝關政治</b>外戚（藤原氏）擔任攝政、關白而掌握實權，時間在 10～11 世紀。老師說這是這堂課最重要的部分。</p><p><b><span class="star">★</span> 遷都平安京</b>784 長岡京 → 794 平安京；城內只准蓋東寺、西寺，是桓武天皇要避免佛教像奈良時代那樣介入政局。</p><p><b><span class="star">★</span> 制度要修正</b>到了平安時代，大化改新以來的制度都面臨修正：百姓的稅務、勞役太重，有些制度推行不下去。</p></div></section>
+<section><header class="sec"><span class="no">02</span><h2>一條線看完年代</h2><p>講＝講義　師＝老師口述　補＝母版補充（講義與老師都沒講）</p></header>
+<section class="era"><div class="era-h"><span class="rn">I</span><h3>遷都：逃離奈良</h3><span class="rg">784 – 824</span></div><div class="clips"><div class="pin clip src r1"><span class="who">講義</span><p>○為了遠離奈良寺廟等舊勢力，784長岡京 →怨靈所纏，794平安京。</p></div></div><ol class="tl"><li class=""><span class="yr">784</span><span class="sp"><i></i></span><div class="tx"><b>桓武天皇遷都長岡京</b><span class="tg">講</span><p>遷都的兩個理由：遠離奈良的佛教寺院勢力；平城京沒有大河，長岡京旁有淀川水系。</p></div></li><li class=""><span class="yr">785</span><span class="sp"><i></i></span><div class="tx"><b>藤原種繼遇刺，早良親王絕食而死</b><span class="tg">師補</span><p>早良親王死後被追封為「崇道天皇」，用來安撫怨靈。</p></div></li><li class=""><span class="yr">792</span><span class="sp"><i></i></span><div class="tx"><b>健兒制（邊境以外廢軍團）</b><span class="tg">師補</span><p>同年廢除邊境以外的軍團，改由郡司子弟擔任防衛兵。</p></div></li><li class="key"><span class="yr">794</span><span class="sp"><i></i></span><div class="tx"><b>遷都平安京，平安時代開始</b><span class="tg">講</span><p>仿長安的棋盤格局；城內只准蓋東寺、西寺，避免佛教再介入政治。</p></div></li><li class=""><span class="yr">797</span><span class="sp"><i></i></span><div class="tx"><b>坂上田村麻呂任征夷大將軍</b><span class="tg">補</span><p>平定東北的蝦夷；「征夷大將軍」後來成為幕府將軍的官銜。</p></div></li><li class=""><span class="yr">804</span><span class="sp"><i></i></span><div class="tx"><b>最澄、空海隨遣唐使入唐</b><span class="tg">師補</span><p>當時最澄已是佛教界大佬，空海只是無名的留學僧。</p></div></li><li class=""><span class="yr">805・<br>806</span><span class="sp"><i></i></span><div class="tx"><b>最澄回國、開天台宗</b><span class="tg">補</span><p>台密：天台宗，根據地比叡山延曆寺。</p></div></li><li class=""><span class="yr">824</span><span class="sp"><i></i></span><div class="tx"><b>空海在神泉苑祈雨</b><span class="tg">師</span><p>神泉苑是桓武開平安京時，在大內裏南邊開的池。</p></div></li></ol><div class="wnote"><svg class="grid" viewBox="0 0 166 22" preserveAspectRatio="none" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1"><g vector-effect="non-scaling-stroke"><line vector-effect="non-scaling-stroke" x1="5" x2="5" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="10" x2="10" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="15" x2="15" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="20" x2="20" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="25" x2="25" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="30" x2="30" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="35" x2="35" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="40" x2="40" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="45" x2="45" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="50" x2="50" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="55" x2="55" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="60" x2="60" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="65" x2="65" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="70" x2="70" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="75" x2="75" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="80" x2="80" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="85" x2="85" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="90" x2="90" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="95" x2="95" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="100" x2="100" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="105" x2="105" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="110" x2="110" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="115" x2="115" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="120" x2="120" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="125" x2="125" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="130" x2="130" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="135" x2="135" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="140" x2="140" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="145" x2="145" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="150" x2="150" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="155" x2="155" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="160" x2="160" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="165" x2="165" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="5" y2="5"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="10" y2="10"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="15" y2="15"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="20" y2="20"/></g></svg><span>我的年表筆記｜遷都</span></div></section>
+<section class="era"><div class="era-h"><span class="rn">II</span><h3>怨靈、遣唐使與藤原氏興起</h3><span class="rg">858 – 930</span></div><div class="clips two"><div class="pin clip src r2 rt"><span class="who">講義</span><p>菅原道真（右大臣）vs. 藤原家（左大臣）。</p></div><div class="pin clip src r3"><span class="who">講義</span><p>・理由：財政危機，海難，唐朝衰落，日本的文化達一定水準。</p></div></div><ol class="tl"><li class=""><span class="yr">858</span><span class="sp"><i></i></span><div class="tx"><b>藤原良房實質攝政（清和天皇 9 歲即位）</b><span class="tg">補</span><p>第一位人臣攝政。</p></div></li><li class=""><span class="yr">863</span><span class="sp"><i></i></span><div class="tx"><b>神泉苑舉行京都第一次御靈會</b><span class="tg">師</span><p>之後祇園社的御靈會固定下來，就是祇園祭。</p></div></li><li class=""><span class="yr">884</span><span class="sp"><i></i></span><div class="tx"><b>藤原基經成為事實上的第一位關白</b><span class="tg">補</span><p>第一位關白。</p></div></li><li class="key"><span class="yr">894</span><span class="sp"><i></i></span><div class="tx"><b>菅原道真建議停派遣唐使</b><span class="tg">講</span><p>四個理由：財政危機、海難、唐朝衰落、日本文化已達一定水準。</p></div></li><li class=""><span class="yr">901</span><span class="sp"><i></i></span><div class="tx"><b>道真被貶大宰府（昌泰之變）</b><span class="tg">師補</span><p>大宰權帥名義上是長官，實際上是貶官的常用頭銜。</p></div></li><li class=""><span class="yr">903</span><span class="sp"><i></i></span><div class="tx"><b>道真死於大宰府</b><span class="tg">補</span><p>朝廷後來在京都北野蓋天滿宮，把道真奉為天神。</p></div></li><li class=""><span class="yr">909</span><span class="sp"><i></i></span><div class="tx"><b>藤原時平 39 歲猝死</b><span class="tg">師補</span><p>排擠道真的左大臣；老師說「死後六年」。</p></div></li><li class=""><span class="yr">930</span><span class="sp"><i></i></span><div class="tx"><b>清涼殿落雷</b><span class="tg">師補</span><p>落雷打死大納言藤原清貫等人，被認為是道真作祟。</p></div></li></ol><div class="wnote"><svg class="grid" viewBox="0 0 166 22" preserveAspectRatio="none" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1"><g vector-effect="non-scaling-stroke"><line vector-effect="non-scaling-stroke" x1="5" x2="5" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="10" x2="10" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="15" x2="15" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="20" x2="20" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="25" x2="25" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="30" x2="30" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="35" x2="35" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="40" x2="40" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="45" x2="45" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="50" x2="50" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="55" x2="55" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="60" x2="60" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="65" x2="65" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="70" x2="70" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="75" x2="75" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="80" x2="80" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="85" x2="85" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="90" x2="90" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="95" x2="95" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="100" x2="100" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="105" x2="105" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="110" x2="110" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="115" x2="115" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="120" x2="120" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="125" x2="125" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="130" x2="130" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="135" x2="135" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="140" x2="140" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="145" x2="145" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="150" x2="150" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="155" x2="155" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="160" x2="160" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="165" x2="165" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="5" y2="5"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="10" y2="10"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="15" y2="15"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="20" y2="20"/></g></svg><span>我的年表筆記｜道真與怨靈</span></div></section>
+<section class="era"><div class="era-h"><span class="rn">III</span><h3>攝關政治：藤原氏的八十年</h3><span class="rg">10～11 世紀 – 1192</span></div><div class="clips two"><div class="pin clip src r1"><span class="who">講義</span><p>○中臣（藤原）鎌足→不比等→四家之中的北家。全盛：道長30年 ＆ 子・賴通50年。</p></div><div class="ext clip r4"><span class="who">補充｜道長的和歌</span><p class="poem">この世をば　わが世とぞ思ふ　望月の　欠けたることも　なしと思へば</p><p class="tr">這世界就是我的世界，就像滿月沒有一點缺口。（道長讓三個女兒先後成為三代天皇的皇后）</p></div></div><ol class="tl"><li class="key"><span class="yr">10～11<small>世紀</small></span><span class="sp"><i></i></span><div class="tx"><b>攝關政治；道長 30 年、賴通 50 年</b><span class="tg">講</span><p>外戚任攝政、關白，掌握實權；道長＋賴通父子約八十年。</p></div></li><li class="key"><span class="yr">1192</span><span class="sp"><i></i></span><div class="tx"><b>源賴朝創鎌倉幕府，平安時代結束</b><span class="tg">講</span><p>現行教科書多採 1185（設守護、地頭）。</p></div></li></ol><div class="wnote"><svg class="grid" viewBox="0 0 166 22" preserveAspectRatio="none" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1"><g vector-effect="non-scaling-stroke"><line vector-effect="non-scaling-stroke" x1="5" x2="5" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="10" x2="10" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="15" x2="15" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="20" x2="20" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="25" x2="25" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="30" x2="30" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="35" x2="35" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="40" x2="40" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="45" x2="45" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="50" x2="50" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="55" x2="55" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="60" x2="60" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="65" x2="65" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="70" x2="70" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="75" x2="75" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="80" x2="80" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="85" x2="85" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="90" x2="90" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="95" x2="95" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="100" x2="100" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="105" x2="105" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="110" x2="110" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="115" x2="115" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="120" x2="120" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="125" x2="125" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="130" x2="130" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="135" x2="135" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="140" x2="140" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="145" x2="145" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="150" x2="150" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="155" x2="155" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="160" x2="160" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="165" x2="165" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="5" y2="5"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="10" y2="10"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="15" y2="15"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="20" y2="20"/></g></svg><span>我的年表筆記｜攝關政治</span></div></section>
+<section class="era"><div class="era-h"><span class="rn">IV</span><h3>後來的京都</h3><span class="rg">1868 – 1895</span></div><div class="clips"><div class="pin clip src r2"><span class="who">講義</span><p>※平安神宮（1895創建）－桓武（50）＆孝明天皇（121）。10/22時代祭。</p></div></div><ol class="tl"><li class=""><span class="yr">1868</span><span class="sp"><i></i></span><div class="tx"><b>明治維新，天皇遷往東京；改用新曆，祇園祭改在 7 月</b><span class="tg">師</span><p>天皇一直住在京都到這年；改新曆，祇園祭從農曆六月移到七月。</p></div></li><li class="key"><span class="yr">1895</span><span class="sp"><i></i></span><div class="tx"><b>平安神宮創建</b><span class="tg">講</span><p>遷都 1100 年紀念；祭桓武（第 50 代）與孝明（第 121 代）；10/22 時代祭。</p></div></li></ol><div class="wnote"><svg class="grid" viewBox="0 0 166 22" preserveAspectRatio="none" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1"><g vector-effect="non-scaling-stroke"><line vector-effect="non-scaling-stroke" x1="5" x2="5" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="10" x2="10" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="15" x2="15" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="20" x2="20" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="25" x2="25" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="30" x2="30" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="35" x2="35" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="40" x2="40" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="45" x2="45" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="50" x2="50" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="55" x2="55" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="60" x2="60" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="65" x2="65" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="70" x2="70" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="75" x2="75" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="80" x2="80" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="85" x2="85" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="90" x2="90" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="95" x2="95" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="100" x2="100" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="105" x2="105" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="110" x2="110" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="115" x2="115" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="120" x2="120" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="125" x2="125" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="130" x2="130" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="135" x2="135" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="140" x2="140" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="145" x2="145" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="150" x2="150" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="155" x2="155" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="160" x2="160" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="165" x2="165" y1="0" y2="22"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="5" y2="5"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="10" y2="10"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="15" y2="15"/><line vector-effect="non-scaling-stroke" x1="0" x2="166" y1="20" y2="20"/></g></svg><span>我的年表筆記｜其他</span></div></section>
+</section>
+<section><header class="sec"><span class="no">03</span><h2>本堂因果鏈</h2><p>照編號順序讀。</p></header><ol class="chain"><li><span>奈良時代佛教與政治糾纏太深（道鏡事件），平城京又沒有大河可運輸</span></li><li><span>桓武天皇 784 年遷都長岡京，負責的藤原種繼遇刺、早良親王冤死，怨靈之說四起</span></li><li><span>794 年再遷平安京：仿長安的棋盤格局、城內只准蓋東寺西寺，靠淀川與琵琶湖通往各道</span></li><li><span>京都盆地人口密集、濕熱，流行病一來就辦御靈會安撫怨靈 → 祇園祭的起源</span></li><li><span>894 年菅原道真建議停派遣唐使（財政、海難、唐衰落、日本文化已夠成熟）→ 日本風文化抬頭</span></li><li><span>道真被藤原氏排擠、冤死大宰府，又被奉為天神（北野天滿宮）</span></li><li><span>藤原北家以外戚身分出任攝政、關白，道長、賴通父子獨攬約八十年</span></li><li><span>律令跟不上現實：以「格」「式」補充，增設攝政、關白、征夷大將軍、檢非違使等令外官，軍團改成健兒制，開始允許土地私有</span></li><li><span>佛教從鎮護國家轉為貴族求現世利益的密教（最澄天台宗、空海真言宗），並和神道結合（本地垂迹說）</span></li></ol></section>
+<section><header class="sec"><span class="no">04</span><h2>人物索引</h2><p>八個人，各一句話。</p></header><table><thead><tr><th>人物</th><th>標籤</th><th>一句話</th></tr></thead><tbody><tr><th>桓武天皇</th><td>第 50 代</td><td>784 遷長岡京、794 遷平安京；刻意擺脫奈良的佛教勢力。</td></tr><tr><th>早良親王</th><td>怨靈</td><td>桓武天皇的弟弟，被認為是殺害藤原種繼的主使，流放淡路途中絕食而死；人們認為是他的怨靈作祟。</td></tr><tr><th>藤原種繼</th><td>遇刺</td><td>負責遷都長岡京的天皇親信，遭暗殺，真相不明。</td></tr><tr><th>菅原道真</th><td>右大臣</td><td>894 年建議停派遣唐使；被藤原家排擠，貶到大宰府，兩年後冤死，後來成為北野天滿宮的天神、學問之神。</td></tr><tr><th>藤原道長・賴通</th><td>北家全盛</td><td>道長掌權約 30 年，兒子賴通約 50 年；藤原氏掌權時代將近三分之一由這對父子稱霸。</td></tr><tr><th>中臣鎌足 → 不比等</th><td>藤原始祖</td><td>不比等的四個兒子分出南家、北家、式家、京家；最後壟斷攝政、關白的是北家。</td></tr><tr><th>最澄</th><td>台密</td><td>隨遣唐使入唐；開天台宗，根據地是比叡山延曆寺。</td></tr><tr><th>空海</th><td>東密</td><td>隨遣唐使入唐；開真言宗，天皇把東寺賜給他，另在高野山建金剛峰寺；死後追贈「弘法大師」。</td></tr></tbody></table></section>
+<section><header class="sec"><span class="no">05</span><h2>不在年表上的制度與信仰</h2><p>每張紙片一個詞。</p></header><div class="cluster"><div class="pin  r1"><span class="who">攝政</span><p>有理由的代理：天皇年幼、是女性或生病時，代行天皇的職務。</p></div><div class="pin  r2"><span class="who">關白</span><p>無理由的輔佐：天皇已成年、身體也好，仍在旁輔佐，所有奏章先經過他。日文俗語「亭主関白」由此而來。</p></div><div class="pin  r3"><span class="who">平安京</span><p>仿長安的棋盤狀都城：橫向「條」（一～九條），正中朱雀大路分左京、右京，北端是大內裏（平安宮）。城內只有東寺、西寺。選址合「四神相應」；陰陽師是中務省陰陽寮的官員。</p></div><div class="pin  r4"><span class="who">遣唐使停派</span><p>894 年菅原道真建議。理由：財政危機、海難、唐朝衰落、日本文化已達一定水準。停派後日本把唐文化內化，發展出日本風文化。</p></div><div class="pin  r1"><span class="who">格・式</span><p>格＝補充或修改律令的法令；式＝施行細則。</p></div><div class="pin  r2"><span class="who">令外官</span><p>令原本沒有、後來增設的官：攝政、關白、征夷大將軍、健兒制（郡司子弟當邊防兵）、檢非違使（京城警察）。</p></div><div class="pin  r3"><span class="who">土地私有</span><p>開始允許，大化改新「公地公民」的原則鬆動；私有地擴大就是莊園（老師說下次才講）。</p></div><div class="pin  r4"><span class="who">怨靈信仰</span><p>冤死 → 怨靈 → 建廟或辦祭安撫：早良親王、菅原道真（北野天滿宮）、疫病（御靈會 → 祇園祭、八坂神社）。</p></div><div class="pin  r1"><span class="who">佛教變容</span><p>平安二宗＝密教：師傳＋加持祈禱，求現世利益（對照顯教：讀經修行）。鎮護國家佛教 → 貴族佛教；並與神道結合，神佛習合（本地垂迹說）。</p></div></div></section>
+<section><header class="sec"><span class="no">06</span><h2>容易混在一起的</h2><p>虛線框＝要特別分清楚。</p></header><div class="vs"><table><tbody><tr><th>攝政</th><td>有理由的代理：天皇年幼、是女性、生病。</td><td class="ne">≠</td><th>關白</th><td>無理由的輔佐：天皇成年也在旁，實權更大。</td></tr><tr><th>台密</th><td>最澄・天台宗・比叡山延曆寺。</td><td class="ne">≠</td><th>東密</th><td>空海・真言宗・東寺與高野山金剛峰寺。</td></tr><tr><th>密教</th><td>師傳＋加持祈禱，求現世利益。</td><td class="ne">≠</td><th>顯教</th><td>公開的經典教義，讀經修行就能入門（奈良佛教屬此類）。</td></tr><tr><th>長岡京</th><td>784 年；在平安京西南；怨靈纏身，只用了十年。</td><td class="ne">≠</td><th>平安京</th><td>794 年；仿長安；城內只有東寺、西寺。</td></tr><tr><th>東寺・西寺</th><td>平安京建城時蓋的官寺，城內僅此兩座。</td><td class="ne">≠</td><th>金閣寺・南禪寺等</th><td>鎌倉時代（中世）以後才蓋的，不在平安京初期。</td></tr><tr><th>孝明天皇</th><td>最後一位住在京都的天皇，第 121 代；平安神宮祭祀（1895 創建，10/22 時代祭）。</td><td class="ne">≠</td><th>明治天皇</th><td>第 122 代，搬去東京的那一位。老師口述誤成 120 任，以講義為準。</td></tr><tr><th>1192</th><td>講義的平安時代結束年（源賴朝任征夷大將軍）。</td><td class="ne">≠</td><th>1185</th><td>現行教科書多採（設守護、地頭）。</td></tr></tbody></table></div></section>
+<p class="foot">母版：2-wiki/日本史/日本史-平安時代（攝關政治）.md</p></div>
+</main>
+<script>document.getElementById('pdf').addEventListener('click', function () { window.print(); });</script>
+</body>
+</html>

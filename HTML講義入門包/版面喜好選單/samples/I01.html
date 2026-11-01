@@ -1,0 +1,534 @@
+<!doctype html>
+<!-- 版面喜好選單範例 I01｜3D 傾斜光影面板｜來源：講師範例庫 output範例/UI互動技巧/01-3D傾斜光影面板.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>01 · 3D 傾斜光影面板</title>
+<script>
+  // 先於 CSS 套用 embed 模式，避免閃一下完整版面
+  try { if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed'); } catch (e) {}
+</script>
+<style>
+  :root {
+    --bg:#f4f3ef; --surface:#ffffff; --text:#1c1b19; --muted:#6b6862; --line:#e4e1da;
+    --accent:#5b4bff; --accent-2:#00b3a4;
+    --font:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Consolas,"Microsoft JhengHei",monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+      --accent:#8b7dff; --accent-2:#2fd6c6;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+    --accent:#8b7dff; --accent-2:#2fd6c6;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: var(--font); line-height: 1.6;
+    overflow-x: hidden;
+  }
+  main { max-width: 920px; margin: 0 auto; padding: 0 16px 64px; }
+
+  /* ---------- header ---------- */
+  header { padding: 44px 0 8px; position: relative; }
+  .kicker { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; letter-spacing: .08em; }
+  .kicker .no { font-family: var(--mono); font-size: 13px; color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 1px 10px; }
+  h1 { margin: 10px 0 6px; font-size: clamp(28px, 6vw, 44px); line-height: 1.15; letter-spacing: -.01em; font-weight: 800; }
+  h1 .n { color: var(--accent); font-family: var(--mono); font-weight: 600; margin-right: .3em; }
+  header p { margin: 0; max-width: 40em; color: var(--muted); font-size: 16px; }
+  .theme-btn {
+    position: absolute; right: 0; top: 44px; font: inherit; font-size: 13px; color: var(--muted);
+    background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; cursor: pointer;
+  }
+  .theme-btn:hover { color: var(--text); border-color: var(--muted); }
+
+  /* ---------- stage ---------- */
+  .stage {
+    margin-top: 28px; padding: 40px 0; border-radius: 28px; border: 1px solid var(--line);
+    display: flex; justify-content: center; position: relative; overflow: hidden;
+    background:
+      radial-gradient(520px 360px at 50% 40%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+      radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text) 13%, transparent) 1px, transparent 1.4px) 0 0/22px 22px,
+      var(--bg);
+  }
+  .phone {
+    width: min(390px, 100vw - 32px); height: 720px; border-radius: 44px; flex: none;
+    background: var(--surface); border: 1px solid var(--line);
+    box-shadow: 0 30px 60px -20px rgba(20,18,40,.28), 0 8px 20px -8px rgba(20,18,40,.18);
+    position: relative; overflow: hidden; display: flex; flex-direction: column;
+  }
+  .phone::before { /* 瀏海 */
+    content: ""; position: absolute; top: 10px; left: 50%; width: 104px; height: 28px; margin-left: -52px;
+    border-radius: 99px; background: #0c0c0e; z-index: 3;
+  }
+  .screen {
+    flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden;
+    background: color-mix(in srgb, var(--bg) 70%, var(--surface));
+    touch-action: pan-y;
+  }
+  .status { height: 50px; flex: none; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 30px 6px; font-size: 14px; font-weight: 700; }
+  .status i { font-style: normal; font-size: 11px; letter-spacing: 2px; }
+  .appbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 26px 2px; }
+  .appbar h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: .02em; }
+  .appbar small { display: block; color: var(--muted); font-size: 12px; font-weight: 500; letter-spacing: .04em; }
+  .appbar .plus { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; font-size: 20px; color: var(--muted); }
+
+  .wallet { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 6px 0; }
+
+  /* ---------- 卡片（3D） ---------- */
+  .slot {
+    position: relative; width: min(300px, calc(100% - 48px)); height: 170px; margin: 0 auto;
+    perspective: 760px;
+    touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+    cursor: grab; border-radius: 20px; outline: none; -webkit-tap-highlight-color: transparent;
+  }
+  .slot.down { cursor: grabbing; }
+  .slot:focus-visible { outline: 3px solid var(--accent); outline-offset: 6px; }
+  .shadow {
+    position: absolute; left: 14px; right: 14px; top: 18px; bottom: -8px; border-radius: 22px;
+    background: rgba(12,10,30,.6); filter: blur(16px); opacity: .35; will-change: transform, opacity; pointer-events: none;
+  }
+  .card {
+    position: absolute; inset: 0; border-radius: 20px; overflow: hidden; isolation: isolate;
+    transform-origin: 50% 50%; will-change: transform;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.14), inset 0 1px 0 rgba(255,255,255,.3);
+    color: var(--ink);
+  }
+  .card > * { position: absolute; pointer-events: none; }
+  .face { inset: 0; }
+  .shift { left: -40%; top: -40%; width: 180%; height: 180%; will-change: transform, opacity; }
+  .glare {
+    left: -50%; top: -50%; width: 200%; height: 200%; will-change: transform, opacity; opacity: 0;
+    background: radial-gradient(circle closest-side, rgba(255,255,255,.92) 0%, rgba(255,255,255,.34) 34%, rgba(255,255,255,0) 100%);
+  }
+  .streak {
+    left: 0; top: -25%; width: 30%; height: 150%; opacity: 0; will-change: transform, opacity;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.62) 50%, rgba(255,255,255,0));
+  }
+  .content { inset: 0; padding: 16px 18px; display: flex; flex-direction: column; justify-content: space-between; z-index: 2; }
+  .row { display: flex; justify-content: space-between; align-items: center; }
+  .brand { font-weight: 800; letter-spacing: .12em; font-size: 15px; }
+  .brand small { display: block; font-weight: 500; font-size: 10.5px; letter-spacing: .14em; opacity: .7; margin-top: 1px; }
+  .chip { width: 38px; height: 28px; border-radius: 6px; background: linear-gradient(135deg,#f3dc9b,#b98a2c 55%,#ecd07f); box-shadow: inset 0 0 0 1px rgba(0,0,0,.25); position: relative; }
+  .chip::before, .chip::after { content: ""; position: absolute; background: rgba(0,0,0,.28); }
+  .chip::before { left: 0; right: 0; top: 50%; height: 1px; }
+  .chip::after { top: 0; bottom: 0; left: 36%; width: 1px; box-shadow: 10px 0 0 rgba(0,0,0,.28); }
+  .num { font-family: var(--mono); font-size: 15px; letter-spacing: .16em; }
+  .holder { font-size: 11px; letter-spacing: .14em; opacity: .8; }
+  .tag { font-size: 10.5px; letter-spacing: .12em; border: 1px solid currentColor; border-radius: 99px; padding: 0 8px; opacity: .8; }
+  .nfc { width: 22px; height: 22px; opacity: .75; }
+
+  /* 材質一：霧面 */
+  .m-matte { --ink: #eaf2ee; }
+  .m-matte .face {
+    background:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.22'/></svg>"),
+      linear-gradient(150deg, #2f5d57 0%, #1f3f3c 55%, #163230 100%);
+  }
+  .m-matte .shift { display: none; }
+  /* 材質二：拉絲金屬 */
+  .m-metal { --ink: #1b1d22; }
+  .m-metal .face {
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.12) 0 1px, rgba(0,0,0,.06) 1px 2px, rgba(255,255,255,0) 2px 4px),
+      linear-gradient(135deg, #d8dbe1 0%, #9ba1ad 38%, #cdd0d7 58%, #858b98 100%);
+  }
+  .m-metal .shift {
+    mix-blend-mode: soft-light;
+    background: conic-gradient(from 210deg at 50% 50%, #fff, #555, #fff, #444, #fff, #666, #fff);
+  }
+  /* 材質三：全像 */
+  .m-holo { --ink: #10131c; }
+  .m-holo .face {
+    background:
+      repeating-linear-gradient(115deg, rgba(255,255,255,.0) 0 7px, rgba(255,255,255,.14) 7px 8px),
+      linear-gradient(140deg, #e9ecf7 0%, #d5daf0 100%);
+  }
+  .m-holo .shift {
+    mix-blend-mode: multiply; opacity: .75;
+    background: linear-gradient(105deg, #ff8fd8, #ffd86b, #7dffb4, #6fd6ff, #a48bff, #ff8fd8, #ffd86b, #7dffb4);
+  }
+
+  .readout {
+    flex: none; margin: 0 auto 26px; padding: 5px 14px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line);
+    font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap;
+  }
+  .readout b { color: var(--text); font-weight: 600; display: inline-block; min-width: 4.4em; text-align: right; }
+
+  /* ---------- knobs / prompt / notes ---------- */
+  section.knobs, section.prompt, section.notes { margin-top: 28px; }
+  h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .1em; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+  .knobs .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .knob { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+  .knob label { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 600; }
+  .knob output { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .knob small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  input[type=range] { width: 100%; margin: 10px 0 0; accent-color: var(--accent); height: 28px; }
+  input[type=range]:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+  .prompt .box { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; display: flex; gap: 16px; align-items: flex-start; }
+  .prompt blockquote { margin: 0; flex: 1; font-size: 16px; line-height: 1.8; border-left: 3px solid var(--accent-2); padding-left: 14px; }
+  .copy { flex: none; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 0; border-radius: 10px; padding: 8px 16px; background: var(--accent); color: #fff; min-width: 76px; }
+  .copy.ok { background: var(--accent-2); color: #06201d; }
+
+  .notes ol { margin: 0; padding: 0; counter-reset: n; list-style: none; display: grid; gap: 10px; }
+  .notes li { counter-increment: n; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px 12px 52px; position: relative; font-size: 15px; }
+  .notes li::before { content: counter(n); position: absolute; left: 16px; top: 12px; width: 24px; height: 24px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); font-family: var(--mono); font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+  .notes code { font-family: var(--mono); font-size: 13px; background: color-mix(in srgb, var(--text) 8%, transparent); padding: 1px 6px; border-radius: 6px; }
+
+  @media (max-width: 560px) {
+    .prompt .box { flex-direction: column; }
+    .copy { align-self: stretch; }
+    .theme-btn { position: static; margin-top: 12px; }
+    .stage { border-radius: 20px; padding: 24px 0; }
+  }
+
+  /* ---------- embed ---------- */
+  html.embed, html.embed body { background: transparent; overflow: hidden; height: 100%; }
+  html.embed header, html.embed .knobs, html.embed .prompt, html.embed .notes { display: none; }
+  html.embed main { max-width: none; padding: 0; height: 100%; }
+  html.embed .stage { margin: 0; padding: 0; border: 0; background: none; height: 100%; align-items: center; border-radius: 0; overflow: visible; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="kicker"><span class="no">01</span><span>UI 互動技巧・實體質感</span></div>
+    <h1><span class="n">01 ·</span>3D 傾斜光影面板</h1>
+    <p>平面卡片沒有重量感。讓面板隨觸點做透視傾斜、鏡面高光跟著手指跑，鬆手再用彈簧回正，它就像一塊有材質的實物。</p>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="切換淺色與深色">切換深淺色</button>
+  </header>
+
+  <section class="stage" aria-label="Demo 舞台">
+    <div class="phone">
+      <div class="screen">
+        <div class="status"><span>9:41</span><i>●●●● ▮</i></div>
+        <div class="appbar">
+          <div><h2>我的錢包</h2><small>按住卡片、拖曳，再放開</small></div>
+          <div class="plus" aria-hidden="true">+</div>
+        </div>
+        <div class="wallet">
+          <!-- 霧面 -->
+          <div class="slot" tabindex="0" role="button" aria-label="霧面會員卡，按住拖曳可傾斜，Enter 或空白鍵可預覽" data-mat="matte">
+            <div class="shadow"></div>
+            <div class="card m-matte">
+              <div class="face"></div><div class="shift"></div>
+              <div class="content">
+                <div class="row"><div class="brand">森田咖啡<small>MORITA COFFEE</small></div>
+                  <svg class="nfc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 8c2 2.6 2 5.4 0 8M11 6c3.2 3.6 3.2 8.4 0 12M15 4c4.2 4.6 4.2 11.4 0 16"/></svg></div>
+                <div class="row"><div class="num">•••• 0417</div><div class="tag">霧面</div></div>
+                <div class="row"><div class="holder">LIN MEI-HUA</div><div class="holder">有效 08/29</div></div>
+              </div>
+              <div class="glare"></div><div class="streak"></div>
+            </div>
+          </div>
+          <!-- 金屬 -->
+          <div class="slot" tabindex="0" role="button" aria-label="鈦金屬信用卡，按住拖曳可傾斜，Enter 或空白鍵可預覽" data-mat="metal">
+            <div class="shadow"></div>
+            <div class="card m-metal">
+              <div class="face"></div><div class="shift"></div>
+              <div class="content">
+                <div class="row"><div class="brand">澄月銀行<small>TITANIUM INFINITE</small></div><div class="chip"></div></div>
+                <div class="row"><div class="num">4821  ••••  ••••  7730</div></div>
+                <div class="row"><div class="holder">CHEN YU-CHENG</div><div class="tag">鈦金屬</div></div>
+              </div>
+              <div class="glare"></div><div class="streak"></div>
+            </div>
+          </div>
+          <!-- 全像 -->
+          <div class="slot" tabindex="0" role="button" aria-label="全像集點卡，按住拖曳可傾斜，Enter 或空白鍵可預覽" data-mat="holo">
+            <div class="shadow"></div>
+            <div class="card m-holo">
+              <div class="face"></div><div class="shift"></div>
+              <div class="content">
+                <div class="row"><div class="brand">流光點數<small>HOLO POINTS CLUB</small></div>
+                  <svg class="nfc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg></div>
+                <div class="row"><div class="num">12,480 點</div></div>
+                <div class="row"><div class="holder">銀級會員</div><div class="tag">全像</div></div>
+              </div>
+              <div class="glare"></div><div class="streak"></div>
+            </div>
+          </div>
+        </div>
+        <div class="readout" id="readout" aria-live="off">rotateX <b id="rxv">0.0°</b>　rotateY <b id="ryv">0.0°</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="knobs" aria-label="可調參數">
+    <h3>可調參數</h3>
+    <div class="grid">
+      <div class="knob"><label for="kTilt">最大傾斜角 <output id="oTilt"></output></label><input id="kTilt" type="range" min="4" max="30" step="1" value="14"><small>按在卡片邊緣時的傾斜上限</small></div>
+      <div class="knob"><label for="kStiff">剛性 stiffness <output id="oStiff"></output></label><input id="kStiff" type="range" min="60" max="400" step="5" value="170"><small>越大回正越快、越硬</small></div>
+      <div class="knob"><label for="kDamp">阻尼 damping <output id="oDamp"></output></label><input id="kDamp" type="range" min="4" max="40" step="1" value="12"><small>越小過衝越多，約 26 為臨界阻尼</small></div>
+      <div class="knob"><label for="kHover">滑鼠懸停傾斜 <output id="oHover"></output></label><input id="kHover" type="range" min="0" max="100" step="5" value="0"><small>0% 關閉，只有按壓才傾斜（僅滑鼠）</small></div>
+    </div>
+  </section>
+
+  <section class="prompt" aria-label="AI 描述詞">
+    <h3>AI 描述詞</h3>
+    <div class="box">
+      <blockquote id="promptText">為 card 添加跟隨觸摸位置的 3D 透視傾斜與鏡面反射流光，鬆手帶 spring 阻尼回正。</blockquote>
+      <button class="copy" id="copyBtn" type="button">複製</button>
+    </div>
+  </section>
+
+  <section class="notes" aria-label="實作要點">
+    <h3>實作要點</h3>
+    <ol>
+      <li><b>透視放在父層：</b>外層 <code>.slot</code> 設 <code>perspective: 760px</code>，裡面的卡片才套 <code>rotateX/rotateY</code>。把 perspective 寫進 transform 字串會讓每張卡的消失點跟著卡片跑，立體感就不對。</li>
+      <li><b>角度由觸點推算：</b>觸點相對卡片中心正規化成 nx、ny（-1 到 1），<code>rotateY = nx × 最大角</code>、<code>rotateX = −ny × 最大角</code>，所以按哪個角，哪個角就往下壓。要用未傾斜的外層量座標，不能量已旋轉的卡片。</li>
+      <li><b>光影全走 transform 與 opacity：</b>高光、流光條、全像漸層都是大一號的圖層，用 <code>translate3d</code> 位移，亮度由傾斜量與按壓量決定。滑動時不碰 layout，整頁三張卡也跑得順。</li>
+      <li><b>彈簧自己積分：</b>五個狀態（rotateX、rotateY、高光 x/y、按壓量）各跑半隱式 Euler，<code>a = −k(x−t) − c·v</code>。預設 k=170、c=12，阻尼比約 0.46，會有一次可見的過衝再衰減；位移與速度都小於門檻才停止 rAF。</li>
+      <li><b>套用到別的頁面：</b>卡片要設 <code>touch-action: none</code>，否則手機上拖曳會變成捲動；<code>prefers-reduced-motion</code> 下本頁改為不彈跳、直接回正。卡片內文字建議別太小，傾斜時透視會讓邊緣字縮小。</li>
+    </ol>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ---------- 參數 ---------- */
+  const P = { tilt: 14, k: 170, c: 12, hover: 0 };
+  const knobs = [
+    ['kTilt', 'oTilt', 'tilt', v => v + '°'],
+    ['kStiff', 'oStiff', 'k', v => String(v)],
+    ['kDamp', 'oDamp', 'c', v => String(v)],
+    ['kHover', 'oHover', 'hover', v => v + '%'],
+  ];
+  knobs.forEach(([id, oid, key, fmt]) => {
+    const el = $('#' + id), out = $('#' + oid);
+    const apply = () => {
+      const v = +el.value;
+      P[key] = key === 'hover' ? v / 100 : v;
+      out.textContent = fmt(v);
+    };
+    el.addEventListener('input', apply);
+    apply();
+  });
+
+  /* ---------- 卡片狀態 ---------- */
+  const KEYS = ['rx', 'ry', 'hx', 'hy', 'p'];
+  // 各材質的高光強度係數 g、流光條係數 s、全像層基礎亮度
+  const MAT = {
+    matte: { g: 0.5, s: 0.3, shift: 0 },
+    metal: { g: 0.95, s: 0.85, shift: 0.65 },
+    holo:  { g: 0.75, s: 0.8, shift: 0.45 },
+  };
+  const readX = $('#rxv'), readY = $('#ryv');
+
+  const cards = [...document.querySelectorAll('.slot')].map(slot => {
+    const c = {
+      slot,
+      card: $('.card', slot), shadow: $('.shadow', slot),
+      glare: $('.glare', slot), streak: $('.streak', slot), shift: $('.shift', slot),
+      m: MAT[slot.dataset.mat],
+      W: 300, H: 170,
+      x: { rx: 0, ry: 0, hx: .5, hy: .5, p: 0 },
+      v: { rx: 0, ry: 0, hx: 0, hy: 0, p: 0 },
+      t: { rx: 0, ry: 0, hx: .5, hy: .5, p: 0 },
+      pressed: false, active: false, pid: null, timer: 0,
+    };
+    return c;
+  });
+
+  function measure() {
+    cards.forEach(c => { c.W = c.slot.offsetWidth; c.H = c.slot.offsetHeight; });
+  }
+  addEventListener('resize', measure);
+  measure();
+
+  /* ---------- 目標值 ---------- */
+  function aim(c, nx, ny, strength, press) {
+    c.t.rx = -ny * P.tilt * strength;
+    c.t.ry = nx * P.tilt * strength;
+    c.t.hx = .5 + nx * .5;
+    c.t.hy = .5 + ny * .5;
+    c.t.p = press;
+    wake(c);
+  }
+  function aimFromEvent(c, e, strength, press) {
+    const r = c.slot.getBoundingClientRect();   // 未旋轉的外層，座標才準
+    const nx = clamp((e.clientX - (r.left + r.width / 2)) / (r.width / 2), -1, 1);
+    const ny = clamp((e.clientY - (r.top + r.height / 2)) / (r.height / 2), -1, 1);
+    aim(c, nx, ny, strength, press);
+  }
+  function release(c) {
+    c.pressed = false;
+    c.slot.classList.remove('down');
+    c.t.rx = 0; c.t.ry = 0; c.t.hx = .5; c.t.hy = .5; c.t.p = 0;
+    wake(c);
+  }
+
+  /* ---------- 彈簧 rAF ---------- */
+  let running = false, last = 0;
+  function wake(c) {
+    c.active = true;
+    if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
+  }
+  function frame(now) {
+    let dt = Math.min((now - last) / 1000, 1 / 20);
+    last = now;
+    const reduce = reduceMQ.matches;
+    let any = false;
+    for (const c of cards) {
+      if (!c.active) continue;
+      if (reduce) {
+        for (const k of KEYS) { c.x[k] = c.t[k]; c.v[k] = 0; }
+        c.active = false;
+      } else {
+        // 按住時跟手稍硬（阻尼比不變），放開後用使用者設定的彈簧
+        const f = c.pressed ? 1.5 : 1;
+        const k = P.k * f, damp = P.c * Math.sqrt(f);
+        const n = Math.max(1, Math.ceil(dt / (1 / 120)));
+        const h = dt / n;
+        for (let i = 0; i < n; i++) {
+          for (const key of KEYS) {
+            const a = (-k * (c.x[key] - c.t[key]) - damp * c.v[key]);   // m = 1
+            c.v[key] += a * h;
+            c.x[key] += c.v[key] * h;
+          }
+        }
+        let still = true;
+        for (const key of KEYS) {
+          const tol = (key === 'rx' || key === 'ry') ? .004 : .0004;
+          if (Math.abs(c.x[key] - c.t[key]) > tol || Math.abs(c.v[key]) > tol * 4) { still = false; break; }
+        }
+        if (still) { for (const key of KEYS) { c.x[key] = c.t[key]; c.v[key] = 0; } c.active = false; }
+      }
+      render(c);
+      if (c.active) any = true;
+    }
+    if (any) requestAnimationFrame(frame); else running = false;
+  }
+
+  /* ---------- 繪製（只動 transform / opacity） ---------- */
+  function render(c) {
+    const { rx, ry, hx, hy, p } = c.x;
+    const tiltMax = Math.max(P.tilt, 1);
+    const mag = clamp(Math.hypot(rx, ry) / tiltMax, 0, 1.3);      // 傾斜強度 0..1
+    const inten = clamp(.22 * clamp(p, 0, 1.2) + .78 * mag, 0, 1.25);
+
+    c.card.style.transform = `rotateX(${rx.toFixed(3)}deg) rotateY(${ry.toFixed(3)}deg) scale(${(1 + .035 * p).toFixed(4)})`;
+
+    // 陰影：往「翹起的一側」偏移；按壓越深越濃
+    c.shadow.style.transform = `translate3d(${(-ry * 1.7).toFixed(2)}px, ${(rx * 1.7 + 2).toFixed(2)}px, 0) scale(${(1 + .03 * p).toFixed(4)})`;
+    c.shadow.style.opacity = clamp(.3 + .42 * p + .12 * mag, 0, .9).toFixed(3);
+
+    // 鏡面高光：圓形光斑中心跟觸點
+    c.glare.style.transform = `translate3d(${((hx - .5) * c.W).toFixed(1)}px, ${((hy - .5) * c.H).toFixed(1)}px, 0)`;
+    c.glare.style.opacity = clamp(inten * c.m.g, 0, 1).toFixed(3);
+
+    // 斜向流光條：隨觸點水平滑過整張卡
+    const sw = c.W * .3;
+    const s = hx * .85 + hy * .15;
+    c.streak.style.transform = `translate3d(${((s * 1.5 - .5) * c.W - sw / 2).toFixed(1)}px, 0, 0) skewX(-22deg)`;
+    c.streak.style.opacity = clamp(inten * c.m.s * 1.05, 0, 1).toFixed(3);
+
+    // 金屬／全像圖層：隨觸點反向位移，產生視角變化的錯覺
+    if (c.m.shift) {
+      c.shift.style.transform = `translate3d(${(-(hx - .5) * c.W * .9).toFixed(1)}px, ${(-(hy - .5) * c.H * .9).toFixed(1)}px, 0)`;
+      c.shift.style.opacity = clamp(c.m.shift * (.55 + .6 * inten), 0, 1).toFixed(3);
+    }
+
+    if (c === lastTouched) {
+      readX.textContent = rx.toFixed(1) + '°';
+      readY.textContent = ry.toFixed(1) + '°';
+    }
+  }
+  let lastTouched = null;
+
+  /* ---------- Pointer Events ---------- */
+  cards.forEach(c => {
+    const s = c.slot;
+    s.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      clearTimeout(c.timer);
+      c.pressed = true; c.pid = e.pointerId; lastTouched = c;
+      s.classList.add('down');
+      try { s.setPointerCapture(e.pointerId); } catch (_) {}
+      aimFromEvent(c, e, 1, 1);
+      e.preventDefault();
+    });
+    s.addEventListener('pointermove', e => {
+      if (c.pressed) {
+        if (e.pointerId === c.pid) aimFromEvent(c, e, 1, 1);
+      } else if (e.pointerType === 'mouse' && P.hover > 0) {
+        lastTouched = c;
+        aimFromEvent(c, e, P.hover, .3 * P.hover);
+      }
+    });
+    const end = e => {
+      if (e.pointerId !== c.pid) return;
+      try { s.releasePointerCapture(e.pointerId); } catch (_) {}
+      c.pid = null;
+      release(c);
+    };
+    s.addEventListener('pointerup', end);
+    s.addEventListener('pointercancel', end);
+    s.addEventListener('lostpointercapture', end);
+    s.addEventListener('pointerleave', e => { if (!c.pressed && e.pointerType === 'mouse') release(c); });
+    s.addEventListener('contextmenu', e => e.preventDefault());
+
+    // 鍵盤：Enter / 空白鍵 → 按向某個角落再放開，預覽彈簧回彈
+    let corner = 0;
+    const corners = [[-.85, -.85], [.85, -.6], [.7, .85], [-.8, .7]];
+    s.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      if (e.repeat) return;
+      lastTouched = c;
+      const [nx, ny] = corners[corner++ % corners.length];
+      clearTimeout(c.timer);
+      c.pressed = true;
+      aim(c, nx, ny, 1, 1);
+      c.timer = setTimeout(() => release(c), 240);
+    });
+  });
+
+  reduceMQ.addEventListener && reduceMQ.addEventListener('change', () => cards.forEach(wake));
+  cards.forEach(render);
+
+  /* ---------- 複製 ---------- */
+  const copyBtn = $('#copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    const text = $('#promptText').textContent.trim();
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (_) {}
+    if (!ok) {
+      try {
+        const r = document.createRange(); r.selectNodeContents($('#promptText'));
+        const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        ok = document.execCommand('copy');
+      } catch (_) {}
+    }
+    copyBtn.textContent = ok ? '已複製' : '請按 Ctrl+C';
+    copyBtn.classList.toggle('ok', ok);
+    setTimeout(() => { copyBtn.textContent = '複製'; copyBtn.classList.remove('ok'); }, 1600);
+  });
+
+  /* ---------- 深淺色手動切換 ---------- */
+  $('#themeBtn').addEventListener('click', () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+  });
+})();
+</script>
+</body>
+</html>

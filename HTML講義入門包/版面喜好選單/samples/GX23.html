@@ -1,0 +1,73 @@
+<!doctype html><!-- 版面喜好選單範例 GX23｜雙弧對轉載入｜來源：講師範例庫 output範例/元件庫/GX23-雙弧對轉載入.html；原始來源 https://github.com/uiverse-io/galaxy（loaders/Ali-Tahmazi99_smooth-donkey-70.html），作者 Ali-Tahmazi99，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX23 雙弧對轉載入（Two nested arcs spinning in opposite directions）
+  來源：https://github.com/uiverse-io/galaxy　loaders/Ali-Tahmazi99_smooth-donkey-70.html
+  原作者：Ali-Tahmazi99　授權：MIT (Copyright 2023 Uiverse.io)　commit：adbd2ad
+  移植：保留原作的動作——外圈留上下兩段弧、1s 順時針；內圈留左右兩段弧、2s 逆時針，兩圈速度差一倍；
+    原作靠 top:-9px 與 margin 目測對位，兩圈圓心其實差 1.5px，改成 border-box 絕對置中，外 64px／內 48px、框 5px；
+    青色 #64dfdf 換成 P11 --accent；場景改成「加權平均試算」表格上方的處理中遮罩（表格淡化），
+    遮罩上有「取消」，取消後顯示表格與「重新計算」，按下再回到處理中（少量原生 JS）；
+    加 role=status 與文字；prefers-reduced-motion 時兩圈不轉，只留透明度呼吸。
+  2026-10-09 由子代理移植成純 HTML／CSS（必要時加少量原生 JS）
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>雙弧對轉載入</title>
+<style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px 16px;background:var(--bg);color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.card{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line)}
+.hd h1{margin:0;font-size:15px;font-weight:700}
+.btn{font:inherit;font-size:12px;font-weight:700;padding:4px 12px;border:1px solid var(--line-strong);border-radius:4px;background:var(--surface);color:var(--ink);cursor:pointer}
+.btn:hover{background:var(--surface-2)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{position:relative}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;transition:opacity .2s}
+th,td{padding:7px 16px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
+th{font-size:12px;font-weight:700;color:var(--ink-2);background:var(--surface-2)}
+td.n,th.n{text-align:right;font-family:ui-monospace,Consolas,monospace}
+tr:last-child td{border-bottom:0}
+tfoot td{font-weight:700}
+.ov{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgb(246 248 249 / .72)}
+.wrap[data-busy=true] .ov{display:flex}
+.wrap[data-busy=true] table{opacity:.35}
+.ov b{font-weight:700}
+.ov .btn{margin-top:2px}
+
+/* 原作 .loading：兩圈，外圈留上下、內圈留左右，速度差一倍、方向相反 */
+.loading{position:relative;width:64px;height:64px}
+.d1,.d2{position:absolute;border:5px solid var(--accent);border-radius:50px}
+.d1{inset:0;border-left-color:transparent;border-right-color:transparent;animation:load161 1s linear infinite}
+.d2{inset:8px;border-top-color:transparent;border-bottom-color:transparent;animation:load2812 2s linear infinite}
+@keyframes load161{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@keyframes load2812{0%{transform:rotate(0)}100%{transform:rotate(-360deg)}}
+@keyframes breathe{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){
+  .d1,.d2{animation:breathe 1.6s ease-in-out infinite}
+  .d2{animation-delay:-.8s}
+  table{transition:none}
+}
+</style></head><body>
+<div class="card">
+  <div class="hd"><h1>加權平均試算</h1><button class="btn" id="run" type="button" hidden>重新計算</button></div>
+  <div class="wrap" id="w" data-busy="true">
+    <table>
+      <thead><tr><th>科目</th><th class="n">學分</th><th class="n">分數</th></tr></thead>
+      <tbody><tr><td>財務管理</td><td class="n">3</td><td class="n">88</td></tr><tr><td>策略管理</td><td class="n">3</td><td class="n">91</td></tr><tr><td>組織行為</td><td class="n">2</td><td class="n">84</td></tr></tbody>
+      <tfoot><tr><td>加權平均</td><td class="n">8</td><td class="n">88.1</td></tr></tfoot>
+    </table>
+    <div class="ov" role="status"><div class="loading" aria-hidden="true"><div class="d1"></div><div class="d2"></div></div><b>重新計算中…</b><button class="btn" id="cancel" type="button">取消</button></div>
+  </div>
+</div>
+<script>
+const w=document.getElementById('w'),run=document.getElementById('run'),cancel=document.getElementById('cancel');
+cancel.addEventListener('click',()=>{w.dataset.busy='false';run.hidden=false;run.focus()});
+run.addEventListener('click',()=>{w.dataset.busy='true';run.hidden=true;cancel.focus()});
+</script>
+</body></html>

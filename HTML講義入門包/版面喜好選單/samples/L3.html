@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<!-- 版面喜好選單範例 L3｜博物館展板｜來源：講師範例庫 output範例/設計偏好選擇/samples/L3-博物館展板.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 範例 L3 博物館展板：借歷史展廳，大型橫向年表當主角、本堂時代放大打光，講義原文像展品、其餘內容以展品說明卡陳列 -->
+<title>古代律令制國家的建構－大和時代飛鳥時期（大化改新）、奈良時代－</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap">')</script>
+<style>
+:root{
+  --wall-dark:#1e2826;     /* 展廳深牆 */
+  --wall-dark-2:#2a3633;
+  --on-dark:#ece6d8;
+  --on-dark-2:#b9b3a4;
+  --wall:#dfe1de;          /* 灰泥淺牆 */
+  --card:#fbfbf9;          /* 說明卡 */
+  --ink:#1d1f1e;
+  --ink-2:#555953;
+  --line:#c9c3b6;
+  --vermilion:#b8321f;     /* 唯一強調色：填空答案、★、本堂 */
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--wall)}
+body{margin:0;background:var(--wall);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.8}
+::selection{background:var(--vermilion);color:#fff}
+strong{font-weight:700}
+.ts{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* 入口深牆：標題＋大型年表 */
+.hall{background:var(--wall-dark);color:var(--on-dark);padding:88px 0 72px}
+.hall-inner{max-width:1240px;margin:0 auto;padding:0 56px}
+.hall h1{margin:0;font-family:var(--serif);font-weight:900;font-size:52px;line-height:1.3;max-width:21em;text-wrap:balance}
+.hall .meta{margin:22px 0 0;font-size:16px;color:var(--on-dark-2);display:flex;flex-wrap:wrap;gap:4px 28px}
+
+.axis{margin-top:96px}
+.axis h2{margin:0 0 28px;font-family:var(--serif);font-size:22px;font-weight:700;color:var(--on-dark)}
+.axis-scroll{overflow-x:auto;padding-bottom:12px;scrollbar-color:#56625e transparent}
+.axis ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr 1fr 2.4fr 2.1fr 1fr 1fr;min-width:1040px;align-items:end}
+.axis li{position:relative;padding:0 14px 0 0;color:var(--on-dark-2)}
+.axis .era{display:block;font-family:var(--serif);font-weight:700;font-size:24px;line-height:1.3;color:var(--on-dark-2)}
+.axis .bar{display:block;height:6px;margin:14px 0 14px;background:#4a5652}
+.axis .yr{display:block;font-size:14px;font-variant-numeric:tabular-nums;color:var(--on-dark-2)}
+.axis .per{display:block;font-size:14px}
+.axis .now .era{font-size:76px;line-height:1.05;color:#fff;font-weight:900}
+.axis .now .bar{height:14px;background:var(--vermilion)}
+.axis .now .yr{font-size:20px;color:#fff;font-weight:500}
+.axis .now .per{font-size:16px;color:var(--on-dark)}
+.axis .now .note{display:block;margin-top:6px;font-size:16px;font-weight:700;color:#f0a597}
+.axis li + li .bar{margin-left:-14px}
+.axis li:first-child .bar{margin-left:0}
+
+/* 展廳導言牆面文字 */
+.intro{max-width:1240px;margin:0 auto;padding:112px 56px 40px}
+.intro h2{margin:0 0 28px;font-family:var(--serif);font-size:30px;font-weight:700}
+.intro p{margin:0;max-width:36em;font-family:var(--serif);font-size:21px;line-height:1.95;font-weight:500}
+.intro p+p{margin-top:22px}
+
+/* 展間 */
+.room{max-width:1240px;margin:0 auto;padding:96px 56px 40px}
+.room>h2{margin:0;font-family:var(--serif);font-size:44px;font-weight:900;line-height:1.3;padding-bottom:24px;border-bottom:1px solid var(--ink)}
+
+.exhibit{display:grid;grid-template-columns:5fr 6fr;gap:56px;padding:88px 0 0}
+.object{position:sticky;top:40px;align-self:start}
+.object p{margin:0;font-family:var(--serif);font-weight:700;font-size:32px;line-height:1.6;color:var(--ink)}
+.ans{color:var(--vermilion);font-weight:900;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:8px}
+
+.labels{display:flex;flex-direction:column;gap:20px}
+.label{background:var(--card);padding:26px 30px 24px;box-shadow:0 1px 2px rgba(40,35,25,.12),0 8px 24px -12px rgba(40,35,25,.22)}
+.label h3{margin:0 0 10px;font-size:15px;font-weight:700;color:var(--ink-2)}
+.label p{margin:0}
+.label ul{margin:0;padding-left:1.2em}
+.label li+li{margin-top:8px}
+.label-main{padding:32px 34px 30px}
+.label-main p:first-of-type{font-family:var(--serif);font-size:19px;line-height:1.9;font-weight:500}
+.label-main .link{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:16px;color:var(--ink-2)}
+.star{font-weight:700}
+.star .mk{color:var(--vermilion)}
+.label-story{background:transparent;box-shadow:none;border:1px solid var(--ink-2);padding:22px 28px}
+.label-story p{font-family:var(--serif);font-size:18px;font-weight:500}
+.label-note{background:transparent;box-shadow:none;border-top:1px solid var(--line);padding:18px 0 0;color:var(--ink-2)}
+.label-warn{background:#f3ead4;box-shadow:none;border:1px dashed #9c7a2e;color:#5a4412}
+.label-warn h3{color:#6b4f12}
+
+/* 出口：記住三件事 */
+.exit{background:var(--wall-dark);color:var(--on-dark);margin-top:112px;padding:88px 0 96px}
+.exit-inner{max-width:1240px;margin:0 auto;padding:0 56px}
+.exit h2{margin:0 0 32px;font-family:var(--serif);font-size:30px;font-weight:700}
+.exit ol{margin:0;padding:0 0 0 1.4em;font-family:var(--serif);font-size:24px;line-height:1.7;font-weight:500;max-width:34em}
+.exit li+li{margin-top:18px}
+.exit li::marker{color:#f0a597;font-weight:700}
+
+@media (max-width:900px){
+  .hall{padding:56px 0 48px}
+  .hall-inner,.intro,.room,.exit-inner{padding-left:16px;padding-right:16px}
+  .hall h1{font-size:32px}
+  .axis{margin-top:56px}
+  .intro{padding-top:64px}
+  .intro p{font-size:18px}
+  .room{padding-top:64px}
+  .room>h2{font-size:30px}
+  .exhibit{grid-template-columns:1fr;gap:28px;padding-top:56px}
+  .object{position:static}
+  .object p{font-size:24px}
+  .label,.label-main{padding:22px 20px}
+  .label-note{padding:16px 0 0}
+  .exit{margin-top:72px;padding:56px 0 64px}
+  .exit ol{font-size:19px}
+}
+</style>
+</head>
+<body>
+
+<header class="hall">
+  <div class="hall-inner">
+    <h1>古代律令制國家的建構－大和時代飛鳥時期（大化改新）、奈良時代－</h1>
+    <p class="meta"><span>日本史（國立政治大學）</span><span>2026-09-21</span></p>
+
+    <section class="axis">
+      <h2>時代軸</h2>
+      <div class="axis-scroll">
+        <ol>
+          <li><span class="era">繩文</span><span class="bar"></span><span class="yr">約前 1 萬年～前 3 世紀</span><span class="per">上古</span></li>
+          <li><span class="era">彌生</span><span class="bar"></span><span class="yr">約前 3 世紀～3 世紀</span><span class="per">上古</span></li>
+          <li><span class="era">古墳</span><span class="bar"></span><span class="yr">3～6 世紀</span><span class="per">上古（大和政權）</span></li>
+          <li class="now"><span class="era">飛鳥</span><span class="bar"></span><span class="yr">592～710</span><span class="per">古代</span><span class="note">本堂（後半：大化改新起）</span></li>
+          <li class="now"><span class="era">奈良</span><span class="bar"></span><span class="yr">710～794</span><span class="per">古代</span><span class="note">本堂</span></li>
+          <li><span class="era">平安</span><span class="bar"></span><span class="yr">794～1185</span><span class="per">古代</span></li>
+          <li><span class="era">鎌倉以後</span><span class="bar"></span><span class="yr">1185～</span><span class="per">中世（武士政權）</span></li>
+        </ol>
+      </div>
+    </section>
+  </div>
+</header>
+
+<section class="intro">
+  <h2>這堂課在講什麼</h2>
+  <p>上一堂課停在飛鳥時期的推古朝新政：理念喊出來了（以天皇為中心的中央集權國家），但沒落實。這堂課講的就是「落實」的過程——從 645 年的<strong>大化改新</strong>開始，日本用兩、三代人的時間把唐朝那一整套<strong>律令制</strong>搬進來，變成一個有法典、有官僚、有戶籍、有稅制、有常備兵的國家；接著 710 年遷都<strong>平城京</strong>，進入<strong>奈良時代</strong>，看這套制度運作起來長什麼樣、又怎麼開始鬆動。</p>
+  <p>讀之前先記三個詞：<strong>律令</strong>＝律是刑法、令是行政法，合起來就是整套國家運作的成文規則，這是「律令制國家」名字的由來；<strong>公地公民</strong>＝土地和人民名義上全部收歸天皇（國家）所有，這是改新之詔最核心的一刀；<strong>平城京</strong>＝仿長安蓋的新都城（今奈良市），710 到 794 年的首都。</p>
+</section>
+
+<main class="room">
+  <h2>總論：645 年，大化改新</h2>
+
+  <article class="exhibit">
+    <div class="object">
+      <p>○645，仿唐（618年）<span class="ans">強盛</span> ＆ 社會階層矛盾嚴重、蘇我氏跋扈等問題；旨在建設中央集權國家。</p>
+    </div>
+    <div class="labels">
+      <section class="label label-main">
+        <h3>白話</h3>
+        <p>大化改新的起點寫 645 年，但它不是「一年之內做完的一場改革」，而是從 645 年起陸續推出的一整串改革。之所以把 645 訂為起點，是因為那一年頒布了「改新之詔」。改革的動機分兩邊：<strong>外面</strong>——唐朝 618 年建國後極為強盛（盛唐），日本想照抄一套成功的制度；<strong>裡面</strong>——7 世紀前半土地兼併嚴重，豪族佔走大量土地，底層百姓淪為佃農甚至奴隸，加上蘇我氏專權跋扈，非改不可。目標則是上一堂課推古朝就喊過、卻沒做到的那句話：建立以天皇為中心的中央集權國家。</p>
+        <p class="link">連結：「蘇我氏跋扈」是這一條的引信，下面「主力」那條就是清算蘇我氏的人馬；「仿唐」則貫穿整份講義，後面每一項制度幾乎都標著「※唐朝○○制」。</p>
+      </section>
+      <section class="label">
+        <h3>老師</h3>
+        <ul>
+          <li>教科書把大化改新的起點訂在 645 年，是因為那一年頒布了「改新之詔」；實際上改革是 645 年之後陸續推出的，不是一次做完<span class="ts">〔1-00:46〕</span><span class="ts">〔1-01:32〕</span>。不過考試還是跟著教科書走，起點寫 645 年<span class="ts">〔1-01:43〕</span>。</li>
+          <li>為什麼要仿唐？唐朝 618 年成立，是中國國勢非常強盛的一個朝代，正是盛唐的時候<span class="ts">〔1-01:51〕</span><span class="ts">〔1-02:02〕</span>。</li>
+          <li>7 世紀前半日本國內土地兼併非常嚴重，豪族佔有大量土地，底層窮百姓只能給豪族或地主當佃農，甚至當奴隸<span class="ts">〔1-02:13〕</span><span class="ts">〔1-02:29〕</span>。</li>
+          <li><span class="star"><span class="mk">★</span> 在古代社會，你沒有土地基本上就失去了生存的資格——土地是一個家庭、一個人最重要的生活工具</span><span class="ts">〔1-02:53〕</span>。</li>
+          <li>大化改新延續推古朝新政，想建立的就是中央集權國家<span class="ts">〔1-03:24〕</span>。</li>
+        </ul>
+      </section>
+      <section class="label label-story">
+        <h3>老師故事：無殼蝸牛</h3>
+        <p>老師用現在很多人當「無殼蝸牛」（買不起房）來對比：今天沒有房子還能辛苦幾年慢慢賺，古代沒有土地就等於沒有活路<span class="ts">〔1-02:37〕</span>。</p>
+      </section>
+      <section class="label label-note">
+        <h3>補充</h3>
+        <ul>
+          <li>645 年的政變本身叫<strong>乙巳之變</strong>（中大兄皇子與中臣鎌足誅殺蘇我入鹿）；「大化改新」指的是政變之後展開的一連串改革。兩個詞常被混用，但嚴格說是「政變」與「改革」的差別。</li>
+          <li>唐朝 618 年由李淵建立；日本此時能同時看到隋（581–618）的速亡與唐的強盛兩個教訓。</li>
+        </ul>
+      </section>
+    </div>
+  </article>
+
+  <article class="exhibit">
+    <div class="object">
+      <p>律（刑罰法規）、令（行政法規）。</p>
+    </div>
+    <div class="labels">
+      <section class="label label-main">
+        <h3>白話</h3>
+        <p>「律令」是兩種法：<strong>律</strong>是刑法（犯了什麼罪、判什麼刑），<strong>令</strong>是行政法（政府怎麼組織、官怎麼設、稅怎麼收）。整套國家運作靠這兩部成文法典撐起來，所以這個時代叫「律令制國家」。日本的律幾乎照搬唐律，令則依日本國情改寫較多。</p>
+        <p class="link">連結：下一條要講的「法制的建構在律令制定後才完成」，指的就是這兩部法典。</p>
+      </section>
+      <section class="label">
+        <h3>老師</h3>
+        <ul>
+          <li>律是刑罰法規、令是行政法規（老師先講反、當場更正）<span class="ts">〔1-06:50〕</span><span class="ts">〔1-07:01〕</span>。</li>
+          <li>律令制度主要是學唐朝的律典<span class="ts">〔1-08:37〕</span>。</li>
+        </ul>
+      </section>
+      <section class="label label-note">
+        <h3>補充</h3>
+        <ul>
+          <li>唐代法典有「律令格式」四種；日本只引進了律與令兩種，另以「格」（補充法令）「式」（施行細則）補之。</li>
+        </ul>
+      </section>
+    </div>
+  </article>
+
+  <article class="exhibit">
+    <div class="object">
+      <p>※645年頒布「改新之詔」，但法制的建構是在律令制定後才完成。</p>
+    </div>
+    <div class="labels">
+      <section class="label label-main">
+        <h3>白話</h3>
+        <p>645 年只是頒了一份「施政方針」（改新之詔），還不是法律。真正把這些方針寫成可執行的條文、建立起完整法制，要等到 701 年的<strong>大寶律令</strong>、718 年編成的<strong>養老律令</strong>。所以講義提醒：645 是起點不是終點，中間隔了半個多世紀。</p>
+        <p class="link">連結：這解釋了為什麼下面「改新之詔」四條（甲乙丙丁）講的都是方向，細節則要看律令。</p>
+      </section>
+      <section class="label">
+        <h3>老師</h3>
+        <ul>
+          <li>日本律令史上有好幾部相關法典，但早期幾部只有律沒有令；真正律令兼備、內容也比較清楚可考的，只有<strong>大寶律令</strong>與<strong>養老律令</strong>，兩者內容大致相同<span class="ts">〔1-07:16〕</span><span class="ts">〔1-07:38〕</span><span class="ts">〔1-08:11〕</span>。</li>
+          <li>早期那幾部法典的原件都已經佚失，年代只能靠後世學者推估<span class="ts">〔1-08:01〕</span>。</li>
+          <li>大化改新是建立在律令的基礎上，才發展出後面那些配套措施<span class="ts">〔1-08:27〕</span>。</li>
+        </ul>
+      </section>
+      <section class="label label-warn">
+        <h3>逐字稿此處辨識不清</h3>
+        <p>老師唸的早期法典名（ASR 記成「晉江律」「飛鳥律」「飛鳥禁律」「元律」）音辨不可靠，可能是近江令、飛鳥淨御原令一類；此處以老師明確講到的大寶律令、養老律令為準。</p>
+      </section>
+      <section class="label label-note">
+        <h3>補充</h3>
+        <ul>
+          <li>主要時程：668 近江令（存疑）→ 689 飛鳥淨御原令 → <strong>701 大寶律令</strong>（律令完備，首部真正施行的）→ 718 編成、757 施行的<strong>養老律令</strong>。養老律令是唯一有大量條文留存到今天的。</li>
+        </ul>
+      </section>
+    </div>
+  </article>
+</main>
+
+<section class="exit">
+  <div class="exit-inner">
+    <h2>記住三件事</h2>
+    <ol>
+      <li>645＝改新之詔頒布年，教科書以此為大化改新起點；但改革是陸續推出的。</li>
+      <li>動機兩邊：唐朝強盛（想抄）＋國內土地兼併與蘇我氏跋扈（不得不改）。</li>
+      <li>律＝刑法、令＝行政法；法制真正完成要到大寶律令、養老律令。</li>
+    </ol>
+  </div>
+</section>
+
+<script>
+// 窄螢幕時，年表容器自動捲到本堂位置
+(function(){
+  var box=document.querySelector('.axis-scroll'),now=document.querySelector('.axis .now');
+  if(box&&now&&box.scrollWidth>box.clientWidth){box.scrollLeft=Math.max(0,now.offsetLeft-box.offsetLeft-24);}
+})();
+</script>
+</body>
+</html>

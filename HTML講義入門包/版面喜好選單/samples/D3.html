@@ -1,0 +1,320 @@
+<!doctype html>
+<!-- 版面喜好選單範例 D3｜新擬態帳務頁｜來源：講師範例庫 output範例/設計偏好選擇/samples/D3-新擬態帳務頁.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<!-- 範例 D3 新擬態帳務頁：灰白底、白卡片配雙向柔和陰影（新擬態），只用一個靛藍強調色。三欄：左邊一條圖示導覽列，中間是問候標題、三張小卡（數字＋漲跌＋迷你折線）、一張雙線趨勢圖、快速輸入列與提醒；右邊一條窄欄放餘額、週曆、交易與目標進度。文字與數字是示意內容。 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>旅費概況</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">')</script>
+<style>
+/* 變數名與 配色/palettes.css 相同，換配色時整段蓋掉即可；--desk 與 --nm-* 是這個版式自己的 */
+:root{
+  color-scheme:light;
+  --desk:#e3e6ee;
+  --bg:#f5f6fa;
+  --surface:#ffffff;
+  --surface-2:#eef0f5;
+  --ink:#1d1d2b;
+  --ink-2:#5b5e72;
+  --line:#dde0e9;
+  --accent:#5552d0;
+  --on-accent:#ffffff;
+  --accent-soft:#e7e6fb;
+  --c1:#5552d0; --c2:#1d1d2b;
+  --bad:#d63f45;
+  --nm-out:9px 9px 22px rgba(163,172,198,.3),-8px -8px 20px rgba(255,255,255,.95);
+  --nm-in:inset 3px 3px 6px rgba(163,172,198,.32),inset -3px -3px 6px rgba(255,255,255,.95);
+  --sans:"Plus Jakarta Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--desk)}
+body{margin:0;background:var(--desk);color:var(--ink);font:500 13px/1.55 var(--sans);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+h1,h2,h3,p,ul{margin:0;padding:0}
+h1,h2,h3{text-wrap:balance}
+ul{list-style:none}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+
+/* 外框後面疊兩張紙 */
+.stack{position:relative;max-width:1104px;margin:44px auto}
+.stack::before,.stack::after{content:"";position:absolute;border-radius:36px;background:#eef0f6}
+.stack::before{inset:-12px 18px 18px -14px;transform:rotate(-1.2deg)}
+.stack::after{inset:-6px -12px 10px 14px;transform:rotate(.8deg);background:#f0f2f7}
+.app{position:relative;z-index:1;display:grid;grid-template-columns:88px minmax(0,1fr) 250px;border-radius:32px;background:var(--bg);padding:38px 0 34px;box-shadow:0 30px 70px -44px rgba(60,70,110,.55)}
+
+/* 圖示導覽列 */
+.rail{display:flex;flex-direction:column;align-items:center;gap:20px;border-right:1px solid var(--line)}
+.mark{margin:6px 0 62px}
+.rb{position:relative;display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--surface-2);color:#9a9eb2;box-shadow:var(--nm-out)}
+.rb.on{background:var(--accent);color:#fff;box-shadow:0 8px 18px -6px rgba(85,82,208,.6)}
+.rb .i{fill:currentColor;stroke:none}
+.badge{position:absolute;right:-7px;top:-7px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:var(--bad);color:#fff;font-size:12px;font-weight:700;line-height:18px;text-align:center}
+.badge.dot{min-width:8px;width:8px;height:8px;padding:0;right:-2px;top:-2px}
+.rail .gap{margin-top:auto}
+
+/* 主區 */
+.main{padding:0 28px}
+.main h1{font-size:clamp(22px,2.5vw,28px);font-weight:600;line-height:1.35;margin:4px 0 22px}
+.card{background:var(--surface);border-radius:22px;box-shadow:var(--nm-out);padding:20px 22px}
+.assets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px}
+.asset-h{display:grid;grid-template-columns:36px minmax(0,1fr) 16px;gap:10px;align-items:center}
+.coin{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--surface-2);color:var(--accent);box-shadow:var(--nm-in)}
+.asset-h b{display:block;font-size:14px;font-weight:700;line-height:1.3}
+.pair{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);font-weight:700}
+.pair .i{width:12px;height:12px}
+.kebab{width:16px;height:16px;fill:var(--ink-2);stroke:none}
+.asset-b{display:grid;grid-template-columns:minmax(0,1fr) 62px;gap:8px;align-items:end;margin-top:14px}
+.asset-b strong{display:block;font-size:19px;font-weight:700;line-height:1.3;white-space:nowrap}
+.chg{display:inline-flex;align-items:center;gap:8px;margin-top:4px;font-size:12px;font-weight:700;color:var(--ink-2)}
+.arrow{display:grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--accent);color:#fff}
+.arrow .i{width:10px;height:10px;stroke-width:3}
+.asset-b svg{display:block;width:62px;height:26px}
+
+.rev{margin-top:26px;padding:22px 22px 16px}
+.rev-h{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px 12px}
+.rev-h h2{font-size:17px;font-weight:700;line-height:1.3}
+.rev-h .delta{display:inline-flex;align-items:center;gap:10px;margin-top:3px;font-size:12px;font-weight:700;color:var(--ink-2)}
+.ranges{display:flex;gap:14px;margin-left:auto}
+.ranges button{height:26px;padding:0 13px;border:0;border-radius:999px;background:var(--surface-2);box-shadow:var(--nm-in);font-size:12px;font-weight:600;color:#62667c}
+.ranges button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);box-shadow:none}
+.plot{position:relative;height:124px;margin-top:6px}
+.plot svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.plot path,.plot line{vector-effect:non-scaling-stroke}
+.xlab{display:flex;justify-content:space-between;margin-top:12px;font-size:12px;font-weight:700;color:var(--ink-2)}
+
+.pair-row{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);gap:26px;margin-top:26px}
+.pair-row h2{font-size:17px;font-weight:700;line-height:1.3}
+.quick ul{position:relative;margin-top:12px;padding-right:14px;display:grid;gap:14px}
+.quick ul::after{content:"";position:absolute;right:0;top:0;width:2px;height:26px;border-radius:2px;background:#9a9eb2}
+.quick li{display:grid;grid-template-columns:36px minmax(64px,1fr) minmax(120px,1.4fr) auto;gap:12px;align-items:center}
+.cat{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--ink);color:#fff}
+.quick li:nth-child(2) .cat{background:var(--accent)}
+.quick b{display:block;font-size:14px;font-weight:700;line-height:1.3}
+.quick small{font-size:12px;font-weight:700;color:var(--ink-2)}
+.field{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;height:30px;border-radius:9px;background:var(--surface-2);box-shadow:var(--nm-in);font-size:12px;font-weight:700}
+.field input{width:100%;min-width:0;height:100%;padding:0 10px;border:0;background:none;outline:0}
+.field input::placeholder{color:#62667c;opacity:1}
+.field span{display:inline-flex;align-items:center;gap:6px;height:16px;padding:0 10px;border-left:1px solid #cfd3de;white-space:nowrap}
+.field .i{width:12px;height:12px}
+.ghost{height:30px;padding:0 20px;border-radius:10px;border:2px solid var(--accent);background:var(--surface);color:var(--accent);font-size:13px;font-weight:700;white-space:nowrap}
+.acts-h{display:flex;align-items:center;gap:8px}
+.acts-h .i{margin-left:auto;width:14px;height:14px}
+.acts ul{margin-top:12px;display:grid;gap:14px}
+.acts li{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px;align-items:center}
+.acts i{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--surface-2);color:#9a9eb2;box-shadow:var(--nm-in)}
+.acts i .i{fill:currentColor;stroke:none}
+.acts b{display:flex;justify-content:space-between;gap:8px;font-size:14px;font-weight:700;line-height:1.3;color:var(--accent)}
+.acts b time{font-size:12px;color:var(--ink-2);white-space:nowrap}
+.acts span{display:block;font-size:12px;font-weight:700;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* 右欄 */
+.aside{padding:0 26px;border-left:1px solid var(--line)}
+.user{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+.sq{position:relative;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--surface-2);color:#9a9eb2;box-shadow:var(--nm-out)}
+.sq .i{fill:currentColor;stroke:none}
+.ava{position:relative;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-weight:700}
+.ava::after{content:"";position:absolute;right:-5px;bottom:-5px;width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.user .state{display:inline-flex;align-items:center;gap:8px;margin-left:auto;font-size:12px;font-weight:700}
+.user .state .i{width:12px;height:12px}
+.sec{margin-top:30px}
+.sec:first-of-type{margin-top:0}
+.sec-h{display:flex;align-items:center;justify-content:space-between}
+.sec-h h2{font-size:17px;font-weight:700;line-height:1.3}
+.addr{display:flex;align-items:center;gap:8px;margin-top:2px;font-size:12px;font-weight:700}
+.addr span{color:var(--ink-2)}
+.addr .i{margin-left:auto;width:12px;height:12px}
+.bal{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:12px;padding:8px 12px;border-radius:8px;background:var(--surface);box-shadow:var(--nm-out)}
+.bal b{font-size:17px;font-weight:700;color:var(--accent)}
+.bal span{font-size:12px;font-weight:700;white-space:nowrap}
+.aside .ghost{display:block;width:100%;height:34px;margin-top:18px;background:none}
+.week{display:grid;grid-template-columns:repeat(7,1fr);margin-top:12px;text-align:center;font-size:12px;font-weight:700}
+.week span{display:block}
+.week em{display:grid;place-items:center;width:20px;height:20px;margin:2px auto 0;border-radius:50%;font-style:normal;color:var(--ink-2)}
+.week .on em{background:var(--accent);color:#fff}
+.week .sun,.week .sun em{color:var(--bad)}
+.tx{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;align-items:center;margin-top:16px;padding:12px;border-radius:12px;background:var(--surface);box-shadow:var(--nm-out)}
+.tx b{display:block;font-size:14px;font-weight:700;line-height:1.3}
+.tx small{font-size:12px;font-weight:700;color:var(--ink-2)}
+.tx div:last-child{text-align:right}
+.tx div:last-child b{font-size:12px}
+.goal{margin-top:12px;font-size:12px;font-weight:700}
+.goal p{display:flex;justify-content:space-between}
+.goal p:last-child{color:var(--ink-2)}
+.goal p:last-child b{color:var(--ink)}
+.meter{height:3px;margin:6px 0;border-radius:2px;background:#dfe2ec}
+.meter i{display:block;height:100%;border-radius:2px;background:var(--accent)}
+
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ghost,.ranges button,.rb{transition:transform .15s}
+.ghost:active,.ranges button:active,.rb:active{transform:scale(.96)}
+
+@media (max-width:1100px){
+  .stack{margin:0}
+  .stack::before,.stack::after{display:none}
+  .app{grid-template-columns:76px minmax(0,1fr);border-radius:0;padding:28px 0}
+  .aside{grid-column:1 / -1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 28px;margin-top:30px;padding:28px 28px 0;border-left:0;border-top:1px solid var(--line)}
+  .user{grid-column:1 / -1}
+  .sec{margin-top:0}
+}
+@media (max-width:760px){
+  .app{grid-template-columns:minmax(0,1fr);padding:16px 0 24px}
+  .rail{flex-direction:row;flex-wrap:wrap;gap:14px;padding:0 16px 16px;border-right:0;border-bottom:1px solid var(--line)}
+  .mark{margin:0 8px 0 0}
+  .rail .gap{margin:0}
+  .main{padding:16px 16px 0}
+  .assets,.pair-row{grid-template-columns:minmax(0,1fr);gap:18px}
+  .rev,.pair-row{margin-top:18px}
+  .ranges{margin-left:0;gap:8px;flex-wrap:wrap}
+  .quick li{grid-template-columns:36px minmax(0,1fr) auto}
+  .quick .field{grid-column:1 / 3;grid-row:2}
+  .quick .ghost{grid-column:3;grid-row:2}
+  .aside{grid-template-columns:minmax(0,1fr);gap:26px 0;padding:24px 16px 0}
+}
+@media (prefers-reduced-motion:reduce){ *{transition:none !important} }
+@media print{
+  html,body{background:#fff}
+  .stack{margin:0}
+  .stack::before,.stack::after{display:none}
+  .app{box-shadow:none;border-radius:0;background:#fff}
+  .card,.tx,.bal{box-shadow:none;border:1px solid var(--line);break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 11L12 3.5l8.5 7.5V20a1 1 0 0 1-1 1H14v-6h-4v6H4.5a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M4 6.5h14a2 2 0 0 1 2 2V10h-5a3 3 0 0 0 0 6h5v1.500a2 2 0 0 1-2 2H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1zM15.5 12a1.5 1.5 0 1 0 0 2H21v-2z"/></symbol>
+  <symbol id="i-stat" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6 3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm2 9v5h2v-5zm3-4v9h2V8zm3 6v3h2v-3z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><path d="M3 8.200l9 5.3 9-5.300V18a1.5 1.5 0 0 1-1.5 1.500h-15A1.5 1.5 0 0 1 3 18zM4.5 5h15L12 10.800z"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6 3h12a2 2 0 0 1 2 2v9.500a4.5 4.5 0 0 0-5.5 5.500H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm2 5v2h8V8zm0 4v2h5v-2zm10.5 3.500a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18zm-1 12.500v2h2v-2zM12 7a3.2 3.2 0 0 0-3.2 3.200h2A1.2 1.2 0 1 1 12 11.400a1 1 0 0 0-1 1V14h2v-.800A3.2 3.2 0 0 0 12 7z"/></symbol>
+  <symbol id="i-exit" viewBox="0 0 24 24"><path d="M5 3h8a2 2 0 0 1 2 2v3h-2V5H5v14h8v-3h2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm11.3 5.300L20 12l-3.7 3.7-1.4-1.400L16.2 13H9v-2h7.200l-1.3-1.300z"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 1 6 6v5l2 3H4l2-3V9a6 6 0 0 1 6-6zm-2 15.500h4a2 2 0 0 1-4 0z"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10.3 3h3.400l.5 2.3 1.7.7 2-1.3 2.4 2.4-1.3 2 .7 1.7 2.3.5v3.400l-2.3.5-.7 1.7 1.3 2-2.4 2.4-2-1.3-1.7.7-.5 2.300h-3.400l-.5-2.3-1.7-.7-2 1.3-2.4-2.4 1.3-2-.7-1.700L2 13.700v-3.400l2.3-.5.7-1.7-1.3-2 2.4-2.4 2 1.3 1.7-.7zM12 8.500a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 3l8 3v6c0 4.5-3.3 8-8 9-4.7-1-8-4.5-8-9V6zm-1.2 11.800l5-5.3-1.5-1.4-3.6 3.8-1.6-1.6-1.4 1.400z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8 10V8a4 4 0 0 1 8 0v2h1.500A1.5 1.5 0 0 1 19 11.500v8a1.5 1.5 0 0 1-1.5 1.500h-11A1.5 1.5 0 0 1 5 19.500v-8A1.5 1.5 0 0 1 6.5 10zm2 0h4V8a2 2 0 0 0-4 0z"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-aup" viewBox="0 0 24 24"><path d="M12 19V6M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-adn" viewBox="0 0 24 24"><path d="M12 5v13M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-kebab" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l1-4.500L16.5 4l3.5 3.500L8.5 19z" fill="currentColor"/></symbol>
+  <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 18V6M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5M7 11.500a1.5 1.5 0 1 0 0-.01"/></symbol>
+  <symbol id="i-train" viewBox="0 0 24 24"><rect x="6" y="3.5" width="12" height="13" rx="3"/><path d="M6 11h12M9.5 14h.01M14.5 14h.01M8 20l2-3.500M16 20l-2-3.5"/></symbol>
+  <symbol id="i-bowl" viewBox="0 0 24 24"><path d="M4 12h16a8 8 0 0 1-16 0zM9 8c0-1.5 1.5-1.5 1.5-3M13.5 8c0-1.5 1.5-1.5 1.5-3"/></symbol>
+</svg>
+
+<div class="stack">
+<div class="app">
+  <nav class="rail" aria-label="主選單">
+    <svg class="mark" width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><circle cx="21" cy="14" r="12" fill="#5552d0" opacity=".45"/><circle cx="16" cy="19" r="13" fill="#5552d0"/><circle cx="16" cy="19" r="3.5" fill="#fff"/></svg>
+    <a class="rb on" href="#" aria-current="page"><svg class="i"><use href="#i-home"/></svg><span class="sr">總覽</span></a>
+    <a class="rb" href="#"><svg class="i"><use href="#i-wallet"/></svg><span class="sr">帳戶</span></a>
+    <a class="rb" href="#"><svg class="i"><use href="#i-stat"/></svg><span class="sr">統計</span></a>
+    <a class="rb" href="#"><svg class="i"><use href="#i-mail"/></svg><span class="badge">+3</span><span class="sr">訊息，3 則未讀</span></a>
+    <a class="rb" href="#"><svg class="i"><use href="#i-note"/></svg><span class="sr">報表</span></a>
+    <a class="rb gap" href="#"><svg class="i"><use href="#i-help"/></svg><span class="badge dot"></span><span class="sr">說明</span></a>
+    <a class="rb" href="#"><svg class="i"><use href="#i-exit"/></svg><span class="sr">登出</span></a>
+  </nav>
+
+  <main class="main">
+    <h1>早安，旅費概況</h1>
+
+    <section class="assets" aria-label="三個類別的支出">
+      <article class="card">
+        <div class="asset-h"><span class="coin"><svg class="i"><use href="#i-bed"/></svg></span><div><b>住宿</b><span class="pair">本月<svg class="i"><use href="#i-down"/></svg></span></div><svg class="kebab" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-kebab"/></svg></div>
+        <div class="asset-b"><div><strong>NT$27,942</strong><span class="chg">− 1.82 %<i class="arrow"><svg class="i"><use href="#i-adn"/></svg></i></span></div>
+          <svg viewBox="0 0 62 26" aria-hidden="true"><path d="M2 13c5 0 6 7 11 7s6-10 12-10 6 8 11 8 7-14 13-14 6 8 11 9" fill="none" stroke="#5552d0" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+      </article>
+      <article class="card">
+        <div class="asset-h"><span class="coin"><svg class="i"><use href="#i-train"/></svg></span><div><b>交通</b><span class="pair">本月<svg class="i"><use href="#i-down"/></svg></span></div><svg class="kebab" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-kebab"/></svg></div>
+        <div class="asset-b"><div><strong>NT$1,514</strong><span class="chg">+ 0.37 %<i class="arrow"><svg class="i"><use href="#i-aup"/></svg></i></span></div>
+          <svg viewBox="0 0 62 26" aria-hidden="true"><path d="M2 20c6 2 8-4 13-4s5 6 10 6 6-8 11-8 5 5 10 2 8-10 14-14" fill="none" stroke="#5552d0" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+      </article>
+      <article class="card">
+        <div class="asset-h"><span class="coin"><svg class="i"><use href="#i-bowl"/></svg></span><div><b>餐飲</b><span class="pair">本月<svg class="i"><use href="#i-down"/></svg></span></div><svg class="kebab" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-kebab"/></svg></div>
+        <div class="asset-b"><div><strong>NT$6,310</strong><span class="chg">− 1.43 %<i class="arrow"><svg class="i"><use href="#i-adn"/></svg></i></span></div>
+          <svg viewBox="0 0 62 26" aria-hidden="true"><path d="M2 14c5-8 10-10 16-8s8 10 14 10 8-10 14-8 8 8 14 14" fill="none" stroke="#5552d0" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+      </article>
+    </section>
+
+    <article class="card rev">
+      <div class="rev-h">
+        <div><h2>支出</h2><span class="pair">實際／預算<svg class="i"><use href="#i-down"/></svg></span></div>
+        <span class="delta">+ NT$4,560（8.90 %）<i class="arrow"><svg class="i"><use href="#i-aup"/></svg></i></span>
+        <div class="ranges" role="group" aria-label="期間">
+          <button type="button" aria-pressed="false">1 週</button>
+          <button type="button" aria-pressed="false">1 個月</button>
+          <button type="button" aria-pressed="true">6 個月</button>
+          <button type="button" aria-pressed="false">1 年</button>
+        </div>
+      </div>
+      <div class="plot" role="img" aria-label="五月到十月的實際支出（深色線）與預算（靛藍線）">
+        <svg viewBox="0 0 600 124" preserveAspectRatio="none" aria-hidden="true">
+          <g stroke="#e9ebf2" stroke-width="1"><line x1="0" y1="2" x2="600" y2="2"/><line x1="0" y1="42" x2="600" y2="42"/><line x1="0" y1="82" x2="600" y2="82"/><line x1="0" y1="122" x2="600" y2="122"/></g>
+          <path d="M0 18C50 70 90 98 140 96C200 94 230 6 290 4C350 2 390 96 430 100C470 104 480 30 520 28C560 26 580 70 600 96" fill="none" stroke="#1d1d2b" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M0 92C40 70 70 54 110 62C160 72 200 74 240 52C280 30 320 26 360 34C410 44 440 78 480 76C530 74 570 44 600 20" fill="none" stroke="#5552d0" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="xlab" aria-hidden="true"><span>5 月</span><span>6 月</span><span>7 月</span><span>8 月</span><span>9 月</span><span>10 月</span></div>
+    </article>
+
+    <section class="pair-row">
+      <article class="card quick">
+        <h2>快速記帳</h2>
+        <ul>
+          <li><span class="cat"><svg class="i"><use href="#i-bowl"/></svg></span><div><b>餐飲</b><small>午餐・晚餐</small></div>
+            <label class="field"><span class="sr">金額</span><input type="text" inputmode="decimal" placeholder="$0.00"><span>TWD<svg class="i"><use href="#i-down"/></svg></span></label>
+            <button class="ghost" type="button">記一筆</button></li>
+          <li><span class="cat"><svg class="i"><use href="#i-train"/></svg></span><div><b>交通</b><small>地鐵・巴士</small></div>
+            <label class="field"><span class="sr">金額</span><input type="text" inputmode="decimal" placeholder="$0.00"><span>JPY<svg class="i"><use href="#i-down"/></svg></span></label>
+            <button class="ghost" type="button">記一筆</button></li>
+        </ul>
+      </article>
+      <article class="card acts">
+        <div class="acts-h"><h2>最近提醒</h2><svg class="i"><use href="#i-down"/></svg></div>
+        <ul>
+          <li><i><svg class="i"><use href="#i-shield"/></svg></i><div><b>旅平險<time>23:27</time></b><span>保單已生效，保障到回程當天</span></div></li>
+          <li><i><svg class="i"><use href="#i-lock"/></svg></i><div><b>預算上限<time>23:27</time></b><span>餐飲已用到本月預算的 80%</span></div></li>
+        </ul>
+      </article>
+    </section>
+  </main>
+
+  <aside class="aside">
+    <div class="user">
+      <span class="sq"><svg class="i"><use href="#i-bell"/></svg><span class="badge">+2</span></span>
+      <span class="sq"><svg class="i"><use href="#i-gear"/></svg></span>
+      <span class="ava">旅</span>
+      <span class="state">線上<svg class="i"><use href="#i-down"/></svg></span>
+    </div>
+
+    <section class="sec">
+      <div class="sec-h"><h2>目前餘額</h2><svg class="kebab" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-kebab"/></svg></div>
+      <p class="addr">帳戶：<span>旅費專戶</span><svg class="i"><use href="#i-pen"/></svg></p>
+      <p class="bal"><b>NT$36,580</b><span>¥170,300</span></p>
+      <button class="ghost" type="button">追加預算</button>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h"><h2>交易紀錄</h2></div>
+      <div class="week" aria-label="本週">
+        <div><span>一</span><em>13</em></div><div class="on"><span>二</span><em>14</em></div><div><span>三</span><em>15</em></div><div><span>四</span><em>16</em></div><div><span>五</span><em>17</em></div><div><span>六</span><em>18</em></div><div class="sun"><span>日</span><em>19</em></div>
+      </div>
+      <div class="tx"><span class="coin"><svg class="i"><use href="#i-bed"/></svg></span><div><b>住宿</b><small>23:03</small></div><div><b>− NT$12,670</b><small>2 晚</small></div></div>
+      <div class="tx"><span class="coin"><svg class="i"><use href="#i-train"/></svg></span><div><b>交通</b><small>17:16</small></div><div><b>− NT$859</b><small>3 段</small></div></div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h"><h2>預算目標</h2><svg class="kebab" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-kebab"/></svg></div>
+      <div class="goal"><p><span>住宿</span><span>2.3 / 3.0 萬</span></p><div class="meter" role="img" aria-label="住宿已用 77%"><i style="width:77%"></i></div><p><b>77%</b><span>還剩 23% 到 3.0 萬</span></p></div>
+      <div class="goal"><p><span>餐飲</span><span>0.6 / 1.8 萬</span></p><div class="meter" role="img" aria-label="餐飲已用 34%"><i style="width:34%"></i></div><p><b>34%</b><span>還剩 66% 到 1.8 萬</span></p></div>
+    </section>
+  </aside>
+</div>
+</div>
+</body>
+</html>

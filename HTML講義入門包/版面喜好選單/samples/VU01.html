@@ -1,0 +1,40 @@
+<!doctype html>
+<!-- 版面喜好選單範例 VU01｜立體按壓按鈕｜來源：講師範例庫 output範例/元件庫/VU01-立體按壓按鈕.html；原始來源 https://github.com/Ashutoshx7/VengeanceUI（src/components/ui/pop-button.tsx），作者 None，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  VU01 立體按壓按鈕（PopButton）
+  來源：https://github.com/Ashutoshx7/VengeanceUI　src/components/ui/pop-button.tsx
+  原作者：原檔未標　授權：MIT
+  移植：Tailwind 任意值陰影改純 CSS 變數；uppercase 拿掉（中文不適用）；多加一個藍色版示範顏色綁用途；加 focus-visible 與 reduced-motion。原作本來就是淺色。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>立體按壓按鈕</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f6f7f9;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;color:#382b22}
+.row{display:flex;gap:28px;padding-bottom:24px}
+.pop{--face:#fff0f0;--hover:#ffe9e9;--edge:#b18597;--lip:#f9c4d2;--base:#ffe3e2;
+ font:inherit;font-weight:700;font-size:16px;color:#382b22;cursor:pointer;
+ padding:16px 26px;border-radius:12px;background:var(--face);border:2px solid var(--edge);
+ box-shadow:0 12px 0 -2px var(--lip),0 12px 0 0 var(--edge),0 22px 0 0 var(--base);
+ transition:all .15s cubic-bezier(0,0,.58,1)}
+.pop:hover{background:var(--hover);transform:translateY(4px);
+ box-shadow:0 8px 0 -2px var(--lip),0 8px 0 0 var(--edge),0 16px 0 0 var(--base)}
+.pop:active{transform:translateY(12px);box-shadow:0 0 0 -2px var(--lip),0 0 0 0 var(--edge),0 0 0 0 var(--base)}
+.pop:focus-visible{outline:3px solid #2563eb;outline-offset:4px}
+.blue{--face:#eef5ff;--hover:#e3eeff;--edge:#5b86c4;--lip:#bcd3f5;--base:#dce9fb}
+p{position:fixed;bottom:14px;margin:0;font-size:12px;color:#6b7280}
+@media (prefers-reduced-motion:reduce){.pop{transition:none}}
+</style>
+</head>
+<body>
+<div class="row">
+<button class="pop">下載講義</button>
+<button class="pop blue">匯出 PDF</button>
+</div>
+<p>滑過按鈕會下沉，按下去貼底</p>
+</body>
+</html>

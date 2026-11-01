@@ -1,0 +1,18 @@
+<!doctype html><!-- 版面喜好選單範例 GX03｜翻板按鈕｜來源：講師範例庫 output範例/元件庫/GX03-翻板按鈕.html；原始來源 https://github.com/uiverse-io/galaxy（Buttons/mi-series_terrible-sheep-85.html），作者 mi-series，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX03 翻板按鈕（Flip-plate button）
+  來源：https://github.com/uiverse-io/galaxy　Buttons/mi-series_terrible-sheep-85.html
+  原作者：mi-series　授權：MIT
+  移植：原作粉底深藍字、全大寫＋letter-spacing 2px；改成深底板翻開後露出淺面，拿掉大寫與字距（中文不加字距），新增淺色襯底與邊框，加 focus-visible 與 reduced-motion。原作 font-weight:500px 是無效值，已修正。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>demo</title><style>*{box-sizing:border-box}html,body{margin:0;height:100%}body{background:#f5f6f8;color:#1f2937;font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;display:flex;align-items:center;justify-content:center}.cap{font-size:12px;color:#6b7280;margin-top:14px;text-align:center}
+.grp{display:flex;gap:18px}
+.btn{--c:#2f3c7e;width:150px;line-height:42px;font:inherit;font-size:16px;font-weight:700;background:transparent;color:#e8ecf8;border:0;border-radius:6px;position:relative;z-index:2;perspective:300px;transform-style:preserve-3d;cursor:pointer;transition:color .3s}
+.btn.r{--c:#9b2226;color:#fbeaeb}
+.btn::after{content:"";position:absolute;inset:0;background:var(--c);border-radius:6px;z-index:-1;transform-origin:center bottom;transition:transform .3s ease}
+.btn::before{content:"";position:absolute;inset:0;background:#eef0f7;border:1px solid var(--c);border-radius:6px;z-index:-2}
+.btn:hover,.btn:focus-visible{color:var(--c)}
+.btn:hover::after,.btn:focus-visible::after{transform:rotateX(-180deg)}
+@media (prefers-reduced-motion:reduce){.btn,.btn::after{transition:none}}
+</style></head><body><div><div class="grp"><button class="btn">送出查核</button><button class="btn r">退回修改</button></div><div class="cap">滑過去：深色底板往上翻轉，露出淺色面與同色字</div></div></body></html>

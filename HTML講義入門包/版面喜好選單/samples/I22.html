@@ -1,0 +1,852 @@
+<!doctype html>
+<!-- 版面喜好選單範例 I22｜層疊滑走｜來源：講師範例庫 output範例/網頁互動效果/14-層疊滑走.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>14 · 層疊滑走</title>
+<!-- 畫廊頁的卡片文字由這三個 meta 產生 -->
+<meta name="demo-desc" content="一疊卡片，最上面那張可以左右拖。拖得夠遠或甩得夠快就飛出去，下一張放大補上來；不夠就彈回原位。">
+<meta name="demo-use" content="適合：作品或商品快選、推薦與配對清單、通知與待辦的快速分類">
+<meta name="demo-input" content="card">
+<script>
+  // 先於 CSS 套用 embed 模式，避免閃一下完整版面
+  try { if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed'); } catch (e) {}
+</script>
+<style>
+  /* ================= 共用樣式 開始（13 頁一致，勿改） ================= */
+  :root {
+    --bg:#f4f3ef; --surface:#ffffff; --text:#1c1b19; --muted:#6b6862; --line:#e4e1da;
+    --accent:#5b4bff; --accent-2:#00b3a4;
+    --site-bg:#f7f5f0; --site-ink:#16150f; --site-sub:#6f6b61; --site-line:#dedad0;
+    --font:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Consolas,"Microsoft JhengHei",monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+      --accent:#8b7dff; --accent-2:#2fd6c6;
+      --site-bg:#0f0f12; --site-ink:#f3f1ea; --site-sub:#9d998f; --site-line:#2a2a30;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+    --accent:#8b7dff; --accent-2:#2fd6c6;
+    --site-bg:#0f0f12; --site-ink:#f3f1ea; --site-sub:#9d998f; --site-line:#2a2a30;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: var(--font); line-height: 1.6;
+    overflow-x: hidden;
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 0 16px 64px; }
+
+  /* ---------- header ---------- */
+  header { padding: 44px 0 8px; position: relative; }
+  .kicker { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; letter-spacing: .08em; }
+  .kicker .no { font-family: var(--mono); font-size: 13px; color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 1px 10px; }
+  h1 { margin: 10px 0 2px; font-size: clamp(28px, 6vw, 44px); line-height: 1.15; letter-spacing: 0; font-weight: 800; }
+  h1 .n { color: var(--accent); font-family: var(--mono); font-weight: 600; margin-right: .3em; }
+  .en { margin: 0 0 8px; font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  header p.sum { margin: 0; max-width: 40em; color: var(--muted); font-size: 16px; }
+  .theme-btn {
+    position: absolute; right: 0; top: 44px; font: inherit; font-size: 13px; color: var(--muted);
+    background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; cursor: pointer;
+  }
+  .theme-btn:hover { color: var(--text); border-color: var(--muted); }
+
+  /* ---------- stage：一個假的瀏覽器視窗，效果都發生在 .view 裡 ---------- */
+  .stage {
+    margin-top: 28px; padding: clamp(12px, 3vw, 28px); border-radius: 28px; border: 1px solid var(--line);
+    position: relative;
+    background:
+      radial-gradient(520px 360px at 50% 40%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+      radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text) 13%, transparent) 1px, transparent 1.4px) 0 0/22px 22px,
+      var(--bg);
+  }
+  .browser {
+    width: 100%; height: clamp(420px, 68vh, 600px); border-radius: 16px; border: 1px solid var(--line);
+    background: var(--site-bg); overflow: hidden; display: flex; flex-direction: column; position: relative;
+    box-shadow: 0 30px 60px -20px rgba(20,18,40,.28), 0 8px 20px -8px rgba(20,18,40,.18);
+  }
+  .bar {
+    height: 34px; flex: none; display: flex; align-items: center; gap: 7px; padding: 0 12px;
+    border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 60%, var(--surface));
+    font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap;
+  }
+  .bar i { width: 9px; height: 9px; border-radius: 50%; background: color-mix(in srgb, var(--muted) 45%, transparent); flex: none; }
+  .bar .url { margin-left: 8px; overflow: hidden; text-overflow: ellipsis; }
+  .bar .readout { margin-left: auto; overflow: hidden; text-overflow: ellipsis; }
+  .bar .readout b { color: var(--text); font-weight: 600; }
+  .bar .auto {
+    font: inherit; color: var(--muted); background: transparent; border: 1px solid var(--line);
+    border-radius: 99px; padding: 1px 10px; cursor: pointer; flex: none;
+  }
+  .bar .auto[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+  .view {
+    flex: 1; min-height: 0; position: relative; overflow: hidden; container-type: size;
+    background: var(--site-bg); color: var(--site-ink); outline: none;
+  }
+  .view.scroll { overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; }
+  .view:focus-visible { box-shadow: inset 0 0 0 3px var(--accent); }
+  .hint {
+    position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 30; pointer-events: none;
+    font-size: 12px; line-height: 1; padding: 7px 12px; border-radius: 99px; white-space: nowrap;
+    background: rgba(18,18,22,.78); color: #fff; transition: opacity .4s;
+  }
+  .hint.off { opacity: 0; }
+
+  /* 作品圖：由共用腳本的 paintArt() 畫好後塞進 --art0 … --art5 */
+  .art { background: #888 center / cover no-repeat; }
+  .art[data-a="0"] { background-image: var(--art0); } .art[data-a="1"] { background-image: var(--art1); }
+  .art[data-a="2"] { background-image: var(--art2); } .art[data-a="3"] { background-image: var(--art3); }
+  .art[data-a="4"] { background-image: var(--art4); } .art[data-a="5"] { background-image: var(--art5); }
+
+  /* ---------- knobs / prompt / notes ---------- */
+  section.knobs, section.prompt, section.notes { margin-top: 28px; }
+  h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .1em; color: var(--muted); font-weight: 700; }
+  .knobs .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .knob { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+  .knob label { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 600; }
+  .knob output { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .knob small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  input[type=range] { width: 100%; margin: 10px 0 0; accent-color: var(--accent); height: 28px; }
+  input[type=range]:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+  .prompt .box { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; display: flex; gap: 16px; align-items: flex-start; }
+  .prompt blockquote { margin: 0; flex: 1; font-size: 16px; line-height: 1.8; border-left: 3px solid var(--accent-2); padding-left: 14px; }
+  .copy { flex: none; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 0; border-radius: 10px; padding: 8px 16px; background: var(--accent); color: #fff; min-width: 76px; }
+  .copy.ok { background: var(--accent-2); color: #06201d; }
+
+  .notes ol { margin: 0; padding: 0; counter-reset: n; list-style: none; display: grid; gap: 10px; }
+  .notes li { counter-increment: n; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px 12px 52px; position: relative; font-size: 15px; }
+  .notes li::before { content: counter(n); position: absolute; left: 16px; top: 12px; width: 24px; height: 24px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); font-family: var(--mono); font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+  .notes code { font-family: var(--mono); font-size: 13px; background: color-mix(in srgb, var(--text) 8%, transparent); padding: 1px 6px; border-radius: 6px; }
+
+  @media (max-width: 560px) {
+    .prompt .box { flex-direction: column; }
+    .copy { align-self: stretch; }
+    .theme-btn { position: static; margin-top: 12px; }
+    .stage { border-radius: 20px; }
+    .bar .url { display: none; }
+  }
+
+  /* ---------- embed：畫廊卡片裡的預覽，只留瀏覽器視窗 ---------- */
+  html.embed, html.embed body { background: transparent; overflow: hidden; height: 100%; }
+  html.embed header, html.embed .knobs, html.embed .prompt, html.embed .notes { display: none; }
+  html.embed main { max-width: none; padding: 0; height: 100%; }
+  html.embed .stage { margin: 0; padding: 0; border: 0; background: none; height: 100%; border-radius: 0; }
+  html.embed .browser { height: 100%; border: 0; border-radius: 0; box-shadow: none; }
+  html.embed .bar .auto, html.embed .hint { display: none; }   /* 操作提示改由畫廊頁顯示 */
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+  }
+  /* ================= 共用樣式 結束 ================= */
+
+  /* ================= 本效果樣式 ================= */
+  /* 萬能句式拆解（14–18 五頁一致，勿改） */
+  .formula { margin: 12px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+  .formula div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+  .formula dt { font-size: 12px; font-weight: 700; color: var(--accent); }
+  .formula dd { margin: 2px 0 0; font-size: 14px; line-height: 1.55; }
+
+  /* ---------- 版面：中央一疊卡片，左右各一顆按鈕，上方兩個角落是標題與收藏數 ---------- */
+  .pk {
+    position: absolute; inset: 0; overflow: hidden; isolation: isolate;
+    --cw: min(55cqh, 46cqw); --ch: calc(var(--cw) * 1.2);      /* 卡片寬高，跟著視窗縮放 */
+    --keep: #087a70; --skip: #c93a25;
+    user-select: none; -webkit-user-select: none; touch-action: pan-y;
+  }
+  .pk-head { position: absolute; left: clamp(12px, 3.6cqw, 34px); top: clamp(10px, 5cqh, 30px); }
+  .pk-eye { margin: 0; font-family: var(--mono); font-size: clamp(11px, 1.4cqw, 12px); line-height: 1.4; letter-spacing: .14em; color: var(--site-sub); }
+  .pk-head h2 { margin: .45em 0 0; font-size: clamp(15px, 2.7cqw, 26px); line-height: 1.3; font-weight: 800; }
+  .pk-tally {
+    position: absolute; right: clamp(12px, 3.6cqw, 34px); top: clamp(10px, 5cqh, 30px); margin: 0;
+    text-align: right; font-size: clamp(11px, 1.4cqw, 13px); line-height: 1.4; color: var(--site-sub);
+  }
+  .pk-tally b { font-family: var(--mono); font-size: 1.2em; color: var(--site-ink); }
+  .pk-dots { display: flex; justify-content: flex-end; gap: 4px; margin-top: 6px; }
+  .pk-dots i { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--site-sub); transition: background-color .2s, border-color .2s; }
+  .pk-dots i.is-on { background: var(--accent-2); border-color: var(--accent-2); }
+
+  /* ---------- 卡片：六張都疊在同一個位置，誰在上面由 JS 的 transform 與 z-index 決定 ---------- */
+  .pk-deck {
+    position: absolute; left: 50%; top: 50%; width: var(--cw); height: var(--ch);
+    margin: calc(var(--ch) * -.48) 0 0 calc(var(--cw) * -.5); touch-action: pan-y;
+  }
+  .sc {
+    position: absolute; inset: 0; display: flex; flex-direction: column; overflow: hidden; opacity: 0;
+    border-radius: clamp(10px, 2.2cqw, 18px); border: 1px solid var(--site-line);
+    background: var(--surface); color: var(--site-ink);
+    box-shadow: 0 18px 36px -20px rgba(20,18,40,.5), 0 2px 6px rgba(20,18,40,.08);
+    will-change: transform, opacity; touch-action: pan-y;   /* 橫向拖曳給卡片，直向滑動留給頁面 */
+  }
+  .sc.is-top { cursor: grab; }
+  .pk.is-drag .sc.is-top { cursor: grabbing; }
+  .sc.is-fly { pointer-events: none; }
+  .sc-pic { flex: 1; min-height: 0; }
+  .sc-cap { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: clamp(7px, 1.5cqw, 14px) clamp(10px, 2cqw, 18px); }
+  .sc-cap b { display: block; font-size: clamp(13px, 2.3cqw, 20px); line-height: 1.3; font-weight: 800; white-space: nowrap; }
+  .sc-cap span { display: block; font-size: clamp(11px, 1.4cqw, 13px); line-height: 1.4; color: var(--site-sub); white-space: nowrap; }
+  .sc-heart { flex: none; width: clamp(15px, 2.4cqw, 22px); height: clamp(15px, 2.4cqw, 22px); fill: none; stroke: var(--site-sub); stroke-width: 1.6; opacity: .45; }
+  .sc.is-kept .sc-heart { fill: var(--accent-2); stroke: var(--accent-2); opacity: 1; }
+
+  /* 方向標記：往右浮現「收藏」，往左浮現「略過」，透明度 = 位移 ÷ 距離門檻 */
+  .sc-mark {
+    position: absolute; top: 7%; padding: .1em .55em; border-radius: 8px; border: 2px solid currentColor;
+    background: rgba(255,255,255,.94); font-size: clamp(13px, 2.6cqw, 22px); line-height: 1.4; font-weight: 800;
+    opacity: 0; pointer-events: none; will-change: opacity;
+  }
+  .sc-keep { left: 7%; color: var(--keep); transform: rotate(-9deg); }
+  .sc-skip { right: 7%; color: var(--skip); transform: rotate(9deg); }
+  /* 越後面的卡片蓋上越濃的底色，看起來像退到遠處 */
+  .sc-shade { position: absolute; inset: 0; background: var(--site-bg); opacity: 0; pointer-events: none; }
+
+  /* ---------- 按鈕：拖曳的等效操作 ---------- */
+  .pk-btn {
+    position: absolute; top: calc(50% + var(--ch) * .02); transform: translateY(-50%);
+    display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 clamp(10px, 1.6cqw, 16px);
+    font: inherit; font-size: clamp(12px, 1.5cqw, 14px); font-weight: 700; line-height: 1; white-space: nowrap;
+    color: var(--site-ink); background: var(--surface); border: 1px solid var(--site-line); border-radius: 99px; cursor: pointer;
+    transition: background-color .15s, border-color .15s, color .15s;
+  }
+  .pk-btn:focus-visible { border-radius: 99px; }
+  .pk-btn svg { flex: none; width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .pk-no { right: calc(50% + var(--cw) * .5 + clamp(10px, 3cqw, 34px)); }
+  .pk-yes { left: calc(50% + var(--cw) * .5 + clamp(10px, 3cqw, 34px)); }
+  .pk-no:hover, .pk-no.is-armed { background: var(--skip); border-color: var(--skip); color: #fff; }
+  .pk-yes:hover, .pk-yes.is-armed { background: var(--keep); border-color: var(--keep); color: #fff; }
+
+  /* ---------- 卡片下方的刻度：圓點是目前的位移，兩條短線是距離門檻 ---------- */
+  .pk-gauge {
+    position: absolute; left: 50%; top: calc(50% + var(--ch) * .52 + clamp(9px, 3.2cqh, 20px));
+    width: calc(var(--cw) * 1.5); height: 1px; margin-left: calc(var(--cw) * -.75); background: var(--site-line);
+  }
+  .pk-gauge i { position: absolute; left: 50%; }
+  .pk-g0 { top: -3px; width: 1px; height: 7px; background: var(--site-sub); opacity: .6; }
+  .pk-tk { top: -5px; width: 2px; height: 11px; margin-left: -1px; border-radius: 1px; background: var(--site-sub); will-change: transform; }
+  .pk-dot { top: -4px; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%; background: var(--site-ink); will-change: transform; }
+  .pk-gauge.is-over .pk-dot { background: var(--accent); }
+
+  /* 自動示範時的假手指，讓人看得出卡片是被拖著走的 */
+  .pk-finger {
+    position: absolute; left: 0; top: 0; z-index: 40; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%;
+    background: rgba(255,255,255,.4); border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.35), 0 4px 10px rgba(0,0,0,.3);
+    opacity: 0; pointer-events: none; will-change: transform, opacity; transition: opacity .18s;
+  }
+  .pk-finger.is-on { opacity: .92; }
+  .pk-finger.is-down { background: rgba(255,255,255,.72); }
+  .pk-live { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  @container (max-width: 520px) {
+    .pk-head h2 { display: none; }
+  }
+  @container (max-width: 400px) {
+    .pk-btn { width: 36px; padding: 0; justify-content: center; }
+    .pk-btn span { display: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="kicker"><span class="no">14</span><span>網頁互動效果・卡片</span></div>
+    <h1><span class="n">14 ·</span>層疊滑走</h1>
+    <p class="en">Stacked Card Swipe（swipeable card stack／Tinder-style swipe deck）</p>
+    <p class="sum">卡片疊成一疊，最上面那張可以左右拖，下面一張跟著拖曳進度放大補位。放手時看距離和速度兩件事：有一項過門檻就順著方向飛出去，都沒過就用彈簧彈回原位。左右各代表一個決定，適合一次只看一件、快速表態的清單。</p>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="切換淺色與深色">切換深淺色</button>
+  </header>
+
+  <section class="stage" aria-label="Demo 舞台">
+    <div class="browser">
+      <div class="bar">
+        <i></i><i></i><i></i><span class="url">studio-kiri.tw/works/shortlist</span>
+        <span class="readout" id="readout" aria-hidden="true"></span>
+        <button class="auto" id="autoBtn" type="button" aria-pressed="true">自動示範：開</button>
+      </div>
+      <div class="view" id="view" tabindex="0" role="region" aria-label="示範頁面：拖曳最上面的卡片，或按左右方向鍵把它滑走">
+        <div class="pk" id="pk">
+          <div class="pk-head">
+            <p class="pk-eye">SHORTLIST</p>
+            <h2>挑幾件<br>想細看的案子</h2>
+          </div>
+          <p class="pk-tally">已收藏 <b id="nKeep">0</b> / 6<span class="pk-dots" id="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span></p>
+          <button class="pk-btn pk-no" id="btnSkip" type="button" aria-label="略過最上面這件作品"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg><span>略過</span></button>
+          <div class="pk-deck" id="deck" role="group" aria-label="作品卡片，疊成一疊"></div>
+          <button class="pk-btn pk-yes" id="btnKeep" type="button" aria-label="收藏最上面這件作品"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.5C8 13.5 2 9.8 2 5.9 2 4.2 3.3 3 4.9 3 6.2 3 7.4 3.8 8 4.9 8.6 3.8 9.8 3 11.1 3 12.7 3 14 4.2 14 5.9 14 9.8 8 13.5 8 13.5z"/></svg><span>收藏</span></button>
+          <div class="pk-gauge" id="gauge" aria-hidden="true"><i class="pk-g0"></i><i class="pk-tk" id="tkL"></i><i class="pk-tk" id="tkR"></i><i class="pk-dot" id="gdot"></i></div>
+          <div class="pk-finger" id="finger" aria-hidden="true"></div>
+          <p class="pk-live" id="live" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="hint" id="hint">← 左右拖曳最上面那張卡片 →</div>
+    </div>
+  </section>
+
+  <section class="knobs" aria-label="可調參數">
+    <h3>可調參數</h3>
+    <div class="grid">
+      <div class="knob"><label for="kDist">距離門檻 <output id="oDist"></output></label><input id="kDist" type="range" min="15" max="70" step="1" value="35"><small>拖離中央超過卡片寬度的這個比例，放手就飛出去</small></div>
+      <div class="knob"><label for="kVel">速度門檻 <output id="oVel"></output></label><input id="kVel" type="range" min="200" max="2000" step="50" value="600"><small>放手前 90 毫秒的平均速度超過它，沒拖夠遠也算甩出去</small></div>
+      <div class="knob"><label for="kOver">彈回過衝 <output id="oOver"></output></label><input id="kOver" type="range" min="0" max="30" step="1" value="10"><small>沒過門檻時，彈簧衝過中央的幅度；0% 是剛好不過頭</small></div>
+      <div class="knob"><label for="kFly">飛出時長 <output id="oFly"></output></label><input id="kFly" type="range" min="150" max="700" step="10" value="300"><small>過門檻之後飛到畫面外要花多久，下一張也用這段時間補位</small></div>
+    </div>
+  </section>
+
+  <section class="prompt" aria-label="AI 描述詞">
+    <h3>AI 描述詞</h3>
+    <div class="box">
+      <blockquote id="promptText">做一個層疊滑走：一疊卡片最上面那張，從螢幕中央往左或右拖，超過卡片寬度 <span data-p="dist">35</span>% 或放手速度超過 <span data-p="vel">600</span> px/s 就飛出畫面，否則回中央；跟手、帶慣性，彈回過衝約 <span data-p="over">10</span>%；飛出 <span data-p="fly">300</span> 毫秒。下一張隨拖曳進度放大補位。</blockquote>
+      <button class="copy" id="copyBtn" type="button">複製</button>
+    </div>
+    <dl class="formula" aria-label="萬能句式拆解">
+      <div><dt>主體</dt><dd>一疊卡片最上面那張</dd></div>
+      <div><dt>起點</dt><dd>螢幕中央，疊在整疊的最上層</dd></div>
+      <div><dt>終點</dt><dd>往左或右飛出畫面，排到整疊最後面；位移沒超過卡片寬度 <span data-p="dist">35</span>%、放手速度也沒超過 <span data-p="vel">600</span> px/s，就回到中央</dd></div>
+      <div><dt>手感</dt><dd>一比一跟手，放手時帶著當下的速度（慣性）；彈回用彈簧，剛性 240、過衝約 <span data-p="over">10</span>%</dd></div>
+      <div><dt>時長</dt><dd>飛出 <span data-p="fly">300</span> 毫秒，下一張同步補位</dd></div>
+    </dl>
+  </section>
+
+  <section class="notes" aria-label="實作要點">
+    <h3>實作要點</h3>
+    <ol>
+      <li><b>用陣列記誰在上面：</b>六張卡片都疊在同一個位置，另外用一個陣列記順序。排第 k 層的卡片畫成 <code>translateY(−k × 7.5% 卡片高) scale(1 − 0.07k)</code>，第 3 層起透明度是 0。飛走的那張搬到陣列最後，所以永遠滑不完。</li>
+      <li><b>拖曳只改 transform，補位跟著進度走：</b><code>pointerdown</code> 記下指標與卡片位移的差，<code>pointermove</code> 把位移直接寫進 <code>translate3d</code>，每拖一個卡片寬度轉 18°。補位進度 = <code>clamp(|dx| / 距離門檻, 0, 1)</code>，後面每一張的層數都減掉它，第二張就一路長到第一張的大小。</li>
+      <li><b>放手判定看兩件事：</b><code>|dx| &gt; 距離門檻 || |vx| &gt; 速度門檻</code>。速度是最近 90 毫秒的位移除以時間，不要只看最後一格，否則數字會跟著取樣亂跳。方向：速度過門檻就看速度的正負，否則看位移的正負。</li>
+      <li><b>飛出與彈回是兩條路：</b>飛出走 <code>x = x0 + Δ(a·u + (1 − a)·u²)</code>，<code>a = clamp(放手速度 × 時長 ÷ Δ, 0.6, 2)</code>，起步速度接得上放手那一刻，下限 0.6 讓按鍵觸發時也不會慢吞吞。彈回是每格自己積分的彈簧：<code>加速度 = −240·x − c·v</code>，阻尼 c 由過衝換算，過衝 10% 時阻尼比約 0.59。</li>
+      <li><b>套用到別的頁面：</b>只看距離不看速度的話，輕輕一甩會被判成彈回，手感很鈍。卡片要設 <code>touch-action: pan-y</code>，橫向拖曳才收得到事件，直向滑動照樣捲頁面；設成 <code>none</code> 會把頁面的直向捲動擋住。用滑鼠拖比用手指費力，鍵盤使用者與螢幕閱讀器更是拖不了，所以要另外給按鈕或方向鍵的等效操作。</li>
+    </ol>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  /* ================= 共用腳本 開始（13 頁一致，勿改） ================= */
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const EMBED = document.documentElement.classList.contains('embed');
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ---------- 假網站的六件作品 ---------- */
+  const WORKS = [
+    { t: '霧島茶室',   en: 'Kirishima Tea House', tag: '品牌識別', yr: '2026' },
+    { t: '潮間帶書店', en: 'Intertidal Books',    tag: '空間導視', yr: '2026' },
+    { t: '北緯二十五', en: 'N25° Outdoor',        tag: '電商網站', yr: '2025' },
+    { t: '夜行列車',   en: 'Night Express',       tag: '動態影像', yr: '2025' },
+    { t: '白露陶器',   en: 'Hakuro Ceramics',     tag: '包裝設計', yr: '2024' },
+    { t: '巷弄氣象台', en: 'Alley Weather',       tag: 'App 介面', yr: '2024' },
+  ];
+
+  /* 把第 i 件作品畫進 canvas；t（秒）會讓畫面緩慢動起來，靜態圖傳 0 */
+  function paintArt(ctx, i, w, h, t = 0) {
+    const S = Math.sin;
+    const lin = (stops, x0 = 0, y0 = 0, x1 = 0, y1 = 1) => {
+      const g = ctx.createLinearGradient(x0 * w, y0 * h, x1 * w, y1 * h);
+      stops.forEach(([o, c]) => g.addColorStop(o, c)); return g;
+    };
+    const fill = c => { ctx.fillStyle = c; ctx.fillRect(0, 0, w, h); };
+    const disc = (x, y, r, c) => { ctx.beginPath(); ctx.arc(x * w, y * h, r * h, 0, 6.2832); ctx.fillStyle = c; ctx.fill(); };
+    const wave = (y, amp, freq, ph, c) => {
+      ctx.beginPath(); ctx.moveTo(0, h);
+      for (let x = 0; x <= 1.001; x += .04) ctx.lineTo(x * w, (y + amp * S(x * freq + ph)) * h);
+      ctx.lineTo(w, h); ctx.closePath(); ctx.fillStyle = c; ctx.fill();
+    };
+    ctx.save();
+    switch (((i % 6) + 6) % 6) {
+      case 0: // 霧島茶室：墨綠、月、三層霧
+        fill(lin([[0, '#2a5a52'], [1, '#0d2220']]));
+        disc(.68 + .012 * S(t * .5), .34 + .01 * S(t * .37), .19, '#ece4c6');
+        wave(.56, .05, 5.2, 1 + t * .5, 'rgba(176,214,196,.20)');
+        wave(.68, .06, 4.1, 3 + t * .7, 'rgba(176,214,196,.26)');
+        wave(.82, .04, 6.3, 5 + t * .9, 'rgba(206,232,218,.34)');
+        break;
+      case 1: // 潮間帶書店：沙色、朱紅太陽、三道浪
+        fill(lin([[0, '#f1e7d2'], [1, '#e3d3b2']]));
+        disc(.27, .3 + .012 * S(t * .6), .13, '#e2674a');
+        wave(.56, .035, 7, 0 + t * 1.1, '#5f9cc4');
+        wave(.68, .045, 5.4, 2 + t * .8, '#2f6694');
+        wave(.82, .035, 8.2, 4 + t * 1.4, '#1b3f62');
+        break;
+      case 2: { // 北緯二十五：橘底、等高線、兩座山
+        fill(lin([[0, '#f58a45'], [1, '#d8431c']]));
+        ctx.lineWidth = Math.max(1, h * .004); ctx.strokeStyle = 'rgba(255,240,220,.3)';
+        for (let k = 1; k <= 7; k++) {
+          ctx.beginPath(); ctx.ellipse(.74 * w, .3 * h, k * .1 * h * (1 + .03 * S(t + k)), k * .065 * h, -.3, 0, 6.2832); ctx.stroke();
+        }
+        const tri = (x0, x1, top, c) => { ctx.beginPath(); ctx.moveTo(x0 * w, h); ctx.lineTo((x0 + x1) / 2 * w, top * h); ctx.lineTo(x1 * w, h); ctx.closePath(); ctx.fillStyle = c; ctx.fill(); };
+        tri(.28, 1.02, .42, '#5a2a17'); tri(-.08, .66, .3, '#2a1710');
+        ctx.beginPath(); ctx.moveTo(.29 * w, .3 * h); ctx.lineTo(.235 * w, .5 * h); ctx.lineTo(.3 * w, .46 * h); ctx.lineTo(.345 * w, .5 * h); ctx.closePath(); ctx.fillStyle = '#fbe9d4'; ctx.fill();
+        break; }
+      case 3: { // 夜行列車：深紫夜、月、一列亮窗
+        fill(lin([[0, '#14112c'], [1, '#3d2c70']]));
+        for (let k = 0; k < 26; k++) disc((k * .381966) % 1, ((k * .618034) % 1) * .52, .003 + (k % 3) * .0018, `rgba(255,255,255,${.35 + .3 * S(t * 1.3 + k)})`);
+        disc(.2, .24, .1, '#f6e7b0'); disc(.236, .215, .09, '#211a45');
+        ctx.fillStyle = '#0a0818'; ctx.fillRect(0, .78 * h, w, .22 * h);
+        const y = .6 * h, ch = .18 * h, cw = .3 * w, off = ((t * .06) % 1) * (cw + .02 * w);
+        for (let x = -cw - .02 * w + off; x < w; x += cw + .02 * w) {
+          ctx.fillStyle = '#0e0b20'; ctx.beginPath(); ctx.roundRect(x, y, cw, ch, ch * .22); ctx.fill();
+          ctx.fillStyle = '#ffd76a';
+          for (let k = 0; k < 4; k++) { ctx.beginPath(); ctx.roundRect(x + cw * (.07 + k * .225), y + ch * .2, cw * .17, ch * .36, ch * .06); ctx.fill(); }
+        }
+        break; }
+      case 4: { // 白露陶器：米白、陶瓶、小碗
+        fill(lin([[0, '#f1ede6'], [1, '#ddd5c8']]));
+        ctx.fillStyle = '#c9bfae'; ctx.fillRect(0, .76 * h, w, .24 * h);
+        const sh = (x, rx) => { ctx.beginPath(); ctx.ellipse(x * w, .775 * h, rx * h, .022 * h, 0, 0, 6.2832); ctx.fillStyle = 'rgba(60,45,30,.22)'; ctx.fill(); };
+        sh(.44, .2); sh(.72, .15);
+        const cx = .42 * w, sway = .004 * w * S(t * .8);
+        ctx.beginPath(); ctx.moveTo(cx - .05 * h, .2 * h);
+        ctx.bezierCurveTo(cx - .06 * h + sway, .34 * h, cx - .21 * h, .4 * h, cx - .19 * h, .6 * h);
+        ctx.bezierCurveTo(cx - .17 * h, .74 * h, cx - .1 * h, .775 * h, cx, .775 * h);
+        ctx.bezierCurveTo(cx + .1 * h, .775 * h, cx + .17 * h, .74 * h, cx + .19 * h, .6 * h);
+        ctx.bezierCurveTo(cx + .21 * h, .4 * h, cx + .06 * h + sway, .34 * h, cx + .05 * h, .2 * h);
+        ctx.closePath(); ctx.fillStyle = lin([[0, '#a98f74'], [1, '#7d6450']], .3, 0, .55, 0); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(.61 * w, .62 * h); ctx.bezierCurveTo(.62 * w, .8 * h, .82 * w, .8 * h, .83 * w, .62 * h); ctx.closePath(); ctx.fillStyle = '#e9e3d8'; ctx.fill();
+        ctx.beginPath(); ctx.ellipse(.72 * w, .62 * h, .11 * w, .02 * h, 0, 0, 6.2832); ctx.fillStyle = '#b9a58c'; ctx.fill();
+        break; }
+      default: { // 巷弄氣象台：天藍、太陽、三朵雲
+        fill(lin([[0, '#6bb9f2'], [1, '#e4f3ff']]));
+        disc(.74, .3, .15 + .006 * S(t * 1.2), '#ffc93c');
+        const cloud = (x, y, s, a) => { for (const [dx, dy, r] of [[0, 0, .1], [.09, -.035, .13], [.2, 0, .1], [.1, .03, .11]]) disc(x + dx * s * h / w, y + dy * s, r * s, `rgba(255,255,255,${a})`); };
+        cloud(((.08 + t * .012) % 1.3) - .15, .56, 1.25, .96);
+        cloud(((.5 + t * .02) % 1.3) - .15, .34, .8, .9);
+        cloud(((.92 + t * .008) % 1.3) - .15, .76, 1, .93);
+        break; }
+    }
+    ctx.restore();
+  }
+
+  /* 靜態作品圖 → dataURL，並塞進 --art0 … --art5 給 .art[data-a] 用 */
+  const artCache = [];
+  function artURL(i) {
+    if (!artCache[i]) {
+      const c = document.createElement('canvas'); c.width = 960; c.height = 600;
+      paintArt(c.getContext('2d'), i, 960, 600, 0);
+      artCache[i] = c.toDataURL('image/jpeg', .86);
+    }
+    return artCache[i];
+  }
+  WORKS.forEach((_, i) => document.documentElement.style.setProperty('--art' + i, `url(${artURL(i)})`));
+
+  /* ---------- 可調參數：defs = [inputId, outputId, key, 顯示格式, 換算（可省）] ---------- */
+  function bindKnobs(P, defs, onChange) {
+    defs.forEach(([id, oid, key, fmt, conv]) => {
+      const el = $('#' + id), out = $('#' + oid);
+      const apply = () => { const v = +el.value; P[key] = conv ? conv(v) : v; out.textContent = fmt(v); };
+      el.addEventListener('input', () => { apply(); onChange && onChange(key); });
+      apply();
+    });
+  }
+
+  /* ---------- 舞台是否真的在螢幕上（iframe 內也準），不在就別空轉 ---------- */
+  const Stage = { el: $('.browser'), view: $('#view'), visible: true };
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(es => { Stage.visible = es[0].isIntersecting; Auto.vis(); }).observe(Stage.el);
+  }
+
+  /* ---------- 自動示範：一載入就播；使用者一動手就停。embed 閒置 4 秒後恢復 ---------- */
+  const Auto = (() => {
+    const btn = $('#autoBtn'), hint = $('#hint');
+    let tick = null, want = false, on = false, t = 0, last = 0, raf = 0, timer = 0;
+    function frame(now) {
+      if (!on) return;
+      const dt = Math.min((now - last) / 1000, .05); last = now; t += dt;
+      tick(t, dt);
+      raf = requestAnimationFrame(frame);
+    }
+    function sync() {
+      btn.setAttribute('aria-pressed', String(want));
+      btn.textContent = want ? '自動示範：開' : '自動示範：關';
+      hint.classList.toggle('off', !want);
+    }
+    function run() {
+      if (on || !tick || !want || !Stage.visible || reduceMQ.matches) return;
+      on = true; last = performance.now(); raf = requestAnimationFrame(frame);
+    }
+    function halt() { on = false; cancelAnimationFrame(raf); }
+    btn.addEventListener('click', () => { clearTimeout(timer); want = !want; want ? run() : halt(); sync(); });
+    return {
+      get on() { return on; },
+      /* fn(t, dt)：t 為自動示範累計秒數；在裡面去改 scrollTop 或餵假的指標座標 */
+      init(fn) { tick = fn; want = !reduceMQ.matches; sync(); run(); },
+      /* 使用者真的動手時呼叫 */
+      poke() {
+        clearTimeout(timer);
+        if (want) { want = false; halt(); sync(); }
+        if (EMBED) timer = setTimeout(() => { want = true; sync(); run(); }, 4000);
+      },
+      /* 幫忙掛監聽：Auto.watch(view, 'wheel pointerdown touchstart keydown') */
+      watch(el, types) { types.split(' ').forEach(ty => el.addEventListener(ty, () => Auto.poke(), { passive: true })); },
+      vis() { Stage.visible ? run() : halt(); },
+    };
+  })();
+
+  /* ---------- 複製描述詞 ---------- */
+  const copyBtn = $('#copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    const text = $('#promptText').textContent.trim();
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (_) {}
+    if (!ok) {
+      try {
+        const r = document.createRange(); r.selectNodeContents($('#promptText'));
+        const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        ok = document.execCommand('copy');
+      } catch (_) {}
+    }
+    copyBtn.textContent = ok ? '已複製' : '請按 Ctrl+C';
+    copyBtn.classList.toggle('ok', ok);
+    setTimeout(() => { copyBtn.textContent = '複製'; copyBtn.classList.remove('ok'); }, 1600);
+  });
+
+  /* ---------- 深淺色：自己的按鈕，或由畫廊頁 postMessage 帶進來 ---------- */
+  $('#themeBtn').addEventListener('click', () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+  });
+  addEventListener('message', e => {
+    const th = e.data && e.data.theme;
+    if (th === 'light' || th === 'dark') document.documentElement.dataset.theme = th;
+    if (e.data && e.data.poke) Auto.poke();          // 畫廊頁：使用者點了預覽，準備動手
+  });
+  /* ================= 共用腳本 結束 ================= */
+
+  /* ================= 本效果 ================= */
+  const view = Stage.view, pk = $('#pk'), deck = $('#deck'), readout = $('#readout'), finger = $('#finger'), live = $('#live');
+  const btnSkip = $('#btnSkip'), btnKeep = $('#btnKeep'), nKeep = $('#nKeep'), dots = $$('#dots i');
+  const gauge = $('#gauge'), tkL = $('#tkL'), tkR = $('#tkR'), gdot = $('#gdot');
+  const P = { dist: .35, vel: 600, over: .1, fly: 300 };
+  const STIFF = 240;                            // 彈簧剛性
+  const ROT = 18, ROT_MAX = 30;                 // 每拖一個卡片寬度轉 18°，最多 30°
+  const STEP = .075, SHRINK = .07, DEPTH = 3;   // 每往後一層：往上偏 7.5% 卡片高、縮小 7%；第 3 層起看不見
+  const WINDOW = 90;                            // 放手速度的取樣區間（毫秒）
+
+  /* ---------- 卡片：六件作品各一張，order[0] 是最上面那張 ---------- */
+  const cards = WORKS.map((w, i) => {
+    const el = document.createElement('article');
+    el.className = 'sc';
+    el.setAttribute('aria-label', `${w.t}，${w.tag}，${w.yr}`);
+    el.innerHTML =
+      `<div class="sc-pic art" data-a="${i}"></div>` +
+      `<div class="sc-cap"><div><b>${w.t}</b><span>${w.tag} · ${w.yr}</span></div>` +
+      `<svg class="sc-heart" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.5C8 13.5 2 9.8 2 5.9 2 4.2 3.3 3 4.9 3 6.2 3 7.4 3.8 8 4.9 8.6 3.8 9.8 3 11.1 3 12.7 3 14 4.2 14 5.9 14 9.8 8 13.5 8 13.5z"/></svg></div>` +
+      `<span class="sc-mark sc-keep" aria-hidden="true">收藏</span><span class="sc-mark sc-skip" aria-hidden="true">略過</span><i class="sc-shade"></i>`;
+    deck.appendChild(el);
+    return { i, w, el, keep: $('.sc-keep', el), skip: $('.sc-skip', el), shade: $('.sc-shade', el), kept: false, fly: null, tf: '', op: -1, sh: -1, mk: -1, ms: -1 };
+  });
+  const order = cards.slice();
+
+  /* ---------- 版面尺寸：太小就整個不畫（畫廊的 iframe 會被壓到趨近 0） ---------- */
+  let W = 0, H = 0, cw = 0, ch = 0, deckL = 0, deckT = 0, ok = false;
+  function measure() {
+    W = view.clientWidth; H = view.clientHeight; cw = deck.offsetWidth; ch = deck.offsetHeight;
+    deckL = deck.offsetLeft; deckT = deck.offsetTop;
+    ok = W > 40 && H > 40 && cw > 12 && ch > 12;
+  }
+
+  /* ---------- 狀態 ---------- */
+  let x = 0, y = 0, vx = 0, vy = 0;             // 最上面那張的位移與速度
+  let dragging = false, springing = false, grabSign = 1, gx = 0, gy = 0, samples = [];
+  let lift = 0, liftFrom = 0, liftT0 = 0, liftDur = 300;   // 有卡片飛走後，整疊還差多少層沒補上
+  const fliers = [];                            // 正在飛出畫面的卡片
+  let verdict = '待命', shownV = 0, shownDx = 0, flashDir = 0, flashUntil = 0;
+  let armed = 0, over = false, lastRead = '', lastDot = '', lastTk = '', byAuto = false, nudge = 1;
+
+  const thrPx = () => Math.max(1, P.dist * cw);
+  const rotOf = (dx, sign) => clamp(dx / cw * ROT, -ROT_MAX, ROT_MAX) * sign;
+  // 過衝比例 → 阻尼比：os = exp(−πζ / √(1 − ζ²))，0 代表臨界阻尼
+  const zetaOf = os => { if (os <= 0) return 1; const L = Math.log(os); return -L / Math.sqrt(Math.PI * Math.PI + L * L); };
+
+  /* 最近 90 毫秒的平均速度（px/s）。分母最少算 40 毫秒，放手前手抖一下才不會被當成甩出去 */
+  function velocity(now) {
+    const b = samples[samples.length - 1], a = samples.find(s => s.t >= now - WINDOW);
+    if (!a || a === b) return [0, 0];
+    const k = 1000 / Math.max(40, now - a.t);
+    return [(b.x - a.x) * k, (b.y - a.y) * k];
+  }
+
+  /* ---------- 拖曳三件事：真實指標與自動示範都呼叫這一組 ---------- */
+  function dragStart(px, py, t = performance.now()) {
+    if (!ok || dragging || order[0].fly) return;
+    if (Math.abs(x) < 2) {                      // 抓上半部往右拖是順時針，抓下半部反過來
+      const r = deck.getBoundingClientRect();
+      grabSign = py < r.top + r.height / 2 ? 1 : -1;
+    }
+    dragging = true; springing = false;
+    gx = px - x; gy = py - y;                   // 指標與卡片位移的差，之後卡片就黏在指標上
+    samples = [{ t, x: px, y: py }];
+    verdict = '拖曳中'; shownV = 0;
+    pk.classList.add('is-drag');
+    request();
+  }
+  function dragMove(px, py, t = performance.now()) {
+    if (!dragging) return;
+    x = px - gx; y = py - gy;
+    samples.push({ t, x: px, y: py });
+    while (samples.length > 2 && samples[0].t < t - 250) samples.shift();
+    shownV = velocity(t)[0];
+    request();
+  }
+  function dragEnd(t = performance.now(), cancel = false) {
+    if (!dragging) return;
+    dragging = false; pk.classList.remove('is-drag');
+    [vx, vy] = velocity(t);
+    vx = clamp(vx, -4000, 4000); vy = clamp(vy, -4000, 4000);
+    shownV = vx; shownDx = x;
+    const far = Math.abs(x) > thrPx(), fast = Math.abs(vx) > P.vel;
+    if (!cancel && (far || fast)) {
+      const dir = fast ? Math.sign(vx) : Math.sign(x);       // 速度夠快就看速度的方向，否則看位移的方向
+      verdict = far && dir === Math.sign(x) ? '飛出・距離' : '飛出・速度';
+      flyOut(dir);
+    } else {
+      verdict = '彈回';
+      settle();
+    }
+    request();
+  }
+
+  /* 彈回：交給 frame() 裡的彈簧，放手速度當初速 */
+  function settle() {
+    if (reduceMQ.matches) { x = y = vx = vy = 0; return; }
+    springing = true;
+  }
+
+  /* 飛出：最上面那張改成「飛行中」，並立刻排到陣列最後；剩下的卡片各往前補一層 */
+  function flyOut(dir) {
+    const now = performance.now(), c = order[0], p = clamp(Math.abs(x) / thrPx(), 0, 1);
+    order.push(order.shift());
+    if (!reduceMQ.matches) {
+      const d = dir * (W / 2 + cw * .8 + 12) - x;                                         // 還要飛多遠才完全出畫面
+      const a = clamp(Math.max(0, vx * dir) * (P.fly / 1000) / Math.abs(d), .6, 2);       // 起步速度接上放手速度，設下限
+      c.fly = { x0: x, y0: y, d, a, vy: clamp(vy, -900, 900), t0: now, dur: P.fly, sign: grabSign, x, y };
+      c.el.classList.add('is-fly');
+      fliers.push(c);
+      liftFrom = lift = Math.min(2, lift + 1 - p); liftT0 = now; liftDur = P.fly;         // 拖曳時已經補了 p 層，剩下的用飛出時長補完
+    }
+    x = y = vx = vy = 0; springing = false; grabSign = 1;
+    c.kept = dir > 0;
+    flashDir = dir; flashUntil = now + 320;
+    stack(); tally();
+    if (!byAuto) live.textContent = `${dir > 0 ? '已收藏' : '已略過'}：${c.w.t}。現在最上面是：${order[0].w.t}`;
+  }
+
+  /* 按鈕與方向鍵的等效操作：不用拖，直接往該方向飛出去 */
+  function swipe(dir) {
+    if (!ok || order[0].fly) return;
+    if (dragging) {
+      const p = pid; pid = null; dragging = false; pk.classList.remove('is-drag');
+      if (p !== null) { try { deck.releasePointerCapture(p); } catch (_) {} }
+    }
+    vx = vy = 0; shownV = 0; shownDx = x; verdict = '飛出・按鍵';
+    flyOut(dir);
+    request();
+  }
+
+  function stack() {
+    order.forEach((c, k) => {
+      c.el.style.zIndex = c.fly ? 20 : 10 - k;
+      c.el.classList.toggle('is-top', k === 0);
+      c.el.setAttribute('aria-hidden', String(k !== 0));
+    });
+  }
+  function tally() {
+    nKeep.textContent = cards.filter(c => c.kept).length;
+    cards.forEach(c => { dots[c.i].classList.toggle('is-on', c.kept); c.el.classList.toggle('is-kept', c.kept); });
+  }
+
+  /* ---------- 繪製：每張卡片只寫 transform 與 opacity，數值沒變就不寫 ---------- */
+  const r2 = v => Math.round(v * 100) / 100;
+  function put(c, tx, ty, rot, sc, op, sh, m) {
+    const tf = `translate3d(${tx.toFixed(1)}px,${ty.toFixed(1)}px,0) rotate(${rot.toFixed(2)}deg) scale(${sc.toFixed(4)})`;
+    if (tf !== c.tf) c.el.style.transform = c.tf = tf;
+    op = r2(op); if (op !== c.op) c.el.style.opacity = c.op = op;
+    sh = r2(sh); if (sh !== c.sh) c.shade.style.opacity = c.sh = sh;
+    const mk = r2(clamp(m, 0, 1)), ms = r2(clamp(-m, 0, 1));
+    if (mk !== c.mk) c.keep.style.opacity = c.mk = mk;
+    if (ms !== c.ms) c.skip.style.opacity = c.ms = ms;
+  }
+  function render(now) {
+    if (!ok) return;
+    const thr = thrPx(), promo = clamp(Math.abs(x) / thr, 0, 1);          // 補位進度
+    order.forEach((c, k) => {
+      const f = c.fly;
+      if (f) { put(c, f.x, f.y, rotOf(f.x, f.sign), 1, 1, 0, f.x / thr); return; }
+      const s = Math.min(DEPTH, k + lift - (k ? promo : 0));              // 這張目前在第幾層（可以是小數）
+      if (k) put(c, 0, -s * STEP * ch, 0, 1 - s * SHRINK, clamp(DEPTH - s, 0, 1), s * .16, 0);
+      else put(c, x, y - s * STEP * ch, rotOf(x, grabSign), 1 - s * SHRINK, 1, s * .16, x / thr);
+    });
+
+    const far = (dragging || springing) && Math.abs(x) > thr;
+    const arm = dragging && far ? Math.sign(x) : now < flashUntil ? flashDir : 0;
+    if (arm !== armed) { armed = arm; btnKeep.classList.toggle('is-armed', arm > 0); btnSkip.classList.toggle('is-armed', arm < 0); }
+    if (far !== over) { over = far; gauge.classList.toggle('is-over', far); }
+    const dot = `translate3d(${clamp(x, -.75 * cw, .75 * cw).toFixed(1)}px,0,0)`;
+    if (dot !== lastDot) gdot.style.transform = lastDot = dot;
+    const tk = thr.toFixed(1);
+    if (tk !== lastTk) { lastTk = tk; tkL.style.transform = `translate3d(${-thr}px,0,0)`; tkR.style.transform = `translate3d(${thr}px,0,0)`; }
+
+    // 讀數：斜線前是目前的值，斜線後是門檻；視窗很窄時省略速度那一段
+    const dx = dragging || springing ? x : shownDx;
+    const speed = W < 400 ? '' : `${dragging ? '速度' : '放手'} <b>${Math.round(Math.abs(shownV))}</b>/${P.vel}　`;
+    const txt = `dx <b>${dx < -.5 ? '−' : '+'}${Math.abs(Math.round(dx))}</b>/${Math.round(thr)}　${speed}<b>${verdict}</b>`;
+    if (txt !== lastRead) readout.innerHTML = lastRead = txt;
+  }
+
+  /* ---------- 動畫迴圈：有東西在動才跑，全部靜止或離開畫面就停 ---------- */
+  let raf = 0, last = 0;
+  function request() { if (!raf && Stage.visible) raf = requestAnimationFrame(frame); }
+  function frame(now) {
+    raf = 0;
+    const dt = last ? Math.min((now - last) / 1000, .05) : 1 / 60; last = now;
+    if (fake.down && !Auto.on) fakeStop();                    // 自動示範被關掉：把拖到一半的卡片放開
+    let busy = false;
+
+    if (springing) {                                          // 彈簧：加速度 = −k·x − c·v，切小步積分
+      const c = 2 * zetaOf(P.over) * Math.sqrt(STIFF), n = Math.max(1, Math.ceil(dt * 240)), h = dt / n;
+      for (let i = 0; i < n; i++) {
+        vx += (-STIFF * x - c * vx) * h; x += vx * h;
+        vy += (-STIFF * y - c * vy) * h; y += vy * h;
+      }
+      if (Math.abs(x) < .3 && Math.abs(y) < .3 && Math.abs(vx) < 8 && Math.abs(vy) < 8) { x = y = vx = vy = 0; springing = false; }
+      busy = springing;
+    }
+    if (lift > 0) {                                           // 補位：ease-out 把剩下的層數補完
+      const u = clamp((now - liftT0) / liftDur, 0, 1);
+      lift = u >= 1 ? 0 : liftFrom * Math.pow(1 - u, 3);
+      if (lift > 0) busy = true;
+    }
+    for (let i = fliers.length - 1; i >= 0; i--) {            // 飛出：x = x0 + Δ(a·u + (1 − a)·u²)
+      const c = fliers[i], f = c.fly, u = clamp((now - f.t0) / f.dur, 0, 1);
+      if (u >= 1) { c.fly = null; c.el.classList.remove('is-fly'); fliers.splice(i, 1); stack(); continue; }
+      f.x = f.x0 + f.d * (f.a * u + (1 - f.a) * u * u);
+      f.y = f.y0 + f.vy * (f.dur / 1000) * u * (1 - u / 2);
+      busy = true;
+    }
+    render(now);
+    if (now < flashUntil) busy = true;
+    if ((busy || fake.down) && Stage.visible) { if (!raf) raf = requestAnimationFrame(frame); }
+    else last = 0;
+  }
+  if ('IntersectionObserver' in window) {                     // 回到畫面時把沒跑完的動畫接回來
+    new IntersectionObserver(es => { if (es[0].isIntersecting && !raf) raf = requestAnimationFrame(frame); }).observe(Stage.el);
+  }
+  new ResizeObserver(() => { measure(); render(performance.now()); }).observe(view);
+
+  /* ---------- 真實輸入：Pointer Events ＋ setPointerCapture ---------- */
+  let pid = null;
+  deck.addEventListener('pointerdown', e => {
+    if (e.button || pid !== null) return;
+    fakeStop();
+    if (!ok || order[0].fly || e.target.closest('.sc') !== order[0].el) return;
+    pid = e.pointerId;
+    try { deck.setPointerCapture(pid); } catch (_) {}
+    dragStart(e.clientX, e.clientY);
+  });
+  deck.addEventListener('pointermove', e => { if (e.pointerId === pid) dragMove(e.clientX, e.clientY); });
+  const release = e => {
+    if (e.pointerId !== pid) return;
+    pid = null;
+    if (e.type === 'pointerup') dragMove(e.clientX, e.clientY);
+    dragEnd(performance.now(), e.type !== 'pointerup');       // 被瀏覽器取消（例如改成直向捲動）就一律彈回
+  };
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ty => deck.addEventListener(ty, release));
+
+  /* ---------- 鍵盤與按鈕 ---------- */
+  view.addEventListener('keydown', e => {
+    const d = { ArrowLeft: -1, ArrowRight: 1 }[e.key];
+    if (!d || e.altKey || e.ctrlKey || e.metaKey) return;
+    e.preventDefault(); fakeStop(); swipe(d);
+  });
+  btnSkip.addEventListener('click', () => { fakeStop(); swipe(-1); });
+  btnKeep.addEventListener('click', () => { fakeStop(); swipe(1); });
+
+  /* ---------- 可調參數 ---------- */
+  function sync() {                                           // 描述詞與句式拆解裡的數字跟著滑桿走
+    const v = { dist: Math.round(P.dist * 100), vel: P.vel, over: Math.round(P.over * 100), fly: P.fly };
+    $$('[data-p]').forEach(el => { el.textContent = v[el.dataset.p]; });
+  }
+  bindKnobs(P, [
+    ['kDist', 'oDist', 'dist', v => v + '%', v => v / 100],
+    ['kVel', 'oVel', 'vel', v => v + ' px/s'],
+    ['kOver', 'oOver', 'over', v => v + '%', v => v / 100],
+    ['kFly', 'oFly', 'fly', v => v + ' 毫秒'],
+  ], () => { sync(); render(performance.now()); });
+  // 過衝與時長要動一次才看得出來：自動示範關著的時候，放開滑桿就推一下或滑走一張
+  $('#kOver').addEventListener('change', () => {
+    if (Auto.on || dragging || !ok || reduceMQ.matches) return;
+    nudge = -nudge; vx = nudge * cw * 7; springing = true; verdict = '彈回'; shownV = 0; request();
+  });
+  $('#kFly').addEventListener('change', () => {
+    if (Auto.on || dragging) return;
+    nudge = -nudge; byAuto = true; swipe(nudge); byAuto = false;
+  });
+
+  /* ---------- 自動示範：把假座標餵進同一組 dragStart／dragMove／dragEnd ---------- */
+  const CYCLE = 6.4, ease = k => k * k * (3 - 2 * k);
+  const fake = { down: false, id: -1, done: -1, t0: 0, s: 0, dur: 0, pos: null, bx: 0, by: 0 };
+  function fingerAt(dx, down) {
+    finger.style.transform = `translate3d(${(deckL + cw * .5 + dx).toFixed(1)}px,${(deckT + ch * .4 - Math.abs(dx) * .12).toFixed(1)}px,0) scale(${down ? .82 : 1})`;
+    finger.classList.add('is-on'); finger.classList.toggle('is-down', down);
+  }
+  function fakeMove(s) {
+    const dx = fake.pos(s) * cw;
+    fake.s = s;
+    dragMove(fake.bx + dx, fake.by - Math.abs(dx) * .12, (fake.t0 + s) * 1000);
+    fingerAt(dx, true);
+  }
+  function fakeUp(cancel) {
+    fake.down = false; fake.done = fake.id;
+    byAuto = true; dragEnd((fake.t0 + fake.s) * 1000, cancel); byAuto = false;
+    finger.classList.remove('is-on', 'is-down');
+  }
+  /* 使用者接手或自動示範被關掉：拖到一半就放開讓它彈回，假手指收起來 */
+  function fakeStop() {
+    if (fake.down) fakeUp(true);
+    else finger.classList.remove('is-on', 'is-down');
+  }
+  'pointermove pointerdown touchstart keydown'.split(' ').forEach(ty => view.addEventListener(ty, fakeStop, { passive: true, capture: true }));
+  $('#autoBtn').addEventListener('click', () => { if (!Auto.on) fakeStop(); });
+  addEventListener('message', e => { if (e.data && e.data.poke) fakeStop(); });
+
+  Auto.watch(view, 'pointermove pointerdown touchstart keydown');
+  Auto.init(t => {
+    if (!ok || pid !== null) return;
+    if (fake.down) {                                          // 手勢進行中：照時間餵座標，時間到就放手
+      const s = t - fake.t0;
+      fakeMove(Math.min(s, fake.dur));
+      if (s >= fake.dur) fakeUp(false);
+      return;
+    }
+    const round = Math.floor(t / CYCLE), u = t - round * CYCLE, d = round % 2 ? -1 : 1;   // 每一輪左右對調
+    const flick = clamp(.33 * cw / 950, .06, .2);             // 甩那一下的秒數：約 950 px/s 移動卡片寬度的 33%
+    const list = [
+      { at: .3, dur: 1.1, pos: s => d * .24 * ease(Math.min(s / .8, 1)) },     // 慢慢拖 24% 就放手 → 彈回
+      { at: 2, dur: 1.4, pos: s => d * .62 * ease(Math.min(s / .9, 1)) },      // 拖到 62% 停一下再放 → 距離過門檻，飛出
+      { at: 4.6, dur: flick, pos: s => -d * .33 * Math.min(s / flick, 1) },    // 反方向很快地甩 33% → 速度過門檻，飛出
+    ];
+    const i = list.findIndex(g => u >= g.at - .35 && u < g.at + .25), id = round * 3 + i;
+    if (i < 0 || id === fake.done) { finger.classList.remove('is-on', 'is-down'); return; }
+    const g = list[i];
+    if (u < g.at || order[0].fly) { fingerAt(0, false); return; }             // 手指先到位，還沒按下
+    const r = deck.getBoundingClientRect();
+    fake.bx = r.left + r.width * .5; fake.by = r.top + r.height * .4;
+    fake.id = id; fake.t0 = t; fake.s = 0; fake.dur = g.dur; fake.pos = g.pos; fake.down = true;
+    dragStart(fake.bx, fake.by, t * 1000);
+    if (!dragging) { fake.down = false; return; }
+    fingerAt(0, true);
+  });
+
+  measure(); sync(); stack(); tally(); render(performance.now());
+})();
+</script>
+</body>
+</html>

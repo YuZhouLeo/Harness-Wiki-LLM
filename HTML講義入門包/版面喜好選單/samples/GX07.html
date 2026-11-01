@@ -1,0 +1,20 @@
+<!doctype html><!-- 版面喜好選單範例 GX07｜筆記紙橫格底紋｜來源：講師範例庫 output範例/元件庫/GX07-筆記紙橫格底紋.html；原始來源 https://github.com/uiverse-io/galaxy（Patterns/artvelog_splendid-quail-83.html），作者 artvelog，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX07 筆記紙橫格底紋（Ruled-paper pattern）
+  來源：https://github.com/uiverse-io/galaxy　Patterns/artvelog_splendid-quail-83.html
+  原作者：artvelog　授權：MIT
+  移植：原作只有 container；加上示範文字與標籤（定義／重點／易錯／例題各綁一色），行高對齊 30px 橫格。若要用在長講義，背景要放在內容容器上而不是固定高度。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>demo</title><style>*{box-sizing:border-box}html,body{margin:0;height:100%}body{font:15px/30px "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;color:#1f2937}
+.paper{height:100%;background:#f1f1f1;background-image:linear-gradient(90deg,transparent 50px,#ffb4b8 50px,#ffb4b8 52px,transparent 52px),linear-gradient(#e1e1e1 .1em,transparent .1em);background-size:100% 30px;padding:2px 20px 0 66px;overflow:hidden}
+h1{margin:0;font-size:16px;line-height:30px}
+.b{display:inline-block;font-size:12px;font-weight:700;line-height:18px;padding:0 6px;border-radius:3px;color:#fff;vertical-align:1px}
+.g{background:#2f7d46}.r{background:#c62828}.y{background:#b7791f}
+</style></head><body><div class="paper"><h1>第 5 週　資本預算</h1>
+<div><span class="b g">定義</span> 淨現值（NPV）＝未來現金流折現後減初始投資</div>
+<div><span class="b y">重點</span> NPV 大於 0 才值得做</div>
+<div><span class="b r">易錯</span> 折現率要用要求報酬率，不是借款利率</div>
+<div><span class="b g">例題</span> 初始投資 100 萬，三年各回收 45 萬</div>
+<div style="color:#6b7280;font-size:13px">（紅色邊線與橫格是純 CSS 漸層，沒有圖檔）</div>
+<div></div></div></body></html>

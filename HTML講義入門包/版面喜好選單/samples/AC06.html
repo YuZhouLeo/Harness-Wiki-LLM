@@ -1,0 +1,32 @@
+<!doctype html><!-- 版面喜好選單範例 AC06｜結果卡片翻入｜來源：講師範例庫 output範例/元件庫/AC06-結果卡片翻入.html；原始來源 https://github.com/animate-css/animate.css（source/flippers/flipInX.css），作者 Daniel Eden，授權 Hippocratic-2.1。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  AC06 結果卡片翻入（flipInX）
+  來源：https://github.com/animate-css/animate.css　source/flippers/flipInX.css
+  原作者：Daniel Eden　授權：Hippocratic-2.1
+  移植：抄 flipInX 的 @keyframes；卡片為淺綠色（綠＝通過）；父層沒有設 perspective，沿用原作 keyframes 內的 perspective(400px)。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>flipInX</title><style>
+:root{--ink:#1f2937;--mut:#6b7280;--line:#cbd5e1;--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--warn:#b45309;--warnbg:#fef3c7;--info:#1d4ed8;--infobg:#dbeafe}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8fafc;color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.panel{width:430px;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.hd{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-bottom:1px solid var(--line);background:#f1f5f9;font-weight:700}
+button{font:inherit;font-size:12px;padding:3px 10px;border:1px solid #94a3b8;background:#fff;border-radius:4px;cursor:pointer;color:var(--ink)}
+.tag{display:inline-block;padding:0 8px;border-radius:3px;font-size:12px;font-weight:700}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.warn{background:var(--warnbg);color:var(--warn)}.info{background:var(--infobg);color:var(--info)}
+.row{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid #e2e8f0}
+.row b{width:76px;font-weight:700}
+.a{animation-duration:1s;animation-fill-mode:both}
+@keyframes flipInX{from{transform:perspective(400px) rotate3d(1,0,0,90deg);animation-timing-function:ease-in;opacity:0}40%{transform:perspective(400px) rotate3d(1,0,0,-20deg);animation-timing-function:ease-in}60%{transform:perspective(400px) rotate3d(1,0,0,10deg);opacity:1}80%{transform:perspective(400px) rotate3d(1,0,0,-5deg)}to{transform:perspective(400px)}}
+.flipInX{backface-visibility:visible!important;animation-name:flipInX}
+.card{margin:12px;padding:12px;border:1px solid #86efac;border-left:5px solid var(--ok);background:#f0fdf4;border-radius:4px}
+.card h3{margin:0 0 4px;font-size:15px;color:var(--ok)}
+@media (prefers-reduced-motion:reduce){.a{animation:none!important}}
+</style></head><body>
+<div class="panel"><div class="hd">查核結果<button id="r">重播</button></div>
+<div class="card a flipInX" id="c"><h3>通過：發票 AB-12345678</h3><div>統一編號、金額、日期皆吻合，無須補件。</div>
+<div style="margin-top:6px"><span class="tag ok">通過</span> <span class="tag info">已歸檔</span></div></div>
+<div class="row" style="border:0;color:var(--mut)">結果卡片像翻牌一樣從平面豎起，只出現一次。</div></div>
+<script>function play(e,c){e.classList.remove(c);void e.offsetWidth;e.classList.add(c)}
+var c=document.getElementById('c');document.getElementById('r').onclick=function(){play(c,'flipInX')}</script></body></html>

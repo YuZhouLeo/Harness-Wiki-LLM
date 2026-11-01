@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>講義：語文</title>
+<style>
+/* 講義模板：語文形式。給學生的 AI 讀，要換內容只改 main 裡的文字，不用改這段。
+   版型規則：一頁一個文法點；先「這些要記住」，再例句與解說，再練習表，答案印在頁尾。主色只有一個。 */
+@page{size:A4;margin:0}
+:root{--ink:#2b2522;--ink-2:#655a52;--main:#c8551b;--soft:#fdeee2;--softer:#fff7f0;--line:#efb78f;--page:#e9e7e3;--hl:#ffe9a8;
+  --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;--jp:"Hiragino Sans","Yu Gothic UI","Yu Gothic","Meiryo",sans-serif;--digit:"Bahnschrift","Segoe UI","SF Pro Display",sans-serif}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{margin:0}
+body{background:var(--page);color:var(--ink);font:400 10.8pt/1.6 var(--font)}
+h1,h2,h3,p,ul,ol{margin:0;padding:0}
+ul,ol{list-style:none}
+[lang=ja]{font-family:var(--jp)}
+.sheet{width:210mm;min-height:297mm;margin:8mm auto;background:#fff;position:relative;display:flex;flex-direction:column}
+.top{height:17mm;display:flex;align-items:center;gap:4mm;padding:0 15mm;background:repeating-linear-gradient(135deg,#fbdcc4 0 5mm,#fdeee2 5mm 10mm)}
+.part{background:var(--main);color:#fff;font-weight:700;font-size:13pt;padding:1mm 4.5mm;border-radius:2mm 2mm 0 2mm}
+.top b{font-size:13pt}
+.body{flex:1;padding:5mm 15mm 16mm;display:flex;flex-direction:column}
+.memo{flex:1;margin-top:2.5mm;border:.5pt solid var(--line);border-radius:1.5mm;padding:.5mm 2.5mm;color:var(--main);font-size:9pt;font-weight:500;background:repeating-linear-gradient(transparent 0 6.7mm,var(--line) 6.7mm 7mm) 0 6mm/100% 7mm repeat-y}
+.title{display:flex;align-items:flex-end;gap:3mm}
+.title small{display:block;color:var(--main);font:600 9pt var(--digit)}
+.title i{font:600 38pt/.95 var(--digit);color:var(--main);font-style:normal}
+.title h1{font-size:23pt;font-weight:900;line-height:1.2;padding-bottom:.5mm}
+.keep{margin-top:3.5mm;background:var(--soft);border-radius:2.5mm;padding:2.5mm 4mm}
+.keep h2{font-size:9.5pt;font-weight:500;color:var(--main);margin-bottom:.5mm}
+.keep li{font-weight:500;padding-left:5mm;position:relative}
+.keep li::before{content:"✓";position:absolute;left:0;color:var(--main);font-weight:700}
+.keep em{font-style:normal;color:var(--main);font-weight:700}
+.pill{margin-top:4mm;background:var(--main);color:#fff;font-size:11.5pt;font-weight:700;padding:.6mm 5mm;border-radius:99px}
+.ex{margin-top:2mm;font-weight:700}
+.ex .m{display:inline-block;width:5mm;height:5mm;line-height:5mm;text-align:center;background:var(--ink);color:#fff;font-size:8.5pt;font-weight:500;margin-right:1.5mm;vertical-align:.3mm}
+.ex.no{color:var(--ink-2);font-weight:500}
+.ex.no .m{background:var(--ink-2)}
+.ex u{text-decoration-color:var(--main);text-decoration-thickness:1.2pt;text-underline-offset:2pt}
+.say{margin-top:1.2mm;text-indent:1em}
+.say b{font-weight:700;background:var(--hl);padding:0 .5mm}
+.chk{margin-top:4mm;display:flex;align-items:center;gap:2mm;border-bottom:1pt dashed var(--main);padding-bottom:.8mm}
+.chk span{background:var(--main);color:#fff;font-size:9pt;font-weight:700;padding:.2mm 2mm;border-radius:1mm}
+.chk h2{font-size:12pt;font-weight:700}
+table{width:100%;border-collapse:collapse;margin-top:2mm;font-size:10.2pt;border:1pt solid var(--main)}
+th{background:var(--soft);color:var(--main);font-weight:500;padding:.8mm 2mm;border:.5pt solid var(--line);text-align:center}
+td{padding:.8mm 2mm;border:.5pt solid var(--line);text-align:center}
+.fill{margin-top:2.5mm;font-weight:500;line-height:2}
+.box{display:inline-block;min-width:15mm;height:6.2mm;line-height:6mm;vertical-align:middle;border:.8pt solid var(--ink);border-radius:1mm;text-align:left;padding-left:1mm;color:var(--main);font-size:8.5pt;font-weight:700;background:#fff}
+.foot{margin-top:2.5mm;padding-top:1.2mm;border-top:.5pt solid var(--line);font-size:9.2pt;line-height:1.5;color:var(--ink-2)}
+.foot b{color:var(--main)}
+.pg{position:absolute;left:15mm;bottom:7mm;font:600 11pt var(--digit);color:var(--main)}
+@media print{body{background:#fff}.sheet{margin:0;min-height:296mm}.sheet+.sheet{break-before:page}}
+</style>
+</head>
+<body>
+<!-- 內容開始：AI 只改下面 main 裡的文字。放不下就複製一整個 main 區塊當下一頁；「我的筆記」只留在最後一頁。 -->
+<main class="sheet">
+  <div class="top"><span class="part">Part 1</span><b>私の家族</b></div>
+  <div class="body">
+    <div class="title"><div><small>Lesson</small><i>2</i></div><h1 lang="ja">主語の統一とてもらう</h1></div>
+
+    <div class="keep">
+      <h2>這些要記住</h2>
+      <ul>
+        <li>日文一個句子裡，動作的<em>主詞要統一</em>。</li>
+        <li>「てもらう」的主詞是<em>接受恩惠的人</em>，「てくれる」的主詞是<em>給予恩惠的人</em>。</li>
+        <li>主詞真的沒辦法統一，就<em>加接續詞</em>拆成兩個子句。</li>
+      </ul>
+    </div>
+
+    <h2 class="pill">用「てもらう」讓前後主詞都是「私」</h2>
+    <p class="ex"><span class="m">○</span><span lang="ja">奥さんに1200円<u>貸してもらって</u>、私は助かりました。</span></p>
+    <p class="ex no"><span class="m">×</span><span lang="ja">奥さんが1200円貸してくれて、私は助かりました。</span></p>
+    <p class="ex"><span class="m">○</span><span lang="ja">奥さんが1200円<u>貸してくれたから</u>、私は助かりました。</span></p>
+    <p class="say">我們直覺會翻成「房東太太借了我 1200 円，我得救了」，但<b>一個句子不能有兩個主詞</b>。第二句前半的主詞是「奥さん」，後半是「私」，所以不對。</p>
+    <p class="say">第一句前後的主詞都是「私」（直譯：我請房東太太借我），所以後半的「私は助かりました」接得上。第三句加了「から」，變成兩個子句，就不受這個限制。</p>
+
+    <div class="chk"><span>基礎練習</span><h2>在空格填入適合的助詞或動詞</h2></div>
+    <table>
+      <tr><th>句型</th><th>主詞是誰</th><th>對方用哪個助詞</th><th>例子</th></tr>
+      <tr><td lang="ja">てくれる</td><td>給予恩惠的人</td><td>が（對方就是主詞）</td><td lang="ja">奥さん<b>が</b>貸してくれる</td></tr>
+      <tr><td lang="ja">てもらう</td><td>接受恩惠的人</td><td lang="ja"><span class="box" style="min-width:9mm">①</span></td><td lang="ja">私が奥さん<b>に</b>貸してもらう</td></tr>
+    </table>
+    <p class="fill" lang="ja">
+      友だち <span class="box" style="min-width:9mm">②</span> ノートを見せてもらって、私は助かりました。<br>
+      奥さんに1200円貸して <span class="box">③</span> 、私は助かりました。<br>
+      奥さんが1200円貸して <span class="box">④</span> から、私は助かりました。
+    </p>
+
+    <p class="foot"><b>答案</b>　① に　② に　③ もらって　④ くれた　　<b>注</b>　這裡的限制主要指動作性比較明顯的動詞。②～④ 是 AI 依規則出的示範題，不是課本原文。</p>
+    <div class="memo">我的筆記</div>
+  </div>
+  <span class="pg">16</span>
+</main>
+<!-- 內容結束 -->
+
+</body>
+</html>

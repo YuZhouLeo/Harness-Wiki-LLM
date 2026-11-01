@@ -1,0 +1,808 @@
+<!doctype html>
+<!-- 版面喜好選單範例 F6｜粗黑框重點卡｜來源：講師範例庫 output範例/網頁設計風格/F6-粗框重點卡.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F6 新粗野×重點框｜日本史 大和時代考前重點</title>
+<style>
+/* ===== 風格本體：所有規則都收在 .style 底下。照 3-output/NCCU/製作規範.md：
+   淺色底、系統字型、沒有動畫與 transition、沒有 fixed／sticky、沒有 vh 高度；列印是無縫直式（182×243mm，文字跨頁接續），只有圖、表格列、小格子不拆 ===== */
+:root { color-scheme: light; }
+body { margin: 0; background: #ebe6d9; }
+.style {
+  --ink: #111111;
+  --ink-2: #4a4a4a;
+  --paper: #fffdf6;
+  /* 每個顏色綁一種框，整頁不換 */
+  --def: #8ec5ff;   --def-bg: #eef6ff;     /* 藍＝定義、白話 */
+  --pt: #ff8370;    --pt-ink: #cf1820;     /* 紅＝考點（講義原文）；紅字＝填空答案 */
+  --tc: #ffd92e;    --tc-bg: #fff8d2;      /* 黃＝老師說的；螢光筆＝老師強調（★） */
+  --ex: #8fe3a6;    --ex-bg: #effbf2;      /* 綠＝補充 */
+  --mix: #ff9fdc;   --mix-bg: #fff0fa;     /* 粉＝易混淆 */
+  --quiz: #c4b0ff;  --quiz-bg: #f4f0ff;    /* 紫＝自我測驗與答案 */
+  --dot: #b7b1a1;   /* 點格＝手寫：用 inline SVG 的虛線畫（.dg），不用 CSS 漸層鋪，PDF 放大才不會糊 */
+  color: var(--ink);
+  font: 400 14.5px/1.62 "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+  text-spacing-trim: space-first;
+}
+.style *, .style *::before, .style *::after { box-sizing: border-box; }
+.style h1, .style h2, .style h3 { margin: 0; line-height: 1.3; text-wrap: balance; }
+.style p { margin: 0; text-wrap: pretty; }
+.style ul, .style ol, .style dl, .style dd { margin: 0; padding: 0; }
+.style a { color: inherit; text-underline-offset: 3px; }
+
+/* 工具列：只在螢幕上出現 */
+.style .bar { width: 182mm; max-width: 100%; margin: 0 auto; padding: 12px 8mm 0; display: flex; align-items: center; gap: 12px; font-size: 13.5px; color: var(--ink-2); }
+.style .bar button { font: inherit; font-weight: 700; color: var(--ink); background: var(--tc); border: 3px solid var(--ink); border-radius: 0; box-shadow: 4px 4px 0 var(--ink); padding: 5px 16px; cursor: pointer; flex: none; white-space: nowrap; }
+.style .bar button:focus-visible, .style a:focus-visible { outline: 3px solid var(--pt-ink); outline-offset: 2px; }
+
+/* 紙：螢幕上寬 182mm、左右留白 8mm，跟 @page 一樣（內容寬 166mm），所以螢幕上的換行跟 PDF 一致 */
+.style .sheet { width: 182mm; max-width: 100%; margin: 12px auto 0; padding: 6mm 8mm 8mm; background: var(--paper); }
+
+/* 頁首 */
+.style .top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 14px 22px; align-items: start; margin-right: 6px; }
+.style .stamp { display: inline-block; padding: 2px 10px; border: 3px solid var(--ink); background: #fff; font-size: 13.5px; font-weight: 700; transform: rotate(-2deg); }
+.style .top h1 { display: grid; justify-items: start; gap: 8px; margin-top: 12px; font-size: 56px; font-weight: 700; line-height: 1.1; }
+.style .top h1 span { padding: 2px 12px 6px; border: 3px solid var(--ink); background: #fff; box-shadow: 6px 6px 0 var(--ink); }
+.style .top h1 span + span { margin-left: 26px; }
+.style .top .sub { margin-top: 14px; font-size: 16px; font-weight: 700; }
+.style .top .lead { margin-top: 6px; }
+.style .legend { list-style: none; display: grid; gap: 7px; padding: 12px 12px 12px; border: 3px solid var(--ink); background: #fff; box-shadow: 6px 6px 0 var(--ink); }
+.style .legend li { display: grid; grid-template-columns: 6.4em minmax(0, 1fr); gap: 10px; align-items: center; font-size: 13.5px; line-height: 1.45; }
+.style .legend b { padding: 1px 6px; border: 2.5px solid var(--ink); text-align: center; font-size: 13px; }
+.style .legend-h { font-size: 13px; font-weight: 700; }
+.style .legend .l-d { position: relative; background: #fff; }
+.style .words { grid-column: 1 / -1; }
+
+/* 重點卡：粗黑框＋不模糊的位移陰影；右邊一條窄欄留給手寫 */
+.style .card { margin: 24px 6px 0 0; border: 3px solid var(--ink); background: #fff; box-shadow: 6px 6px 0 var(--ink); }
+.style .card-h { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 7px 12px; border-bottom: 3px solid var(--ink); }
+.style .card-h .no { flex: none; display: grid; place-items: center; width: 34px; height: 34px; background: var(--ink); color: #fff; font: 700 20px/1 "Segoe UI", "SF Pro Display", system-ui, sans-serif; }
+.style .card-h h2 { font-size: 21px; font-weight: 700; }
+.style .card-h .yr { margin-left: auto; padding: 1px 8px; border: 2.5px solid var(--ink); font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.style .card-b { display: grid; grid-template-columns: minmax(0, 1fr) 118px; }
+.style .main { min-width: 0; padding: 2px 18px 18px 14px; }
+.style .note { position: relative; min-width: 0; padding: 6px 8px; border-left: 2.5px dashed var(--ink); font-size: 12.5px; font-weight: 700; color: var(--ink-2); }
+/* 點格與橫線都是向量：一條 stroke-dasharray 的直線就是一排點；寬高 100%，跟著手寫欄長 */
+.style .defs { position: absolute; width: 0; height: 0; }
+.style .dg { position: absolute; z-index: -1; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }   /* 墊在字的下面 */
+.style .note, .style .lines, .style .legend .l-d { z-index: 0; }
+.style .dg .rule { stroke: var(--dot); stroke-width: 4000; stroke-dasharray: 1 28; fill: none; }
+
+/* 重點框：左上一塊色塊標籤，顏色＝框的種類 */
+/* 框線與底色畫在 ::before 上（從頂端往下 13px 才開始），標籤就落在 .bx 自己的盒子裡：分頁時標籤不會被留在上一頁 */
+.style .bx { position: relative; z-index: 0; margin-top: 9px; padding: 30.5px 14.5px 12.5px; }
+.style .bx::before { content: ""; position: absolute; z-index: -1; left: 0; right: 0; top: 13px; bottom: 0; border: 2.5px solid var(--ink); background: var(--bx-bg, #fff); }
+.style .bx > .tg { position: absolute; top: 0; left: 10px; padding: 0 9px; border: 2.5px solid var(--ink); background: #fff; font-size: 13px; font-weight: 700; line-height: 20px; }
+.style .bx p + p, .style .bx p + ul, .style .bx ul + p { margin-top: 6px; }
+.style .bx ul { list-style: none; display: grid; gap: 4px; }
+.style .bx li { position: relative; padding-left: 14px; }
+.style .bx li::before { content: ""; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; background: var(--ink); }
+.style .def { --bx-bg: var(--def-bg); }   .style .def > .tg { background: var(--def); }
+.style .pt > .tg { background: var(--pt); }
+.style .tc { --bx-bg: var(--tc-bg); }     .style .tc > .tg { background: var(--tc); }
+.style .ex { --bx-bg: var(--ex-bg); }     .style .ex > .tg { background: var(--ex); }
+.style .mix { --bx-bg: var(--mix-bg); }   .style .mix > .tg { background: var(--mix); }
+.style .quiz { --bx-bg: var(--quiz-bg); } .style .quiz > .tg { background: var(--quiz); }
+.style .three::before { border-width: 3px; box-shadow: 4px 4px 0 var(--ink); }
+.style .three > .tg { background: var(--ink); color: #fff; }
+.style .three ol { list-style: none; display: grid; gap: 6px; }
+.style .three li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 9px; padding: 0; font-size: 15px; font-weight: 700; line-height: 1.55; }
+.style .three li::before { position: static; width: 16px; height: 16px; margin-top: 4px; border: 2.5px solid var(--ink); background: #fff; }
+
+.style .src { font-size: 15.5px; font-weight: 700; line-height: 1.6; }
+.style .ans { padding: 0 2px; border-bottom: 2.5px solid var(--pt-ink); color: var(--pt-ink); }
+.style .hl { box-shadow: inset 0 -.62em 0 #ffe45c; -webkit-box-decoration-break: clone; box-decoration-break: clone; font-weight: 700; }   /* 螢光筆：不模糊的內陰影蓋住下半行，是純色塊，不用漸層 */
+.style .chip { display: inline-block; margin-right: 5px; padding: 0 5px; border: 2px solid var(--ink); font-size: 12.5px; font-weight: 700; line-height: 1.4; }
+.style .chip.c-pt { background: var(--pt); } .style .chip.c-tc { background: var(--tc); } .style .chip.c-ex { background: var(--ex); } .style .chip.c-def { background: var(--def); }
+.style .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 12px; align-items: start; }
+
+/* 時代軸 */
+.style .eras { list-style: none; display: grid; grid-template-columns: 1fr 1fr 1.2fr 1.2fr 1fr 1fr 1fr; gap: 7px; padding: 12px 16px 14px 12px; border-bottom: 3px solid var(--ink); }
+.style .eras li { padding: 5px 6px 6px; border: 2px solid var(--ink); background: #fff; font-size: 12.5px; line-height: 1.4; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.style .eras b { display: block; font-size: 16px; color: var(--ink); }
+.style .eras .now { border-width: 3px; box-shadow: 4px 4px 0 var(--ink); color: var(--ink); }
+.style .eras .now b { font-size: 20px; }
+.style .eras .now span { display: inline-block; margin-top: 3px; padding: 0 6px; background: var(--ink); color: #fff; font-weight: 700; }
+
+/* 因果鏈 */
+.style .chain { list-style: none; counter-reset: c; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 18px; margin-top: 14px; }
+.style .chain li { counter-increment: c; position: relative; padding: 7px 8px 8px; border: 2.5px solid var(--ink); background: #fff; box-shadow: 3px 3px 0 var(--ink); }
+.style .chain li::before { content: counter(c); display: grid; place-items: center; width: 22px; height: 22px; margin-bottom: 4px; background: var(--ink); color: #fff; font: 700 14px/1 "Segoe UI", system-ui, sans-serif; }
+.style .chain li::after { content: ""; position: absolute; top: 50%; right: -16px; margin-top: -7px; border: 7px solid transparent; border-left: 9px solid var(--ink); border-right: 0; }
+.style .chain li:nth-child(4n)::after { display: none; }
+
+/* 小圖解 */
+.style .name4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin: 4px 0 8px; border: 2.5px solid var(--ink); background: #fff; }
+.style .name4 div { padding: 4px 3px 6px; text-align: center; font-size: 14px; line-height: 1.4; }
+.style .name4 div + div { border-left: 2.5px solid var(--ink); }
+.style .name4 b { display: block; font-size: 21px; line-height: 1.3; white-space: nowrap; }
+.style .map { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.style .map div { padding: 4px 6px 5px; border: 2px solid var(--ink); background: #fff; font-size: 14px; line-height: 1.4; }
+.style .map b { display: block; font-size: 15px; }
+.style .map .full { grid-column: 1 / -1; }
+.style .map .sea { border: 0; border-top: 2px dashed var(--ink); border-bottom: 2px dashed var(--ink); background: none; text-align: center; font-size: 12.5px; font-weight: 700; padding: 1px; }
+.style .vs { display: grid; grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr); align-items: center; gap: 8px; margin-top: 8px; }
+.style .vs div { padding: 6px 10px 8px; border: 2.5px solid var(--ink); background: #fff; box-shadow: 3px 3px 0 var(--ink); }
+.style .vs div b { display: block; font-size: 19px; }
+.style .vs i { display: grid; place-items: center; width: 40px; height: 40px; background: var(--ink); color: #fff; font: 700 14px/1 "Segoe UI", system-ui, sans-serif; font-style: normal; }
+.style .bx ul.route { display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: center; margin-top: 6px; }
+.style .bx .route li { padding: 0 7px; border: 2px solid var(--ink); background: #fff; font-size: 14px; }
+.style .bx .route li::before { display: none; }
+.style .bx .route li:not(:last-child)::after { content: "→"; position: absolute; right: -20px; top: 0; font-weight: 700; }
+
+.style table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 14px; line-height: 1.5; background: #fff; }
+.style th, .style td { padding: 5px 7px; border: 2px solid var(--ink); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+.style th { font-weight: 700; }
+.style .yrs td:first-child { width: 5.4em; font-weight: 700; font-variant-numeric: tabular-nums; }
+.style .yrs td:last-child { width: 8.2em; }
+.style .yrs .chip { margin: 1px 4px 1px 0; }
+
+/* 自我測驗：空格夠大，可以直接手寫 */
+.style .q { list-style: none; counter-reset: q; display: grid; gap: 12px; }
+.style .q.b { counter-reset: q 4; }
+.style .q li { counter-increment: q; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; padding: 0; font-size: 15.5px; font-weight: 700; line-height: 2.5; }
+.style .q li::before { content: counter(q); position: static; display: grid; place-items: center; width: 26px; height: 26px; margin-top: 7px; background: var(--ink); color: #fff; font: 700 14px/1 "Segoe UI", system-ui, sans-serif; }
+.style .blank { font-style: normal; display: inline-block; width: 5.6em; height: 34px; margin: 0 3px; border: 2.5px solid var(--ink); background: #fff; box-shadow: 3px 3px 0 var(--ink); vertical-align: middle; }
+.style .blank.s { width: 3em; } .style .blank.l { width: 7.6em; }
+.style .lines { position: relative; min-height: 120px; margin-top: 8px; border: 2.5px solid var(--ink); background: #fff; }
+.style .answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 18px; list-style: none; }
+.style .answers li { padding: 0; }
+.style .answers li::before { display: none; }
+.style .answers b { display: inline-block; min-width: 1.7em; }
+.style .foot { margin-top: 20px; font-size: 13px; color: var(--ink-2); }
+
+@media (max-width: 640px) {
+  .style .sheet { padding: 16px 14px 20px 14px; }
+  .style .top { grid-template-columns: 1fr; }
+  .style .top h1 { font-size: 42px; }
+  .style .card-b, .style .two, .style .answers { grid-template-columns: 1fr; }
+  .style .note { min-height: 84px; border-left: 0; border-top: 2.5px dashed var(--ink); }
+  .style .eras { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .style .chain { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .style .chain li::after { display: none; }
+  .style .name4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .style .name4 div:nth-child(3) { border-left: 0; }
+  .style .name4 div:nth-child(n+3) { border-top: 2.5px solid var(--ink); }
+  .style th, .style td { padding: 4px 5px; }
+  .style .q li { line-height: 2.7; }
+}
+/* 列印：無縫直式（照 3-output/NCCU/製作規範.md 第 1 節）。182×243mm、上下 4mm 左右 8mm，不印頁碼；
+   六個邊界框都給空字串，Chrome 才不會印自己的頁首頁尾 */
+@page {
+  size: 182mm 243mm; margin: 4mm 8mm 4mm;
+  @top-left { content: "" } @top-center { content: "" } @top-right { content: "" }
+  @bottom-left { content: "" } @bottom-center { content: "" } @bottom-right { content: "" }
+}
+@media print {
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { background: #fff; }             /* Chrome 不會把底色鋪到 @page 的邊界，所以頁面留白底 */
+  .style .bar, .spec { display: none !important; }
+  .style .sheet { width: auto; max-width: none; margin: 0; padding: 0; background: #fff; }   /* 米白紙色只在螢幕上；印出來是白紙 */
+  /* 文字一律可以跨頁：重點卡、重點框、圖例都不設 break-inside: avoid，每頁填到底、下一頁接著寫。
+     卡與框跨頁時框線在頁緣開口（不 clone），看起來是同一個框延續；框的標籤 .tg 在框自己的盒子裡，不會落單在頁尾 */
+  .style .card-h, .style .legend-h { break-after: avoid; }
+  /* 不拆的只有切開就壞的小東西：卡頭、時代軸、因果鏈的格子、表格列、小圖解的格子、測驗題、答案格、手寫橫線格 */
+  .style .card-h, .style .eras, .style .chain li, .style tr, .style .legend li,
+  .style .name4, .style .map > div, .style .vs, .style .route, .style .q li, .style .lines, .style .answers li { break-inside: avoid; }
+  .style .src, .style p, .style li { orphans: 1; widows: 1; }
+  .style .foot { break-before: avoid; }
+}
+
+/* ===== 共用：風格規格面板（各頁相同，逐字複製，不要改） ===== */
+.spec { all: initial; display: block; background: #f6f5f1; color: #1c1b19; color-scheme: light; border-top: 1px solid #dcd9d0;
+  font: 400 15px/1.7 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; text-spacing-trim: space-first;
+  padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 48px) 64px; }
+.spec *, .spec *::before, .spec *::after { box-sizing: border-box; }
+.spec .spec-in { max-width: 1120px; margin: 0 auto; }
+.spec .spec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin: 0 0 6px; }
+.spec .spec-code { font: 700 13px/1 ui-monospace, Consolas, monospace; color: #fff; background: #1c1b19; padding: 5px 9px; border-radius: 6px; }
+.spec h2 { margin: 0; font-size: clamp(22px, 3vw, 30px); line-height: 1.3; font-weight: 700; text-wrap: balance; }
+.spec .spec-en { font: 500 14px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-def { margin: 0 0 22px; max-width: 46em; color: #3b3935; }
+.spec .spec-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.spec .spec-card { background: #fff; border: 1px solid #e4e1da; border-radius: 12px; padding: 16px 18px; min-width: 0; }
+.spec .spec-card.wide { grid-column: 1 / -1; }
+.spec h3 { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: #6b6862; }
+.spec ul, .spec ol { margin: 0; padding-left: 1.2em; }
+.spec li { margin: 2px 0; }
+.spec p { margin: 0; }
+.spec p + p { margin-top: 6px; }
+.spec code { font: 13px/1.5 ui-monospace, Consolas, monospace; background: #f0eee8; padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.spec .spec-traits { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 16px; }
+.spec .spec-traits small { display: block; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-sw { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.spec .spec-sw li { margin: 0; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #3b3935; }
+.spec .spec-sw i { display: block; height: 34px; border-radius: 8px; border: 1px solid rgba(0,0,0,.12); margin-bottom: 4px; }
+.spec .spec-fit b { display: inline-block; min-width: 4.2em; }
+.spec .spec-prompt { background: #efedff; border-color: #dcd8ff; }
+.spec .spec-back { display: inline-block; margin-top: 22px; color: #1c1b19; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 720px) { .spec .spec-grid { grid-template-columns: 1fr; } }
+@media print { .spec { border-top: 0; } .spec .spec-card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<main class="style">
+  <div class="bar">
+    <button type="button" id="pdf" title="iPad 直式、無縫分頁（182×243mm，文字跨頁接續），給 GoodNotes 垂直捲動閱讀；在列印視窗的目的地選「另存為 PDF」，其他設定不用動">匯出 PDF（GoodNotes 直式）</button>
+    <span>輸出成 iPad 直式、無縫分頁的 PDF（182×243mm），匯進 GoodNotes 垂直捲動閱讀、手寫。</span>
+  </div>
+
+  <div class="sheet" id="sheet">
+    <!-- 點格的定義：26 條直的虛線，每條是一排點（間距 14px）。手寫欄用 <svg class="dg"><use href="#dg"/></svg> 取用，超出的部分自己被裁掉 -->
+    <svg class="defs" aria-hidden="true" focusable="false"><defs><g id="dg" fill="none" stroke="#b7b1a1" stroke-width="2" stroke-linecap="round" stroke-dasharray=".01 13.99">
+      <line x1="10" y1="32" x2="10" y2="100%"/><line x1="24" y1="32" x2="24" y2="100%"/><line x1="38" y1="32" x2="38" y2="100%"/><line x1="52" y1="32" x2="52" y2="100%"/>
+      <line x1="66" y1="32" x2="66" y2="100%"/><line x1="80" y1="32" x2="80" y2="100%"/><line x1="94" y1="32" x2="94" y2="100%"/><line x1="108" y1="32" x2="108" y2="100%"/>
+      <line x1="122" y1="32" x2="122" y2="100%"/><line x1="136" y1="32" x2="136" y2="100%"/><line x1="150" y1="32" x2="150" y2="100%"/><line x1="164" y1="32" x2="164" y2="100%"/>
+      <line x1="178" y1="32" x2="178" y2="100%"/><line x1="192" y1="32" x2="192" y2="100%"/><line x1="206" y1="32" x2="206" y2="100%"/><line x1="220" y1="32" x2="220" y2="100%"/>
+      <line x1="234" y1="32" x2="234" y2="100%"/><line x1="248" y1="32" x2="248" y2="100%"/><line x1="262" y1="32" x2="262" y2="100%"/><line x1="276" y1="32" x2="276" y2="100%"/>
+      <line x1="290" y1="32" x2="290" y2="100%"/><line x1="304" y1="32" x2="304" y2="100%"/><line x1="318" y1="32" x2="318" y2="100%"/><line x1="332" y1="32" x2="332" y2="100%"/>
+      <line x1="346" y1="32" x2="346" y2="100%"/><line x1="360" y1="32" x2="360" y2="100%"/>
+    </g></defs></svg>
+
+    <!-- 頁首 -->
+    <header class="top">
+      <div>
+        <span class="stamp">日本史｜國立政治大學｜2026-09-14</span>
+        <h1><span>大和時代</span><span>考前重點</span></h1>
+        <p class="sub">古代天皇制的形成：古墳時期＆飛鳥時期</p>
+        <p class="lead">日本在西元 3 到 8 世紀之間，從「一個大王加一群地方豪族的聯盟」變成「以天皇為中心、有官僚制度的國家」。這一頁是前半段。</p>
+      </div>
+      <ul class="legend" aria-label="顏色圖例">
+        <li class="legend-h" style="grid-template-columns:1fr">每種框一個顏色，整頁不換</li>
+        <li><b style="background:var(--pt)">考點</b><span>講義原文。<span class="ans">紅字</span>是課堂填空的答案</span></li>
+        <li><b style="background:var(--def)">定義</b><span>名詞是什麼意思、那一條在講什麼</span></li>
+        <li><b style="background:var(--tc)">老師</b><span>老師口述。<span class="hl">螢光筆</span>是老師強調的（★）</span></li>
+        <li><b style="background:var(--mix)">易混淆</b><span>兩個東西容易搞錯的地方</span></li>
+        <li><b style="background:var(--ex)">補充</b><span>講義和老師都沒講的背景</span></li>
+        <li><b style="background:var(--quiz)">自我測驗</b><span>題目留空格，答案在頁尾</span></li>
+        <li><b style="background:var(--ink);color:#fff">記住三件事</b><span>每節收尾，背起來就在方格打勾</span></li>
+        <li><b class="l-d"><svg class="dg" viewBox="0 0 84 20" preserveAspectRatio="none" aria-hidden="true"><path d="M5 5h.01M12 5h.01M19 5h.01M65 5h.01M72 5h.01M79 5h.01M5 15h.01M12 15h.01M19 15h.01M65 15h.01M72 15h.01M79 15h.01" fill="none" stroke="#b7b1a1" stroke-width="2" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>點格</b><span>留給你手寫：每張卡右邊一欄</span></li>
+      </ul>
+      <div class="bx def words" style="margin-top:0">
+        <b class="tg">定義｜先記三個詞</b>
+        <ul>
+          <li><b>大王</b>＝當時對君主的稱呼。「天皇」是 7 世紀末才有的稱號，講義為了方便仍寫天皇。</li>
+          <li><b>豪族</b>＝地方上有勢力的大家族，跟大王合作也跟大王競爭。</li>
+          <li><b>百濟</b>＝朝鮮半島西南的國家，日本最重要的技術與文化來源。</li>
+        </ul>
+      </div>
+    </header>
+
+    <!-- 1 時代與分期 -->
+    <section class="card">
+      <div class="card-h"><b class="no">1</b><h2>時代與分期</h2><span class="yr">3 世紀～710</span></div>
+      <ol class="eras" aria-label="時代軸">
+        <li><b>繩文</b>約前 1 萬年～前 3 世紀<br>上古</li>
+        <li><b>彌生</b>約前 3 世紀～3 世紀<br>上古</li>
+        <li class="now"><b>古墳</b>3～6 世紀<br>上古（大和政權）<br><span>本堂</span></li>
+        <li class="now"><b>飛鳥</b>592～710<br>古代開始<br><span>本堂</span></li>
+        <li><b>奈良</b>710～794<br>古代</li>
+        <li><b>平安</b>794～1185<br>古代</li>
+        <li><b>鎌倉以後</b>1185～<br>中世（武士政權）</li>
+      </ol>
+      <div class="card-b">
+        <div class="main">
+          <div class="bx pt">
+            <b class="tg">考點</b>
+            <p class="src">○時代：3A.D.～710；遷都範圍侷限在以大和（現在的奈良）為中心近畿地區。</p>
+            <p class="src">前期－<span class="ans">古墳</span>時期（3A.D.～6 A.D），後期－<span class="ans">飛鳥</span>時期（592-710）</p>
+            <p class="src">古代　※古代：古代天皇制。</p>
+          </div>
+          <div class="two">
+            <div class="bx def">
+              <b class="tg">定義</b>
+              <p>大和時代將近五百年。都城一代一代搬，但都在奈良盆地一帶，沒離開過。</p>
+              <p>分期看的是「文化特徵」，不是政治事件：前期的標誌是古墳，後期的標誌是飛鳥文化，也就是最早的佛教文化。</p>
+            </div>
+            <div>
+              <div class="bx tc">
+                <b class="tg">老師</b>
+                <p><span class="hl">★ 從推古朝新政開始進入「古代」，在此之前叫「上古」。</span>推古朝新政到大化改新，目標都是建立以天皇為中心的中央集權國家。</p>
+              </div>
+              <div class="bx ex">
+                <b class="tg">補充</b>
+                <p>592 年是推古天皇即位那年（崇峻天皇同年被殺）；710 年是遷都平城京。</p>
+              </div>
+            </div>
+          </div>
+          <div class="bx three">
+            <b class="tg">記住三件事</b>
+            <ol>
+              <li>大和時代＝古墳期＋飛鳥期，將近五百年，都城都在奈良一帶。</li>
+              <li>當時的君主叫大王；「天皇」和「日本」都是 7 世紀末才有的名字。</li>
+              <li>前期看古墳，後期看飛鳥（佛教）文化。</li>
+            </ol>
+          </div>
+        </div>
+        <aside class="note" aria-label="手寫區">筆記<svg class="dg" aria-hidden="true"><use href="#dg"/></svg></aside>
+      </div>
+    </section>
+
+    <!-- 2 因果鏈 -->
+    <section class="card">
+      <div class="card-h"><b class="no">2</b><h2>本堂因果鏈</h2><span class="yr">從第 1 格讀到第 8 格</span></div>
+      <div class="card-b">
+        <div class="main">
+          <ol class="chain">
+            <li>中國大亂（五胡亂華）</li>
+            <li>人和技術流向朝鮮半島與日本</li>
+            <li>大和政權透過百濟取得鐵、漢字、儒家、佛教</li>
+            <li>佛教是新東西，朝廷分裂：蘇我氏（擁佛）對物部氏（排佛）</li>
+            <li>蘇我氏勝，殺崇峻天皇，扶植推古天皇</li>
+            <li>聖德太子與蘇我馬子學中國：冠位十二階、憲法十七條、遣隋使</li>
+            <li>「以天皇為中心的國家」開始成形，史稱古代的開始</li>
+            <li>同時：古墳不再象徵權威，改蓋寺廟（飛鳥文化）</li>
+          </ol>
+        </div>
+        <aside class="note" aria-label="手寫區">筆記<svg class="dg" aria-hidden="true"><use href="#dg"/></svg></aside>
+      </div>
+    </section>
+
+    <!-- 3 古墳時期 -->
+    <section class="card">
+      <div class="card-h"><b class="no">3</b><h2>古墳時期：大和政權</h2><span class="yr">3～6 世紀</span></div>
+      <div class="card-b">
+        <div class="main">
+
+          <div class="bx pt">
+            <b class="tg">考點｜政權長什麼樣</b>
+            <p class="src">○大王＋氏族（豪族）。政權範圍：九州北部-中部地方。</p>
+            <p class="src">※「<span class="ans">天皇</span>」稱號－7世紀後期天武天皇（40）。　※「日本」「日本史」？</p>
+          </div>
+          <div class="two">
+            <div class="bx def">
+              <b class="tg">定義</b>
+              <p>大王和各地豪族組成的聯盟，不是大王一個人說了算；大王比較像盟主。東北的蝦夷、九州南部的熊襲・隼人還不在裡面。</p>
+            </div>
+            <div class="bx mix">
+              <b class="tg">易混淆｜大王 ≠ 天皇</b>
+              <p><span class="hl">★ 這個時期還沒有「天皇」稱號，只有「大王」。</span>大仙古墳被注成「仁德天皇陵」，是後世受戰前皇國思想影響的寫法。「日本」這個國名也是 7 世紀末才出現，在此之前中國史書叫這裡「倭」。</p>
+            </div>
+          </div>
+
+          <div class="bx pt">
+            <b class="tg">考點｜成立原因</b>
+            <p class="src">1.魏晉南北朝、五胡亂華，中國對周邊控制減弱。</p>
+            <p class="src">2.欲得中國或朝鮮技術、鐵。</p>
+            <p class="src">→Ex：鐵器（七支刀）、製陶、紡織、漢字、儒家、佛教etc；主要由百濟傳入。</p>
+          </div>
+          <div class="bx tc">
+            <b class="tg">老師｜傳進來的東西，後來長成什麼</b>
+            <table>
+              <tbody>
+                <tr><th style="width:4.2em">鐵器</th><td><span class="hl">★ 七支刀是百濟王獻給倭王的。</span>現藏奈良縣天理市的石上神宮；全長約 75 公分，是祭品不是實用品；銘文共 61 字。</td></tr>
+                <tr><th>漢字</th><td>百濟的王仁博士帶來《論語》與《千字文》。在此之前日本史只能靠考古文物和中國史書。</td></tr>
+                <tr><th>儒家</th><td>五經博士傳入五經（詩、書、易、禮、春秋）。漢朝以儒家選官僚 → 飛鳥時期的冠位十二階。</td></tr>
+                <tr><th>佛教</th><td>百濟聖明王獻佛像、佛經給欽明天皇。對日本是新興宗教 → 朝廷分成擁佛派與排佛派。</td></tr>
+              </tbody>
+            </table>
+            <p><span class="hl">★ 三國之中跟日本關係最好的是百濟，文物多從百濟來。</span></p>
+          </div>
+
+          <div class="bx pt">
+            <b class="tg">考點｜朝鮮半島</b>
+            <p class="src">※朝鮮半島三國鼎立：高句麗、新羅、百濟。 cf. 任那（加羅諸國）。</p>
+            <p class="src">※朝鮮移民-天皇祖先說。</p>
+          </div>
+          <div class="two">
+            <div class="bx def">
+              <b class="tg">定義｜位置示意</b>
+              <div class="map">
+                <div class="full"><b>高句麗</b>北，今天的北韓</div>
+                <div><b>百濟</b>西南。跟日本最好</div>
+                <div><b>新羅</b>東南。跟日本打過仗</div>
+                <div class="full"><b>加羅諸國</b>最南端，十幾個部落的聯盟</div>
+                <div class="full sea">海</div>
+                <div class="full"><b>倭</b>大和政權</div>
+              </div>
+            </div>
+            <div>
+              <div class="bx tc">
+                <b class="tg">老師</b>
+                <p>391 年百濟要求日本出兵打新羅，日本佔新羅王城約九年；400 年被高句麗擊退。六世紀左右加羅諸國被新羅滅掉。</p>
+                <p>天皇祖先說：帶著先進文物和技術的渡來人勢力最大，變成大王。到現在還是未被證實的說法。</p>
+              </div>
+              <div class="bx mix">
+                <b class="tg">易混淆｜任那＝加羅諸國</b>
+                <p><span class="hl">★「任那」是日本跟加羅結盟之後給的國號，只有日本在用；韓國稱加羅諸國。</span></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bx pt">
+            <b class="tg">考點｜中央政治制度</b>
+            <p class="src">氏姓制度：氏－血統。姓－朝廷的地位和職務。世襲。</p>
+            <p class="src">cf. 只有統治階層才有；大王及平民百姓無。</p>
+          </div>
+          <div class="two">
+            <div class="bx tc">
+              <b class="tg">老師｜一個名字拆四段</b>
+              <div class="name4">
+                <div><b>藤原</b>氏<br>血統</div>
+                <div><b>朝臣</b>姓<br>朝廷的職務地位</div>
+                <div><b>九條</b>苗字<br>分家後的家名</div>
+                <div><b>兼實</b>名</div>
+              </div>
+              <p><span class="hl">★「藤原朝臣九條兼實」八個字。</span>姓是大王賜的：有當官才有姓，所以一般民眾沒有；大王自己也沒有，因為沒有人賜給他。</p>
+            </div>
+            <div class="bx mix">
+              <b class="tg">易混淆｜氏・姓・苗字</b>
+              <p>大化改新之後氏姓制度廢除，表示身分的「姓」不再需要；氏與苗字合為一體，統稱苗字，也就是現在日文的「姓氏」。</p>
+              <p>一般民眾到明治維新才有姓氏；天皇家到今天都沒有姓氏，只有名。</p>
+            </div>
+          </div>
+
+          <div class="bx pt">
+            <b class="tg">考點｜古墳</b>
+            <p class="src">○古墳：大王或各豪族墳墓。表權威。埴輪。</p>
+            <p class="src">消失原因：群集墳（有力農民的家族墳），大王或各豪族重心轉移至蓋寺廟或佛像。</p>
+          </div>
+          <div class="two">
+            <div class="bx def">
+              <b class="tg">定義</b>
+              <ul>
+                <li><b>古墳</b>：不是一般埋屍體的地方，蓋得雄偉是為了表示權威。近畿地區最多。</li>
+                <li><b>大仙古墳</b>：大阪府堺市，日本最大。</li>
+                <li><b>前方後圓墳</b>：前面方、後面圓，最常見的形狀。</li>
+                <li><b>埴輪</b>：排列在古墳底部或墳丘四周的陶製品總稱。形態有船、舞者、家屋、雞。</li>
+                <li><b>陪葬品</b>三類：咒術祭祀（銅鏡、勾玉、三角緣神獸鏡）、權力軍事（頭盔、盔甲）、陶器。沒有殉死。</li>
+                <li><b>群集墳</b>：很多規模變小的墳墓聚集在同一區，一個地方十個到一百個。</li>
+              </ul>
+            </div>
+            <div>
+              <div class="bx mix">
+                <b class="tg">易混淆｜內部構造</b>
+                <table>
+                  <tbody>
+                    <tr><th style="width:4.6em">豎穴式</th><td>從上往下挖，下葬要打開上方。早期多。</td></tr>
+                    <tr><th>橫穴式</th><td>走道盡頭有門，方便追葬。晚期多。</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="bx tc">
+                <b class="tg">老師</b>
+                <p><span class="hl">★ 古墳原本表示政治與社會身分 → 群集墳 → 單一墳墓，只剩埋葬遺體的功能。</span></p>
+                <p>群集墳重視的是家族支配；之後的官僚不再世襲，顯示的是個人支配。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bx three">
+            <b class="tg">記住三件事</b>
+            <ol>
+              <li>政權是大王＋豪族的聯盟；官職靠出身（氏姓制度：氏＝血統，姓＝朝廷頭銜，世襲）。</li>
+              <li>鐵、漢字、儒家、佛教都經由百濟傳入，因為中國正亂、日本想要技術。</li>
+              <li>古墳＝權威象徵；後來變成群集墳，權威改由寺廟表現。</li>
+            </ol>
+          </div>
+        </div>
+        <aside class="note" aria-label="手寫區">筆記<svg class="dg" aria-hidden="true"><use href="#dg"/></svg></aside>
+      </div>
+    </section>
+
+    <!-- 4 飛鳥時期 -->
+    <section class="card">
+      <div class="card-h"><b class="no">4</b><h2>飛鳥時期：新政</h2><span class="yr">6 世紀後期～710</span></div>
+      <div class="card-b">
+        <div class="main">
+
+          <div class="bx pt">
+            <b class="tg">考點｜飛鳥與大王家</b>
+            <p class="src">※飛鳥：日本最早的寺廟－飛鳥寺，日本最早的佛教文化－飛鳥文化。</p>
+            <p class="src">○6 A.D.後期～710　　※飛鳥（奈良縣南部）</p>
+            <p class="src">○「大王家」（血緣）：蘇我氏＋欽明（29）。</p>
+          </div>
+          <div class="two">
+            <div class="bx def">
+              <b class="tg">定義</b>
+              <p>初期的大王，皇位繼承不一定跟血緣有關，很多時候是地緣或政治協商。「有大王家血緣才能繼位」是從這時候慢慢固定下來的。</p>
+              <p>當時還沒有嫡長子繼承制：天皇的弟弟、長子、次子都可能繼位。</p>
+            </div>
+            <div>
+              <div class="bx tc">
+                <b class="tg">老師</b>
+                <p><span class="hl">★ 六世紀，第 29 代欽明天皇娶了蘇我氏家長蘇我稻目的女兒，開始大王家與蘇我氏的姻親關係。</span></p>
+              </div>
+              <div class="bx ex">
+                <b class="tg">補充</b>
+                <p>稻目之子馬子 → 蝦夷 → 入鹿，三代掌權到 645 年的乙巳之變。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bx pt">
+            <b class="tg">考點｜氏族對立</b>
+            <p class="src">○氏族對立（蘇我氏：擁佛，財政 vs. 物部氏：排佛，軍事）→推古天皇（33。女性－中繼）。</p>
+            <div class="vs">
+              <div><b>蘇我氏</b>擁佛・管財政<br><span class="chip c-tc">老師</span>跟大王家關係密切</div>
+              <i>VS</i>
+              <div><b>物部氏</b>排佛・管軍事<br><span class="chip c-tc">老師</span>保守，排斥新興宗教</div>
+            </div>
+          </div>
+          <div class="two">
+            <div class="bx tc">
+              <b class="tg">老師</b>
+              <p><span class="hl">★ 更根本的是政治鬥爭：一個國家最重要的就是管錢和軍事。</span></p>
+              <p>蘇我馬子滅了物部氏，同時把親物部的第 32 代崇峻天皇殺了。蘇我氏找不到有蘇我血緣的合適男丁，就推欽明天皇的女兒推古當第 33 代：日本史上第一位女性天皇。</p>
+            </div>
+            <div class="bx def">
+              <b class="tg">定義｜中繼</b>
+              <p>沒有合適男丁時由女性擔任，性質是「中繼」。126 代裡女性天皇只有個位數。</p>
+              <p>推古是欽明的女兒、稻目的外孫女。</p>
+            </div>
+          </div>
+
+          <div class="bx pt">
+            <b class="tg">考點｜理念與主力</b>
+            <p class="src">○理念－天皇為中心的中央集權國家。為時短，到大化改新才較落實。</p>
+            <p class="src">○改革主力：蘇我氏 ＆<span class="ans">聖德太子</span>。</p>
+          </div>
+          <div class="two">
+            <div class="bx def">
+              <b class="tg">定義｜聖德太子</b>
+              <p>第 31 代用明天皇的兒子、推古天皇的侄子，跟蘇我家也有血緣。據說在馬廄出生，又稱廄戶皇子。</p>
+            </div>
+            <div>
+              <div class="bx tc">
+                <b class="tg">老師</b>
+                <p>背景是受到隔壁隋朝的刺激。新政時間很短，提出的理念要到大化改新才比較完整落實。</p>
+              </div>
+              <div class="bx ex">
+                <b class="tg">補充</b>
+                <p>隋在 589 年統一中國；推古朝新政（593 年起）正好在這之後。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bx pt">
+            <b class="tg">考點｜三大政策 ①</b>
+            <p class="src">・冠位十二階制－能力選官，十二階（儒家） ≠ 氏姓。</p>
+            <p><b class="chip c-tc">老師</b>把冠分成十二階，每一階冠帽的顏色和裝飾不同。<span class="hl">★ 採用儒家的德目：德、仁、禮、信、義、智，各分大小，所以是十二階。</span>目的是打破氏姓制度的世襲，用能力取才。</p>
+            <p><b class="chip c-ex">補充</b>603 年制定。冠色依序紫・青・赤・黃・白・黑。</p>
+          </div>
+          <div class="bx pt">
+            <b class="tg">考點｜三大政策 ②</b>
+            <p class="src">・憲法十七條－官僚訓誡。以和為貴、重佛教、服從天皇。</p>
+            <p><b class="chip c-tc">老師</b><span class="hl">★ 以和為貴：有鑑於之前地方豪族爭權奪利，要官僚不要再搞政治鬥爭。</span>重視佛教：蘇我氏擁佛，聖德太子也很重視。服從天皇（＝服從大王）：這裡的官僚不是「國家的公僕」，而是天皇的官僚。</p>
+            <p><b class="chip c-ex">補充</b>604 年制定。第一條「以和為貴」、第二條「篤敬三寶」、第三條「承詔必謹」。</p>
+          </div>
+          <div class="bx pt">
+            <b class="tg">考點｜三大政策 ③</b>
+            <p class="src">・遣隋使（小野妹子etc），攝取中國文化。</p>
+            <p class="src">「日出處天子致書日沒處天子無恙云云」(『隋書』「倭國傳」)。</p>
+            <p><b class="chip c-tc">老師</b>據說至少派了五次。<span class="hl">★ 遣隋使是去朝貢，但日本沒有向中國稱臣。</span><span class="hl">★ 隋煬帝看了國書非常火大：</span>中國皇帝認為只有自己是天子，你竟然也自稱天子。</p>
+            <p><b class="chip c-tc">老師</b>航路刻意沿岸繞遠路，因為當時的船不堅固、海上風浪多變：</p>
+            <ul class="route" aria-label="遣隋使航路">
+              <li>大阪灣</li><li>瀨戶內海</li><li>關門海峽</li><li>對馬海峽</li><li>沿百濟沿岸</li><li>山東半島登陸</li><li>陸路到長安</li>
+            </ul>
+            <p style="margin-top:8px"><b class="chip c-ex">補充</b>有紀錄的遣隋使：600 年（只見於《隋書》）、607 年小野妹子、608 年、614 年。</p>
+          </div>
+
+          <div class="bx mix">
+            <b class="tg">易混淆｜這四個最常寫錯</b>
+            <table>
+              <tbody>
+                <tr><th style="width:8.6em">憲法十七條</th><td>不是現在講的國家基本大法，是對官僚的訓誡。</td></tr>
+                <tr><th>小野妹子</th><td>是男的。第二次遣隋使的團長。</td></tr>
+                <tr><th>朝貢 ≠ 冊封</th><td><b class="chip c-tc">老師</b>日本去朝貢，但沒有向中國稱臣；朝鮮半島各國則受中國冊封。<br><b class="chip c-ex">補充</b>朝貢＝向中國皇帝送禮，換回贈與貿易；冊封＝接受中國皇帝授予的王號、承認自己是臣屬。</td></tr>
+                <tr><th>冠位十二階 ≠ 氏姓</th><td>冠位按能力授予個人，不世襲；氏姓靠出身，給家族，世襲。</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="bx three">
+            <b class="tg">記住三件事</b>
+            <ol>
+              <li>蘇我氏（擁佛、管財政）打贏物部氏（排佛、管軍事），扶植第一位女天皇推古。</li>
+              <li>聖德太子與蘇我馬子推動三大政策：冠位十二階（能力取代出身）、憲法十七條（官僚聽天皇的）、遣隋使（學中國但不稱臣）。</li>
+              <li>目標是以天皇為中心的中央集權，真正落實要等 645 年後的大化改新。</li>
+            </ol>
+          </div>
+        </div>
+        <aside class="note" aria-label="手寫區">筆記<svg class="dg" aria-hidden="true"><use href="#dg"/></svg></aside>
+      </div>
+    </section>
+
+    <!-- 5 佛教文化 -->
+    <section class="card">
+      <div class="card-h"><b class="no">5</b><h2>佛教文化</h2><span class="yr">飛鳥文化</span></div>
+      <div class="card-b">
+        <div class="main">
+          <div class="bx pt">
+            <b class="tg">考點</b>
+            <p class="src">・最早佛教文化（飛鳥文化）。</p>
+            <p class="src">・寺廟或佛像－大王或豪族權威<span class="ans">象徵</span>＆祈福（≒ 民間宗教）。Ext：飛鳥寺、法隆寺、四天王寺etc。</p>
+          </div>
+          <div class="bx def">
+            <b class="tg">定義</b>
+            <p>飛鳥文化就是日本最早的佛教文化，當時留下的寺廟、佛像都在奈良。大王、豪族蓋寺廟和佛像是要展現權威，接替了古墳的功能；也把佛教當成祈福的工具，很多寺廟是發願、還願蓋的。</p>
+          </div>
+          <div class="bx mix">
+            <b class="tg">易混淆｜三座寺是誰蓋的、為什麼蓋</b>
+            <table>
+              <thead><tr><th style="width:5.4em">寺</th><th style="width:6.4em">誰</th><th>為什麼蓋</th><th>記憶點</th></tr></thead>
+              <tbody>
+                <tr><th>飛鳥寺</th><td>蘇我氏</td><td>蘇我氏發願所建</td><td>日本最古老的私人寺廟，不是官方蓋的；有大佛</td></tr>
+                <tr><th>法隆寺</th><td>聖德太子</td><td>祈求父親用明天皇病癒</td><td>又叫斑鳩寺。1993 年登錄世界遺產，是日本最早的世界遺產</td></tr>
+                <tr><th>四天王寺</th><td>聖德太子</td><td>蘇我氏與物部氏開戰時祈求打贏，打贏後還願</td><td>在大阪，靠大阪灣；朱紅色，學者認為建造時受到中國寺廟影響</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="bx three">
+            <b class="tg">記住三件事</b>
+            <ol>
+              <li>飛鳥文化＝日本最早的佛教文化，寺廟與佛像都在奈良。</li>
+              <li>寺廟接替古墳，成為展示權威的方式，也用來祈福、還願。</li>
+              <li>三座寺：飛鳥寺（蘇我氏）、法隆寺（聖德太子為父病）、四天王寺（聖德太子還願）。</li>
+            </ol>
+          </div>
+        </div>
+        <aside class="note" aria-label="手寫區">筆記<svg class="dg" aria-hidden="true"><use href="#dg"/></svg></aside>
+      </div>
+    </section>
+
+    <!-- 6 年表 -->
+    <section class="card">
+      <div class="card-h"><b class="no">6</b><h2>本堂年表</h2><span class="yr">右欄是這個年份的出處</span></div>
+      <div class="card-b">
+        <div class="main">
+          <table class="yrs" style="margin-top:14px">
+            <tbody>
+              <tr><td>391</td><td>日本出兵攻新羅，佔王城約九年</td><td><b class="chip c-tc">老師</b></td></tr>
+              <tr><td>400</td><td>被高句麗擊退</td><td><b class="chip c-tc">老師</b></td></tr>
+              <tr><td>6 世紀中</td><td>百濟聖明王把佛教傳給欽明天皇。年份 538 或 552 兩說</td><td><b class="chip c-tc">老師</b><b class="chip c-ex">補充</b></td></tr>
+              <tr><td>562</td><td>加羅諸國（大加耶）亡於新羅。老師說「六世紀左右」</td><td><b class="chip c-tc">老師</b><b class="chip c-ex">補充</b></td></tr>
+              <tr><td>587</td><td>蘇我馬子滅物部氏</td><td><b class="chip c-ex">補充</b></td></tr>
+              <tr><td>589</td><td>隋統一中國</td><td><b class="chip c-ex">補充</b></td></tr>
+              <tr><td>592</td><td>崇峻天皇被殺，推古天皇即位</td><td><b class="chip c-pt">講義</b></td></tr>
+              <tr><td>593</td><td>聖德太子任攝政</td><td><b class="chip c-ex">補充</b></td></tr>
+              <tr><td>596</td><td>飛鳥寺落成</td><td><b class="chip c-ex">補充</b></td></tr>
+              <tr><td>603</td><td>冠位十二階</td><td><b class="chip c-ex">補充</b></td></tr>
+              <tr><td>604</td><td>憲法十七條</td><td><b class="chip c-ex">補充</b></td></tr>
+              <tr><td>607</td><td>小野妹子率第二次遣隋使。老師只說第二次</td><td><b class="chip c-tc">老師</b><b class="chip c-ex">補充</b></td></tr>
+              <tr><td>645</td><td>乙巳之變，大化改新開始</td><td><b class="chip c-ex">補充</b></td></tr>
+              <tr><td>710</td><td>遷都平城京，進入奈良時代</td><td><b class="chip c-pt">講義</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <aside class="note" aria-label="手寫區">筆記<svg class="dg" aria-hidden="true"><use href="#dg"/></svg></aside>
+      </div>
+    </section>
+
+    <!-- 7 自我測驗 -->
+    <section class="card">
+      <div class="card-h"><b class="no">7</b><h2>自我測驗</h2><span class="yr">先把上面遮起來；答案在頁尾</span></div>
+      <div class="card-b">
+        <div class="main">
+          <div class="bx quiz">
+            <b class="tg">自我測驗 A｜課堂填空（講義原本就挖空的 5 格）</b>
+            <ol class="q">
+              <li><span>前期－<i class="blank"></i>時期（3A.D.～6 A.D），後期－<i class="blank"></i>時期（592-710）</span></li>
+              <li><span>※「<i class="blank"></i>」稱號－7世紀後期天武天皇（40）。</span></li>
+              <li><span>○改革主力：蘇我氏 ＆<i class="blank l"></i>。</span></li>
+              <li><span>寺廟或佛像－大王或豪族權威<i class="blank"></i>＆祈福（≒ 民間宗教）。</span></li>
+            </ol>
+          </div>
+          <div class="bx quiz">
+            <b class="tg">自我測驗 B｜加碼（從講義原文再挖的空，不是課堂填空）</b>
+            <ol class="q b">
+              <li><span>氏姓制度：氏－<i class="blank"></i>。姓－朝廷的<i class="blank"></i>和職務。世襲。</span></li>
+              <li><span>→Ex：鐵器（<i class="blank"></i>刀）、製陶、紡織、漢字、儒家、佛教etc；主要由<i class="blank"></i>傳入。</span></li>
+              <li><span>消失原因：<i class="blank"></i>（有力農民的家族墳），大王或各豪族重心轉移至蓋<i class="blank"></i>或佛像。</span></li>
+              <li><span>氏族對立（蘇我氏：<i class="blank s"></i>佛，財政 vs. 物部氏：<i class="blank s"></i>佛，軍事）→<i class="blank"></i>天皇（33。女性－中繼）。</span></li>
+              <li><span>冠位十二階制－<i class="blank"></i>選官，十二階（<i class="blank"></i>） ≠ 氏姓。</span></li>
+              <li><span>憲法十七條－官僚訓誡。以<i class="blank s"></i>為貴、重<i class="blank"></i>、服從<i class="blank"></i>。</span></li>
+              <li><span>遣隋使（<i class="blank l"></i>etc），攝取中國文化。</span></li>
+            </ol>
+          </div>
+          <div class="bx tc">
+            <b class="tg">老師｜留的加分題（下週會問）</b>
+            <p class="src">推古朝新政的改革主力是蘇我氏和聖德太子；蘇我氏跟皇室有姻親、勢力大、也崇佛。為什麼現在歷史上比較少聽到蘇我氏，大家記得的反而是聖德太子？</p>
+            <p>老師自己給的線索：教科書（尤其以前的日本教科書）常講聖德太子；關於他的傳說很多；1930 到 1950–60 年代他一直是紙鈔肖像。</p>
+            <div class="lines" aria-label="手寫區"><svg class="dg" aria-hidden="true"><line class="rule" x1="50%" y1="29" x2="50%" y2="100%"/></svg></div>
+          </div>
+        </div>
+        <aside class="note" aria-label="手寫區">筆記<svg class="dg" aria-hidden="true"><use href="#dg"/></svg></aside>
+      </div>
+    </section>
+
+    <!-- 答案 -->
+    <section class="card">
+      <div class="card-h"><b class="no">答</b><h2>答案</h2><span class="yr">寫完再看</span></div>
+      <div class="main">
+        <div class="bx quiz">
+          <b class="tg">自我測驗的答案</b>
+          <ul class="answers">
+            <li><b>1</b>古墳／飛鳥</li>
+            <li><b>2</b>天皇</li>
+            <li><b>3</b>聖德太子</li>
+            <li><b>4</b>象徵</li>
+            <li><b>5</b>血統／地位</li>
+            <li><b>6</b>七支／百濟</li>
+            <li><b>7</b>群集墳／寺廟</li>
+            <li><b>8</b>擁／排／推古</li>
+            <li><b>9</b>能力／儒家</li>
+            <li><b>10</b>和／佛教／天皇</li>
+            <li><b>11</b>小野妹子</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <p class="foot">內容取自 2-wiki/日本史/日本史-大和時代（古墳・飛鳥）.md（2026-09-14 課堂筆記母版）。完整講義：<a data-removed-link>日本史 09/14　上古古代 筆記講義</a></p>
+  </div>
+</main>
+
+<!-- ========== 風格規格：給人挑、也給之後照這個風格實作的 AI 讀（不進 PDF） ========== -->
+<section class="spec" id="spec">
+  <div class="spec-in">
+    <div class="spec-head">
+      <span class="spec-code">F6</span>
+      <h2>新粗野×重點框</h2>
+      <span class="spec-en">Neo-Brutalism × 參考書重點框</span>
+    </div>
+    <p class="spec-def">一節一張粗黑框的卡，卡裡是參考書那種左上帶色塊標籤的重點框；一種框一個顏色，紅字是填空答案，黃色螢光筆是老師強調，卡的右邊留一條點格欄手寫。</p>
+
+    <div class="spec-grid">
+      <div class="spec-card">
+        <h3>從兩個風格各拿什麼</h3>
+        <ul>
+          <li><b>W09 新粗野主義</b>：3px 黑框、<code>6px 6px 0</code> 不模糊的位移陰影、鮮明色塊標籤、黑底白字的編號方塊、標題壓在加框的色塊上、微微旋轉的標章。</li>
+          <li><b>參考書重點框（L1）</b>：標籤騎在框線左上角；一種框一個固定顏色與固定意思；講義原文加粗、填空答案紅字加底線；老師強調用黃色螢光筆；每節結尾「記住三件事」；頁首放圖例。</li>
+          <li><b>沒有拿的</b>：新粗野的插畫色塊堆疊、游標與笑臉貼紙、導覽列；參考書的深藍章節色塊（改成黑色編號方塊）。</li>
+        </ul>
+      </div>
+      <div class="spec-card">
+        <h3>字型</h3>
+        <p>只用系統字型：<code>PingFang TC</code>／<code>Microsoft JhengHei</code>，內文 14.5px（約 11pt），講義原文 15.5px 粗體；編號方塊用 <code>Segoe UI</code>／<code>SF Pro Display</code>。不連 CDN，匯出 PDF 時不會掉字型。</p>
+      </div>
+      <div class="spec-card wide">
+        <h3>色票（每個顏色綁一件事）</h3>
+        <ul class="spec-sw">
+          <li><i style="background:#ff8370"></i>考點（講義原文）--pt #ff8370</li>
+          <li><i style="background:#cf1820"></i>填空答案的紅字 --pt-ink #cf1820</li>
+          <li><i style="background:#8ec5ff"></i>定義 --def #8ec5ff</li>
+          <li><i style="background:#ffd92e"></i>老師 --tc #ffd92e；螢光筆 #ffe45c</li>
+          <li><i style="background:#ff9fdc"></i>易混淆 --mix #ff9fdc</li>
+          <li><i style="background:#8fe3a6"></i>補充 --ex #8fe3a6</li>
+          <li><i style="background:#c4b0ff"></i>自我測驗與答案 --quiz #c4b0ff</li>
+          <li><i style="background:#111111"></i>記住三件事、框線 --ink #111111</li>
+          <li><i style="background:#fffdf6"></i>紙 --paper #fffdf6</li>
+        </ul>
+      </div>
+      <div class="spec-card wide">
+        <h3>關鍵做法</h3>
+        <ol>
+          <li>重點卡 <code>.card</code>：<code>border: 3px solid #111; box-shadow: 6px 6px 0 #111</code>，無圓角；右邊留 6px 外距給陰影。卡頭是 34px 的黑底白字編號方塊加 21px 標題。</li>
+          <li>卡身兩欄 <code>grid-template-columns: minmax(0,1fr) 118px</code>：左邊放重點框，右邊是虛線隔開的點格欄給手寫；窄螢幕改成上下疊。</li>
+          <li>點格與橫線用 inline SVG 畫，不用 CSS 漸層鋪：手寫欄設 <code>position: relative</code>，裡面放 <code>&lt;svg class="dg"&gt;</code>（絕對定位、寬高 100%，會跟著卡片長高）。點格是每 14px 一條直的 <code>&lt;line y2="100%"&gt;</code>，<code>stroke-dasharray=".01 13.99"</code> 加 <code>stroke-linecap="round"</code>，一條線就是一排點；26 條線定義一次（<code>#dg</code>），各欄用 <code>&lt;use&gt;</code> 取用。橫線格是一條 <code>stroke-width: 4000</code>、<code>stroke-dasharray: 1 28</code> 的直線。用 <code>radial-gradient</code> 加 <code>background-size</code> 鋪的點格，在長頁 PDF 裡會被點陣化、放大是糊的。</li>
+          <li>重點框 <code>.bx</code>：2.5px 黑框，淡色底；標籤 <code>.tg</code> 騎在框線上，底色＝框的種類。框線與底色畫在 <code>.bx::before</code>（<code>top: 13px</code> 才開始），標籤用 <code>position: absolute; top: 0</code>，所以標籤落在 <code>.bx</code> 自己的盒子裡，分頁時不會被留在上一頁。換種類只換一個 class（<code>pt／def／tc／mix／ex／quiz／three</code>）。</li>
+          <li>紅字答案 <code>.ans</code>：<code>color: #cf1820</code> 加 2.5px 底線；螢光筆 <code>.hl</code>：<code>box-shadow: inset 0 -.62em 0 #ffe45c</code>，只蓋下半行，是純色塊（不用漸層，各家 PDF 閱讀器才畫得一樣）。</li>
+          <li>列印是無縫直式：<code>@page { size: 182mm 243mm; margin: 4mm 8mm 4mm }</code>，六個邊界框給空字串、不印頁碼。文字一律可以跨頁：重點卡、重點框都不設 <code>break-inside: avoid</code>，每頁填到底、下一頁接著同一句；卡與框跨頁時框線在頁緣開口，看起來是同一個框延續。不拆的只有切開就壞的小東西（卡頭、時代軸、因果鏈的格子、表格列、小圖解、測驗題、手寫橫線格）；卡頭設 <code>break-after: avoid</code>，重點框的標籤 <code>.tg</code> 在框自己的盒子裡，兩者都不會落單在頁尾。右側手寫欄的點格 SVG 會跟著卡片跨頁，每一頁都畫得出來。螢幕上的紙寬 182mm、左右留白 8mm，跟 <code>@page</code> 一樣；米白紙色只在螢幕上，印出來是白底。</li>
+          <li>自我測驗的空格 <code>.blank</code>：<code>inline-block</code>、寬 5.6em、高 34px、粗框加 3px 位移陰影，行高 2.5，可以直接手寫；答案集中在頁尾一張卡，不做「點了才顯示」。</li>
+          <li>「記住三件事」每一條前面是一個 16px 的粗框方格，背起來就打勾。</li>
+        </ol>
+      </div>
+      <div class="spec-card wide spec-fit">
+        <h3>套到學校資料</h3>
+        <p><b>適合</b>考前重點、帶填空的講義整理：內容有講義原文、老師口述、補充、容易搞混的東西好幾種來源，要一眼分得出哪一句會考。</p>
+        <p><b>不適合</b>只有一種資訊的頁面（純年表、純名單）：顏色用不上，只剩粗框會顯得吵，改用 F2。</p>
+        <p><b>規範</b>符合 NCCU 製作規範：淺色底、無動畫、無 fixed／sticky、無 vh、系統字型、無縫直式分頁（182×243mm，文字跨頁接續，只有圖、表格列、小格子不拆；規格面板與工具列不進 PDF）。這一份印出來是 13 頁（每頁 182×243mm）。手寫區：每張卡右側的點格欄、測驗空格、加分題的橫線格。</p>
+      </div>
+      <div class="spec-card wide spec-prompt">
+        <h3>AI 描述詞</h3>
+        <p>粗框重點卡（Neo-Brutalism × 參考書重點框）：米白紙底，一節一張白色重點卡，3px 黑框加 6px 不模糊的黑色位移陰影，無圓角；卡裡是左上帶色塊標籤的重點框，一種框一個固定顏色（紅＝考點、藍＝定義、黃＝老師、粉＝易混淆、綠＝補充、紫＝自我測驗、黑＝記住三件事）；填空答案紅字加底線，老師強調用黃色螢光筆；卡右側留點格欄手寫，測驗題留粗框空格、答案集中在頁尾；系統黑體，靜態；列印是無縫直式（182×243mm、上下 4mm 左右 8mm、不印頁碼）、白底，文字與框都可以跨頁接續，只有圖、表格列、小格子不拆。</p>
+      </div>
+    </div>
+    <a class="spec-back" href="../index.html">← 回喜好選單</a>
+  </div>
+</section>
+
+<script>
+/* 匯出 PDF：分頁與邊界都寫在上面的 @page，這裡只開列印視窗（照 3-output/NCCU/製作規範.md 第 1 節） */
+document.getElementById('pdf').addEventListener('click', function () { window.print(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html><!-- 版面喜好選單範例 GX16｜上浮單選圓點｜來源：講師範例庫 output範例/元件庫/GX16-上浮單選圓點.html；原始來源 https://github.com/uiverse-io/galaxy（Radio-buttons/JkHuger_dull-lizard-58.html），作者 JkHuger，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX16 上浮單選圓點（Radio group: ring with a dot that scales in, option lifts 2px on hover）
+  來源：https://github.com/uiverse-io/galaxy　Radio-buttons/JkHuger_dull-lizard-58.html
+  原作者：JkHuger　授權：MIT（Copyright 2023 Uiverse.io）　commit adbd2ad
+  移植：原作是三個「Male／Female／Other」單選，2px 深灰圓框，選中時圓心的點從 0 放大到 8px（0.2 秒），懸停時整列上浮 2px。
+    原作的 radio 用 display:none，鍵盤按不到，改成視覺隱藏、保留原生方向鍵切換，加 focus-visible 外框與 fieldset／legend；
+    選項改成「摘要寄送頻率」每天／每週／每月，每項加一行說明，底部結果列用 CSS :has 顯示目前選擇（不用 JS）。
+    深灰 #333 圓框換成 P11 次字色，選中的框與點換成強調色；補 prefers-reduced-motion（不上浮、不放大，直接出現）。
+  2026-10-09 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>上浮單選圓點</title><style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--bg);color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.wrap{width:min(380px,100%)}
+fieldset.card{margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;min-width:0}
+legend{float:left;width:100%;padding:10px 16px;border-bottom:1px solid var(--line);font-weight:700;font-size:15px}
+.radio-container{clear:both;padding:14px 16px 4px}
+.out{margin:0;padding:10px 16px;border-top:1px solid var(--surface-2);font-size:12px;color:var(--ink-2)}
+.out b{color:var(--accent)}
+.out span{display:none}
+.card:has(#f1:checked) .out .o1,.card:has(#f2:checked) .out .o2,.card:has(#f3:checked) .out .o3{display:inline}
+.cap{margin-top:12px;font-size:12px;color:var(--ink-2);text-align:center}
+
+/* ── 原作單選（#333 換成 P11 變數） ── */
+.radio-wrapper{margin-bottom:14px}
+.radio-button{display:flex;align-items:flex-start;cursor:pointer;transition:all .2s ease-in-out;position:relative}
+.radio-button:hover{transform:translateY(-2px)}
+.radio-button input[type="radio"]{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.radio-checkmark{
+  display:inline-block;position:relative;flex:none;width:16px;height:16px;margin:3px 10px 0 0;
+  border:2px solid var(--ink-2);border-radius:50%;transition:border-color .2s ease-in-out;
+}
+.radio-checkmark:before{
+  content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+  width:8px;height:8px;border-radius:50%;background-color:var(--accent);transition:all .2s ease-in-out;
+}
+.radio-button input[type="radio"]:checked ~ .radio-checkmark{border-color:var(--accent)}
+.radio-button input[type="radio"]:checked ~ .radio-checkmark:before{transform:translate(-50%,-50%) scale(1)}
+.radio-button input[type="radio"]:focus-visible ~ .radio-checkmark{outline:2px solid var(--accent);outline-offset:3px}
+.radio-label{font-size:15px;font-weight:600;line-height:1.45}
+.radio-label small{display:block;font-size:12px;font-weight:400;color:var(--ink-2)}
+@media (prefers-reduced-motion:reduce){
+  .radio-button,.radio-checkmark,.radio-checkmark:before{transition:none}
+  .radio-button:hover{transform:none}
+}
+</style></head><body><div class="wrap">
+<fieldset class="card">
+  <legend>摘要寄送頻率</legend>
+  <div class="radio-container">
+    <div class="radio-wrapper"><label class="radio-button" for="f1"><input id="f1" name="freq" type="radio" value="day"><span class="radio-checkmark"></span><span class="radio-label">每天<small>08:00 寄出前一天的更新</small></span></label></div>
+    <div class="radio-wrapper"><label class="radio-button" for="f2"><input id="f2" name="freq" type="radio" value="week" checked><span class="radio-checkmark"></span><span class="radio-label">每週<small>週一寄出上週摘要，含待辦</small></span></label></div>
+    <div class="radio-wrapper"><label class="radio-button" for="f3"><input id="f3" name="freq" type="radio" value="month"><span class="radio-checkmark"></span><span class="radio-label">每月<small>每月 1 日寄出整月回顧</small></span></label></div>
+  </div>
+  <p class="out">下一封：<span class="o1"><b>明天 08:00</b></span><span class="o2"><b>10/12（週一）08:00</b></span><span class="o3"><b>11/01 08:00</b></span></p>
+</fieldset>
+<div class="cap">滑過選項會上浮一點；選中時圓心的點從中間放大，也能用方向鍵切換</div>
+</div>
+</body></html>

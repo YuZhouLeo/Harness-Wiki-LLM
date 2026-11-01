@@ -1,0 +1,32 @@
+<!doctype html><!-- 版面喜好選單範例 AC02｜新項目由下浮入｜來源：講師範例庫 output範例/元件庫/AC02-新項目由下浮入.html；原始來源 https://github.com/animate-css/animate.css（source/fading_entrances/fadeInUp.css），作者 Daniel Eden，授權 Hippocratic-2.1。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  AC02 新項目由下浮入（fadeInUp）
+  來源：https://github.com/animate-css/animate.css　source/fading_entrances/fadeInUp.css
+  原作者：Daniel Eden　授權：Hippocratic-2.1
+  移植：抄 fadeInUp 的 @keyframes；示範為淺色待辦清單，狀態標籤用固定的綠／藍／橘／紅，外層 overflow:hidden 避免進場時溢出。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>fadeInUp</title><style>
+:root{--ink:#1f2937;--mut:#6b7280;--line:#cbd5e1;--ok:#15803d;--okbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2;--warn:#b45309;--warnbg:#fef3c7;--info:#1d4ed8;--infobg:#dbeafe}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8fafc;color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.panel{width:430px;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.hd{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-bottom:1px solid var(--line);background:#f1f5f9;font-weight:700}
+button{font:inherit;font-size:12px;padding:3px 10px;border:1px solid #94a3b8;background:#fff;border-radius:4px;cursor:pointer;color:var(--ink)}
+.tag{display:inline-block;padding:0 8px;border-radius:3px;font-size:12px;font-weight:700}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.warn{background:var(--warnbg);color:var(--warn)}.info{background:var(--infobg);color:var(--info)}
+.row{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid #e2e8f0}
+.row b{width:76px;font-weight:700}
+.a{animation-duration:1s;animation-fill-mode:both}
+@keyframes fadeInUp{from{opacity:0;transform:translate3d(0,100%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+.fadeInUp{animation-name:fadeInUp}
+.row span:nth-child(2){flex:1}
+@media (prefers-reduced-motion:reduce){.a{animation:none!important}}
+</style></head><body>
+<div class="panel"><div class="hd">待辦清單<button id="r">新增項目</button></div>
+<div class="row"><span class="tag ok">完成</span><span>整理第 3 週講義</span><span style="color:var(--mut)">10/06</span></div>
+<div class="row"><span class="tag info">進行中</span><span>核對發票金額</span><span style="color:var(--mut)">10/07</span></div>
+<div class="row"><span class="tag warn">待補</span><span>補上來源清單</span><span style="color:var(--mut)">10/08</span></div>
+<div id="l" style="overflow:hidden"><div class="row a fadeInUp" id="n"><span class="tag bad">急</span><span>寄出申報資料</span><span style="color:var(--mut)">10/09</span></div></div></div>
+<script>function play(e,c){e.classList.remove(c);void e.offsetWidth;e.classList.add(c)}
+var n=document.getElementById('n');document.getElementById('r').onclick=function(){play(n,'fadeInUp')}</script></body></html>

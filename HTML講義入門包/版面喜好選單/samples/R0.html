@@ -1,0 +1,266 @@
+<!doctype html>
+<!-- 版面喜好選單範例 R0｜暖紙卡片報告｜來源：講師範例庫 output範例/設計偏好選擇/samples/R0-原版.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Claude Code 使用習慣分析</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Noto+Serif+TC:wght@600;700&amp;display=swap">')</script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f5f1ea; --paper:#fffdf8; --ink:#1f1c18; --muted:#6c6459; --line:#e3dbcd; --line-2:#cfc4b2;
+  --red:#8f2d1f; --red-bg:#f9e6e1; --amb:#9a6512; --amb-bg:#f8eed6; --grn:#3a6a4c; --grn-bg:#e3efe5; --blu:#365a7c; --blu-bg:#e4ecf4;
+  --code-bg:#efe9de; --shadow:0 1px 0 rgba(31,28,24,.04), 0 8px 24px -18px rgba(31,28,24,.35);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#161411; --paper:#1f1c18; --ink:#ebe5da; --muted:#a49b8d; --line:#332e27; --line-2:#4a4239;
+    --red:#e58b78; --red-bg:#3a1e18; --amb:#e2b05a; --amb-bg:#3a2d14; --grn:#8fc7a1; --grn-bg:#1c3324; --blu:#8fb4d8; --blu-bg:#1a2a3a;
+    --code-bg:#2a2620; --shadow:0 1px 0 rgba(0,0,0,.2), 0 8px 24px -18px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#161411; --paper:#1f1c18; --ink:#ebe5da; --muted:#a49b8d; --line:#332e27; --line-2:#4a4239;
+  --red:#e58b78; --red-bg:#3a1e18; --amb:#e2b05a; --amb-bg:#3a2d14; --grn:#8fc7a1; --grn-bg:#1c3324; --blu:#8fb4d8; --blu-bg:#1a2a3a;
+  --code-bg:#2a2620; --shadow:0 1px 0 rgba(0,0,0,.2), 0 8px 24px -18px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.75 "Noto Sans TC","PingFang TC","Microsoft JhengHei","微軟正黑體",system-ui,sans-serif;padding-inline:16px;-webkit-font-smoothing:antialiased}
+a{color:var(--blu);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--blu) 40%,transparent)}
+code{font:.88em/1.5 ui-monospace,"Cascadia Code","JetBrains Mono",Consolas,monospace;background:var(--code-bg);padding:.1em .4em;border-radius:4px;word-break:break-all}
+pre{background:var(--code-bg);padding:14px 16px;border-radius:8px;overflow-x:auto;font-size:.85em;line-height:1.6;border:1px solid var(--line);margin:8px 0 14px}
+pre code{background:none;padding:0;word-break:normal}
+h1,h2,h3{font-family:"Noto Serif TC","Songti TC","PMingLiU","新細明體",serif;line-height:1.3;margin:0}
+h4{margin:0;font-size:15.5px;font-weight:600;line-height:1.4}
+h1{font-size:clamp(26px,4vw,38px);font-weight:700}
+h2{font-size:24px;font-weight:700}
+h3{font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:.4em 0 .9em}
+ul,ol{padding-left:1.4em;margin:.3em 0 .9em}
+li{margin:.25em 0}
+li::marker{color:var(--muted)}
+.wrap{max-width:1180px;margin:0 auto}
+.layout{display:grid;grid-template-columns:1fr;gap:28px;padding-block:28px 64px}
+@media (min-width:1080px){.layout{grid-template-columns:232px minmax(0,1fr);gap:44px}}
+aside.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 18px);align-self:start;font-size:13.5px;display:none}
+@media (min-width:1080px){aside.toc{display:block}}
+aside.toc .kicker{margin-bottom:8px}
+aside.toc a{display:block;color:var(--muted);border:0;padding:5px 0 5px 12px;border-left:2px solid var(--line);line-height:1.4}
+aside.toc a:hover{color:var(--ink);border-left-color:var(--line-2)}
+main{min-width:0}
+.kicker{font:600 11px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+section{padding-top:40px;border-top:1px solid var(--line);margin-top:40px}
+section.hero{border-top:0;margin-top:0;padding-top:12px}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
+.sec-num{font-family:"Noto Serif TC",serif;font-size:38px;font-weight:700;line-height:1;color:var(--line-2)}
+.lede{font-size:16.5px;max-width:72ch}
+.hero .meta{color:var(--muted);font-size:13.5px;margin-top:10px;display:flex;flex-wrap:wrap;gap:6px 18px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:26px 0 10px}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow)}
+.stat .n{font-family:"Noto Serif TC",serif;font-size:30px;font-weight:700;line-height:1.1}
+.stat .l{font-size:12.5px;color:var(--muted);margin-top:4px}
+.stat.red .n{color:var(--red)} .stat.amb .n{color:var(--amb)} .stat.grn .n{color:var(--grn)} .stat.blu .n{color:var(--blu)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow);margin:14px 0}
+.card > :first-child{margin-top:0} .card > :last-child{margin-bottom:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.pill{display:inline-block;font:600 11.5px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.04em;padding:5px 9px;border-radius:999px;vertical-align:middle;white-space:nowrap}
+.pill.red{background:var(--red-bg);color:var(--red)} .pill.amb{background:var(--amb-bg);color:var(--amb)} .pill.grn{background:var(--grn-bg);color:var(--grn)} .pill.blu{background:var(--blu-bg);color:var(--blu)} .pill.gray{background:var(--code-bg);color:var(--muted)}
+.habit{background:var(--paper);border:1px solid var(--line);border-left-width:5px;border-radius:10px;padding:16px 18px 14px;margin:12px 0}
+.habit.red{border-left-color:var(--red)} .habit.amb{border-left-color:var(--amb)} .habit.grn{border-left-color:var(--grn)} .habit.blu{border-left-color:var(--blu)}
+.habit .t{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px}
+.habit .t h4{font-size:16px}
+.habit .ev{font-size:13.5px;color:var(--muted);margin:.3em 0}
+.habit .ev q{quotes:"「" "」"}
+.habit .cost{font-size:14px;margin:.4em 0}
+.habit .cost b{color:var(--amb)}
+.habit .fix{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:14px}
+.habit .fix b{color:var(--grn)}
+.tbl{overflow-x:auto;margin:12px 0 18px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;font-size:13.8px;min-width:560px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{font-weight:600;background:color-mix(in srgb,var(--code-bg) 60%,var(--paper));font-size:12.5px;color:var(--muted);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.good{color:var(--grn);font-weight:600} td.bad{color:var(--red);font-weight:600}
+.bars{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;align-items:end;height:110px;margin:10px 0 4px}
+.bars div{background:var(--blu);border-radius:3px 3px 0 0;min-height:2px;position:relative}
+.bars div.n{background:var(--red)}
+.bars div span{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:10.5px;color:var(--muted)}
+.hours{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;font-size:10px;color:var(--muted);text-align:center}
+.note{border-left:3px solid var(--blu);background:var(--blu-bg);padding:10px 14px;border-radius:0 8px 8px 0;font-size:14px;margin:12px 0}
+.warn{border-left:3px solid var(--red);background:var(--red-bg);padding:10px 14px;border-radius:0 8px 8px 0;font-size:14px;margin:12px 0}
+.keep{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.keep .card h4{margin-bottom:6px}
+.keep .card .ev{font-size:13.5px;color:var(--muted)}
+footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+@media print{body{background:#fff} .card,.habit,.stat{box-shadow:none;break-inside:avoid} aside.toc{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="layout">
+<aside class="toc">
+  <div class="kicker">目錄</div>
+  <a href="#summary">總覽</a>
+  <a href="#numbers">1 數字怎麼看</a>
+  <a href="#habits">2 值得優化的 10 個習慣</a>
+  <a href="#keep">3 做得好、要保留的</a>
+  
+  <a href="#compare">5 對照七月那次分析</a>
+  
+</aside>
+<main>
+
+<section class="hero" id="summary">
+  <div class="kicker">Usage Habits Review</div>
+  <h1 style="margin-top:8px">Claude Code 使用習慣分析</h1>
+  <div class="meta">
+    <span>資料：這台 Windows 的 43 個 session，2026-07-13 到 2026-09-16</span>
+    <span>另含全域 prompt 歷史 68 則，2026-06-08 起</span>
+    <span>產出日期：2026-09-17</span>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="n">97</div><div class="l">使用者發話</div></div>
+    <div class="stat"><div class="n">40</div><div class="l">每則發話換來的助手訊息</div></div>
+    <div class="stat"><div class="n">21</div><div class="l">每則發話的工具呼叫</div></div>
+    <div class="stat amb"><div class="n">70%</div><div class="l">session 只講 1 到 2 句</div></div>
+    <div class="stat red"><div class="n">15%</div><div class="l">發話只是叫我 pull／push</div></div>
+    <div class="stat grn"><div class="n">2</div><div class="l">中斷次數（七月是 17）</div></div>
+  </div>
+  <p class="lede">你的使用方式很鮮明：一句話丟一個大任務，然後讓它跑幾小時到幾天。這種方式的效率取決於兩件事，第一句話有沒有把目標講清楚，以及有沒有把機械性的小事也丟給模型。資料顯示前者大致做得好，後者是最大的浪費來源。</p>
+  <div class="card">
+    <ul>
+      <li><b>最大的機械浪費是把對話當 git 按鈕與 App 啟動器。</b>15 則發話只是 pull 或 push，另外 23 次用 /app-launch 啟動程式。每次都要載入約 25KB 的指令檔、跑 4 到 27 次工具呼叫，做的卻是一行終端指令就能做完的事。</li>
+      <li><b>方向錯誤已經很少，但剩下的都是同一種：先講方法、後講目標。</b>問了三輪做法，才說出真正想要的結果。改用固定開場句型就能省掉那三輪。</li>
+      <li><b>有一個可以馬上改的小習慣。</b>把個人資料放在檔案裡，不要直接貼進對話。</li>
+      <li><b>做得好的要保留：</b>先要提案再選、把糾正寫成規則、用計劃書接力、標注 /orchestrate 的判斷 14 次裡有 13 次是準的。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="numbers">
+  <div class="sec-head"><span class="sec-num">1</span><h2>數字怎麼看</h2></div>
+  <div class="tbl"><table>
+    <tr><th>指標</th><th>數值</th><th>解讀</th></tr>
+    <tr><td>session 數 ／ 發話數</td><td>43 ／ 97</td><td>平均一個 session 只講 2.3 句。19 個 session 只有 1 句，11 個只有 2 句。</td></tr>
+    <tr><td>助手訊息 ／ 工具呼叫</td><td>3,910 ／ 2,029</td><td>每句話換來 40 則回覆與 21 次工具動作。14 個 session 的助手訊息超過 100 則。</td></tr>
+    <tr><td>只做 git 同步的發話</td><td>15（15%）</td><td>Obsidian 6 則、另一個專案 9 則。其中 11 個 session 整場只有這一句、5 分鐘內結束。</td></tr>
+    <tr><td>/app-launch</td><td>23 次</td><td>prompt 歷史 19 次加上 transcript 4 次。每次 5 到 7 分鐘、20 到 45 次工具呼叫。</td></tr>
+    <tr><td>標注並行（/orchestrate 或「工作流」）</td><td>14（14%）</td><td>與七月的 12% 持平，但從口語「用工作流」轉為指令 /orchestrate。</td></tr>
+    <tr><td>用 @ 或絕對路徑引用檔案</td><td>18（19%）</td><td>引用時我幾乎不必再偵查。沒引用的任務多半是全庫掃描類，本來就要偵查。</td></tr>
+    <tr><td>先要提案再決定</td><td>6 次</td><td>「先給我提議」「先給我一個 demo 的範本，讓我確定、選擇後再實際修改」。</td></tr>
+    <tr><td>糾正上一輪</td><td>6 則</td><td>其中 2 則是我選錯來源或轉錯專有名詞，3 則是需求本身沒先講目標。</td></tr>
+    <tr><td>中斷 ／ 我主動提問</td><td>2 ／ 6</td><td>中斷從七月的 17 次降到 2 次。我提問很少，而你常寫「有問題可以再問我」。</td></tr>
+    <tr><td>開超過一天的 session</td><td>8 個</td><td>最長 35 天（只用來 pull／push 三次），其次 5 天、2.4 天、2.4 天。</td></tr>
+    <tr><td>同一則送出兩次</td><td>2 次</td><td>8/19 的 skill 盤點長指令間隔 2 分鐘送兩次；9/8 的 UI 重設計同一分鐘送兩次。</td></tr>
+  </table></div>
+
+  <h3>發話時段分佈</h3>
+  <p>55% 的發話落在 23:00 到 03:59。這本身不是問題，但它決定了一件事：深夜丟出的任務多半是無人值守跑到早上，所以那些任務不該依賴我中途提問。</p>
+  <div class="card">
+    <div class="bars">
+      <div class="n" style="height:83%"><span>15</span></div><div class="n" style="height:100%"><span>18</span></div><div class="n" style="height:56%"><span>10</span></div><div class="n" style="height:2%"></div>
+      <div style="height:2%"></div><div style="height:2%"></div><div style="height:2%"></div><div style="height:2%"></div>
+      <div style="height:6%"><span>1</span></div><div style="height:6%"><span>1</span></div><div style="height:28%"><span>5</span></div><div style="height:28%"><span>5</span></div>
+      <div style="height:28%"><span>5</span></div><div style="height:6%"><span>1</span></div><div style="height:6%"><span>1</span></div><div style="height:2%"></div>
+      <div style="height:2%"></div><div style="height:2%"></div><div style="height:28%"><span>5</span></div><div style="height:39%"><span>7</span></div>
+      <div style="height:39%"><span>7</span></div><div style="height:6%"><span>1</span></div><div style="height:28%"><span>5</span></div><div class="n" style="height:56%"><span>10</span></div>
+    </div>
+    <div class="hours"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span></div>
+    <p style="font-size:12.5px;color:var(--muted);margin:10px 0 0">每小時的發話數。紅色是 23:00 到 03:59。</p>
+  </div>
+</section>
+
+<section id="habits">
+  <div class="sec-head"><span class="sec-num">2</span><h2>值得優化的 10 個習慣</h2></div>
+  <p class="lede">按「省下的時間 ÷ 改起來的難度」排序。每一條都附證據、成本與具體改法。</p>
+
+  <div class="habit red"><div class="t"><span class="pill red">最大浪費</span><h4>1. 拿對話當 git 按鈕</h4></div>
+    <div class="ev">證據：<q>幫我pull和push</q>（7/13 三次，同一個 session 跨 35 天）、<q>幫我push</q>（8/17、8/19、8/20、8/25）、<q>pull</q><q>pull</q>（8/20 間隔 2 分鐘）、<q>幫我pull</q>（9/6）、<q>幫我pull檔案</q>（9/7）、<q>幫我進行pull</q>（9/10）。共 15 則，11 個 session 整場只有這一句。</div>
+    <div class="cost"><b>成本：</b>每次要載入三份 CLAUDE.md 約 25KB 加記憶索引，再跑 4 到 27 次工具呼叫，等 1 到 3 分鐘，做的是 <code>sh .scripts/sync.sh</code> 一行的事。15 次合計約 4 萬 token 的指令檔重載，全部沒有產出。</div>
+    <div class="fix"><b>改法：</b>終端直接跑 <code>sh .scripts/sync.sh "訊息"</code>，或在 Git Bash 加一個 alias。只有需要「幫我判斷怎麼拆 commit」時才用 /git-auto。不要為了 pull 開一個 session，更不要用一個開了 35 天的 session 當按鈕。</div></div>
+
+  <div class="habit red"><div class="t"><span class="pill red">最大浪費</span><h4>2. 拿 Claude 當 App 啟動器</h4></div>
+    <div class="ev">證據：/app-launch 在 prompt 歷史出現 19 次、transcript 4 次；六月甚至問過<q>我可以規定說，以後啟用這個skill的話，要用haiku模型嗎</q>，表示你自己也覺得貴。</div>
+    <div class="cost"><b>成本：</b>每次 5 到 7 分鐘、20 到 45 次工具呼叫，只為了把程式叫起來。</div>
+    <div class="fix"><b>改法：</b>把啟動流程寫成 .bat 或沿用既有的 .vbs，做成桌面捷徑或開機自動啟動。skill 只留給「連不上外部服務時幫我診斷」這種需要判斷的情境。</div></div>
+
+  <div class="habit amb"><div class="t"><span class="pill amb">方向錯誤</span><h4>3. 先講方法、後講目標</h4></div>
+    <div class="ev">證據：先問做法，經過兩輪示範後才說出真正的目標；另一次也是先問能有哪些成果，再說不需要播放功能。</div>
+    <div class="cost"><b>成本：</b>每次多兩到三輪來回，而且第一輪做的東西整個作廢。這是七月分析裡「做錯方向」痛點剩下的主要形態。</div>
+    <div class="fix"><b>改法：</b>需求開頭固定三行：「目標：…／我以為的做法：…／驗收：看到什麼算完成」。第一行有了，我就會直接從目標推方案，不會照你猜的方法做。</div></div>
+
+  <div class="habit amb"><div class="t"><span class="pill amb">效率</span><h4>5. Session 開著幾天不關</h4></div>
+    <div class="ev">證據：8 個 session 超過一天。最長的 35 天只發了 4 句，全是 pull／push；5 天的那個 4 句也全是 pull；另外兩個 2.4 天的是 另一個專案 的開發 session，各 4 到 7 句。</div>
+    <div class="cost"><b>成本：</b>舊 session 每收一句新話都帶著整段歷史，回應變慢、費用變高，還會依過期狀態動作，例如另一台機器已經改過的檔案。開發用的長 session 在壓縮後也會忘掉早期決定。</div>
+    <div class="fix"><b>改法：</b>新任務開新 session。同主題要延續就 <code>claude --resume</code> 挑那一個，或在新 session 用 <code>@plans/…計劃.md</code> 接力，這是你已經在用的模式。純機械操作不要進 session。</div></div>
+
+  <div class="habit amb"><div class="t"><span class="pill amb">效率</span><h4>6. 檔案先丟根目錄再叫我整理，但沒有固定的收件匣</h4></div>
+    <div class="ev">證據：9/14 把 8 張圖、2 個音檔、1 個 doc 放在 筆記庫 根目錄再叫我<q>在 raw 和 wiki 各開一個資料夾</q>；另一個專案 用 <code>0905/</code> 資料夾當暫存；4 個 xls 與 document.pdf 也是放根目錄。</div>
+    <div class="cost"><b>成本：</b>做法本身很好，是你最省力的輸入方式。但沒有固定位置與固定指令，結果是根目錄散檔累積（上一份報告抓到 5 個），而且每次要重新描述「這些檔要放哪」。</div>
+    <div class="fix"><b>改法：</b>固定一個 <code>_inbox/</code>，加一個 <code>/ingest</code> 指令，內容就是「把 _inbox 裡的東西依 raw-capture 規則歸檔，回報清單」。以後只要丟檔加打一個指令。</div></div>
+
+  <div class="habit amb"><div class="t"><span class="pill amb">效率</span><h4>7. 反覆問「這台有沒有同步／設定有沒有生效」</h4></div>
+    <div class="ev">證據：7/18 <q>有和…同步更新了嗎</q>、8/17 <q>現在的資料庫的架構，跟專案中的設定有沒有一致</q>、8/19 <q>我的repo應該有部分進行底層設計的更新，但在這臺電腦的版本還沒有應用</q>、8/19 <q>skill的絕對路徑名稱可能會有失效的時候，因爲我會在另外一臺mac中執行</q>。</div>
+    <div class="cost"><b>成本：</b>每次都是一輪偵查加報告，而且答案每天都會變。</div>
+    <div class="fix"><b>改法：</b>一個 <code>/sync-check</code> 指令：git fetch 與 status、全域 skill 的 <code>--check</code>、關鍵工具的 <code>command -v</code>，一行回報。開 session 先打它，或設成 SessionStart hook 自動跑。</div></div>
+
+  <div class="habit amb"><div class="t"><span class="pill amb">品質</span><h4>8. 專有名詞轉錄錯了才事後糾正</h4></div>
+    <div class="ev">證據：9/7 <q>應該是「新易盛」而非新一盛</q>。筆記庫 裡其實有 <code>2-wiki/法說會轉錄-術語表.md</code>，但它是孤兒頁，MOSS-ASR 的說明書沒有引用它。</div>
+    <div class="cost"><b>成本：</b>錯字進了 wiki 就會被後續產出一路引用。</div>
+    <div class="fix"><b>改法：</b>在轉錄說明書加「轉錄前必讀術語表」一行，每次糾正後補一句「加進術語表」，讓糾正只發生一次。</div></div>
+
+  <div class="habit grn"><div class="t"><span class="pill grn">小事</span><h4>9. 同一則指令送出兩次</h4></div>
+    <div class="ev">證據：8/19 18:51 與 18:53 同一段 skill 盤點長指令；9/8 00:21 同一分鐘兩次 UI 重設計指令。</div>
+    <div class="cost"><b>成本：</b>第二次會被排進佇列，我做完第一次後再做一次一樣的事，或把兩次混在一起。</div>
+    <div class="fix"><b>改法：</b>送出後等狀態列出現回應再動作。覺得卡住先看 <code>/tasks</code>，或按 Esc 後重送，不要直接再貼。</div></div>
+
+  <div class="habit grn"><div class="t"><span class="pill grn">小事</span><h4>10. /orchestrate 用在單機除錯迴圈</h4></div>
+    <div class="ev">證據：9/16 12:08 藍牙音響重連的診斷用了 /orchestrate。這種要你重開、聽聲音、看畫面才能推進的迴圈，正是 orchestrate 規則裡寫的「嚴格單線」情境。其餘 13 次的判斷都準確。</div>
+    <div class="cost"><b>成本：</b>並行只放大跑腿量，瓶頸在你的耳朵時沒有幫助，還多花一輪印計畫表。</div>
+    <div class="fix"><b>改法：</b>記一個判準就夠：這件事拆給三個人做會不會有接縫。會，就不標注。</div></div>
+
+  <div class="habit blu"><div class="t"><span class="pill blu">觀察</span><h4>11. 深夜任務常寫「有問題可以再問我」，但人已經不在</h4></div>
+    <div class="ev">證據：<q>有問題都可以在詢問我</q>（9/6 21:43）、<q>有不懂的地方都可以在跟我討論</q>（9/10 00:09）、<q>有疑問都可以詢問我的意見</q>（8/19 23:45）。而 55% 的發話在 23:00 到 03:59，這些 session 多半跑到早上。</div>
+    <div class="cost"><b>成本：</b>我真的問了，任務就停在那裡等到你醒來；我不問，又違反你的指示。</div>
+    <div class="fix"><b>改法：</b>睡前任務加一句「無人值守：不要問，照你的判斷做完，把假設列在最後」。白天有空盯的任務才寫「有問題問我」。</div></div>
+</section>
+
+<section id="keep">
+  <div class="sec-head"><span class="sec-num">3</span><h2>做得好、要保留的</h2></div>
+  <div class="keep">
+    <div class="card"><h4>先要提案，再選，再做</h4><div class="ev">「先給我提議」「先給我一個 demo 的範本，然後讓我確定、選擇後，再實際修改」「請先提供給我讓我來判斷是否要添加」。這是避免整輪作廢最便宜的方法，六次都省下了重做。</div></div>
+    <div class="card"><h4>把糾正寫成規則</h4><div class="ev">8/17 「寫下一個全域的規則，不要將網頁放到 artifact」，同天「不要強制綁定在 windows 的路徑」變成 CLAUDE.md 的多裝置段。糾正一次就永久生效。</div></div>
+    <div class="card"><h4>用計劃書接力</h4><div class="ev">「幫我執行 @plans/…計劃書.md」三次，加上「請確保 plans/… 可以讓下一個 AI 無損的接著我們的對話繼續」。這是長任務跨 session、跨機器最可靠的方式。</div></div>
+    <div class="card"><h4>編號子需求</h4><div class="ev">8/19 的 skill 盤點 session 每一則都用 1. 2. 3. 4. 列需求，還標明哪些「直接修」、哪些「先保留」。這種寫法我幾乎不會做錯方向。</div></div>
+    <div class="card"><h4>標注並行的判斷準確</h4><div class="ev">14 次標注裡 13 次是批次同構或多來源調查，本來就該切。中斷從 17 次降到 2 次，「現在最新的檔案在哪裡」這個七月的痛點這兩個月一次都沒出現。</div></div>
+    <div class="card"><h4>用 @ 引用檔案</h4><div class="ev">19% 的發話帶 @ 或完整路徑。帶了路徑的任務我幾乎不需要偵查，這直接回答了你上一份報告問的「為什麼會讀不相關文件」。</div></div>
+  </div>
+</section>
+
+
+
+<section id="compare">
+  <div class="sec-head"><span class="sec-num">5</span><h2>對照七月那次分析</h2></div>
+  <p class="lede">2026-07-17 在 macOS 掃了 135 個 session、480 則發話，結論寫進了全域 CLAUDE.md。這兩個月在 Windows 的資料可以驗證那些結論。</p>
+  <div class="tbl"><table>
+    <tr><th>七月的結論</th><th>這兩個月</th><th>判定</th></tr>
+    <tr><td>明確點名 workflow 約 12%</td><td>14%，且從口語改為 /orchestrate 指令</td><td class="good">持平，用法更穩定</td></tr>
+    <tr><td>17 次中斷</td><td>2 次</td><td class="good">大幅改善</td></tr>
+    <tr><td>「現在最新的檔案在哪裡」問過 6 次以上</td><td>0 次</td><td class="good">消失，收尾清單規則有效</td></tr>
+    <tr><td>痛點是「做錯方向」</td><td>還在，但集中成一種形態：先講方法後講目標</td><td class="bad">部分改善，需要句型</td></tr>
+    <tr><td>使用者本能知道哪些任務不該並行</td><td>14 次裡 13 次判斷正確</td><td class="good">成立</td></tr>
+    <tr><td>沒有觀察到</td><td>15% 發話是 git 按鈕、23 次啟動器、8 個長壽 session</td><td class="bad">新發現，機械浪費</td></tr>
+    
+  </table></div>
+</section>
+
+
+
+<footer>暖紙卡片版面範例，內容只是示意。</footer>
+</main>
+</div></div>
+</body>
+</html>

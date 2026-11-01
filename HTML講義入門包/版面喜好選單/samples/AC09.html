@@ -1,0 +1,99 @@
+<!doctype html><!-- 版面喜好選單範例 AC09｜刪除列向左滑出｜來源：講師範例庫 output範例/元件庫/AC09-刪除列向左滑出.html；原始來源 https://github.com/animate-css/animate.css（source/sliding_exits/slideOutLeft.css），作者 Daniel Eden，授權 Hippocratic-2.1。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  AC09 刪除列向左滑出（slideOutLeft）
+  來源：https://github.com/animate-css/animate.css　source/sliding_exits/slideOutLeft.css
+  原作者：Daniel Eden　授權：Hippocratic License 2.1 (Copyright 2021 Daniel Eden)　commit：3f8ab23
+  移植：抄 slideOutLeft 的 @keyframes（translate3d 0 → -100%，結尾 visibility:hidden）與 .animated 的 fill-mode both；
+    時長從原作預設 1s 縮成 .45s（ease-in），滑出後再用 .2s 收合列高，讓下面的列補上來（收合是移植另加的）；
+    情境設成「收件匣」清單：按列尾的刪除鈕，該列向左滑出，頁尾出現「復原」可放回（取代被使用者刪掉的 hinge 掉落）；
+    配色照 P11 淺色主控台，刪除鈕懸停用 --bad；刪除後焦點移到下一列的刪除鈕。
+    prefers-reduced-motion 時不位移，改成 .15s 淡出再收合（同 animate.css 對 Out 類動畫的退化方向）。
+  2026-10-09 由子代理移植成純 HTML／CSS（必要時加少量原生 JS）
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>刪除列向左滑出</title>
+<style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+  --animate-duration:.45s;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--bg);color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.panel{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.hd{display:flex;justify-content:space-between;align-items:baseline;padding:10px 14px;border-bottom:1px solid var(--line)}
+.hd b{font-size:15px}
+.hd span{font-size:12px;color:var(--ink-2)}
+.list{overflow:hidden}
+/* 每列外包一層，滑出後收合高度 */
+.wrap{display:grid;grid-template-rows:1fr;transition:grid-template-rows .2s ease}
+.wrap>.row{min-height:0;overflow:hidden}
+.wrap.gone{grid-template-rows:0fr}
+.wrap.gone>.row{visibility:hidden}
+.row{display:flex;align-items:center;gap:10px;padding:0 8px 0 14px;background:var(--surface)}
+.row .in{display:flex;align-items:center;gap:10px;flex:1;min-width:0;padding:9px 0;border-bottom:1px solid var(--surface-2)}
+.wrap:last-child .row .in{border-bottom:0}
+.ft{flex:none;width:36px;font-size:12px;font-weight:700;text-align:center;border-radius:3px;padding:1px 0;background:var(--surface-2);color:var(--ink-2);font-family:ui-monospace,"Cascadia Mono",Consolas,monospace}
+.nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sz{flex:none;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.del{flex:none;width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:6px;background:transparent;color:var(--ink-2);cursor:pointer}
+.del svg{width:16px;height:16px}
+.del:hover{background:var(--bad-soft);color:var(--bad)}
+.del:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.foot{display:flex;justify-content:space-between;align-items:center;min-height:40px;padding:6px 14px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-2)}
+.undo{font:inherit;font-size:12px;font-weight:700;padding:4px 10px;border:1px solid var(--accent);border-radius:6px;background:var(--surface);color:var(--accent);cursor:pointer}
+.undo:hover{background:var(--accent-soft)}
+.undo:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.undo[hidden]{display:none}
+
+/* animate.css：.animated＋slideOutLeft（原樣） */
+.animated{animation-duration:var(--animate-duration);animation-fill-mode:both}
+@keyframes slideOutLeft{from{transform:translate3d(0,0,0)}to{visibility:hidden;transform:translate3d(-100%,0,0)}}
+.slideOutLeft{animation-name:slideOutLeft;animation-timing-function:ease-in}
+@keyframes rmFade{from{opacity:1}to{opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  .slideOutLeft{animation-name:rmFade;animation-duration:.15s}
+  .wrap{transition:none}
+}
+</style></head><body>
+<section class="panel" aria-labelledby="h">
+  <div class="hd"><b id="h">收件匣</b><span id="n">4 個檔案待歸檔</span></div>
+  <div class="list" id="list">
+    <div class="wrap"><div class="row"><div class="in"><span class="ft">M4A</span><span class="nm">法說會錄音-1008.m4a</span><span class="sz">48 MB</span></div><button class="del" type="button" aria-label="刪除 法說會錄音-1008.m4a"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5M7 7v4M9 7v4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div>
+    <div class="wrap"><div class="row"><div class="in"><span class="ft">HEIC</span><span class="nm">講義照片-第5週.heic</span><span class="sz">3.1 MB</span></div><button class="del" type="button" aria-label="刪除 講義照片-第5週.heic"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5M7 7v4M9 7v4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div>
+    <div class="wrap"><div class="row"><div class="in"><span class="ft">MD</span><span class="nm">日本行程草稿.md</span><span class="sz">6 KB</span></div><button class="del" type="button" aria-label="刪除 日本行程草稿.md"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5M7 7v4M9 7v4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div>
+    <div class="wrap"><div class="row"><div class="in"><span class="ft">PDF</span><span class="nm">發票-2026-10.pdf</span><span class="sz">212 KB</span></div><button class="del" type="button" aria-label="刪除 發票-2026-10.pdf"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5M7 7v4M9 7v4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div>
+  </div>
+  <div class="foot"><span id="msg" aria-live="polite">按垃圾桶刪除，列會向左滑出</span><button class="undo" type="button" id="undo" hidden>復原</button></div>
+</section>
+<script>
+(function(){
+  var list=document.getElementById("list"),msg=document.getElementById("msg"),undo=document.getElementById("undo"),n=document.getElementById("n");
+  var stack=[];
+  function left(){return list.querySelectorAll(".wrap:not(.gone)").length}
+  function count(){var k=left();n.textContent=k?k+" 個檔案待歸檔":"收件匣已清空"}
+  list.addEventListener("click",function(e){
+    var b=e.target.closest(".del");if(!b)return;
+    var w=b.closest(".wrap"),row=w.firstElementChild;if(row.classList.contains("slideOutLeft"))return;
+    row.classList.add("animated","slideOutLeft");
+    row.addEventListener("animationend",function done(){
+      row.removeEventListener("animationend",done);
+      w.classList.add("gone");stack.push(w);count();
+      msg.textContent="已移到垃圾桶："+row.querySelector(".nm").textContent;undo.hidden=false;
+      var all=[].slice.call(list.querySelectorAll(".wrap")),i=all.indexOf(w),next=null;
+      for(var k=i+1;k<all.length&&!next;k++)if(!all[k].classList.contains("gone"))next=all[k];
+      for(k=i-1;k>=0&&!next;k--)if(!all[k].classList.contains("gone"))next=all[k];
+      (next?next.querySelector(".del"):undo).focus();
+    });
+  });
+  undo.addEventListener("click",function(){
+    var w=stack.pop();if(!w)return;
+    w.firstElementChild.classList.remove("animated","slideOutLeft");w.classList.remove("gone");count();
+    msg.textContent=stack.length?"還可以再復原 "+stack.length+" 個":"已全部放回";undo.hidden=!stack.length;
+    w.querySelector(".del").focus();
+  });
+})();
+</script>
+</body></html>

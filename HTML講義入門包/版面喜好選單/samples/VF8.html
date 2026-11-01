@@ -1,0 +1,977 @@
+<!doctype html>
+<!-- 版面喜好選單範例 VF8｜粉彩封面流簡報｜來源：講師範例庫 output範例/garden-skills範例/VF8-粉彩封面流疊層.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VF8 粉彩×封面流疊層｜garden 融合簡報</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">')</script>
+<style>
+/* ═════════ 主題 token：themes/pastel-dream/tokens.css（簡體字型換成 Noto Sans TC，其餘照抄） ═════════ */
+:root {
+  --shell:        #c8d9e6;
+  --surface:      #faf9f7;
+  --surface-2:    #ffffff;
+  --surface-3:    #f0ecde;
+  --text:         #1f2429;
+  --text-2:       #3a4046;
+  --text-mute:    #707880;
+  --text-faint:   #a8b0b8;
+  --rule:         #d8d4cb;
+  --accent:       #5a7c6a;             /* sage green */
+  --accent-soft:  rgba(90, 124, 106, 0.10);
+  --accent-glow:  rgba(90, 124, 106, 0.30);
+
+  --font-display-cn: "Noto Sans TC", "Source Han Sans TC", -apple-system, sans-serif;
+  --font-display-en: "Plus Jakarta Sans", "Inter", -apple-system, sans-serif;
+  --font-body:       "Plus Jakarta Sans", "Inter", "Noto Sans TC", -apple-system, sans-serif;
+  --font-mono:       "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  --font-features:   "ss01", "ss02", "cv02", "tnum";
+
+  --dur-base:       520ms;
+  --dur-slow:       820ms;
+  --dur-cinematic:  1200ms;
+
+  --r-lg:          24px;            /* base.css 沒有定義 --r-lg，依 token 註解「20px+」補上 */
+  --r-card:        var(--r-lg);
+  --r-stage:       0;
+  --rule-w:        1px;
+  --rule-style:    solid;
+  --hero-num-font:    var(--font-display-en);
+  --hero-num-style:   normal;
+  --hero-num-weight:  800;
+  --hero-num-track:   -0.035em;
+  --stage-pad-x:   100px;
+  --stage-pad-y:   80px;
+  --card-shadow:
+    0 1px 0 var(--rule),
+    0 24px 56px rgba(40, 60, 80, 0.10);
+  --shadow-stage:
+    0 60px 160px rgba(50, 70, 90, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  --surface-pattern:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080' preserveAspectRatio='xMaxYMid slice'><g><rect x='1820' y='180' width='44' height='160' rx='22' fill='%23f0b4d4' opacity='0.55'/><rect x='1820' y='360' width='44' height='220' rx='22' fill='%23a8d4c4' opacity='0.55'/><rect x='1820' y='600' width='44' height='140' rx='22' fill='%23c7b8ea' opacity='0.55'/><rect x='1820' y='760' width='44' height='180' rx='22' fill='%23ffe6a7' opacity='0.55'/></g></svg>");
+  --surface-pattern-size: 100% 100%;
+  --surface-pattern-blend: normal;
+  --surface-pattern-opacity: 0.9;
+
+  /* 膠囊色條的四個顏色（取自上面 --surface-pattern 的 SVG），四款新品各認領一色 */
+  --pk-blush:  #f0b4d4;
+  --pk-mint:   #a8d4c4;
+  --pk-lav:    #c7b8ea;
+  --pk-cream:  #ffe6a7;
+
+  /* base.css 的緩動；soft springy 用輕微衝過頭的曲線 */
+  --ease-quart:  cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-soft:   cubic-bezier(0.4, 0, 0.1, 1);
+  --ease-spring: cubic-bezier(0.34, 1.32, 0.64, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--shell); color: var(--text);
+  font-family: var(--font-display-cn); font-feature-settings: var(--font-features);
+  -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;
+  letter-spacing: normal; overflow-x: hidden;
+}
+h1, h2, h3, p, dl, dd { margin: 0; }
+
+/* ═════════ STAGE ENGINE · CSS（VF 系列共用，整段可直接複製） ═════════ */
+.deck { position: relative; height: 100vh; height: 100svh; min-height: 240px; background: var(--shell);
+  display: flex; align-items: center; justify-content: center; overflow: hidden; }
+@media (max-aspect-ratio: 1/1) { .deck { height: calc(100vw * 9 / 16 + 48px); min-height: 0; } }
+.stage-fitter { position: relative; flex: none; }
+.stage-frame { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0;
+  background: var(--surface); overflow: hidden; cursor: pointer; box-shadow: var(--shadow-stage);
+  border-radius: var(--r-stage); user-select: none; -webkit-user-select: none; }
+.stage-frame::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background-image: var(--surface-pattern); background-size: var(--surface-pattern-size);
+  mix-blend-mode: var(--surface-pattern-blend); opacity: var(--surface-pattern-opacity); }
+.slide { position: absolute; inset: 0; z-index: 2; opacity: 0; visibility: hidden;
+  transition: opacity var(--dur-base) var(--ease-soft), visibility 0s linear var(--dur-base); }
+.slide.is-active { opacity: 1; visibility: visible;
+  transition: opacity var(--dur-slow) var(--ease-soft) 120ms, visibility 0s; }
+/* 宣告式逐步揭示：data-at="n" 的元素在 step ≥ n 時得到 .on（= n 時另有 .now，> n 時 .past） */
+.rv { opacity: 0; transform: translateY(18px);
+  transition: opacity var(--dur-base) var(--ease-soft), transform var(--dur-slow) var(--ease-quart); }
+.rv.on { opacity: 1; transform: none; }
+.wipe { clip-path: inset(0 100% 0 0); transition: clip-path var(--dur-slow) var(--ease-quart); }
+.wipe.on { clip-path: inset(0 0 0 0); }
+.stage-frame.instant .slide, .stage-frame.instant .slide * { transition: none !important; }
+/* 旁白字幕（N 切換，預設關；畫在舞台內，錄影抓得到） */
+.cap { position: absolute; left: 50%; bottom: 150px; transform: translateX(-50%); z-index: 30; width: max-content;
+  max-width: 1500px; padding: 14px 30px; background: var(--text); color: var(--surface-2);
+  font-family: var(--font-display-cn); font-size: 32px; line-height: 1.5; text-align: center;
+  pointer-events: none; opacity: 0; transition: opacity 300ms linear; }
+.stage-frame.show-cap .cap { opacity: 1; }
+.cap:empty { display: none; }
+/* 底部進度列：平常完全隱藏，滑鼠移到底部 56px 才出現 */
+.pb-hover { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; z-index: 40;
+  display: flex; justify-content: center; align-items: flex-end; }
+.pb { display: flex; align-items: center; gap: 2px; max-width: calc(100% - 24px); overflow-x: auto; scrollbar-width: none;
+  padding: 8px 12px; background: var(--text); color: var(--surface);
+  opacity: 0; transform: translateY(100%);
+  transition: opacity var(--dur-base) var(--ease-quart), transform var(--dur-base) var(--ease-quart); }
+.pb-hover:hover .pb, .pb:focus-within { opacity: 1; transform: none; }
+.pb button { font: inherit; font-size: 13px; line-height: 1.4; color: var(--text-faint); background: none;
+  border: 1px solid transparent; padding: 4px 10px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.pb button:hover { color: var(--surface); }
+.pb button.act { color: var(--surface); border-color: var(--accent); }
+.pb .no { font-family: var(--font-mono); color: var(--accent); }
+.pb .pips { display: flex; gap: 4px; }
+.pb .pip { width: 7px; height: 7px; border-radius: 50%; background: var(--text-mute); }
+.pb .pip.on { background: var(--accent); }
+.pb .cnt { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); padding: 0 6px 0 10px; white-space: nowrap; }
+/* ═════════ STAGE ENGINE · CSS 結束 ═════════ */
+
+/* ═════════ VF8 · I14 疊層轉場：覆寫引擎的 .slide 淡入淡出 ═════════
+ * 引擎預設是舊頁淡出、新頁淡入。這裡改成一疊紙：
+ *   前進：新章從舞台底下升上來（頂端 44px 圓角＋往上投的影），舊章原地縮到 0.92、蓋一層墨色變暗，升完才藏起來。
+ *   倒退：上面那章沉回底下，下面那章從縮小變暗的狀態長回滿版。
+ * 狀態寫在 data-pos（below／active／under／exit／gone），由 vf8-effects 的 Chap.enter() 切換。 */
+.stage-frame { background: var(--shell); }
+.stage-frame::after { display: none; }           /* 裝飾層改畫在每一章自己身上，跟著紙一起升降 */
+.slide, .slide.is-active {
+  opacity: 1; visibility: hidden; overflow: hidden; transform-origin: 50% 0;
+  background: var(--surface); border-radius: 0; box-shadow: none; transform: translateY(104%);
+  transition: transform var(--dur-slow) var(--ease-quart), border-radius var(--dur-base) var(--ease-soft),
+              box-shadow var(--dur-slow) var(--ease-soft), opacity var(--dur-base) linear;
+}
+.slide::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background-image: var(--surface-pattern); background-size: var(--surface-pattern-size);
+  mix-blend-mode: var(--surface-pattern-blend); opacity: var(--surface-pattern-opacity); }
+.slide::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 60; border-radius: inherit;
+  background: var(--text); opacity: 0; transition: opacity var(--dur-slow) var(--ease-soft); }
+.slide[data-pos="below"]  { visibility: visible; z-index: 4; transform: translateY(104%);
+  border-radius: 44px 44px 0 0; box-shadow: 0 -30px 80px rgba(40, 60, 80, 0.22); }
+.slide[data-pos="active"] { visibility: visible; z-index: 4; transform: none;
+  transition: transform var(--dur-slow) var(--ease-quart), border-radius var(--dur-base) var(--ease-soft) calc(var(--dur-slow) * .6),
+              box-shadow var(--dur-slow) var(--ease-soft) calc(var(--dur-slow) * .5), opacity var(--dur-base) linear; }
+.slide[data-pos="under"]  { visibility: visible; z-index: 3; transform: scale(0.92); border-radius: 36px; }
+.slide[data-pos="under"]::after { opacity: 0.34; }
+.slide[data-pos="exit"]   { visibility: visible; z-index: 5; transform: translateY(104%);
+  border-radius: 44px 44px 0 0; box-shadow: 0 -30px 80px rgba(40, 60, 80, 0.22); }
+.slide[data-pos="gone"]   { visibility: hidden; z-index: 2; transition: none; }
+.slide.no-tr, .slide.no-tr::after { transition: none !important; }
+.slide.snap * { transition: none !important; }   /* 倒退回上一章：章內直接到位，不在升降時倒播 */
+
+/* ═════════ 版面共用（primitive：.hero-num／.rule／.card） ═════════ */
+.hero-num { font-family: var(--hero-num-font); font-style: var(--hero-num-style); font-weight: var(--hero-num-weight);
+  letter-spacing: var(--hero-num-track); line-height: 1; color: var(--text); font-feature-settings: "tnum"; }
+.rule { color: var(--rule); height: 0; border: 0; border-top: var(--rule-w) var(--rule-style) var(--rule); width: 100%; margin: 0; }
+.card { background: var(--surface-2); border: 1px solid var(--rule); border-radius: var(--r-card); box-shadow: var(--card-shadow); }
+.en { font-family: var(--font-display-en); }
+.mono { font-family: var(--font-mono); }
+.slide > * { position: absolute; z-index: 1; }
+.hd { left: 100px; top: 72px; right: 160px; }
+.chip-row { display: flex; align-items: center; gap: 18px; }
+.chip { background: var(--accent); color: var(--surface-2); font-weight: 700; font-size: 26px; line-height: 1;
+  padding: 11px 24px; border-radius: 999px; }
+.chip-t { font-size: 28px; color: var(--text-2); }
+.hd h2 { font-size: 64px; font-weight: 800; line-height: 1.22; margin-top: 20px; }
+.hd .sub { font-size: 30px; color: var(--text-mute); margin-top: 8px; line-height: 1.5; }
+.foot { left: 100px; right: 160px; bottom: 34px; display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 24px; color: var(--text-faint); }
+.foot .pg { font-family: var(--font-mono); font-size: 22px; }
+
+/* 逐步揭示的 soft springy 版本（覆寫引擎 .rv 的緩動） */
+.rv { transform: translateY(22px); transition: opacity var(--dur-base) var(--ease-soft), transform var(--dur-slow) var(--ease-spring); }
+.rv.on { transform: none; }
+
+/* ═════════ I23 封面流（Flow）：卡片排成一排，中間最大最正，兩側縮小、傾斜、壓疊 ═════════ */
+.flow { --cw: 300px; --ch: 400px; --top: 60px; perspective: calc(var(--cw) * 4.2);
+  perspective-origin: 50% calc(var(--top) + var(--ch) / 2); }
+.flow::before { content: ""; position: absolute; left: calc(50% - var(--cw) * 1.4); right: calc(50% - var(--cw) * 1.4); top: calc(var(--top) + var(--ch) * .82); height: calc(var(--ch) * .42);
+  pointer-events: none; opacity: var(--floor, 1);
+  background: radial-gradient(ellipse 48% 50% at 50% 50%, rgba(40, 60, 80, 0.13), transparent); }
+.cf-card { position: absolute; left: calc(50% - var(--cw) / 2); top: var(--top); width: var(--cw); height: var(--ch);
+  transform-origin: 50% 100%; will-change: transform; }
+.cf-face, .cf-refl { position: absolute; left: 0; right: 0; height: 100%; border-radius: var(--r-card); overflow: hidden;
+  background: radial-gradient(circle at 50% 34%, var(--surface-2) 0, transparent 62%), color-mix(in srgb, var(--pk) 58%, var(--surface-2)); }
+.cf-face { top: 0; box-shadow: 0 1px 0 var(--rule), 0 24px 56px rgba(40, 60, 80, 0.14); border: 2px solid var(--surface-2);
+  transition: box-shadow var(--dur-base) var(--ease-soft); }
+.cf-card:hover .cf-face { box-shadow: 0 0 0 6px var(--accent-glow), 0 24px 56px rgba(40, 60, 80, 0.14); }   /* 加分：滑鼠移上去亮一圈 */
+.cf-refl { top: calc(100% + 8px); transform: scaleY(-1); pointer-events: none; opacity: var(--rf, 1);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, .26), transparent 30%);
+          mask-image: linear-gradient(to top, rgba(0, 0, 0, .26), transparent 30%); }
+.cf-shade { position: absolute; inset: 0; background: var(--text); opacity: var(--sh, 0); pointer-events: none; border-radius: inherit; }
+.cf-svg { position: absolute; left: 0; top: 2%; width: 100%; height: 80%; }
+.cf-lab { position: absolute; left: 0; right: 0; bottom: 0; padding: 0 24px 22px; display: flex; align-items: baseline; justify-content: center; gap: 12px;
+  opacity: var(--lb, 1); white-space: nowrap; }
+.cf-lab .no { font-family: var(--font-mono); font-size: 20px; color: var(--text-mute); }
+.cf-lab b { font-size: 28px; font-weight: 800; color: var(--text); }
+
+/* ═════════ I14 章內疊層（Stack）：下一張紙從底下升上來，蓋住的那張縮小、變暗、往上露出邊 ═════════ */
+.stk { clip-path: inset(-160px -160px 0 -160px); }   /* 只裁掉底邊：紙從框底升上來，上方與兩側的影子不被切成方框 */
+.sheet { position: absolute; left: 24px; right: 24px; top: 92px; bottom: -48px; border-radius: 32px 32px 0 0;
+  background: var(--surface-2); border: 1px solid var(--rule); transform-origin: 50% 0; --d: 0;
+  box-shadow: 0 -16px 48px rgba(40, 60, 80, 0.12);
+  transform: translateY(112%); transition: transform var(--dur-slow) var(--ease-spring); }
+.sheet.on { transform: translateY(calc(var(--d) * -30px)) scale(calc(1 - var(--d) * .05)); }
+.sheet::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--text); pointer-events: none;
+  opacity: calc(var(--d) * .14); transition: opacity var(--dur-slow) var(--ease-soft); }
+.sheet .band { position: absolute; left: 0; right: 0; top: 0; height: 14px; border-radius: 32px 32px 0 0; background: var(--pk); }
+.sheet .in { position: absolute; left: 56px; right: 56px; top: 50px; bottom: 96px; }
+.sh-top { display: flex; align-items: center; gap: 18px; }
+.sh-tag { font-size: 26px; font-weight: 700; padding: 8px 20px; border-radius: 999px; line-height: 1;
+  background: color-mix(in srgb, var(--pk) 55%, var(--surface-2)); color: var(--text); }
+.sh-top h3 { font-size: 44px; font-weight: 800; }
+
+/* 右側索引欄（疊層頁共用）：講到哪一張，哪一列亮起來 */
+.idx { display: flex; flex-direction: column; gap: 16px; }
+.idx .it { display: grid; grid-template-columns: 56px 1fr; align-items: center; column-gap: 20px; padding: 18px 22px;
+  border-radius: 22px; border: 1px solid transparent; }
+.idx .it.now { background: var(--surface-2); border-color: var(--rule); box-shadow: var(--card-shadow); }
+.idx .it.past { opacity: .62; }
+.idx .it.past.on { opacity: .62; }
+.idx .n { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display-en);
+  font-weight: 800; font-size: 26px; background: color-mix(in srgb, var(--pk) 60%, var(--surface-2)); }
+.idx .t { font-size: 30px; font-weight: 700; line-height: 1.3; }
+.idx .v { font-size: 26px; color: var(--text-mute); line-height: 1.4; margin-top: 2px; }
+
+/* ═════════ 1 封面 ═════════ */
+.cv-brand { left: 100px; top: 120px; display: flex; align-items: center; gap: 18px; }
+.cv-brand svg { width: 64px; height: 44px; }
+.cv-brand b { font-size: 32px; font-weight: 800; }
+.cv-brand .en { font-size: 20px; font-weight: 700; letter-spacing: .22em; color: var(--text-mute); }
+.cv-h1 { left: 96px; top: 232px; font-size: 168px; font-weight: 800; line-height: 1.12; }
+.cv-h1 em { font-style: normal; color: var(--accent); }
+.cv-sub { left: 100px; top: 452px; font-size: 42px; color: var(--text-2); }
+.cv-chips { left: 100px; top: 560px; display: flex; gap: 16px; }
+.cv-chips span { font-size: 28px; padding: 12px 26px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--rule); }
+.cv-chips span b { color: var(--accent); font-family: var(--font-display-en); font-weight: 800; }
+.cv-lead { left: 100px; top: 680px; width: 760px; font-size: 30px; line-height: 1.7; color: var(--text-mute); }
+#cv-flow { left: 940px; top: 170px; width: 820px; height: 720px; --cw: 300px; --ch: 400px; --top: 110px; }
+
+/* ═════════ 2 觀察 ═════════ */
+#ob-stk { left: 76px; top: 262px; width: 1100px; height: 728px; }
+.ob-mid { position: absolute; left: 0; right: 0; top: 108px; display: grid; grid-template-columns: 430px 1fr; column-gap: 44px; align-items: center; }
+.ob-mid .hero-num { font-size: 210px; color: var(--accent); }
+.ob-mid .hero-num small { font-size: 96px; font-weight: 800; margin-left: 4px; }
+.ob-mid p { font-size: 32px; line-height: 1.65; color: var(--text-2); }
+.bars { position: absolute; left: 0; right: 0; bottom: 0; display: grid; gap: 16px; }
+.bar { display: grid; grid-template-columns: 170px 1fr 92px; align-items: center; column-gap: 20px; font-size: 26px; color: var(--text-2); }
+.bar .tr { height: 26px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+.bar .tr i { display: block; height: 100%; border-radius: 999px; width: var(--w); background: color-mix(in srgb, var(--pk) 80%, var(--text-2)); }
+.bar .tr i.lo { background: var(--text-faint); }
+.bar .val { font-family: var(--font-display-en); font-weight: 800; font-size: 30px; text-align: right; color: var(--text); }
+#ob-idx { left: 1236px; top: 354px; width: 520px; }
+
+/* ═════════ 3 新品（封面流） ═════════ */
+#pd-flow { left: 118px; top: 236px; width: 1000px; height: 700px; --cw: 330px; --ch: 440px; --top: 64px; }
+.pd-note { left: 118px; width: 1000px; top: 918px; text-align: center; font-size: 24px; color: var(--text-mute); }
+.pd-note .mono { color: var(--accent); font-size: 22px; margin-left: 12px; }
+.pcard { left: 1160px; top: 236px; width: 580px; height: 724px; }
+.pinfo { position: absolute; inset: 40px 46px 40px; display: flex; flex-direction: column; }
+.pi-top { display: flex; align-items: center; gap: 14px; font-family: var(--font-mono); font-size: 20px; color: var(--text-mute); }
+.pi-top i { width: 28px; height: 28px; border-radius: 50%; background: var(--pk); border: 2px solid var(--surface-2); box-shadow: 0 0 0 1px var(--rule); }
+.pinfo h3 { font-size: 52px; font-weight: 800; line-height: 1.25; margin-top: 18px; }
+.pi-en { font-family: var(--font-display-en); font-size: 22px; font-weight: 600; color: var(--text-mute); margin-top: 4px; }
+.pinfo .rule { margin: 24px 0 8px; }
+.pi-dl > div { padding: 14px 0; border-bottom: var(--rule-w) var(--rule-style) var(--rule); }
+.pi-dl dt { font-size: 24px; color: var(--text-mute); }
+.pi-dl dd { font-size: 31px; font-weight: 700; line-height: 1.4; margin-top: 2px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.sweet { display: inline-flex; gap: 6px; }
+.sweet i { width: 14px; height: 14px; border-radius: 50%; background: var(--surface-3); box-shadow: inset 0 0 0 1px var(--rule); }
+.sweet i.f { background: var(--accent); box-shadow: none; }
+.pi-price { margin-top: auto; display: flex; align-items: baseline; gap: 10px; }
+.pi-price .hero-num { font-size: 120px; }
+.pi-price .u { font-size: 38px; font-weight: 800; }
+.pi-price .s { font-size: 24px; color: var(--text-mute); margin-left: auto; }
+
+/* ═════════ 4 價格與甜度（封面流 → 攤平比較） ═════════ */
+#pr-flow { left: 100px; top: 250px; width: 1640px; height: 560px; --cw: 280px; --ch: 372px; --top: 70px; }
+.pr-call { left: 100px; right: 160px; top: 892px; height: 92px; display: flex; align-items: center; gap: 22px; padding: 0 34px;
+  border-radius: 999px; background: var(--surface-2); border: 1px solid var(--rule); box-shadow: var(--card-shadow); font-size: 30px; }
+.pr-call b { font-family: var(--font-display-en); font-weight: 800; color: var(--accent); font-size: 40px; }
+.pr-col { top: 700px; width: 300px; margin-left: -150px; text-align: center; }
+.pr-col .p { display: flex; align-items: baseline; justify-content: center; gap: 6px; }
+.pr-col .hero-num { font-size: 76px; }
+.pr-col .u { font-size: 30px; font-weight: 800; }
+.pr-col .sw8 { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 12px; font-size: 24px; color: var(--text-2); }
+
+/* ═════════ 5 時程（日曆紙疊層） ═════════ */
+#tl-stk { left: 76px; top: 262px; width: 1100px; height: 728px; }
+.cal { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: grid; align-content: center; grid-template-columns: 410px 1fr; column-gap: 40px; align-items: start; }
+.cal .dt { padding-top: 6px; }
+.cal .mo { font-family: var(--font-display-en); font-weight: 800; font-size: 26px; letter-spacing: .18em; color: var(--text-mute); }
+.cal .hero-num { font-size: 138px; margin-top: 18px; }
+.cal .wd { font-size: 30px; color: var(--text-mute); margin-top: 14px; }
+.cal h4 { margin: 0; font-size: 46px; font-weight: 800; line-height: 1.3; }
+.cal p { font-size: 30px; line-height: 1.7; color: var(--text-2); margin-top: 16px; }
+.cal ul { list-style: none; padding: 0; margin: 26px 0 0; display: grid; gap: 12px; }
+.cal li { font-size: 27px; color: var(--text-2); display: flex; gap: 14px; align-items: baseline; }
+.cal li::before { content: ""; flex: none; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); transform: translateY(-4px); }
+#tl-idx { left: 1236px; top: 354px; width: 520px; }
+
+/* ═════════ 6 目標（數字疊層） ═════════ */
+#kp-stk { left: 76px; top: 262px; width: 1100px; height: 728px; }
+.kp-hero { display: flex; align-items: baseline; gap: 16px; margin-top: 30px; }
+.kp-hero .hero-num { font-size: 190px; color: var(--accent); }
+.kp-hero .u { font-size: 60px; font-weight: 800; }
+.kp-p { font-size: 30px; line-height: 1.6; color: var(--text-2); margin-top: 10px; }
+.stack-bar { display: flex; height: 64px; border-radius: 999px; overflow: hidden; margin-top: 30px; border: 2px solid var(--surface-2); box-shadow: 0 0 0 1px var(--rule); }
+.stack-bar span { flex: var(--n) 0 0; background: color-mix(in srgb, var(--pk) 88%, var(--surface-2)); display: grid; place-items: center;
+  font-size: 24px; font-weight: 700; white-space: nowrap; }
+.stack-bar span + span { border-left: 3px solid var(--surface-2); }
+.fml { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 18px; margin-top: 34px; font-size: 30px; color: var(--text-2); }
+.fml .tk { padding: 10px 22px; border-radius: 18px; background: var(--surface-3); }
+.fml .tk b { font-family: var(--font-display-en); font-weight: 800; font-size: 36px; color: var(--text); margin-right: 6px; }
+.fml .op { font-family: var(--font-display-en); font-weight: 700; font-size: 34px; color: var(--text-mute); }
+#kp-idx { left: 1236px; top: 354px; width: 520px; }
+
+/* ═════════ 7 收尾 ═════════ */
+.en-h { left: 100px; right: 160px; top: 96px; text-align: center; font-size: 92px; font-weight: 800; line-height: 1.2; }
+.en-h em { font-style: normal; color: var(--accent); }
+.en-sub { left: 100px; right: 160px; top: 222px; text-align: center; font-size: 32px; color: var(--text-mute); }
+#en-flow { left: 100px; top: 236px; width: 1640px; height: 520px; --cw: 280px; --ch: 372px; --top: 64px; }
+.en-ask { left: 330px; right: 390px; top: 784px; padding: 30px 44px; display: grid; grid-template-columns: auto 1fr; column-gap: 30px; align-items: center; }
+.en-ask .chip { font-size: 26px; }
+.en-ask p { font-size: 32px; line-height: 1.6; font-weight: 500; }
+.en-ask p b { color: var(--accent); font-weight: 800; }
+
+/* ═════════ 規格面板 ═════════ */
+.spec { background: var(--surface); color: var(--text); padding: 64px 16px 96px; font-family: var(--font-display-cn); font-size: 17px; line-height: 1.75; }
+.spec-in { max-width: 1040px; margin: 0 auto; }
+.spec .eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--text-mute); letter-spacing: .12em; }
+.spec .eyebrow b { color: var(--accent); font-weight: 500; }
+.spec h1 { font-weight: 900; font-size: clamp(30px, 5vw, 48px); line-height: 1.25; margin: 8px 0 6px; }
+.spec .sub { font-size: 18px; color: var(--text-2); }
+.spec .lead { font-size: 20px; margin-top: 20px; padding: 18px 24px; background: var(--surface-2); border: 1px solid var(--rule);
+  border-radius: var(--r-card); box-shadow: var(--card-shadow); }
+.spec h2 { font-size: 24px; font-weight: 900; margin: 48px 0 14px; display: flex; align-items: center; gap: 12px; }
+.spec h2::before { content: ""; width: 28px; height: 8px; border-radius: 8px; background: var(--accent); flex: none; }
+.spec h3 { font-size: 19px; font-weight: 700; margin: 22px 0 6px; }
+.spec p + p { margin-top: 10px; }
+.spec code { font-family: var(--font-mono); font-size: .86em; background: var(--surface-3); padding: 1px 6px; border-radius: 6px; word-break: break-word; }
+.spec ul, .spec ol { padding-left: 1.3em; margin: 8px 0; }
+.spec li + li { margin-top: 6px; }
+.sw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px 18px; }
+.sw { display: flex; align-items: center; gap: 12px; font-size: 14px; line-height: 1.4; }
+.sw i { flex: none; width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--rule); }
+.sw code { background: none; padding: 0; }
+.sw small { display: block; color: var(--text-mute); font-family: var(--font-mono); font-size: 12px; }
+.fx { background: var(--surface-2); border: 1px solid var(--rule); border-radius: var(--r-card); padding: 6px 24px 18px; margin-top: 14px; box-shadow: var(--card-shadow); }
+.fx dl { display: grid; grid-template-columns: 7em 1fr; gap: 6px 16px; margin: 8px 0 0; }
+.fx dt { color: var(--text-mute); }
+.fx dd { margin: 0; min-width: 0; }
+.keys { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; }
+.keys dd { margin: 0; }
+.keys kbd { font-family: var(--font-mono); font-size: 13px; border: 1px solid var(--rule); background: var(--surface-2); padding: 1px 8px; border-radius: 6px; white-space: nowrap; }
+.prompt { background: var(--surface-2); border: 1px solid var(--rule); border-left: 6px solid var(--accent); border-radius: 18px; padding: 18px 22px;
+  font-size: 16px; line-height: 1.85; }
+.links { display: flex; flex-wrap: wrap; gap: 12px 28px; margin-top: 44px; padding-top: 18px; border-top: var(--rule-w) var(--rule-style) var(--rule); }
+.links a { color: var(--text); font-weight: 700; text-decoration: none; border-bottom: 3px solid var(--accent); }
+.links a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 640px) {
+  .spec { font-size: 16px; }
+  .fx { padding: 4px 16px 14px; }
+  .fx dl { grid-template-columns: 1fr; gap: 2px; }
+  .fx dt { margin-top: 8px; }
+  .keys { grid-template-columns: 1fr; gap: 2px 0; }
+  .keys dd { margin: 0 0 8px; }
+}
+
+/* ═════════ reduced-motion：升降改成交叉淡入，彈簧改直接定位；每一步的最終畫面不變 ═════════ */
+@media (prefers-reduced-motion: reduce) {
+  .slide, .slide.is-active, .slide[data-pos] { transition: opacity 280ms linear, visibility 0s linear 280ms !important; }
+  .slide[data-pos="active"] { transition: opacity 280ms linear, visibility 0s !important; }
+  .slide[data-pos="below"], .slide[data-pos="exit"] { transform: none; opacity: 0; border-radius: 0; box-shadow: none; }
+  .slide[data-pos="under"] { transform: none; border-radius: 0; }
+  .slide[data-pos="under"]::after { opacity: 0; }
+  .rv, .wipe { transform: none !important; clip-path: none !important; transition: opacity 240ms linear !important; }
+  .sheet { transition: opacity 240ms linear !important; opacity: 0; }
+  .sheet.on { opacity: 1; }
+  .sheet::after { transition: none; }
+  .pb { transition: opacity 200ms linear; transform: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═════════ 簡報本體 ═════════ -->
+<section class="deck" id="deck" aria-label="簡報：雲朵茶舖秋季新品提案（虛構品牌）">
+  <div class="stage-fitter" id="fitter">
+    <div class="stage-frame" id="frame">
+
+      <!-- 1 封面 -->
+      <section class="slide" id="sl-cover" aria-label="封面">
+        <div class="cv-brand"><svg viewBox="0 0 64 44" aria-hidden="true"><path d="M16 40 Q2 40 3 28 Q4 18 15 18 Q17 5 31 4 Q44 4 47 16 Q61 15 61 28 Q61 40 48 40 Z" style="fill:var(--accent)"/></svg>
+          <b>雲朵茶舖</b><span class="en">CUMULUS TEA</span></div>
+        <h1 class="cv-h1">秋天的<em>四杯</em></h1>
+        <p class="cv-sub">2026 秋季新品提案｜四款口味</p>
+        <div class="cv-chips"><span><b>10/15</b> 全門市上市</span><span><b>40</b> 家門市</span><span>檔期 <b>61</b> 天</span></div>
+        <p class="cv-lead">地瓜、洛神、芋泥、文旦：每款都有一個主打配料，甜度都比一般款低。</p>
+        <div class="flow" id="cv-flow" data-items="potato,roselle,taro,pomelo"></div>
+        <footer class="foot"><span>示意數據｜品牌與品名皆為虛構｜產品示意（SVG）</span><span class="pg">01 / 07</span></footer>
+      </section>
+
+      <!-- 2 觀察（I14 章內疊層） -->
+      <section class="slide" id="sl-why" aria-label="三個觀察">
+        <header class="hd"><div class="chip-row"><span class="chip">01</span><span class="chip-t">為什麼是這四款</span></div>
+          <h2>秋天一到，客人點的東西會變</h2></header>
+        <div class="stk" id="ob-stk">
+          <article class="sheet" data-at="0" style="--pk:var(--pk-cream)"><i class="band"></i><div class="in">
+            <div class="sh-top"><span class="sh-tag">觀察 1</span><h3>天氣一涼，鮮奶類就變多</h3></div>
+            <div class="ob-mid"><div class="hero-num">41<small>%</small></div><p>去年 10–12 月，鮮奶底的杯數佔全部的 41%，比夏天多了 13 個百分點。</p></div>
+            <div class="bars">
+              <div class="bar"><span>7–9 月</span><span class="tr"><i class="lo" style="--w:28%"></i></span><span class="val">28%</span></div>
+              <div class="bar"><span>10–12 月</span><span class="tr"><i style="--w:41%"></i></span><span class="val">41%</span></div>
+            </div></div></article>
+          <article class="sheet" data-at="1" style="--pk:var(--pk-blush)"><i class="band"></i><div class="in">
+            <div class="sh-top"><span class="sh-tag">觀察 2</span><h3>客人願意為配料多付錢</h3></div>
+            <div class="ob-mid"><div class="hero-num">63<small>%</small></div><p>十杯裡有六杯以上會加配料，加料的杯子平均多付 12 元。</p></div>
+            <div class="bars">
+              <div class="bar"><span>有加料</span><span class="tr"><i style="--w:63%"></i></span><span class="val">63%</span></div>
+              <div class="bar"><span>沒加料</span><span class="tr"><i class="lo" style="--w:37%"></i></span><span class="val">37%</span></div>
+            </div></div></article>
+          <article class="sheet" data-at="2" style="--pk:var(--pk-lav)"><i class="band"></i><div class="in">
+            <div class="sh-top"><span class="sh-tag">觀察 3</span><h3>限定款會把人帶回來</h3></div>
+            <div class="ob-mid"><div class="hero-num">38<small>%</small></div><p>買過季節限定款的客人，30 天內回來再買的比例是 38%；一般款是 24%。</p></div>
+            <div class="bars">
+              <div class="bar"><span>限定款</span><span class="tr"><i style="--w:38%"></i></span><span class="val">38%</span></div>
+              <div class="bar"><span>一般款</span><span class="tr"><i class="lo" style="--w:24%"></i></span><span class="val">24%</span></div>
+            </div></div></article>
+        </div>
+        <div class="idx" id="ob-idx">
+          <div class="it rv" data-at="0" style="--pk:var(--pk-cream)"><span class="n">1</span><div><div class="t">鮮奶類變多</div><div class="v">秋季佔 41%</div></div></div>
+          <div class="it rv" data-at="1" style="--pk:var(--pk-blush)"><span class="n">2</span><div><div class="t">願意加配料</div><div class="v">63% 有加料</div></div></div>
+          <div class="it rv" data-at="2" style="--pk:var(--pk-lav)"><span class="n">3</span><div><div class="t">限定款帶回購</div><div class="v">30 天回購 38%</div></div></div>
+        </div>
+        <footer class="foot"><span>示意數據｜去年 10–12 月與 7–9 月門市銷售（虛構）</span><span class="pg">02 / 07</span></footer>
+      </section>
+
+      <!-- 3 新品（I23 封面流） -->
+      <section class="slide" id="sl-cups" aria-label="四款新品">
+        <header class="hd"><div class="chip-row"><span class="chip">02</span><span class="chip-t">四款新品</span></div>
+          <h2>一次轉一杯，看它的重點</h2></header>
+        <div class="flow" id="pd-flow" data-items="potato,roselle,taro,pomelo"></div>
+        <p class="pd-note">產品示意（SVG）<span class="mono" id="pd-count">01 / 04</span></p>
+        <div class="card pcard" id="pd-card"></div>
+        <footer class="foot"><span>示意數據｜售價為大杯 700ml</span><span class="pg">03 / 07</span></footer>
+      </section>
+
+      <!-- 4 價格與甜度（封面流 → 攤平） -->
+      <section class="slide" id="sl-price" aria-label="價格與甜度">
+        <header class="hd"><div class="chip-row"><span class="chip">03</span><span class="chip-t">價格與甜度</span></div>
+          <h2>60 到 85 元，甜度都往下調</h2></header>
+        <div class="flow" id="pr-flow" data-items="roselle,pomelo,potato,taro"></div>
+        <div class="pr-call rv" data-at="0" data-until="0"><b>60 元</b><span>洛神桂花青茶是入門價，負責把學生拉進來</span></div>
+        <div class="pr-call rv" data-at="1" data-until="1"><b>85 元</b><span>芋泥紫米鮮奶最貴，芋泥加紫米的份量撐得起</span></div>
+        <div class="pr-call rv" data-at="2"><b>71 元</b><span>依預估銷量加權的平均一杯；四款都建議比一般款少糖</span></div>
+        <div id="pr-cols"></div>
+        <footer class="foot"><span>示意數據｜甜度以 10 分為全糖</span><span class="pg">04 / 07</span></footer>
+      </section>
+
+      <!-- 5 時程（I14 日曆紙疊層） -->
+      <section class="slide" id="sl-time" aria-label="上市時程">
+        <header class="hd"><div class="chip-row"><span class="chip">04</span><span class="chip-t">上市時程</span></div>
+          <h2>四個日期，一張一張翻過去</h2></header>
+        <div class="stk" id="tl-stk">
+          <article class="sheet" data-at="0" style="--pk:var(--pk-mint)"><i class="band"></i><div class="in"><div class="cal">
+            <div class="dt"><div class="mo">SEPTEMBER</div><div class="hero-num">9/28</div><div class="wd">星期一</div></div>
+            <div><h4>試飲定案</h4><p>員工加會員共 120 人盲測，把四款的甜度與配料份量定下來。</p>
+              <ul><li>每款試三種甜度</li><li>配料份量各試兩種</li></ul></div></div></div></article>
+          <article class="sheet" data-at="1" style="--pk:var(--pk-cream)"><i class="band"></i><div class="in"><div class="cal">
+            <div class="dt"><div class="mo">OCTOBER</div><div class="hero-num">10/5</div><div class="wd">星期一</div></div>
+            <div><h4>門市教育訓練</h4><p>40 家店長一起上課，學配料備量與出杯順序。</p>
+              <ul><li>地瓜、芋泥每天現做</li><li>洛神花凍前一晚備好</li></ul></div></div></div></article>
+          <article class="sheet" data-at="2" style="--pk:var(--pk-blush)"><i class="band"></i><div class="in"><div class="cal">
+            <div class="dt"><div class="mo">OCTOBER</div><div class="hero-num">10/8</div><div class="wd">星期四</div></div>
+            <div><h4>社群預告</h4><p>連續四天，一天公開一款，最後一天公布上市日。</p>
+              <ul><li>10/8 地瓜　10/9 洛神</li><li>10/10 芋泥　10/11 文旦</li></ul></div></div></div></article>
+          <article class="sheet" data-at="3" style="--pk:var(--pk-lav)"><i class="band"></i><div class="in"><div class="cal">
+            <div class="dt"><div class="mo">OCTOBER</div><div class="hero-num">10/15</div><div class="wd">星期四</div></div>
+            <div><h4>全門市上市</h4><p>40 家同步開賣，檔期到 12/14，一共 61 天。</p>
+              <ul><li>11/15 期中檢討，調整備量</li><li>12/14 檔期結束</li></ul></div></div></div></article>
+        </div>
+        <div class="idx" id="tl-idx">
+          <div class="it rv" data-at="0" style="--pk:var(--pk-mint)"><span class="n">1</span><div><div class="t">試飲定案</div><div class="v">9/28（一）</div></div></div>
+          <div class="it rv" data-at="1" style="--pk:var(--pk-cream)"><span class="n">2</span><div><div class="t">門市教育訓練</div><div class="v">10/5（一）</div></div></div>
+          <div class="it rv" data-at="2" style="--pk:var(--pk-blush)"><span class="n">3</span><div><div class="t">社群預告</div><div class="v">10/8（四）起連四天</div></div></div>
+          <div class="it rv" data-at="3" style="--pk:var(--pk-lav)"><span class="n">4</span><div><div class="t">全門市上市</div><div class="v">10/15（四）– 12/14</div></div></div>
+        </div>
+        <footer class="foot"><span>示意數據｜2026 年行事曆</span><span class="pg">05 / 07</span></footer>
+      </section>
+
+      <!-- 6 目標（I14 數字疊層） -->
+      <section class="slide" id="sl-goal" aria-label="預估目標">
+        <header class="hd"><div class="chip-row"><span class="chip">05</span><span class="chip-t">預估目標</span></div>
+          <h2>從一家店一天，算到整個檔期</h2></header>
+        <div class="stk" id="kp-stk">
+          <article class="sheet" data-at="0" style="--pk:var(--pk-mint)"><i class="band"></i><div class="in">
+            <div class="sh-top"><span class="sh-tag">每店每日</span><h3>四款合計</h3></div>
+            <div class="kp-hero"><span class="hero-num">70</span><span class="u">杯</span></div>
+            <div class="stack-bar">
+              <span style="--n:18;--pk:var(--pk-cream)">地瓜 18</span><span style="--n:22;--pk:var(--pk-blush)">洛神 22</span>
+              <span style="--n:14;--pk:var(--pk-lav)">芋泥 14</span><span style="--n:16;--pk:var(--pk-mint)">文旦 16</span></div>
+            <p class="kp-p" style="margin-top:22px">洛神最便宜、賣得最多；芋泥最貴、杯數最少。</p></div></article>
+          <article class="sheet" data-at="1" style="--pk:var(--pk-cream)"><i class="band"></i><div class="in">
+            <div class="sh-top"><span class="sh-tag">整個檔期</span><h3>四款合計杯數</h3></div>
+            <div class="kp-hero"><span class="hero-num">170,800</span><span class="u">杯</span></div>
+            <div class="fml"><span class="tk"><b>70</b>杯</span><span class="op">×</span><span class="tk"><b>40</b>家店</span><span class="op">×</span><span class="tk"><b>61</b>天</span></div></div></article>
+          <article class="sheet" data-at="2" style="--pk:var(--pk-blush)"><i class="band"></i><div class="in">
+            <div class="sh-top"><span class="sh-tag">整個檔期</span><h3>預估營收</h3></div>
+            <div class="kp-hero"><span class="hero-num">1,215</span><span class="u">萬元</span></div>
+            <div class="fml"><span class="tk"><b>4,980</b>元／店／日</span><span class="op">×</span><span class="tk"><b>2,440</b>店日</span><span class="op">=</span><span class="tk"><b>12,151,200</b>元</span></div>
+            <p class="kp-p" style="margin-top:24px">平均一杯 71 元（12,151,200 ÷ 170,800）。</p></div></article>
+        </div>
+        <div class="idx" id="kp-idx">
+          <div class="it rv" data-at="0" style="--pk:var(--pk-mint)"><span class="n">1</span><div><div class="t">每店每日 70 杯</div><div class="v">18＋22＋14＋16</div></div></div>
+          <div class="it rv" data-at="1" style="--pk:var(--pk-cream)"><span class="n">2</span><div><div class="t">檔期 170,800 杯</div><div class="v">40 家 × 61 天</div></div></div>
+          <div class="it rv" data-at="2" style="--pk:var(--pk-blush)"><span class="n">3</span><div><div class="t">營收 1,215 萬元</div><div class="v">平均一杯 71 元</div></div></div>
+        </div>
+        <footer class="foot"><span>示意數據｜檔期 10/15–12/14，共 61 天</span><span class="pg">06 / 07</span></footer>
+      </section>
+
+      <!-- 7 收尾（封面流攤平成一排） -->
+      <section class="slide" id="sl-end" aria-label="收尾">
+        <h2 class="en-h">秋天，從這<em>四杯</em>開始</h2>
+        <div class="flow" id="en-flow" data-items="potato,roselle,taro,pomelo"></div>
+        <div class="card en-ask"><span class="chip">今天請決定</span>
+          <p><b>10/15</b> 四款同步上市；備料以每店每日 <b>70</b> 杯準備，檔期目標營收 <b>1,215</b> 萬元。</p></div>
+        <footer class="foot"><span>示意數據｜雲朵茶舖為虛構品牌｜產品示意（SVG）</span><span class="pg">07 / 07</span></footer>
+      </section>
+
+      <div class="cap" id="cap" aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="pb-hover" data-no-advance><nav class="pb" id="pb" aria-label="簡報進度"></nav></div>
+</section>
+
+<!-- ═════════ 規格面板 ═════════ -->
+<main class="spec" id="spec">
+  <div class="spec-in">
+    <p class="eyebrow"><b>VF8</b> · GARDEN FUSION DECK</p>
+    <h1>VF8 粉彩×封面流疊層</h1>
+    <p class="sub">主題 <code>pastel-dream</code>（柔光夢）× I23 封面流 ＋ I14 滾動疊層轉場</p>
+    <p class="lead">適合「一次介紹好幾個品項」的提案與上新簡報：新品、課程方案、會員等級、旅遊行程。品項用封面流一個一個轉到正中間，章與章之間像一疊紙往上放，語氣友善、不刺眼。</p>
+
+    <h2>主題 token</h2>
+    <div class="sw-grid" id="swatches"></div>
+    <h3>字型</h3>
+    <ul>
+      <li>中文標題與內文：<code>--font-display-cn</code> Noto Sans TC（原 token 為 Noto Sans SC，換繁中），標題 800、細節 700</li>
+      <li>英文、大數字：<code>--font-display-en</code> Plus Jakarta Sans；hero 數字走 <code>--hero-num-*</code>：粗 800、正體、字距 −0.035em</li>
+      <li>說明文：<code>--font-body</code> Plus Jakarta Sans，中文落到 Noto Sans TC</li>
+      <li>等寬：<code>--font-mono</code> JetBrains Mono（只用在卡片編號、計數與進度列）</li>
+      <li>OpenType：<code>"ss01", "ss02", "cv02", "tnum"</code></li>
+    </ul>
+    <h3>mood</h3>
+    <p><code>light · pastel · friendly · soft · approachable · warm</code>。照 token 的「soft springy（輕微衝過頭）」：章內揭示與疊層紙用 <code>cubic-bezier(0.34, 1.32, 0.64, 1)</code>，時長 <code>--dur-base</code> 520ms／<code>--dur-slow</code> 820ms；封面流用阻尼比 0.74 的彈簧（約衝過頭 3%）。章與章的升降不用彈簧，衝過頭會從底邊露出舞台底色，改用 <code>--ease-quart</code>。卡片 24px 圓角（token 寫 <code>--r-card: var(--r-lg)</code> 但 base.css 沒定義 <code>--r-lg</code>，依註解「20px+」補成 24px）。</p>
+    <h3>四款新品的顏色</h3>
+    <p>主題只有一個飽和色（鼠尾草綠 <code>--accent</code>），另外的四個粉彩色來自裝飾層 <code>--surface-pattern</code> 裡右側膠囊色條的 SVG（腮紅粉、薄荷、薰衣草、奶油黃）。這裡把它們拉成 <code>--pk-*</code> 四個變數，四款新品各認領一色；杯中飲料、配料、卡片底色都用 <code>color-mix()</code> 從這四色和 <code>--text</code>／<code>--surface-2</code> 混出來，沒有引入新色相。吸管與甜度點用 <code>--accent</code>。</p>
+
+    <h2>融合了什麼</h2>
+    <div class="fx">
+      <h3>I14 滾動疊層轉場：章與章之間是一疊紙</h3>
+      <dl>
+        <dt>原本</dt><dd>每個滿版區域 <code>position: sticky</code> 釘在頂端，往下捲時下一個區域從底下升上來蓋住它；被蓋住的那層依捲動量縮到 0.92、蓋一層黑色變暗，上層頂部 24px 圓角加往上投的陰影。</dd>
+        <dt>這裡</dt><dd>捲動量改成換章：每次進到新章（第 2、5、9、12、16、19 步）新章從舞台底下升上來，舊章原地縮到 0.92、蓋上 34% 的 <code>--text</code> 變暗、四角變成 36px 圓角，露出底下的 <code>--shell</code> 粉藍灰；倒退時上面那章沉回去，下面那章從縮小變暗長回滿版。章內也用同一招：觀察、時程、目標三章的內容是一疊紙，每一步一張新紙升上來，蓋住的紙往上退 30px、縮 5%、變暗 14%，露出一圈邊，看得出已經翻過幾張。</dd>
+        <dt>做法</dt><dd>改寫引擎的 <code>.slide</code> 轉場：不再用 opacity，改成 <code>data-pos</code> 五種狀態（<code>below</code>／<code>active</code>／<code>under</code>／<code>exit</code>／<code>gone</code>），由 <code>Chap.enter()</code> 在每章 <code>onStep</code> 的 <code>ctx.fresh</code> 時切換；新章先加 <code>.no-tr</code> 瞬間放到 <code>below</code>，強制重排後再切 <code>active</code>，820ms 後把舊章設成 <code>gone</code>。變暗是 <code>.slide::after</code> 一層 <code>--text</code> 只改 opacity；裝飾色條改畫在每章的 <code>::before</code>，跟著紙一起升降。章內紙疊是 <code>data-at</code> 揭示加一個 <code>--d</code>（被蓋了幾層），<code>transform: translateY(calc(var(--d) * -30px)) scale(calc(1 - var(--d) * .05))</code>。</dd>
+      </dl>
+    </div>
+    <div class="fx">
+      <h3>I23 封面流：一步轉正一杯</h3>
+      <dl>
+        <dt>原本</dt><dd>卡片排成一排，正中間那張最大最正，兩側縮到 0.78、往內轉 50°、每遠一張多蓋一層暗色，地板上有倒影；拖曳、甩動、方向鍵或點卡片換主角，臨界阻尼彈簧對齊。</dd>
+        <dt>這裡</dt><dd>拖曳與方向鍵改成按步觸發。新品章（第 5–8 步）每一步轉正下一杯，右邊的卡片換成它的主打配料、甜度建議（10 點甜度條）、目標客群與售價；價格章（第 9–11 步）同一排杯子照價格排，先轉到最便宜的 60 元、再轉到最貴的 85 元，最後一步整排「攤平」成並排比較，杯子底下浮出售價與甜度。封面與收尾也用它：封面的杯子滾進來停在第二杯，收尾從封面流攤平成一排。</dd>
+        <dt>做法</dt><dd><code>class Flow</code>：位置 <code>pos</code> 與攤平量 <code>flat</code> 各是一個彈簧（k=110、阻尼比 0.74，rAF 細分步積分，靜止就停）。每張卡依 <code>d = i − pos</code> 算 <code>translate3d()</code>／<code>rotateY(∓50°)</code>／<code>scale(1→0.78)</code>，第一張側邊走 <code>(1+0.78)/2·cos25°</code> 個卡寬、之後每張只多 0.2 個卡寬；暗色 <code>--sh</code> 每遠一張多 12%（上限 36%），z-index 越靠中間越高；攤平時與並排座標線性內插，倒影淡掉。從 <code>#s=</code> 開啟、倒退或 reduced-motion 時直接定位。杯子是 inline SVG：杯身、封膜、吸管、飲料、配料（地瓜丁、洛神花凍、芋泥加紫米、文旦果粒）與標籤。滑鼠移到卡片上亮一圈 <code>--accent-glow</code>（加分，錄影不靠它）。</dd>
+      </dl>
+    </div>
+
+    <h2>操作</h2>
+    <dl class="keys">
+      <dt><kbd>→</kbd> <kbd>空白</kbd> <kbd>點擊舞台</kbd></dt><dd>下一步</dd>
+      <dt><kbd>←</kbd></dt><dd>上一步（換章時上面那章沉回去）</dd>
+      <dt><kbd>Home</kbd> <kbd>End</kbd></dt><dd>第一步／最後一步</dd>
+      <dt><kbd>1</kbd>–<kbd>7</kbd></dt><dd>跳到第 n 章的第一步</dd>
+      <dt><kbd>N</kbd></dt><dd>切換旁白字幕（預設關）</dd>
+      <dt>滑鼠移到簡報底部</dt><dd>出現進度列（章節＋步數），可點章節或小圓點跳轉</dd>
+    </dl>
+    <p style="margin-top:12px">網址加 <code>#s=7</code> 直接開到第 7 步（從 1 起算，共 19 步）；翻頁時網址用 <code>replaceState</code> 跟著更新。從 <code>#s=</code> 開啟時直接顯示該步的最終畫面、不播動畫，方便截圖。鍵盤只在簡報佔畫面一半以上時接管，捲到規格面板後空白鍵恢復捲頁。</p>
+
+    <h2>怎麼搬進真的 web-video-presentation 專案</h2>
+    <ol>
+      <li><b>章節</b>：七個 <code>&lt;section class="slide"&gt;</code> 各是一個 <code>src/chapters/NN-id/</code>（cover／why／cups／price／time／goal／end）。杯子 SVG 抽成 <code>&lt;CupVisual kind="taro" /&gt;</code>，封面流抽成 <code>&lt;CoverFlow items pos flat /&gt;</code>，<code>pos</code> 與 <code>flat</code> 直接由 <code>step</code> 算出（例：新品章 <code>pos = step</code>；價格章 <code>pos = [0, 3, 1.5][step]</code>、<code>flat = step === 2 ? 1 : 0</code>）。</li>
+      <li><b>step 與旁白</b>：<code>Stage.init</code> 裡每章的 <code>narr</code> 就是該章的 <code>narrations.ts</code>；<code>data-at="n"</code>／<code>data-until="m"</code> 對應 <code>className={step &gt;= n &amp;&amp; step &lt;= m ? "on" : ""}</code>，紙疊的 <code>--d</code> 是 <code>Math.max(0, step - i)</code>。</li>
+      <li><b>primitive class</b>：大數字掛 <code>.hero-num</code>；新品資訊板與收尾決議用 <code>.card</code>（24px 圓角＋<code>--card-shadow</code>）；資訊板裡的分隔用 <code>.rule</code>；舞台交給 <code>.stage-frame</code>，裝飾色條從 <code>.stage-frame::after</code> 搬到每章的 <code>::before</code>。</li>
+      <li><b>章節疊層</b>：框架的章節切換預設是淡入淡出，要在 <code>Stage.tsx</code> 的章節容器上改：依前進／倒退給新舊兩章 <code>below→active</code>＋<code>under</code>、或 <code>under→active</code>＋<code>exit</code>，離場那章延遲 <code>--dur-slow</code> 才卸載。這是唯一要動共用檔的地方。</li>
+      <li><b>Auto 模式</b>：最長的動畫是章節升降 820ms 與封面流彈簧約 0.7 秒，旁白最短約 3 秒，不會被音檔切斷；彈簧用 rAF，不用 setTimeout 推進步數（只有「舊章升完後藏起來」用一次計時器）。</li>
+    </ol>
+
+    <h2>AI 描述詞</h2>
+    <div class="prompt">做一份 16:9 點擊推進的新品提案簡報，奶油白底、粉藍灰外框、深灰字，只有一個鼠尾草綠強調色，全場 Plus Jakarta Sans 搭思源黑體繁中，卡片 24px 大圓角加柔和陰影，畫面右緣貼著一列淡淡的粉紅、薄荷、薰衣草、奶油黃膠囊色條。換章時不要淡入淡出：新的一頁像一張紙從畫面底下升上來蓋住舊頁，頂端有圓角和往上投的淡影，舊頁原地縮小到 92%、變暗、四角變圓，露出底下的粉藍灰；倒退時反過來。產品章用封面流：四杯飲料的卡片排成一排，正中間那張最大最正，兩側往內轉 50 度、縮小、互相壓疊、越遠越暗，地上有淡淡的倒影；每按一次下一步就轉正下一杯，右邊的白卡換成它的名稱、主打配料、十點甜度條、目標客群與售價大數字。價格章同一排杯子照價格排，先轉到最便宜、再轉到最貴，最後整排攤平成並排比較，下面浮出售價與甜度。觀察、時程、目標三章的內容做成一疊紙，每一步一張新紙從框底升上來，蓋住的紙往上退一點、縮小、變暗，露出一圈邊；右邊一欄索引跟著亮到目前這一張。四杯飲料用 SVG 畫：透明杯身、封膜、綠色吸管、粉彩色飲料與配料，杯上貼一張白色小標籤；每款各用一個膠囊色。動畫柔軟、略帶彈性但不誇張。</div>
+
+    <div class="links">
+      <a href="../index.html">← 回 garden 範例總覽</a>
+      <a data-removed-link>看全部 23 個主題</a>
+    </div>
+  </div>
+</main>
+
+<script id="stage-engine">
+/* ═════════ STAGE ENGINE v1（VF 系列共用，整段原樣複製，只在下方另寫 Stage.init 設定） ═════════
+ * 需要的 DOM：#deck > #fitter > #frame > section.slide…、#frame 內的 #cap、#deck 內的 #pb。
+ * Stage.init({ slides: [{ el: '#id', title: '封面', narr: ['旁白…', …], onStep(k, ctx) {} }] })
+ *   ctx = { step, prevStep(同張上一步，換張時為 -1), fresh(剛換張), instant(不播動畫), dir, reduce, el }
+ * 宣告式揭示：slide 內 [data-at="n"] 在 step ≥ n 時加 .on；= n 加 .now；> n 加 .past；
+ *   [data-until="m"] 讓它在 step > m 時再拿掉 .on。
+ * 操作：→／空白／PageDown／點擊＝下一步；←／PageUp＝上一步；Home／End；1–9 跳張；N 切換字幕。
+ * #s=<1 起算的全域步數> 直接開到該步（instant），翻頁時 replaceState 更新。 */
+const Stage = (() => {
+  const W = 1920, H = 1080;
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  let deck, fitter, frame, cap, pb, slides = [], offsets = [], total = 0, g = -1, visible = true;
+
+  function locate(gi) {
+    let s = 0;
+    while (s < slides.length - 1 && gi >= offsets[s] + slides[s].narr.length) s++;
+    return { s, k: gi - offsets[s] };
+  }
+  function fit() {
+    const r = deck.getBoundingClientRect();
+    const sc = Math.min(r.width / W, r.height / H);
+    fitter.style.width = (W * sc) + 'px';
+    fitter.style.height = (H * sc) + 'px';
+    frame.style.transform = 'scale(' + sc + ')';
+  }
+  function markSteps(sl, k) {
+    sl.el.dataset.step = k;
+    sl.el.querySelectorAll('[data-at]').forEach(el => {
+      const n = +el.dataset.at, u = el.dataset.until != null ? +el.dataset.until : Infinity;
+      el.classList.toggle('on', k >= n && k <= u);
+      el.classList.toggle('now', k === n);
+      el.classList.toggle('past', k > n);
+    });
+  }
+  function go(target, opts = {}) {
+    target = clamp(target | 0, 0, total - 1);
+    if (target === g && !opts.force) return;
+    const prev = g, from = prev < 0 ? { s: -1, k: -1 } : locate(prev), to = locate(target);
+    const fresh = from.s !== to.s;
+    const instant = !!opts.instant;
+    g = target;
+    frame.classList.toggle('instant', instant);
+    const sl = slides[to.s];
+    if (fresh) {                                   // 剛進這張：先清掉上次留下的狀態，讓揭示重新播
+      sl.el.querySelectorAll('[data-at]').forEach(el => el.classList.remove('on', 'now', 'past'));
+      void sl.el.offsetWidth;
+    }
+    slides.forEach((s, i) => {
+      s.el.classList.toggle('is-active', i === to.s);
+      s.el.setAttribute('aria-hidden', i === to.s ? 'false' : 'true');
+    });
+    markSteps(sl, to.k);
+    const ctx = { step: to.k, prevStep: fresh ? -1 : from.k, fresh, instant, dir: Math.sign(target - prev),
+                  reduce: reduceMQ.matches, el: sl.el };
+    if (fresh && from.s >= 0 && slides[from.s].onLeave) slides[from.s].onLeave();
+    if (sl.onStep) sl.onStep(to.k, ctx);
+    cap.textContent = sl.narr[to.k] || '';
+    renderPB();
+    frame.dataset.g = g + 1;
+    if (instant) requestAnimationFrame(() => requestAnimationFrame(() => frame.classList.remove('instant')));
+    const h = '#s=' + (g + 1);
+    if (location.hash !== h) history.replaceState(null, '', h);
+  }
+  function buildPB() {
+    pb.innerHTML = slides.map((s, i) =>
+      '<button type="button" data-s="' + i + '"><span class="no">' + String(i + 1).padStart(2, '0') + '</span>' +
+      '<span>' + s.title + '</span><span class="pips"></span></button>').join('') + '<span class="cnt"></span>';
+    pb.addEventListener('click', e => {
+      e.stopPropagation();
+      const pip = e.target.closest('.pip');
+      if (pip) { go(+pip.dataset.g); return; }
+      const b = e.target.closest('button');
+      if (b) go(offsets[+b.dataset.s]);
+    });
+  }
+  function renderPB() {
+    const { s: cs, k } = locate(g);
+    pb.querySelectorAll('button').forEach((b, i) => {
+      b.classList.toggle('act', i === cs);
+      const pips = b.querySelector('.pips');
+      pips.innerHTML = i === cs ? slides[i].narr.map((_, j) =>
+        '<span class="pip' + (j <= k ? ' on' : '') + '" data-g="' + (offsets[i] + j) + '"></span>').join('') : '';
+    });
+    pb.querySelector('.cnt').textContent = String(g + 1).padStart(2, '0') + ' / ' + total;
+  }
+  function fromHash() {
+    const m = /(?:^#|&)s=(\d+)/.exec(location.hash);
+    return m ? clamp(+m[1] - 1, 0, total - 1) : null;
+  }
+  function init(cfg) {
+    deck = document.getElementById('deck'); fitter = document.getElementById('fitter');
+    frame = document.getElementById('frame'); cap = document.getElementById('cap'); pb = document.getElementById('pb');
+    slides = cfg.slides.map(s => Object.assign({}, s, { el: typeof s.el === 'string' ? document.querySelector(s.el) : s.el }));
+    let acc = 0;
+    offsets = slides.map(s => { const o = acc; acc += s.narr.length; return o; });
+    total = acc;
+    buildPB(); fit();
+    addEventListener('resize', fit);
+    if (typeof ResizeObserver === 'function') new ResizeObserver(fit).observe(deck);
+    if (typeof IntersectionObserver === 'function')
+      new IntersectionObserver(es => { visible = es[0].intersectionRatio >= 0.5; }, { threshold: [0, 0.5, 1] }).observe(deck);
+    frame.addEventListener('click', e => {
+      if (e.target.closest('a, button, input, [data-no-advance]')) return;
+      go(g + 1);
+    });
+    addEventListener('keydown', e => {
+      if (!visible || e.ctrlKey || e.metaKey || e.altKey) return;
+      const t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      const k = e.key;
+      if (k === 'ArrowRight' || k === ' ' || k === 'PageDown') { e.preventDefault(); go(g + 1); }
+      else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); go(g - 1); }
+      else if (k === 'Home') { e.preventDefault(); go(0); }
+      else if (k === 'End') { e.preventDefault(); go(total - 1); }
+      else if (/^[1-9]$/.test(k)) { const i = +k - 1; if (i < slides.length) go(offsets[i]); }
+      else if (k === 'n' || k === 'N') frame.classList.toggle('show-cap');
+    });
+    addEventListener('hashchange', () => { const h = fromHash(); if (h != null && h !== g) go(h, { instant: true }); });
+    const h = fromHash();
+    go(h == null ? 0 : h, { instant: h != null, force: true });
+    return api;
+  }
+  const api = { init, go, get index() { return g; }, get total() { return total; }, reduceMQ };
+  return api;
+})();
+/* ═════════ STAGE ENGINE v1 結束 ═════════ */
+</script>
+
+<script id="vf8-effects">
+/* ═════════ VF8 效果：杯子 SVG、封面流 Flow、章節疊層 Chap、章內紙疊、各章設定 ═════════ */
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const reduceMQ = Stage.reduceMQ;
+  const mix = (a, p, b) => 'color-mix(in srgb, ' + a + ' ' + p + '%, ' + b + ')';
+
+  /* ---------- 四款新品（虛構） ---------- */
+  const PRODUCTS = {
+    potato:  { no: '01', name: '蜜地瓜燕麥鮮奶', short: '地瓜', en: 'Honey Sweet Potato Oat Latte', pk: 'var(--pk-cream)',
+               top: '蜜烤地瓜丁＋燕麥', sweet: 3, sweetTxt: '微糖（3 分）', who: '下午想吃點心的上班族', price: 75 },
+    roselle: { no: '02', name: '洛神桂花青茶', short: '洛神', en: 'Roselle Osmanthus Green Tea', pk: 'var(--pk-blush)',
+               top: '洛神花凍', sweet: 5, sweetTxt: '半糖（5 分）', who: '喜歡酸甜果茶的學生', price: 60 },
+    taro:    { no: '03', name: '芋泥紫米鮮奶', short: '芋泥', en: 'Taro Purple Rice Latte', pk: 'var(--pk-lav)',
+               top: '手壓芋泥＋紫米', sweet: 0, sweetTxt: '無糖（芋泥已調味）', who: '拿它當一餐的通勤族', price: 85 },
+    pomelo:  { no: '04', name: '蜂蜜文旦綠茶', short: '文旦', en: 'Honey Pomelo Green Tea', pk: 'var(--pk-mint)',
+               top: '文旦果粒', sweet: 2, sweetTxt: '二分糖', who: '怕甜、想喝清爽的人', price: 70 },
+  };
+
+  /* ---------- 產品示意（SVG）：杯身、封膜、吸管、飲料、配料、標籤；座標系 300×400 ---------- */
+  const sty = o => Object.entries(o).map(([k, v]) => k + ':' + v).join(';');
+  function rnd(seed) { let s = seed; return () => (s = (s * 9301 + 49297) % 233280) / 233280; }
+  function cupSVG(kind, uid) {
+    const P = PRODUCTS[kind], pk = P.pk, r = rnd(kind.length * 37 + 11);
+    const body = 'M70 100 L230 100 L206 352 Q204 364 192 364 L108 364 Q96 364 94 352 Z';
+    const liquid = { potato: mix(pk, 62, 'var(--surface-3)'), roselle: mix(pk, 82, 'var(--text-2)'),
+                     taro: mix(pk, 72, 'var(--surface-2)'), pomelo: mix(pk, 60, 'var(--pk-cream)') }[kind];
+    let tops = '';
+    if (kind === 'potato') {
+      for (let i = 0; i < 9; i++) { const x = 104 + r() * 84, y = 300 + r() * 46, s = 18 + r() * 8;
+        tops += '<rect x="' + x.toFixed(0) + '" y="' + y.toFixed(0) + '" width="' + s.toFixed(0) + '" height="' + s.toFixed(0) + '" rx="6" transform="rotate(' + (r() * 40 - 20).toFixed(0) + ' ' + (x + s / 2).toFixed(0) + ' ' + (y + s / 2).toFixed(0) + ')" style="' + sty({ fill: mix(pk, 60, 'var(--pk-blush)'), stroke: mix(pk, 50, 'var(--text-2)'), 'stroke-width': 1.5 }) + '"/>'; }
+      for (let i = 0; i < 14; i++) tops += '<ellipse cx="' + (104 + r() * 92).toFixed(0) + '" cy="' + (262 + r() * 90).toFixed(0) + '" rx="5" ry="3" style="fill:var(--surface-3);stroke:var(--rule);stroke-width:1"/>';
+    } else if (kind === 'roselle') {
+      for (let i = 0; i < 10; i++) { const x = 102 + r() * 88, y = 292 + r() * 52, s = 20 + r() * 8;
+        tops += '<rect x="' + x.toFixed(0) + '" y="' + y.toFixed(0) + '" width="' + s.toFixed(0) + '" height="' + s.toFixed(0) + '" rx="5" style="' + sty({ fill: mix(pk, 70, 'var(--text)'), opacity: .78 }) + '"/>'; }
+      tops += '<path d="M82 150 Q150 138 220 152" style="fill:none;stroke:var(--surface-2);stroke-width:5;opacity:.5;stroke-linecap:round"/>';
+      for (let i = 0; i < 6; i++) tops += '<circle cx="' + (110 + r() * 80).toFixed(0) + '" cy="' + (140 + r() * 30).toFixed(0) + '" r="3" style="fill:var(--pk-cream)"/>';
+    } else if (kind === 'taro') {
+      tops += '<path d="M90 300 Q120 284 150 298 Q182 312 212 292 L206 364 L94 364 Z" style="fill:' + mix(pk, 78, 'var(--text-2)') + '"/>' +
+              '<path d="M78 150 Q96 200 84 250 Q100 270 92 300" style="fill:none;stroke:' + mix(pk, 78, 'var(--text-2)') + ';stroke-width:14;stroke-linecap:round;opacity:.75"/>' +
+              '<path d="M222 160 Q206 210 216 262" style="fill:none;stroke:' + mix(pk, 78, 'var(--text-2)') + ';stroke-width:12;stroke-linecap:round;opacity:.6"/>';
+      for (let i = 0; i < 26; i++) tops += '<ellipse cx="' + (104 + r() * 92).toFixed(0) + '" cy="' + (318 + r() * 38).toFixed(0) + '" rx="4.5" ry="2.6" style="fill:' + mix('var(--pk-lav)', 45, 'var(--text)') + '"/>';
+    } else {
+      for (let i = 0; i < 16; i++) { const x = 100 + r() * 100, y = 200 + r() * 150;
+        tops += '<ellipse cx="' + x.toFixed(0) + '" cy="' + y.toFixed(0) + '" rx="5" ry="12" transform="rotate(' + (r() * 120 - 60).toFixed(0) + ' ' + x.toFixed(0) + ' ' + y.toFixed(0) + ')" style="' + sty({ fill: mix('var(--pk-cream)', 70, 'var(--pk-blush)'), stroke: mix('var(--pk-cream)', 50, 'var(--text-mute)'), 'stroke-width': 1 }) + '"/>'; }
+    }
+    return '<svg class="cf-svg" viewBox="0 0 300 400" role="img" aria-label="產品示意（SVG）：' + P.name + '">' +
+      '<defs><clipPath id="cl-' + uid + '"><path d="' + body + '"/></clipPath></defs>' +
+      '<ellipse cx="150" cy="376" rx="86" ry="9" style="fill:rgba(31,36,41,.10)"/>' +
+      '<rect x="156" y="12" width="22" height="300" rx="9" transform="rotate(10 167 162)" style="fill:var(--accent)"/>' +
+      '<g clip-path="url(#cl-' + uid + ')">' +
+        '<rect x="60" y="100" width="180" height="270" style="fill:var(--surface-2);opacity:.45"/>' +
+        '<rect x="60" y="126" width="180" height="250" style="fill:' + liquid + ';opacity:.9"/>' +
+        '<rect x="60" y="126" width="180" height="30" style="fill:var(--surface-2);opacity:.35"/>' +
+        tops +
+        '<path d="M88 116 L104 352" style="fill:none;stroke:var(--surface-2);stroke-width:9;stroke-linecap:round;opacity:.55"/>' +
+      '</g>' +
+      '<path d="' + body + '" style="fill:none;stroke:var(--text-2);stroke-width:4;stroke-linejoin:round"/>' +
+      '<rect x="62" y="88" width="176" height="18" rx="9" style="fill:var(--surface-2);stroke:var(--text-2);stroke-width:3.5"/>' +
+      '<rect x="103" y="196" width="94" height="54" rx="15" style="fill:var(--surface-2);stroke:var(--rule);stroke-width:2"/>' +
+      '<text x="150" y="232" text-anchor="middle" style="font-family:var(--font-display-cn);font-size:26px;font-weight:800;fill:var(--text)">' + P.short + '</text>' +
+      '</svg>';
+  }
+
+  /* ---------- 共用彈簧（soft springy：阻尼比 0.74，約衝過頭 3%） ---------- */
+  const Motion = (() => {
+    const items = new Set(); let running = false, last = 0;
+    function wake() { if (!running) { running = true; last = performance.now(); requestAnimationFrame(tick); } }
+    function tick(now) {
+      const dt = Math.min((now - last) / 1000, 1 / 20); last = now;
+      const n = Math.max(1, Math.ceil(dt * 120)), h = dt / n;
+      let busy = false;
+      items.forEach(it => { if (it.step(h, n)) busy = true; it.render(); });
+      if (busy) requestAnimationFrame(tick); else running = false;
+    }
+    return { add: it => items.add(it), wake };
+  })();
+  const K = 110, Z = 0.74;
+  function spring(s, h) { const c = 2 * Z * Math.sqrt(K); s.v += (-K * (s.x - s.t) - c * s.v) * h; s.x += s.v * h; }
+  function settled(s) { if (Math.abs(s.x - s.t) < 0.0015 && Math.abs(s.v) < 0.01) { s.x = s.t; s.v = 0; return true; } return false; }
+
+  /* ---------- I23 封面流 ---------- */
+  const TILT = 50, SCALE = 0.78, GAP = 0.2, SHADE = 0.12;
+  const S0 = (1 + SCALE) / 2 * Math.cos(TILT * Math.PI / 360);   // 正中間到第一張側邊：卡寬的倍數
+  let uidN = 0;
+  class Flow {
+    constructor(el, opt = {}) {
+      this.el = el; this.opt = Object.assign({ flatGap: 360, flatScale: 0.78, flatY: -30 }, opt);
+      this.keys = el.dataset.items.split(',');
+      this.cards = this.keys.map((k, i) => {
+        const P = PRODUCTS[k], c = document.createElement('div');
+        c.className = 'cf-card'; c.style.setProperty('--pk', P.pk);
+        const inner = (id) => cupSVG(k, id) + '<span class="cf-lab"><span class="no">No.' + P.no + '</span><b>' + P.short + '</b></span>';
+        c.innerHTML = '<div class="cf-face">' + inner('f' + (++uidN)) + '<span class="cf-shade"></span></div>' +
+                      '<div class="cf-refl" aria-hidden="true">' + inner('r' + (++uidN)) + '<span class="cf-shade"></span></div>';
+        el.appendChild(c);
+        return { el: c, z: -1 };
+      });
+      this.pos = { x: 0, v: 0, t: 0 }; this.flat = { x: 0, v: 0, t: 0 };
+      Motion.add(this);
+    }
+    set(pos, flat = 0, instant = false) {
+      this.pos.t = pos; this.flat.t = flat;
+      if (instant || reduceMQ.matches) { this.pos.x = pos; this.pos.v = 0; this.flat.x = flat; this.flat.v = 0; this.render(); return; }
+      Motion.wake();
+    }
+    jump(pos, flat = 0) { this.pos.x = this.pos.t = pos; this.flat.x = this.flat.t = flat; this.pos.v = this.flat.v = 0; this.render(); }
+    step(h, n) {
+      let busy = false;
+      for (let i = 0; i < n; i++) { spring(this.pos, h); spring(this.flat, h); }
+      if (!settled(this.pos)) busy = true;
+      if (!settled(this.flat)) busy = true;
+      return busy;
+    }
+    render() {
+      const cw = this.cards[0].el.offsetWidth || 300, f = clamp(this.flat.x, 0, 1.05), N = this.cards.length, o = this.opt;
+      this.el.style.setProperty('--floor', (1 - clamp(f, 0, 1)).toFixed(3));
+      this.cards.forEach((c, i) => {
+        const d = i - this.pos.x, a = Math.abs(d), k = Math.min(a, 1), sg = d < 0 ? -1 : 1;
+        const x = sg * (a < 1 ? S0 * a : S0 + (a - 1) * GAP) * cw;
+        const fx = (i - (N - 1) / 2) * o.flatGap;
+        const tx = lerp(x, fx, f), ty = lerp(0, o.flatY, f);
+        const rot = lerp(-sg * TILT * k, 0, clamp(f, 0, 1)), sc = lerp(lerp(1, SCALE, k), o.flatScale, f);
+        c.el.style.transform = 'translate3d(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px,0) rotateY(' + rot.toFixed(2) + 'deg) scale(' + sc.toFixed(4) + ')';
+        c.el.style.setProperty('--sh', (Math.min(0.36, a * SHADE) * (1 - clamp(f, 0, 1))).toFixed(3));
+        c.el.style.setProperty('--lb', lerp(clamp(2 - a, 0, 1), 1, clamp(f, 0, 1)).toFixed(3));
+        c.el.style.setProperty('--rf', (1 - clamp(f, 0, 1)).toFixed(3));
+        const z = 100 - Math.round(a * 20);
+        if (z !== c.z) c.el.style.zIndex = c.z = z;
+      });
+    }
+  }
+  const flows = {};
+  $$('.flow').forEach(el => { flows[el.id] = new Flow(el, el.id === 'pr-flow' ? { flatY: -40 } : el.id === 'en-flow' ? { flatY: -6, flatScale: 0.86, flatGap: 380 } : {}); });
+
+  /* ---------- I14 章節疊層：data-pos 狀態機 ---------- */
+  const Chap = (() => {
+    const els = $$('#frame > .slide'); let cur = -1, tmr = 0;
+    const DUR = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dur-slow')) || 820;
+    const set = (el, p) => { el.dataset.pos = p; };
+    function snap(el) { el.classList.add('snap'); requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('snap'))); }
+    function enter(i, ctx) {
+      const prev = cur; cur = i; clearTimeout(tmr);
+      if (prev < 0 || prev === i || ctx.instant) { els.forEach((el, j) => set(el, j === i ? 'active' : 'gone')); return; }
+      const A = els[prev], B = els[i], fwd = i > prev;
+      els.forEach((el, j) => { if (j !== i && j !== prev) set(el, 'gone'); });
+      B.classList.add('no-tr'); set(B, fwd ? 'below' : 'under'); void B.offsetWidth; B.classList.remove('no-tr');
+      set(B, 'active'); set(A, fwd ? 'under' : 'exit');
+      if (!fwd) snap(B);
+      tmr = setTimeout(() => { if (cur === i) set(A, 'gone'); }, DUR + 80);
+    }
+    return { enter };
+  })();
+
+  /* ---------- 章內紙疊：--d = 被蓋了幾層 ---------- */
+  function stack(sel, k) { $$(sel + ' .sheet').forEach(s => s.style.setProperty('--d', Math.max(0, k - +s.dataset.at))); }
+
+  /* ---------- 新品資訊板、價格欄 ---------- */
+  const dots = n => '<span class="sweet" aria-label="甜度 ' + n + ' 分">' + Array.from({ length: 10 }, (_, i) => '<i' + (i < n ? ' class="f"' : '') + '></i>').join('') + '</span>';
+  $('#pd-card').innerHTML = flows['pd-flow'].keys.map((k, i) => { const P = PRODUCTS[k];
+    return '<div class="pinfo rv" data-at="' + i + '" data-until="' + i + '" style="--pk:' + P.pk + '">' +
+      '<div class="pi-top"><i></i><span>No.' + P.no + ' · 700ml</span></div>' +
+      '<h3>' + P.name + '</h3><p class="pi-en">' + P.en + '</p><hr class="rule">' +
+      '<dl class="pi-dl"><div><dt>主打配料</dt><dd>' + P.top + '</dd></div>' +
+      '<div><dt>甜度建議</dt><dd>' + P.sweetTxt + dots(P.sweet) + '</dd></div>' +
+      '<div><dt>目標客群</dt><dd>' + P.who + '</dd></div></dl>' +
+      '<div class="pi-price"><span class="hero-num">' + P.price + '</span><span class="u">元</span><span class="s">大杯</span></div></div>'; }).join('');
+  const prX = [-540, -180, 180, 540].map(x => 920 + x);
+  $('#pr-cols').outerHTML = flows['pr-flow'].keys.map((k, i) => { const P = PRODUCTS[k];
+    return '<div class="pr-col rv" data-at="2" style="left:' + prX[i] + 'px;transition-delay:' + (i * 70) + 'ms">' +
+      '<div class="p"><span class="hero-num">' + P.price + '</span><span class="u">元</span></div>' +
+      '<div class="sw8">' + dots(P.sweet) + '</div><div class="sw8">' + P.sweetTxt.replace(/（.*）/, '') + '</div></div>'; }).join('');
+
+  /* ---------- 各章設定 ---------- */
+  const wrap = (i, fn) => (k, ctx) => { if (ctx.fresh) Chap.enter(i, ctx); if (fn) fn(k, ctx); };
+  const quick = ctx => ctx.instant || (ctx.fresh && ctx.dir < 0);   // 從 hash 開或倒退回來：直接到位
+  function flowStep(id, pos, flat, ctx, from) {
+    const f = flows[id];
+    if (ctx.fresh && !quick(ctx) && from) f.jump(from[0], from[1]);
+    f.set(pos, flat, quick(ctx));
+  }
+  Stage.init({ slides: [
+    { el: '#sl-cover', title: '封面',
+      narr: ['這是雲朵茶舖今年秋天的新品提案，一共四款，十月十五號四十家門市同步上市。'],
+      onStep: wrap(0, (k, ctx) => flowStep('cv-flow', 1, 0, ctx, [-1.4, 0])) },
+    { el: '#sl-why', title: '觀察',
+      narr: ['先講為什麼。第一個觀察：天氣一涼，鮮奶類就變多，去年秋天佔到四成一。',
+             '第二個：客人願意為配料多付錢，十杯裡有六杯以上會加料。',
+             '第三個：限定款會把人帶回來，買過的客人一個月內回購率三成八。'],
+      onStep: wrap(1, k => stack('#ob-stk', k)) },
+    { el: '#sl-cups', title: '新品',
+      narr: ['第一杯，蜜地瓜燕麥鮮奶。地瓜本身就甜，建議微糖，下午當點心剛好。',
+             '第二杯，洛神桂花青茶。洛神花凍偏酸，建議半糖，主打學生，六十元。',
+             '第三杯，芋泥紫米鮮奶。份量最足，芋泥已經調過味，建議無糖，給拿它當一餐的通勤族。',
+             '第四杯，蜂蜜文旦綠茶，最清爽的一杯，建議二分糖，給怕甜的人。'],
+      onStep: wrap(2, (k, ctx) => { flowStep('pd-flow', k, 0, ctx, [-1.2, 0]); $('#pd-count').textContent = '0' + (k + 1) + ' / 04'; }) },
+    { el: '#sl-price', title: '價格',
+      narr: ['價格從六十元起跳，洛神是入門款，負責把學生拉進來。',
+             '最貴的是芋泥紫米，八十五元，芋泥加紫米的份量撐得起這個價格。',
+             '四杯攤開來看，甜度都比一般款低；照預估銷量加權，平均一杯七十一元。'],
+      onStep: wrap(3, (k, ctx) => flowStep('pr-flow', [0, 3, 1.5][k], k === 2 ? 1 : 0, ctx, [-1.2, 0])) },
+    { el: '#sl-time', title: '時程',
+      narr: ['時程上，九月二十八號先做試飲，把四款的甜度定下來。',
+             '十月五號門市教育訓練，四十家店長一起學配料備量。',
+             '十月八號開始社群預告，連續四天，一天公開一款。',
+             '十月十五號四十家同步上市，檔期跑到十二月十四號，一共六十一天。'],
+      onStep: wrap(4, k => stack('#tl-stk', k)) },
+    { el: '#sl-goal', title: '目標',
+      narr: ['目標方面，我們抓每家店每天賣七十杯新品。',
+             '乘上四十家店、六十一天，整個檔期是十七萬八百杯。',
+             '換成營收大約一千兩百一十五萬元，平均一杯七十一元。'],
+      onStep: wrap(5, k => stack('#kp-stk', k)) },
+    { el: '#sl-end', title: '收尾',
+      narr: ['以上就是秋天的四杯。今天想請大家決定：十月十五號照計畫上市。'],
+      onStep: wrap(6, (k, ctx) => flowStep('en-flow', 1.5, 1, ctx, [1.5, 0])) },
+  ] });
+
+  /* ---------- 規格面板色票 ---------- */
+  const cs = getComputedStyle(document.documentElement);
+  const sw = [['--shell', '外框、換章時露出的底'], ['--surface', '每一章的紙'], ['--surface-2', '卡片、紙疊、杯身'], ['--surface-3', '甜度空點、算式底'],
+    ['--text', '主文字、換章變暗層'], ['--text-2', '說明、杯身線'], ['--text-mute', '副標、標籤'], ['--text-faint', '頁尾、低值長條'],
+    ['--rule', '分隔線、卡片邊'], ['--accent', '鼠尾草綠：膠囊、吸管、大數字'], ['--accent-glow', '滑鼠移到卡片的光圈'],
+    ['--pk-cream', '地瓜（色條第 4 段）'], ['--pk-blush', '洛神（色條第 1 段）'], ['--pk-lav', '芋泥（色條第 3 段）'], ['--pk-mint', '文旦（色條第 2 段）']];
+  const box = document.getElementById('swatches');
+  if (box) box.innerHTML = sw.map(([v, d]) => '<div class="sw"><i style="background:var(' + v + ')"></i><div><code>' + v + '</code><small>' +
+    cs.getPropertyValue(v).trim() + '</small>' + d + '</div></div>').join('');
+})();
+</script>
+</body>
+</html>

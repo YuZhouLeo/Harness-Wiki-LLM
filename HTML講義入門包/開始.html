@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HTML 講義入門包</title>
+<style>
+:root{--bg:#f6efe7;--surface:#fffbf6;--surface-2:#efe9de;--ink:#1f1c18;--ink-2:#5a5249;--line:#e3dbcd;--line-strong:#5a3b1c;--accent:#7a4a1e;--accent-soft:#f3e7d8;--c1:#365a7c;--c1-soft:#e4ecf4;--warn:#85550d;--warn-soft:#f8eed6;--ok:#3a6a4c;--ok-soft:#e3efe5;--answer:#b8331a;
+  --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;--mono:"Cascadia Mono",Consolas,Menlo,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.75 var(--font)}
+h1,h2,h3,p,ol,ul{margin:0}
+a{color:var(--c1)}
+code{font:500 14px/1.4 var(--mono);background:var(--surface-2);padding:1px 5px;border-radius:3px;overflow-wrap:anywhere}
+.wrap{max-width:1180px;margin:0 auto;padding:30px 24px 60px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px}
+nav{position:sticky;top:24px;align-self:start;font-size:14px}
+nav p{font-weight:700;margin-bottom:8px}
+nav a{display:block;color:var(--ink-2);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);line-height:1.4}
+nav a:hover{color:var(--ink);border-left-color:var(--line-strong)}
+header h1{font-size:34px;font-weight:900;line-height:1.3}
+header p{color:var(--ink-2);margin-top:6px;font-size:17px}
+section{margin-top:36px;padding-top:22px;border-top:1px solid var(--line);scroll-margin-top:12px}
+h2{font-size:23px;font-weight:700;line-height:1.35}
+h2 small{font-size:15px;font-weight:400;color:var(--ink-2);margin-left:8px}
+h3{font-size:17px;font-weight:700;margin-top:18px}
+section>p{margin-top:8px}
+ol.steps{list-style:none;padding:0;margin-top:10px;counter-reset:s}
+ol.steps>li{counter-increment:s;display:grid;grid-template-columns:32px minmax(0,1fr);gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+ol.steps>li::before{content:counter(s);width:25px;height:25px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.see{display:block;color:var(--ink-2);font-size:15px}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:15px;background:var(--surface)}
+th{background:var(--surface-2);border-bottom:2px solid var(--line-strong);text-align:left;padding:7px 10px;font-weight:600}
+td{border-bottom:1px solid var(--line);padding:7px 10px;vertical-align:top}
+.box{margin-top:12px;padding:10px 14px;border-left:4px solid var(--c1);background:var(--c1-soft)}
+.box.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.box.ok{border-left-color:var(--ok);background:var(--ok-soft)}
+.say{display:block;margin-top:4px;font:500 15px/1.6 var(--mono);background:var(--surface-2);padding:6px 10px;border-radius:4px;overflow-wrap:anywhere}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:10px}
+.cols>div{background:var(--surface);border:1px solid var(--line);padding:12px 14px;border-radius:6px}
+.cols ul{padding-left:18px;margin-top:6px}
+.cols h3{margin-top:0}
+.card{margin-top:40px;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-2)}
+.card b{display:block}
+@media print{nav{display:none}.wrap{display:block;padding:0}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav>
+  <p>目錄</p>
+  <a href="#before">課前：先裝好</a>
+  <a href="#steps">上課：5 個指令</a>
+  <a href="#taste">先填喜好選單</a>
+  <a href="#find">去哪找版面</a>
+  <a href="#check">核對與匯出 PDF</a>
+  <a href="#mark">標註給 AI</a>
+  <a href="#layers">HTML 的 3 層</a>
+  <a href="#where">套件住哪一層</a>
+  <a href="#change">想改樣子找哪裡</a>
+  <a href="#map">功能地圖</a>
+  <a href="#together">HTML 和 AI 互相協助</a>
+  <a href="#edge">前端做不到的事</a>
+  <a href="#stuck">卡住了</a>
+  <a href="#home">帶回家</a>
+</nav>
+<main>
+  <header>
+    <h1>HTML 講義入門包</h1>
+    <p>你負責備料、指定樣子、檢查內容。AI 負責把它做成講義、學習地圖和簡報。</p>
+  </header>
+
+  <section id="before">
+    <h2>課前：先裝好<small>上課前完成</small></h2>
+    <p>你要用自己的 AI 帳號。先從下表找到你的帳號。</p>
+    <table>
+      <tr><th>你的帳號</th><th>要裝的 VS Code 擴充功能</th><th>怎麼開啟</th></tr>
+      <tr><td>Claude 付費方案</td><td>Claude Code</td><td>左側或右上角的 Claude 圖示</td></tr>
+      <tr><td>ChatGPT</td><td>Codex</td><td>Codex 圖示；看不到就按 Ctrl+Shift+P，執行 <code>Codex: Open Codex Sidebar</code></td></tr>
+      <tr><td>Google（Gemini）</td><td>Google Antigravity（Google 發布）</td><td>左側的 Antigravity 圖示</td></tr>
+    </table>
+    <ol class="steps">
+      <li><span>安裝 <a href="https://code.visualstudio.com/">VS Code</a>。Chrome 也要有。</span></li>
+      <li><span>把入門包的 zip 解壓縮到桌面。<span class="see">不要直接在 zip 裡面開檔案。</span></span></li>
+      <li><span>在 VS Code 選 File → Open Folder，打開 <code>HTML講義入門包</code>。<span class="see">問你信不信任這個資料夾時，選信任。</span></span></li>
+      <li><span>按 Ctrl+Shift+X（Mac 按 ⌘⇧X），搜尋上表的擴充功能，按 Install。</span></li>
+      <li><span>打開擴充功能，登入你的帳號。<span class="see">它會開瀏覽器。不需要 API key。</span></span></li>
+      <li><span>在對話框送出下面這句測試：<span class="say">讀 AGENTS.md，告訴我第 2 條規則是什麼</span><span class="see">AI 回答「內容只用原料和母版裡有的資料」就成功了。</span></span></li>
+      <li><span>把自己的上課筆記放進 <code>原料/</code>。<span class="see">文字檔、Markdown 最穩。沒有筆記也可以，裡面有一份備援。</span></span></li>
+    </ol>
+    <div class="box"><b>沒有付費帳號：</b>裝 Google Antigravity，用一般 Google 帳號登入。官方寫免費方案也能用，但額度沒有公布，上課時可能用完。</div>
+    <div class="box warn"><b>真的裝不起來：</b>上課前 15 分鐘來找幹部。還是不行，就改用網頁版 AI：請它輸出單一 HTML 程式碼，複製到記事本，存成 <code>.html</code>。這條路比較麻煩，模板也用不了。</div>
+  </section>
+
+  <section id="steps">
+    <h2>上課：5 個指令<small>照順序做</small></h2>
+    <p>每個指令是一個 Skill，就是一份寫給 AI 看的做事說明。不同帳號的叫法不同。</p>
+    <table>
+      <tr><th>順序</th><th>做什麼</th><th>Claude</th><th>ChatGPT</th><th>打不出來時，送這句</th></tr>
+      <tr><td>1</td><td>把喜歡的版面圖分析成規則</td><td><code>/find-style</code></td><td><code>$find-style</code></td><td>照 <code>.agents/skills/find-style/SKILL.md</code> 做</td></tr>
+      <tr><td>2</td><td>把筆記整理成母版</td><td><code>/make-master</code></td><td><code>$make-master</code></td><td>照 <code>.agents/skills/make-master/SKILL.md</code> 做</td></tr>
+      <tr><td>3</td><td>做講義</td><td><code>/make-handout</code></td><td><code>$make-handout</code></td><td>照 <code>.agents/skills/make-handout/SKILL.md</code> 做</td></tr>
+      <tr><td>4</td><td>做學習地圖</td><td><code>/make-map</code></td><td><code>$make-map</code></td><td>照 <code>.agents/skills/make-map/SKILL.md</code> 做</td></tr>
+      <tr><td>5</td><td>做可編輯簡報</td><td><code>/make-slides</code></td><td><code>$make-slides</code></td><td>照 <code>.agents/skills/make-slides/SKILL.md</code> 做</td></tr>
+    </table>
+    <div class="box"><b>Google Antigravity：</b>先打 <code>/</code> 看清單裡有沒有。沒有就用最右欄那句。</div>
+    <div class="box ok"><b>AI 問能不能寫檔或執行指令：</b>確認它要動的是這個資料夾裡的檔案，再按允許。</div>
+  </section>
+
+  <section id="taste">
+    <h2>先填喜好選單<small>做出屬於你的呈現方式</small></h2>
+    <p>喜好很難用嘴巴講，一張一張選比較快。講師的喜好也是這樣選出來的。</p>
+    <ol class="steps">
+      <li><span>用 Chrome 打開 <a href="版面喜好選單/index.html"><code>版面喜好選單/index.html</code></a>。</span></li>
+      <li><span>每張範例選「喜歡」「留」或「不要」，至少選 3 個喜歡。<span class="see">想到什麼就寫在想法欄。徽章是講師的選擇，不想被影響就關掉開關。</span></span></li>
+      <li><span>填完頁尾「你的喜好卡」的 6 題。</span></li>
+      <li><span>下載 <code>我的喜好.md</code>，放進 <code>範例/</code>。</span></li>
+      <li><span>跑 <code>find-style</code>。AI 會讀喜好卡和你喜歡的範例，把規則寫進 <code>AGENTS.md</code>。</span></li>
+    </ol>
+    <div class="box ok"><b>之後每次產出都會照這份規則。</b>下次改變喜好，就再選一次，再跑一次 <code>find-style</code>。</div>
+  </section>
+
+  <section id="find">
+    <h2>去哪找版面</h2>
+    <p>選單裡沒有喜歡的，就上網找。不用會形容，看到喜歡就存進 <code>範例/</code>。找 3 張。</p>
+    <table>
+      <tr><th>順序</th><th>去哪找</th><th>怎麼做</th><th>注意</th></tr>
+      <tr><td>1</td><td>自己的參考書、老師的講義</td><td>手機拍最喜歡的一頁</td><td>最穩，樣子一定印得出來</td></tr>
+      <tr><td>2</td><td>網路書店的試閱</td><td>搜書名，找「試閱」或內頁預覽</td><td>不是每本都有內頁</td></tr>
+      <tr><td>3</td><td>圖片搜尋、Pinterest</td><td>搜「數學 講義 排版」「歷史 筆記 版面」「study notes layout」</td><td>常找不到出處，也常是沒印過的模擬圖</td></tr>
+      <tr><td>4</td><td>Behance</td><td>搜「editorial layout」「textbook design」</td><td>看得到整本的版面結構</td></tr>
+      <tr><td>5</td><td>Canva 範本</td><td>搜「worksheet」</td><td>當靈感，不用在 Canva 裡做</td></tr>
+    </table>
+    <div class="box warn"><b>圖只讓 AI 看版面。</b>別人的內容不要抄進你要分享的講義。</div>
+  </section>
+
+  <section id="check">
+    <h2>核對與匯出 PDF</h2>
+    <p>外觀漂亮不代表內容是對的。這一步不能省。</p>
+    <ol class="steps">
+      <li><span>看 AI 回報的核對清單：共幾項、漏了哪幾項。</span></li>
+      <li><span>隨機挑 3 個數字或名詞，翻回自己的原始筆記對一次。</span></li>
+      <li><span>用 Chrome 打開講義，按 Ctrl+P（Mac 按 ⌘P）。</span></li>
+      <li><span>目的地選「另存為 PDF」，勾選「背景圖形」，邊界選「無」。</span></li>
+    </ol>
+  </section>
+
+  <section id="mark">
+    <h2>標註給 AI<small>指著元件說要怎麼改</small></h2>
+    <p>「那個標題太大」AI 不知道是哪一個。指給它看。簡報模板內建這個功能。</p>
+    <ol class="steps">
+      <li><span>用 Chrome 打開簡報，按 <code>E</code> 進入編輯模式。</span></li>
+      <li><span>按 <code>M</code>，或按工具列的「＋標註給 AI」。</span></li>
+      <li><span>點要改的元件，寫想法。<span class="see">例：「這個標題太長，改成一行」「這張卡片的底色換成淺灰」。</span></span></li>
+      <li><span>重複第 3 步，把要改的都標完。</span></li>
+      <li><span>按 Ctrl+S 存檔（Mac 按 ⌘S）。<span class="see">第一次存檔要選這個檔所在的資料夾，或它的上層。只有 Chrome、Edge 能寫回。</span></span></li>
+      <li><span>按「複製給 AI」，貼到 AI 對話欄送出。<span class="see">AI 只改標到的元件，改完會清掉處理過的標註。重新整理就看得到結果。</span></span></li>
+    </ol>
+    <div class="box"><b>只想改字或搬位置：</b>按 <code>E</code> 之後直接點字改、直接拖曳，不用標註。</div>
+    <div class="box warn"><b>講義和學習地圖沒有這個功能。</b>請在對話裡寫清楚哪一段，例：「第二節的年表，把年份欄改窄」。</div>
+  </section>
+
+  <section id="layers">
+    <h2>HTML 的 3 層<small>打開 <a href="三層原理示意.html"><code>三層原理示意.html</code></a> 看 60 秒動畫</small></h2>
+    <table>
+      <tr><th>層</th><th>寫在哪</th><th>管什麼</th><th>像房子的</th><th>要改這些就找它</th></tr>
+      <tr><td><b>骨架</b></td><td>HTML</td><td>有哪些東西：標題、段落、按鈕</td><td>鋼筋和隔間</td><td>字、順序、多一個框</td></tr>
+      <tr><td><b>外觀</b></td><td>CSS</td><td>長什麼樣：顏色、字級、間距、幾欄</td><td>油漆和裝潢</td><td>顏色、大小、排法</td></tr>
+      <tr><td><b>動作</b></td><td>JavaScript</td><td>按了會怎樣：翻頁、計分、存進度</td><td>水電和開關</td><td>按鈕的反應、測驗、動畫的開關</td></tr>
+    </table>
+    <p>3 層通常都在同一個 <code>.html</code> 檔裡：<code>&lt;style&gt;</code> 裡是外觀，<code>&lt;script&gt;</code> 裡是動作，其他是骨架。</p>
+  </section>
+
+  <section id="where">
+    <h2>套件住哪一層</h2>
+    <p>套件不是第 4 層，是別人寫好的骨架、外觀、動作。放進檔案的方式看得出它在哪一層：<code>&lt;link&gt;</code> 進外觀，<code>&lt;script&gt;</code> 進動作，貼一段 HTML 進骨架。</p>
+    <table>
+      <tr><th>東西</th><th>骨架</th><th>外觀</th><th>動作</th><th>說明</th></tr>
+      <tr><td>配色</td><td></td><td>●</td><td></td><td>一組 CSS 變數</td></tr>
+      <tr><td>講義、報告版式</td><td>●</td><td>●</td><td></td><td>整頁範例</td></tr>
+      <tr><td>簡報</td><td>●</td><td>●</td><td>●</td><td>含翻頁程式</td></tr>
+      <tr><td>按鈕、開關等小元件</td><td>●</td><td>●</td><td>有的有</td><td>Uiverse、VengeanceUI 的元件約半數要 JavaScript</td></tr>
+      <tr><td>animate.css</td><td></td><td>●</td><td>有的有</td><td>動畫本身是 CSS；要「按了才動」才用 JavaScript</td></tr>
+      <tr><td>滾動、翻牌等互動效果</td><td>●</td><td>●</td><td>●</td><td></td></tr>
+      <tr><td>KaTeX</td><td></td><td>●</td><td>●</td><td>CSS 給字型，JavaScript 排公式</td></tr>
+      <tr><td>Chart.js、Mermaid、Rough.js</td><td></td><td></td><td>●</td><td>JavaScript 把資料畫成圖</td></tr>
+    </table>
+  </section>
+
+  <section id="change">
+    <h2>想改樣子找哪裡<small>不是先翻 CSS</small></h2>
+    <p>你不用自己找程式碼。先判斷要動哪一層，再選下面的做法。</p>
+    <table>
+      <tr><th>想改</th><th>在哪一層</th><th>怎麼做</th></tr>
+      <tr><td>改字、調順序</td><td>骨架</td><td>簡報按 <code>E</code> 直接改；講義在對話裡說</td></tr>
+      <tr><td>多一欄、多一個框</td><td>骨架＋外觀</td><td>CSS 只能排已經有的東西，要多東西要動 HTML。請 AI 改</td></tr>
+      <tr><td>顏色、字級、間距</td><td>外觀</td><td>標註給 AI。想自己試：按 F12，在右邊 Styles 改數字，確定了再請 AI 寫回檔案</td></tr>
+      <tr><td>單欄改雙欄、加左標籤</td><td>外觀為主</td><td>給範例或標註。結構不夠時 AI 才動骨架</td></tr>
+      <tr><td>按了會怎樣、存進度</td><td>動作</td><td>跟 AI 說要什麼行為</td></tr>
+      <tr><td>整體風格</td><td>3 層都動</td><td>不要一條一條改。到喜好選單挑範例，再跑 <code>find-style</code></td></tr>
+    </table>
+    <div class="box warn"><b>F12 改的東西，重新整理就不見。</b>它只拿來試。要留下來，就請 AI 寫回檔案。</div>
+  </section>
+
+  <section id="map">
+    <h2>功能地圖<small>想要什麼 → 跟 AI 說加什麼</small></h2>
+    <p>你不用會寫。把「跟 AI 說加」那欄的字告訴 AI，並請它先說要不要連網。</p>
+    <table>
+      <tr><th>類別</th><th>你想要</th><th>跟 AI 說加</th><th>注意</th></tr>
+      <tr><td rowspan="5">呈現</td><td>數學公式</td><td>KaTeX</td><td>入門包的 <code>產出/katex/</code> 已經放好</td></tr>
+      <tr><td>圖表</td><td>Chart.js</td><td>外部套件要連網，或把套件放進資料夾</td></tr>
+      <tr><td>流程圖</td><td>Mermaid</td><td>同上</td></tr>
+      <tr><td>地圖</td><td>Leaflet</td><td>底圖要連網</td></tr>
+      <tr><td>手繪風</td><td>Rough.js</td><td>同圖表</td></tr>
+      <tr><td rowspan="4">學習</td><td>測驗與計分</td><td>JavaScript</td><td></td></tr>
+      <tr><td>單字卡、間隔複習</td><td>JavaScript＋localStorage</td><td>進度只在這台瀏覽器</td></tr>
+      <tr><td>朗讀</td><td>瀏覽器語音（SpeechSynthesis）</td><td>聲音看電腦裝了哪些語音</td></tr>
+      <tr><td>口說辨識</td><td>瀏覽器語音（SpeechRecognition）</td><td>Chrome 才穩，要連網，聲音會送到雲端</td></tr>
+      <tr><td rowspan="3">存</td><td>存進度</td><td>localStorage</td><td>只在這台電腦的這個瀏覽器</td></tr>
+      <tr><td>存大量資料或圖片</td><td>IndexedDB</td><td>同上</td></tr>
+      <tr><td>寫回檔案</td><td>File System Access</td><td>只有 Chrome、Edge</td></tr>
+      <tr><td rowspan="3">讀進來</td><td>拖進 Excel、CSV</td><td>SheetJS</td><td>檔案不會離開你的電腦</td></tr>
+      <tr><td>拖進 PDF</td><td>PDF.js</td><td>同上</td></tr>
+      <tr><td>辨識圖片裡的字</td><td>Tesseract.js</td><td>第一次要下載語言檔，比較慢</td></tr>
+      <tr><td rowspan="3">帶出去</td><td>列印排版</td><td>列印樣式（<code>@media print</code>）</td><td></td></tr>
+      <tr><td>存成圖片</td><td>html2canvas</td><td></td></tr>
+      <tr><td>轉成 PPTX</td><td>PptxGenJS</td><td>版面會接近，不會一模一樣</td></tr>
+    </table>
+    <div class="box warn"><b>這張表只查過文件。</b>入門包實際用過的是 KaTeX、localStorage、File System Access、列印樣式。其他的請做出來先試。</div>
+  </section>
+
+  <section id="together">
+    <h2>HTML 和 AI 互相協助<small>不只是 AI 做給你看</small></h2>
+    <p>AI 不會點按鈕，你不會寫程式。HTML 可以當你們中間的介面，一輪一輪往前走：</p>
+    <ol class="steps">
+      <li><span>AI 做一份 HTML。</span></li>
+      <li><span>你在瀏覽器裡點、勾、寫。</span></li>
+      <li><span>HTML 把你的選擇變成 <code>.md</code> 或 JSON。</span></li>
+      <li><span>AI 讀這份檔，做下一版。</span></li>
+    </ol>
+    <table>
+      <tr><th>做法</th><th>你做什麼</th><th>AI 拿到什麼</th><th>狀態</th></tr>
+      <tr><td>決策頁</td><td>每題選一個選項</td><td>你的答案清單</td><td>講師做過，這堂課就是這樣定的</td></tr>
+      <tr><td>標註修改清單</td><td>點元件、寫想法</td><td>哪個元件要怎麼改</td><td>講師做過，簡報模板內建</td></tr>
+      <tr><td>喜好選單</td><td>挑喜歡的範例</td><td>你的版面規則</td><td>講師做過，入門包內附</td></tr>
+      <tr><td>按 E 改完再轉檔</td><td>直接改簡報</td><td>改過的內容</td><td>講師做過</td></tr>
+      <tr><td>關聯圖</td><td>看圖找漏洞</td><td>哪些筆記沒連起來</td><td>講師做過，資料由腳本算好，HTML 畫圖</td></tr>
+      <tr><td>錯題回饋</td><td>寫測驗，下載錯題</td><td>你錯在哪，再出相近的題目</td><td>你也可以做</td></tr>
+      <tr><td>原文對照清單</td><td>逐項打勾、標錯</td><td>哪幾段要照原文改</td><td>你也可以做</td></tr>
+    </table>
+  </section>
+
+  <section id="edge">
+    <h2>前端做不到的事</h2>
+    <p>HTML 檔在你的瀏覽器裡執行。下面這些事要有後端（一台一直開著的伺服器）。AI 說做得到時，先問它要不要後端。</p>
+    <div class="cols">
+      <div><h3>一定要後端</h3><ul>
+        <li>多人共用同一份資料</li>
+        <li>登入帳號</li>
+        <li>藏 API 金鑰</li>
+        <li>定時推播、寄信</li>
+        <li>換裝置自動同步</li>
+      </ul></div>
+      <div><h3>常見誤解</h3><p>把 API 金鑰寫進 HTML，以為別人看不到。其實所有人按 F12 都看得到。不要這樣做。</p></div>
+    </div>
+  </section>
+
+  <section id="stuck">
+    <h2>卡住了</h2>
+    <table>
+      <tr><th>狀況</th><th>怎麼辦</th></tr>
+      <tr><td>打 <code>/</code> 或 <code>$</code> 找不到 Skill</td><td>確認打開的是 <code>HTML講義入門包</code> 這個資料夾，不是上一層。再不行就送「照 <code>.agents/skills/…/SKILL.md</code> 做」。</td></tr>
+      <tr><td>額度用完</td><td>和旁邊同學一起看他的畫面，步驟照學。各家額度重設的時間不同，回家再繼續。</td></tr>
+      <tr><td>AI 說看不到圖</td><td>改用文字跟它說版面，或直接用模板：「用模板/講義-文史.html」。</td></tr>
+      <tr><td>公式沒有排出來</td><td>確認講義和 <code>katex/</code> 資料夾都在 <code>產出/</code> 底下，沒有被搬開。</td></tr>
+      <tr><td>AI 把模板改壞了</td><td>刪掉 <code>產出/</code> 裡那個檔，再跑一次指令。模板本身在 <code>模板/</code>，不會受影響。</td></tr>
+      <tr><td>內容被 AI 加料</td><td>跟它說：「只用母版有的資料，把母版沒有的刪掉。」再在 <code>AGENTS.md</code> 加一行規則。</td></tr>
+    </table>
+  </section>
+
+  <section id="home">
+    <h2>帶回家</h2>
+    <ol class="steps">
+      <li><span>每踩一次雷，就在 <code>AGENTS.md</code> 加一行。下次 AI 就不會再犯。</span></li>
+      <li><span>喜歡的成品存進 <code>範例/</code>，下次當範例。</span></li>
+      <li><span>喜好變了，就回 <code>版面喜好選單/index.html</code> 再選一次，再跑 <code>find-style</code>。</span></li>
+      <li><span>新的一科就複製一份整個資料夾，換掉 <code>原料/</code>。</span></li>
+      <li><span>想做到更細，打開 <code>成品參考/</code>，看講師的 3 份真品，也可以按 F12 看原始碼。</span></li>
+    </ol>
+  </section>
+
+  <aside class="card">
+    <b>產出卡</b>
+    受眾：沒有 HTML 概念的大學生。目的：照著裝好工具、做完 5 步，回家還能自己用，也知道要改東西時該找哪一層、跟 AI 說什麼。使用情境：電腦瀏覽器，上課時開在旁邊查。限制：單檔、不連外部資源。語調：操作手冊，一句一步。證據：3 種擴充功能與 Skill 叫法來自官方文件（2026-11-01 查），Claude 路線用 Claude Code 實跑過 5 個 Skill（2026-11-01）；ChatGPT 與 Google 路線只查官方文件，沒有實跑；功能地圖只有 KaTeX、localStorage、File System Access、列印樣式實際用過。
+  </aside>
+</main>
+</div>
+</body>
+</html>

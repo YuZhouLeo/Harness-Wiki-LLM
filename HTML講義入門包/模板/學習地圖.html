@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>學習地圖</title>
+<meta name="description" content="學習地圖模板：內容全部放在 id=map-data 的 JSON 節點，頁面由檔內程式畫出。">
+<!-- 給 AI：只改 body 最前面的 JSON（id="map-data"）。JSON 後面的 CSS 與 JS 是版面程式，不要讀、不要改。欄位說明在同資料夾的「學習地圖-資料格式.md」。 -->
+</head>
+<body>
+<!-- 內容開始：AI 只改這段 -->
+<script type="application/json" id="map-data">
+{
+  "title": "日本史學習地圖",
+  "subtitle": "照年代走三站",
+  "eyebrow": "日本史課堂筆記・示範內容",
+  "tagline": ["看年代", "記三件事", "做練習"],
+  "intro": "三站照年代走：奈良時代的皇權受周邊親戚牽制，攝關政治由**外戚藤原家**掌權，院政由**退位的上皇**掌握實權。",
+  "stations": [
+    {
+      "name": "奈良時代",
+      "when": "710～794",
+      "group": "古代",
+      "status": "done",
+      "summary": "710 年遷都平城京，794 年遷平安京，兩個時代的分界看首都。",
+      "goal": "能對照長安城說出平城京的特色，並說出宇佐八幡宮神託事件的經過。",
+      "remember": [
+        "710 平城京（奈良時代）→ 794 平安京（平安時代），分界看首都。",
+        "平城京仿長安但東西窄、南北長；零件＝大內裏＋條坊＋朱雀大路＋左京右京＋外京（長安沒有）＋東西市。",
+        "左京右京以大內裏朝南的視角分（看地圖會覺得相反）；外京裡的興福寺是藤原氏氏寺。"
+      ],
+      "timeline": [
+        { "when": "710", "event": "遷都平城京，奈良時代開始" },
+        { "when": "769", "event": "宇佐八幡宮神託事件，道鏡篡位失敗" },
+        { "when": "770", "event": "稱德天皇去世，道鏡流放下野" },
+        { "when": "794", "event": "遷都平安京，平安時代開始" }
+      ],
+      "topics": [
+        {
+          "title": "平城京：照長安蓋，但不是照搬",
+          "intro": "平城京仿長安城而建，道路都呈棋盤狀。",
+          "points": [
+            "**大內裏（＝平城宮）**：城北正中央，天皇住的地方兼中央官廳。",
+            "**條坊**：街道縱向稱「坊」（一坊到四坊），橫向稱「條」（一條到九條）。",
+            "**朱雀大路**：貫穿條坊中央的南北大道，直通大內。",
+            "**左京／右京**：以平城宮面向朱雀大路的方向來說，所以看平面圖會覺得左右相反。",
+            "**東市、西市**：兩處官營市場，不是天天開。"
+          ],
+          "table": {
+            "head": ["", "長安城", "平城京"],
+            "rows": [
+              ["城的形狀", "東西較寬、南北較窄", "東西窄、南北長"],
+              ["貫穿中央的南北大道", "朱雀街", "朱雀大路"],
+              ["多出來的一塊", "沒有", "外京，裡面有東大寺、興福寺等多座寺廟"]
+            ]
+          },
+          "note": { "title": "老師故事：平城京的排水困局", "text": "平城京位在盆地又沒有下水道，只能挖井取水、挖側溝排水，結果污水反而順著河川流向天皇所在的大內一帶。" },
+          "terms": [
+            { "term": "平城京", "original": "平城京", "reading": "へいじょうきょう", "meaning": "710 年仿長安城建在奈良的都城" }
+          ]
+        },
+        {
+          "title": "道鏡事件：差點當上天皇的和尚",
+          "intro": "孝謙上皇（46）再度即位，成為第 48 代稱德天皇。她任命和尚道鏡為太政大臣（禪師），又封他為法王。",
+          "flow": ["想把皇位讓給道鏡", "神諭否定", "使者被流放", "隔年稱德天皇去世，道鏡被流放"],
+          "points": [
+            "稱德天皇膝下無子，想把皇位讓給道鏡；但皇位必須由有天皇家血統的人繼承，道鏡沒有。",
+            "稱德天皇派親信前去求證，使者在神殿得到的神諭是「道鏡不是皇室的人，怎麼可以即位」。",
+            "老師的結論：古代皇位爭奪非常激烈，皇權不是集中在天皇一個人身上，受到周邊親戚很大的牽制。"
+          ],
+          "note": { "title": "地點", "text": "宇佐八幡宮在九州大分縣，是全國八幡神社的總本宮。" }
+        }
+      ],
+      "quiz": [
+        { "q": "平城京和長安城的形狀差在哪？", "a": "長安城東西較寬、南北較窄；平城京相反，東西窄、南北長。" },
+        { "q": "左京、右京為什麼在平面圖上看起來左右相反？", "a": "左京右京是以平城宮面向朱雀大路的方向來說的。" },
+        { "q": "下列哪一項是長安城沒有、平城京才有的？", "options": ["貫穿中央的南北大道", "外京", "棋盤狀的道路"], "a": "外京。" }
+      ]
+    },
+    {
+      "name": "攝關政治",
+      "when": "10～11 世紀",
+      "group": "古代",
+      "status": "done",
+      "summary": "擔任攝政、關白的外戚掌握實權的政治體制，又稱貴族政治、藤原政治。",
+      "goal": "不看講義，說得出攝政和關白差在哪裡（有理由／無理由）。",
+      "remember": [
+        "攝關政治（10～11 世紀）＝藤原氏以外戚身分任攝政（有理由的代理）、關白（無理由的輔佐）；俗語「亭主関白」由此而來。",
+        "鎌足 → 不比等 → 四家（南・北・式・京）中的北家；全盛期道長 30 年＋賴通 50 年。",
+        "律令制的調整：格（補充）、式（施行細則）；令外官＝攝政、關白、征夷大將軍、健兒制（郡司子弟）、檢非違使（京城警察）；開始允許土地私有。"
+      ],
+      "timeline": [
+        { "when": "858", "event": "藤原良房實質攝政（清和天皇 9 歲即位）" },
+        { "when": "884", "event": "藤原基經成為事實上的第一位關白" },
+        { "when": "10～11 世紀", "event": "攝關政治；道長 30 年、賴通 50 年" }
+      ],
+      "topics": [
+        {
+          "title": "攝政與關白：藤原家靠什麼掌權",
+          "intro": "藤原氏掌權的身分是外戚：把女兒嫁給天皇，生下的皇子即位，再以這個身分出任攝政或關白。",
+          "table": {
+            "head": ["", "攝政", "關白"],
+            "rows": [
+              ["一句話", "有理由的代理", "無理由的輔佐"],
+              ["什麼時候", "天皇還是小孩子、天皇是女性、或天皇生病的時候", "不需要什麼正當理由，反正就是在旁邊輔佐"]
+            ]
+          },
+          "note": { "title": "老師提到的俗語：亭主関白", "text": "「亭主」查字典有老闆，也有先生（丈夫）的意思；「亭主關白」就是上面一個主子、底下有臣子那樣的家庭關係。" },
+          "terms": [
+            { "term": "攝政", "original": "摂政", "reading": "せっしょう", "meaning": "有理由的代理：天皇年幼、是女性或生病時代行職務" },
+            { "term": "關白", "original": "関白", "reading": "かんぱく", "meaning": "無理由的輔佐：天皇成年也在旁，實權比攝政大" },
+            { "term": "外戚", "original": "外戚", "reading": "がいせき", "meaning": "天皇母親或皇后的娘家；藤原氏靠它掌權" }
+          ]
+        },
+        {
+          "title": "藤原北家：父子稱霸朝政",
+          "flow": ["中臣鎌足", "不比等", "四家（南・北・式・京）", "北家", "道長、賴通"],
+          "points": [
+            "藤原家的始祖是中臣鎌足，再來是不比等；不比等之後分成了四個家，其中**北家**勢力很大。",
+            "藤原道長據說稱霸朝政三十年，他的兒子藤原賴通五十年。",
+            "歷史上的關白，除了豐臣秀吉（豐臣家）之外，都由藤原道長的藤原家子孫世代繼承。"
+          ]
+        },
+        {
+          "title": "律令跟不上現實：格、式、令外官",
+          "intro": "班田收授法、租庸調等古代稅制，對一般老百姓負擔實在太重；有些制度推行不下去，需要修正調整。",
+          "table": {
+            "head": ["", "是什麼", "舉例或原因"],
+            "rows": [
+              ["格", "針對律令做補充的法律", "班田收授法、租庸調、軍團與勞役對老百姓負擔太重"],
+              ["式", "施行細則", "律和令規定得比較簡單，式規定怎麼施行"],
+              ["令外官", "原本的令以外出現的官職", "攝政、關白、征夷大將軍、健兒制、檢非違使"]
+            ]
+          },
+          "points": [
+            "**健兒制**：地方軍團沒辦法正常運作，於是由郡司的子弟擔任防衛兵。",
+            "**檢非違使**：原本京城的治安由被徵召的老百姓維持，改由特定的專門人員維持。"
+          ]
+        }
+      ],
+      "quiz": [
+        { "q": "攝政和關白差在哪裡？", "a": "攝政是有理由的代理；關白是無理由的輔佐。" },
+        { "q": "藤原氏的全盛期是哪一對父子？各稱霸朝政多久？", "a": "藤原道長據說三十年，兒子藤原賴通五十年。" },
+        { "q": "健兒制原本怎麼做、改成什麼？", "a": "原本地方有軍團；地方軍團沒辦法正常運作後，改由郡司的子弟擔任防衛兵。" }
+      ]
+    },
+    {
+      "name": "院政",
+      "when": "1086～1221",
+      "group": "中世",
+      "status": "now",
+      "summary": "退位的天皇（上皇）在朝廷裡掌握政治實權，從 1086 年白河上皇開始，到 1221 年承久之亂為止。",
+      "goal": "能解釋天皇為什麼要退位成上皇才能擁有土地，以及院政怎麼讓武士介入中央政治。",
+      "remember": [
+        "院政：1086 白河上皇起到 1221 承久之亂，退位的天皇（上皇，又稱院；出家的稱法皇）掌握實權；1068 藤原家失勢，是因為藤原家的女性沒有生出皇子。",
+        "公地公民的理念下天皇不能有私人土地 → 退位當上皇才能擁有皇室領、發展家政：院 → 院廳 → 皇室領；院管國家大事，朝廷管小事。",
+        "上皇沒有武力，找源氏、平氏保護莊園、對抗南都北嶺（興福寺、延曆寺）的僧兵 → 武士介入中央政治的契機。"
+      ],
+      "timeline": [
+        { "when": "1068", "event": "藤原氏統治結束" },
+        { "when": "1086", "event": "白河上皇開始院政" },
+        { "when": "1221", "event": "承久之亂，院政結束" }
+      ],
+      "topics": [
+        {
+          "title": "天皇為什麼要退位",
+          "intro": "律令制原則上是公地公民的理念：全天下的土地跟人民都由天皇所有，所以天皇不能擁有私人土地。",
+          "flow": ["天皇不能有私人土地", "退位成上皇，擁有莊園與家政", "找源氏、平氏當武力", "武士介入中央政治"],
+          "points": [
+            "平安中後期莊園興起，寺廟、藤原家、武士都有自己的莊園，皇室家族反而沒有。",
+            "院底下設了**院廳**，管理行政；院有自己的**皇室領**，也就是自己的莊園。",
+            "上皇沒有自己的私人武裝力量，就找源氏跟平氏，保護莊園、鎮壓**南都北嶺**。"
+          ],
+          "table": {
+            "head": ["", "朝廷（天皇）", "院（上皇）"],
+            "rows": [
+              ["管國家的什麼事", "國家的小事", "國家的大事"],
+              ["辦事機構", "既有的朝廷支配體系，還是存在", "院底下設院廳，管理行政"],
+              ["土地與武力", "天皇不能擁有私人土地", "有自己的皇室領，找源氏、平氏當私人武力"]
+            ]
+          },
+          "terms": [
+            { "term": "院政", "original": "院政", "reading": "いんせい", "meaning": "退位的上皇（院）掌握政治實權" },
+            { "term": "南都北嶺", "original": "南都北嶺", "reading": "なんとほくれい", "meaning": "興福寺與延曆寺兩大寺院勢力，擁有僧兵" }
+          ]
+        },
+        {
+          "title": "上皇、院、法皇：三個詞怎麼分",
+          "points": [
+            "**上皇**：退位的天皇。",
+            "**院**：院政時期的上皇又被稱為「院」，他有自己的行政組織，那叫院。",
+            "**法皇**：當時退位的天皇篤信佛教，很多人出家；這時期的上皇又稱法皇。"
+          ],
+          "note": { "title": "老師提醒", "text": "不要把現在的上皇叫法皇，因為現在的上皇沒有出家；是院政時期的上皇又被稱為法皇。" }
+        },
+        {
+          "title": "1068：藤原家為什麼失勢",
+          "intro": "老師問：藤原家是靠什麼維持他們的政治聲勢？同學答：跟天皇家的姻親關係。",
+          "points": [
+            "答案：那時候藤原家的女性們**沒有生出皇子**，所以藤原家呼風喚雨的時代就結束了。"
+          ]
+        }
+      ],
+      "quiz": [
+        { "q": "天皇為什麼要退位才能有自己的土地？", "a": "只要他還在天皇任內，就沒辦法擁有私人土地；變成上皇就可以擁有自己的土地（皇室領）。" },
+        { "q": "院政時期，朝廷和院各管什麼？", "a": "朝廷管國家的小事，院（上皇）管國家的大事。" },
+        { "q": "1068 年藤原家的時代為什麼結束？", "a": "藤原家的女性們沒有生出皇子。" }
+      ]
+    }
+  ],
+  "card": {
+    "audience": "沒有 HTML 概念的大學生，以及替他們換內容的 AI。",
+    "goal": "看懂學習地圖長什麼樣，再把 JSON 換成自己的課。",
+    "context": "在電腦瀏覽器打開，離線可用，邊讀邊打勾。",
+    "limits": "單一 HTML、不連外部資源；AI 只改 JSON，不改版面程式。",
+    "tone": "教學口吻、海報筆記感，不用動畫吸睛。",
+    "evidence": "示範內容全部取自日本史課堂母版，沒有另外補事實。"
+  }
+}
+</script>
+<!-- 內容結束 -->
+
+<style>
+:root{
+  --bg:#f6efe7; --surface:#fffbf6; --surface-2:#efe9de; --ink:#1f1c18; --ink-2:#5a5249;
+  --line:#e3dbcd; --line-strong:#5a3b1c; --c1:#365a7c; --answer:#b8331a; --ok:#3a6a4c; --ok-soft:#e3efe5; --note:#fbf4cf;
+  --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --jp:"Hiragino Sans","Yu Gothic UI","Yu Gothic","Meiryo",sans-serif;
+  --num:"Segoe UI","SF Pro Display",system-ui,sans-serif;
+  --r-hand:18px 13px 20px 12px / 13px 20px 12px 18px;
+  --tone:var(--c1); --tone-soft:#e4ecf4;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-width:1100px;min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr auto auto;color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.65;background-color:var(--bg);background-image:radial-gradient(rgba(90,59,28,.07) 1px,transparent 1.2px);background-size:22px 22px}
+button{font:inherit;color:inherit}
+a{color:inherit}
+h1,h2,h3,p{margin:0;line-height:1.3}
+p{line-height:inherit}
+ul,ol{margin:0;padding:0;list-style:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+.t1{--tone:#365a7c;--tone-soft:#e4ecf4}
+.t2{--tone:#65467a;--tone-soft:#ede4f5}
+.t3{--tone:#85550d;--tone-soft:#f8eed6}
+.t4{--tone:#625b54;--tone-soft:#efebe4}
+.kw{font-weight:700;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;text-decoration-color:rgba(31,28,24,.55)}
+
+/* 深藍頁首帶＋分頁籤 */
+.top{background:var(--c1);color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 0 rgba(31,28,24,.18)}
+.top-in{max-width:1320px;margin:0 auto;padding:10px 32px;display:flex;align-items:center;gap:20px}
+.brand{display:flex;flex-direction:column;text-decoration:none;line-height:1.25;flex:none}
+.brand b{font-size:19px}
+.brand span{font-size:12px;opacity:.85}
+.tabs{display:flex;align-items:center;justify-content:flex-end;gap:3px;margin-left:auto;flex-wrap:wrap}
+.tab{display:inline-flex;align-items:center;gap:5px;text-decoration:none;font-size:14px;padding:5px 10px;border-radius:999px;border:1.5px solid transparent;white-space:nowrap;transition:background-color .15s,border-color .15s}
+.tab i{font-style:normal;font-size:12px;width:19px;height:19px;border-radius:50%;display:inline-grid;place-items:center;border:1.5px solid rgba(255,255,255,.7);font-weight:700}
+.tab:hover{border-color:rgba(255,255,255,.55)}
+.tab[aria-current="page"]{background:var(--surface);color:var(--c1);font-weight:700}
+.tab[aria-current="page"] i{border-color:var(--c1)}
+.tab .tck{display:none;font-size:12px;font-weight:800;line-height:1;color:#cfe8d5}
+.tab.done .tck{display:inline}
+.tab[aria-current="page"] .tck{color:var(--ok)}
+.tabgrp{font-size:12px;opacity:.85;margin-left:8px;padding-left:10px;border-left:1.5px dashed rgba(255,255,255,.45)}
+
+main{width:100%;max-width:1320px;margin:0 auto;padding:30px 32px 44px}
+.page{display:none}
+.page.on{display:block}
+
+/* 毛筆色帶、虛線便當格、緞帶標題、便條紙 */
+.brush{display:inline-block;color:#fff;background:var(--tone);padding:14px 50px 16px;clip-path:polygon(2% 12%,18% 5%,50% 9%,78% 6%,98% 14%,97% 34%,100% 52%,97.5% 74%,99% 90%,78% 96%,50% 92%,22% 97%,1.5% 90%,3% 68%,0 48%,2.5% 30%)}
+.box{position:relative;background:var(--surface);border:2px dashed color-mix(in srgb,var(--tone) 50%,transparent);border-radius:var(--r-hand);padding:32px 22px 20px}
+.ribbon{position:absolute;top:-17px;left:16px;max-width:calc(100% - 32px);background:color-mix(in srgb,var(--tone) 70%,var(--surface));padding:1.5px;transform:rotate(-1deg);clip-path:polygon(0 0,100% 0,calc(100% - 11px) 50%,100% 100%,0 100%,11px 50%)}
+.ribbon > span{display:block;background:var(--tone-soft);padding:4px 26px 4px 24px;font-weight:700;font-size:15px;line-height:1.4;clip-path:polygon(0 0,100% 0,calc(100% - 10px) 50%,100% 100%,0 100%,10px 50%)}
+.sticky{position:relative;background:var(--note);padding:24px 20px 16px;transform:rotate(1.4deg);box-shadow:0 10px 14px -10px rgba(60,40,20,.45),0 1px 0 rgba(60,40,20,.08);border-radius:2px 2px 14px 2px}
+.sticky::before{content:"";position:absolute;top:-10px;left:50%;width:76px;height:20px;margin-left:-38px;background:rgba(214,196,160,.55);transform:rotate(-3deg)}
+.sticky.l{transform:rotate(-1.6deg)}
+.sticky h4{margin:0 0 4px;font-size:13px;color:var(--ink-2);font-weight:700}
+
+.badge{display:inline-block;font-size:12.5px;font-weight:700;line-height:1.7;padding:0 9px;border-radius:999px;white-space:nowrap}
+.badge.done{background:var(--tone-soft);color:var(--tone);border:1px solid color-mix(in srgb,var(--tone) 40%,transparent)}
+.badge.now{background:var(--answer);color:#fff}
+.badge.todo{border:1.5px dashed var(--line-strong);color:var(--ink-2)}
+.badge.fin{background:var(--ok-soft);color:var(--ok);border:1px solid color-mix(in srgb,var(--ok) 40%,transparent)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line-strong);background:var(--surface);border-radius:999px;padding:4px 14px;font-size:14px;cursor:pointer;text-decoration:none;transition:background-color .15s,transform .15s}
+.btn:hover{background:var(--surface-2)}
+.btn:active{transform:scale(.97)}
+
+/* 打勾 */
+.ck{position:absolute;opacity:0;pointer-events:none}
+.bx{flex:none;width:21px;height:21px;border:2px solid var(--ink);border-radius:4px 6px 4px 5px;display:grid;place-items:center;background:var(--surface);transition:background-color .15s,border-color .15s}
+.bx svg{width:15px;height:15px;color:#fff;transform:scale(0);transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
+.ck:checked + .bx{background:var(--ok);border-color:var(--ok)}
+.ck:checked + .bx svg{transform:scale(1)}
+.ck:focus-visible + .bx{outline:2px solid var(--c1);outline-offset:2px}
+.donebox{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:0 13px 0 6px;font-size:14px;cursor:pointer;user-select:none;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);transition:background-color .15s}
+.donebox:hover{background:var(--surface-2)}
+.ck:checked ~ .lb{color:var(--ok);font-weight:700}
+
+/* 首頁 */
+.hero{display:grid;grid-template-columns:190px 1fr 320px;gap:26px;align-items:center;margin-bottom:34px}
+.hero.solo{grid-template-columns:190px 1fr 190px}
+.hero-art{width:186px;height:150px;color:var(--ink);display:block}
+.hero-mid{text-align:center}
+.eyebrow{font-size:14px;color:var(--ink-2);margin-bottom:6px}
+.hero h1{font-size:52px;font-weight:900;line-height:1.15}
+.hero h1 small{display:block;font-size:17px;font-weight:400;margin-top:6px;color:var(--ink-2)}
+.tagline{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:14px;font-size:19px;font-weight:700}
+.tagline i{font-style:normal;color:var(--ink-2);font-weight:400}
+.progress{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:12px 20px;margin-bottom:34px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px}
+.progress b{font-size:15px}
+.progress b em{font-style:normal;font-family:var(--num);font-size:24px;font-variant-numeric:tabular-nums;margin:0 2px}
+.bar{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ok);border-radius:999px;transition:width .2s}
+.progress span{font-size:13.5px;color:var(--ink-2)}
+.sh{display:flex;align-items:baseline;gap:12px;font-size:22px;font-weight:900;margin:0 0 18px}
+.sh small{font-size:13px;font-weight:400;color:var(--ink-2)}
+
+/* 路線：站牌在同一條虛線上 */
+.route{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:30px 22px}
+.stop{display:flex;flex-direction:column;min-width:0}
+.stop-pin{position:relative;display:flex;align-items:center;gap:10px;height:46px;margin-bottom:10px}
+.stop-pin::before{content:"";position:absolute;left:0;right:-22px;top:50%;border-top:3px dashed color-mix(in srgb,var(--tone) 55%,transparent)}
+.stop.rowend .stop-pin::before{right:0}
+.stop.last .stop-pin::before{display:none}
+.disc{position:relative;flex:none;width:44px;height:44px;border-radius:50%;background:var(--tone);color:#fff;display:grid;place-items:center;font:800 19px/1 var(--num)}
+.stop.is-todo .disc{background:var(--surface);color:var(--tone);border:2.5px dashed var(--tone)}
+.stop.is-now .disc{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--answer)}
+.stop.is-fin .disc{background:var(--ok);color:#fff;border:0;box-shadow:none}
+.stop-when{position:relative;background:var(--bg);padding:0 9px;margin-left:4px;font:700 15px/1.4 var(--num);color:var(--tone);font-variant-numeric:tabular-nums;white-space:nowrap}
+.stop-card{flex:1;display:flex;flex-direction:column;gap:10px;background:var(--surface);border:2px solid color-mix(in srgb,var(--tone) 35%,transparent);border-radius:14px;padding:14px 16px}
+.stop.is-now .stop-card{border-color:var(--answer)}
+.stop-h{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.stop-h a{text-decoration:none;font-size:21px;font-weight:900;line-height:1.3}
+.stop-h a:hover{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.stop-grp{font-size:12px;font-weight:700;color:#fff;background:var(--tone);border-radius:6px;padding:0 8px;line-height:1.7}
+.stop-sum{font-size:14px;line-height:1.6}
+.dots{font-size:13.5px;line-height:1.5;display:grid;gap:4px}
+.dots li{position:relative;padding-left:14px}
+.dots li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--tone)}
+.stop-foot{margin-top:auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:10px;border-top:1.5px dashed var(--line)}
+.stop-foot .memc{font-size:12.5px;color:var(--ink-2);margin-right:auto}
+
+/* 全部時間線 */
+.alltl{margin-top:46px}
+.tline{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));row-gap:18px}
+.tl-ev{position:relative;display:block;padding:18px 14px 2px 0;text-decoration:none;border-top:2px solid color-mix(in srgb,var(--tone) 50%,transparent)}
+.tl-ev::before{content:"";position:absolute;left:0;top:-7px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2.5px solid var(--tone)}
+.tl-ev b{display:block;font:700 15px/1.4 var(--num);color:var(--tone)}
+.tl-ev span{display:block;font-size:13.5px;line-height:1.5}
+.tl-ev:hover span{text-decoration:underline;text-underline-offset:3px}
+
+/* 站頁 */
+.st-head{display:grid;grid-template-columns:1fr 340px;gap:28px;align-items:center;margin-bottom:44px}
+.st-head.solo{grid-template-columns:1fr}
+.st-head h1{font-size:30px;font-weight:900;display:flex;align-items:baseline;gap:14px}
+.st-head h1 .no{font-size:16px;font-weight:700;opacity:.88}
+.st-head h1 small{font:600 16px/1.3 var(--num);opacity:.92}
+.st-sum{margin-top:12px;font-size:16px;max-width:760px}
+.st-meta{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.st-two{display:grid;grid-template-columns:7fr 5fr;gap:22px;margin-bottom:44px}
+.st-two.solo{grid-template-columns:1fr}
+.mem{display:grid;gap:10px}
+.mem label{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:15px;line-height:1.6}
+.mem .bx{margin-top:2px}
+.mem .ck:checked ~ .tx{color:var(--ink-2)}
+.mem-foot{margin-top:10px;font-size:12.5px;color:var(--ink-2)}
+.yl li{display:grid;grid-template-columns:6.6em minmax(0,1fr);gap:10px;align-items:baseline;padding:5px 2px;border-bottom:1px dashed var(--line);font-size:14px;line-height:1.5}
+.yl li:last-child{border-bottom:0}
+.yl b{font:700 14px/1.5 var(--num);color:var(--tone);font-variant-numeric:tabular-nums}
+.toc{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 14px;margin-bottom:26px;border-radius:999px;background:var(--surface);border:1.5px solid color-mix(in srgb,var(--tone) 40%,transparent)}
+.toc span{font-size:13px;font-weight:700;color:var(--tone);margin-right:4px}
+.toc button{font-size:13.5px;border:0;background:none;padding:2px 10px;border-radius:999px;cursor:pointer;transition:background-color .15s}
+.toc button:hover{background:var(--tone-soft)}
+.topics{display:grid;gap:36px;margin-bottom:44px}
+.topic{padding:24px 26px;background:var(--surface);border:2px dashed color-mix(in srgb,var(--tone) 50%,transparent);border-radius:var(--r-hand);scroll-margin-top:90px}
+.t-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding-bottom:10px;margin-bottom:14px;border-bottom:2.5px solid var(--tone)}
+.t-tag{padding:4px 24px 4px 14px;background:var(--tone);color:#fff;font-size:14px;font-weight:700;line-height:1.5;clip-path:polygon(0 0,calc(100% - 13px) 0,100% 50%,calc(100% - 13px) 100%,0 100%);border-radius:6px 0 0 6px}
+.t-head h2{font-size:22px;font-weight:900}
+.t-body{display:grid;gap:18px}
+.t-body.split{grid-template-columns:minmax(0,1fr) 340px;gap:28px;align-items:start}
+.t-main,.t-side{display:grid;gap:14px;min-width:0}
+.t-intro{padding:8px 14px;border-left:4px solid var(--tone);background:var(--tone-soft);border-radius:0 10px 10px 0;font-size:14.5px}
+.pts{counter-reset:p}
+.pts li{counter-increment:p;display:grid;grid-template-columns:1.8em minmax(0,1fr);padding:5px 0;font-size:15.5px;line-height:1.8}
+.pts li::before{content:counter(p) ".";font:700 15.5px/1.8 var(--num);color:var(--tone)}
+.pts li + li{border-top:1px dotted var(--line)}
+.chain{display:flex;flex-wrap:wrap;gap:10px 28px}
+.chain li{position:relative;max-width:230px;padding:7px 12px;border:1.5px solid color-mix(in srgb,var(--tone) 45%,transparent);border-radius:10px;background:var(--surface);font-size:14px;font-weight:700;line-height:1.45}
+.chain li + li::before{content:"→";position:absolute;left:-22px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--ink-2)}
+.tb{width:100%;border-collapse:collapse;background:var(--surface);font-size:14.5px;line-height:1.6}
+.tb th,.tb td{border:1px solid color-mix(in srgb,var(--line-strong) 30%,transparent);padding:7px 11px;vertical-align:top;text-align:left}
+.tb thead th{background:var(--tone-soft);border-bottom:2.5px solid var(--tone);color:var(--tone);text-align:center;font-weight:700}
+.tb tbody th{color:var(--tone);background:color-mix(in srgb,var(--tone-soft) 55%,var(--surface));font-weight:700;white-space:nowrap}
+.terms{padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface)}
+.terms h4{margin:0 0 4px;font-size:13px;color:var(--tone);font-weight:700}
+.tm{padding:6px 0 7px;border-bottom:1px dashed var(--line)}
+.tm:last-child{border-bottom:0;padding-bottom:0}
+.tm-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px}
+.tm-h b{font-size:15.5px}
+.tm-h span{font-family:var(--jp);font-size:14.5px}
+.tm-h small{font-family:var(--jp);font-size:12.5px;color:var(--ink-2)}
+.tm p{font-size:13.5px;color:var(--ink-2);line-height:1.55;margin-top:2px}
+.sticky p{font-size:14.5px;line-height:1.7}
+
+/* 練習題：答案預設看得到，按鈕一次遮住或顯示 */
+.quiz-box{margin-bottom:34px;scroll-margin-top:90px}
+.quiz-bar{position:absolute;top:10px;right:16px}
+.quiz{counter-reset:q;display:grid;gap:12px}
+.quiz > li{counter-increment:q;display:grid;grid-template-columns:2em minmax(0,1fr);row-gap:4px;padding-bottom:12px;border-bottom:1px dashed var(--line);font-size:15px}
+.quiz > li:last-child{border-bottom:0;padding-bottom:0}
+.quiz > li::before{content:counter(q) ".";font:700 15px/1.65 var(--num);color:var(--tone)}
+.quiz > li > *{grid-column:2}
+.opts{display:flex;flex-wrap:wrap;gap:2px 26px;font-size:14.5px}
+.opts li::before{content:"□ ";color:var(--ink-2)}
+.ans{display:flex;gap:8px;align-items:baseline}
+.ans i{flex:none;font-style:normal;font-size:12px;font-weight:700;line-height:1.7;padding:0 7px;border-radius:5px;background:var(--tone-soft);color:var(--tone)}
+.ans span{flex:1;font-size:14.5px;line-height:1.65}
+.quiz.hide .ans span{color:transparent;user-select:none;border-bottom:1.5px dashed var(--line-strong)}
+.quiz.hide .ans span b{color:transparent;text-decoration:none}
+.st-nav{display:flex;justify-content:space-between;align-items:center;gap:12px}
+
+/* 頁尾、產出卡、錯誤 */
+.card{width:100%;max-width:1320px;margin:0 auto;padding:0 32px 26px;color:var(--ink-2);font-size:12px;line-height:1.6}
+.card h5{margin:0 0 4px;font-size:12.5px;font-weight:700}
+.card dl{margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 22px;padding-top:8px;border-top:1px dashed var(--line-strong)}
+.card dl div{display:flex;gap:6px}
+.card dt{flex:none;font-weight:700}
+.card dd{margin:0}
+.foot{background:var(--c1);color:#fff}
+.foot-in{max-width:1320px;margin:0 auto;padding:20px 32px;display:grid;grid-template-columns:repeat(3,1fr)}
+.foot-cell{display:flex;align-items:center;gap:12px;padding:2px 22px;border-left:1.5px dashed rgba(255,255,255,.35);font-size:14px;line-height:1.45}
+.foot-cell:first-child{border-left:0;padding-left:0}
+.foot-cell svg{flex:none;width:34px;height:34px}
+.oops{max-width:760px;margin:60px auto;padding:22px 26px;background:var(--surface);border:2px solid var(--answer);border-radius:14px}
+.oops h1{font-size:22px;margin-bottom:10px}
+.oops code{display:block;margin-top:10px;padding:8px 12px;background:var(--surface-2);border-radius:8px;font-size:13.5px;white-space:pre-wrap}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition:none!important}
+  .btn:active{transform:none}
+}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{min-width:0;display:block}
+  .top{position:static}
+  .page{display:block!important;break-before:page}
+  .page:first-child{break-before:auto}
+  .box,.topic,.stop,.tm,.tb tr{break-inside:avoid}
+  .quiz-bar,.toc,.st-nav{display:none}
+}
+</style>
+
+<header class="top" id="top" hidden></header>
+<main id="app"></main>
+<section class="card" id="card" hidden></section>
+<footer class="foot" id="foot" hidden>
+  <div class="foot-in">
+    <div class="foot-cell"><svg viewBox="0 0 40 40" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M6 30c6-10 10 4 16-6s8-4 12-14"/><circle cx="6" cy="30" r="2.5"/><path d="M34 10V4l-6 3 6 3z"/></g></svg><span>照序號走<br>一站看完再換下一站</span></div>
+    <div class="foot-cell"><svg viewBox="0 0 40 40" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><rect x="7" y="7" width="26" height="26" rx="4"/><path d="M13 20l5 5 10-11"/></g></svg><span>打勾會記住<br>只存在這台電腦的瀏覽器</span></div>
+    <div class="foot-cell"><svg viewBox="0 0 40 40" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 14V6h16v8"/><rect x="6" y="14" width="28" height="13" rx="2"/><path d="M12 23h16v11H12z"/></g></svg><span>按 Ctrl＋P 列印<br>所有站會一起印出來</span></div>
+  </div>
+</footer>
+
+<script>
+/* 版面程式：讀上面的 JSON 畫出整頁。換內容不用改這裡。 */
+(() => {
+  const app = document.getElementById('app');
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const txt = (v) => (typeof v === 'string' || typeof v === 'number') ? String(v).trim() : '';
+  const arr = (v) => Array.isArray(v) ? v : [];
+  const strs = (v) => arr(v).map(txt).filter(Boolean);
+  const objs = (v) => arr(v).filter((x) => x && typeof x === 'object');
+  const rich = (v) => esc(txt(v)).replace(/\*\*(.+?)\*\*/g, '<b class="kw">$1</b>');
+
+  function fail(title, detail) {
+    document.title = '學習地圖：內容有錯';
+    app.innerHTML = '<div class="oops"><h1>' + esc(title) + '</h1><p>請 AI 檢查這個檔案裡 id="map-data" 的 JSON，只改那一段。</p>' + (detail ? '<code>' + esc(detail) + '</code>' : '') + '</div>';
+  }
+
+  let data;
+  try {
+    data = JSON.parse(document.getElementById('map-data').textContent);
+  } catch (e) {
+    fail('內容的 JSON 格式有錯，頁面畫不出來', e.message);
+    return;
+  }
+  const stations = objs(data && data.stations).filter((s) => txt(s.name));
+  if (!stations.length) {
+    fail('JSON 裡沒有任何一站', 'stations 至少要有一站，而且每站要有 name。');
+    return;
+  }
+
+  /* 進度：鍵用站名與句子，AI 調換順序也不會錯位 */
+  const KEY = 'study-map:' + location.pathname;
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* 瀏覽器不給存就只留在這一頁 */ } };
+  const state = load();
+  state.done = state.done || {};
+  state.mem = state.mem || {};
+  const names = stations.map((s) => txt(s.name));
+  const mems = stations.map((s) => strs(s.remember));
+  const memKey = (i, j) => names[i] + '|' + mems[i][j];
+
+  /* 分組決定顏色，沒分組就全部同色 */
+  const groups = [];
+  stations.forEach((s) => { const g = txt(s.group); if (g && !groups.includes(g)) groups.push(g); });
+  const tone = (s) => 't' + (Math.max(groups.indexOf(txt(s.group)), 0) % 4 + 1);
+  const STATUS = { done: '已上過', now: '上到這裡', todo: '還沒上' };
+  const NUM = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+  const countWord = (n) => NUM[n] || String(n);
+  const TICK = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const doneBox = (i) => '<label class="donebox"><input class="ck" type="checkbox" data-done="' + i + '"><span class="bx">' + TICK + '</span><span class="lb">這站學完了</span></label>';
+
+  function renderTop() {
+    const top = document.getElementById('top');
+    let last = '';
+    const tabs = stations.map((s, i) => {
+      const g = txt(s.group);
+      const head = g && g !== last ? '<span class="tabgrp">' + esc(g) + '</span>' : '';
+      last = g;
+      return head + '<a class="tab" data-p="s' + (i + 1) + '" href="#/s' + (i + 1) + '"><i>' + (i + 1) + '</i>' + esc(txt(s.short) || names[i]) + '<span class="tck">✓</span></a>';
+    }).join('');
+    top.innerHTML = '<div class="top-in"><a class="brand" href="#/"><b>' + esc(txt(data.title) || '學習地圖') + '</b>' + (txt(data.subtitle) ? '<span>' + esc(txt(data.subtitle)) + '</span>' : '') + '</a>'
+      + '<nav class="tabs" aria-label="分頁"><a class="tab" data-p="home" href="#/">首頁</a>' + tabs + '</nav></div>';
+    top.hidden = false;
+  }
+
+  function renderHome() {
+    const title = txt(data.title) || '學習地圖';
+    const cols = Math.min(stations.length, 4);
+    const art = '<svg class="hero-art" viewBox="0 0 220 176" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M16 42l60-22 66 22 62-22v114l-62 22-66-22-60 22z" fill="var(--surface)"/><path d="M76 20v114M142 42v114" stroke-width="1.6" opacity=".45"/><path d="M38 124c14-26 30 4 46-18s22-30 42-20 30 4 48-30" stroke="var(--answer)" stroke-dasharray="7 7"/><circle cx="38" cy="124" r="6" fill="var(--c1)" stroke="none"/><circle cx="126" cy="86" r="6" fill="var(--c1)" stroke="none"/><path d="M174 56V30l22 8-22 8" fill="var(--note)"/></g></svg>';
+    const route = stations.map((s, i) => {
+      const status = txt(s.status);
+      const topics = objs(s.topics).map((t) => txt(t.title)).filter(Boolean);
+      const cls = ['stop', tone(s)];
+      if ((i + 1) % cols === 0) cls.push('rowend');
+      if (i === stations.length - 1) cls.push('last');
+      if (status === 'now') cls.push('is-now');
+      if (status === 'todo') cls.push('is-todo');
+      return '<article class="' + cls.join(' ') + '" data-stop="' + i + '">'
+        + '<div class="stop-pin"><span class="disc">' + (i + 1) + '</span>' + (txt(s.when) ? '<span class="stop-when">' + esc(txt(s.when)) + '</span>' : '') + '</div>'
+        + '<div class="stop-card"><div class="stop-h"><a href="#/s' + (i + 1) + '">' + esc(names[i]) + '</a>' + (txt(s.group) ? '<span class="stop-grp">' + esc(txt(s.group)) + '</span>' : '') + '<span class="badge" data-badge="' + i + '"></span></div>'
+        + (txt(s.summary) ? '<p class="stop-sum">' + rich(s.summary) + '</p>' : '')
+        + (topics.length ? '<ul class="dots">' + topics.map((t) => '<li>' + esc(t) + '</li>').join('') + '</ul>' : '')
+        + '<div class="stop-foot">' + (mems[i].length ? '<span class="memc" data-memc="' + i + '"></span>' : '<span class="memc"></span>') + doneBox(i) + '<a class="btn" href="#/s' + (i + 1) + '">走這站 →</a></div></div></article>';
+    }).join('');
+    const seen = new Set();
+    const events = [];
+    stations.forEach((s, i) => objs(s.timeline).forEach((e) => {
+      const key = txt(e.when) + '|' + txt(e.event);
+      if ((txt(e.when) || txt(e.event)) && !seen.has(key)) { seen.add(key); events.push({ e, s, i }); }
+    }));
+    const tagline = strs(data.tagline);
+    return '<section class="page" id="p-home">'
+      + '<div class="hero' + (txt(data.intro) ? '' : ' solo') + '">' + art + '<div class="hero-mid">'
+      + (txt(data.eyebrow) ? '<p class="eyebrow">' + esc(txt(data.eyebrow)) + '</p>' : '')
+      + '<h1>' + esc(title) + (txt(data.subtitle) ? '<small>' + esc(txt(data.subtitle)) + '</small>' : '') + '</h1>'
+      + (tagline.length ? '<div class="tagline">' + tagline.map((t) => '<span>' + esc(t) + '</span>').join('<i>・</i>') + '</div>' : '')
+      + '</div>' + (txt(data.intro) ? '<aside class="sticky"><p>' + rich(data.intro) + '</p></aside>' : '') + '</div>'
+      + '<div class="progress"><b id="pg-a"></b><div class="bar"><i id="pg-bar"></i></div><span id="pg-b"></span></div>'
+      + '<h2 class="sh">路線<small>共 ' + stations.length + ' 站，點站名進去看講解</small></h2>'
+      + '<div class="route" style="--cols:' + cols + '">' + route + '</div>'
+      + (events.length ? '<div class="alltl"><h2 class="sh">全部時間線<small>點一格跳到那一站</small></h2><div class="tline">'
+        + events.map(({ e, s, i }) => '<a class="tl-ev ' + tone(s) + '" href="#/s' + (i + 1) + '"><b>' + esc(txt(e.when)) + '</b><span>' + rich(e.event) + '</span></a>').join('') + '</div></div>' : '')
+      + '</section>';
+  }
+
+  function renderTopic(t, i, n) {
+    const flow = strs(t.flow);
+    const points = strs(t.points);
+    const table = t.table && typeof t.table === 'object' ? t.table : null;
+    const rows = table ? arr(table.rows).filter(Array.isArray) : [];
+    const head = table ? arr(table.head).map(txt) : [];
+    const note = typeof t.note === 'string' ? { text: t.note } : (t.note && typeof t.note === 'object' ? t.note : null);
+    const terms = objs(t.terms).filter((x) => txt(x.term));
+    const main = (txt(t.intro) ? '<p class="t-intro">' + rich(t.intro) + '</p>' : '')
+      + (flow.length ? '<ol class="chain">' + flow.map((f) => '<li>' + rich(f) + '</li>').join('') + '</ol>' : '')
+      + (points.length ? '<ol class="pts">' + points.map((p) => '<li><span>' + rich(p) + '</span></li>').join('') + '</ol>' : '')
+      + (rows.length ? '<table class="tb">' + (head.some(Boolean) ? '<thead><tr>' + head.map((h) => '<th>' + esc(h) + '</th>').join('') + '</tr></thead>' : '')
+        + '<tbody>' + rows.map((r) => '<tr>' + r.map((c, k) => k === 0 ? '<th>' + rich(c) + '</th>' : '<td>' + rich(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table>' : '');
+    const side = (note && txt(note.text) ? '<aside class="sticky' + (n % 2 ? ' l' : '') + '">' + (txt(note.title) ? '<h4>' + esc(txt(note.title)) + '</h4>' : '') + '<p>' + rich(note.text) + '</p></aside>' : '')
+      + (terms.length ? '<div class="terms"><h4>名詞對照</h4>' + terms.map((x) => '<div class="tm"><div class="tm-h"><b>' + esc(txt(x.term)) + '</b>' + (txt(x.original) && txt(x.original) !== txt(x.term) ? '<span>' + esc(txt(x.original)) + '</span>' : '') + (txt(x.reading) ? '<small>' + esc(txt(x.reading)) + '</small>' : '') + '</div>' + (txt(x.meaning) ? '<p>' + rich(x.meaning) + '</p>' : '') + '</div>').join('') + '</div>' : '');
+    return '<section class="topic" id="t-' + i + '-' + n + '"><div class="t-head"><span class="t-tag">主題 ' + (n + 1) + '</span><h2>' + esc(txt(t.title)) + '</h2></div>'
+      + '<div class="t-body' + (main && side ? ' split' : '') + '">' + (main ? '<div class="t-main">' + main + '</div>' : '') + (side ? '<div class="t-side">' + side + '</div>' : '') + '</div></section>';
+  }
+
+  function renderStation(s, i) {
+    const topics = objs(s.topics).filter((t) => txt(t.title));
+    const timeline = objs(s.timeline).filter((e) => txt(e.when) || txt(e.event));
+    const quiz = objs(s.quiz).filter((q) => txt(q.q));
+    const remember = mems[i];
+    const memBox = remember.length ? '<div class="box"><div class="ribbon"><span>記住' + countWord(remember.length) + '件事</span></div><div class="mem">'
+      + remember.map((m, j) => '<label><input class="ck" type="checkbox" data-mem="' + i + ':' + j + '"><span class="bx">' + TICK + '</span><span class="tx">' + rich(m) + '</span></label>').join('')
+      + '</div><p class="mem-foot">記住了就打勾，重新整理後還在。</p></div>' : '';
+    const tlBox = timeline.length ? '<div class="box"><div class="ribbon"><span>這站的時間線</span></div><ul class="yl">'
+      + timeline.map((e) => '<li><b>' + esc(txt(e.when)) + '</b><span>' + rich(e.event) + '</span></li>').join('') + '</ul></div>' : '';
+    const prev = i > 0 ? '<a class="btn" href="#/s' + i + '">← ' + esc(names[i - 1]) + '</a>' : '<a class="btn" href="#/">← 首頁</a>';
+    const next = i < stations.length - 1 ? '<a class="btn" href="#/s' + (i + 2) + '">' + esc(names[i + 1]) + ' →</a>' : '<a class="btn" href="#/">回首頁 →</a>';
+    const toc = topics.length + (quiz.length ? 1 : 0) > 1 ? '<nav class="toc"><span>這站有</span>' + topics.map((t, n) => '<button type="button" data-jump="t-' + i + '-' + n + '">' + esc(txt(t.title)) + '</button>').join('') + (quiz.length ? '<button type="button" data-jump="q-' + i + '">練習題</button>' : '') + '</nav>' : '';
+    return '<section class="page ' + tone(s) + '" id="p-s' + (i + 1) + '">'
+      + '<header class="st-head' + (txt(s.goal) ? '' : ' solo') + '"><div>'
+      + '<div class="brush"><h1><span class="no">第 ' + (i + 1) + ' 站</span>' + esc(names[i]) + (txt(s.when) ? '<small>' + esc(txt(s.when)) + '</small>' : '') + '</h1></div>'
+      + (txt(s.summary) ? '<p class="st-sum">' + rich(s.summary) + '</p>' : '')
+      + '<div class="st-meta"><span class="badge" data-badge="' + i + '"></span>' + doneBox(i) + '</div></div>'
+      + (txt(s.goal) ? '<aside class="sticky"><h4>這站目標</h4><p>' + rich(s.goal) + '</p></aside>' : '') + '</header>'
+      + (memBox || tlBox ? '<div class="st-two' + (memBox && tlBox ? '' : ' solo') + '">' + memBox + tlBox + '</div>' : '')
+      + toc
+      + (topics.length ? '<div class="topics">' + topics.map((t, n) => renderTopic(t, i, n)).join('') + '</div>' : '')
+      + (quiz.length ? '<div class="box quiz-box" id="q-' + i + '"><div class="ribbon"><span>練習題</span></div><div class="quiz-bar"><button class="btn" type="button" data-hide="' + i + '">遮住答案</button></div><ol class="quiz" id="quiz-' + i + '">'
+        + quiz.map((q) => { const opts = strs(q.options); return '<li><p>' + rich(q.q) + '</p>' + (opts.length ? '<ul class="opts">' + opts.map((o) => '<li>' + rich(o) + '</li>').join('') + '</ul>' : '') + (txt(q.a) ? '<div class="ans"><i>答</i><span>' + rich(q.a) + '</span></div>' : '') + '</li>'; }).join('')
+        + '</ol></div>' : '')
+      + '<div class="st-nav">' + prev + next + '</div></section>';
+  }
+
+  function renderCard() {
+    const c = data.card && typeof data.card === 'object' ? data.card : null;
+    if (!c) return;
+    const items = [['受眾', c.audience], ['目的', c.goal], ['使用情境', c.context], ['限制', c.limits], ['語調', c.tone], ['證據', c.evidence]].filter((x) => txt(x[1]));
+    if (!items.length) return;
+    const el = document.getElementById('card');
+    el.innerHTML = '<h5>產出卡</h5><dl>' + items.map((x) => '<div><dt>' + x[0] + '</dt><dd>' + esc(txt(x[1])) + '</dd></div>').join('') + '</dl>';
+    el.hidden = false;
+  }
+
+  /* 畫面狀態：打勾後重新上色，不重畫整頁 */
+  function paint() {
+    document.querySelectorAll('input[data-done]').forEach((c) => { c.checked = !!state.done[names[+c.dataset.done]]; });
+    document.querySelectorAll('input[data-mem]').forEach((c) => { const [i, j] = c.dataset.mem.split(':').map(Number); c.checked = !!state.mem[memKey(i, j)]; });
+    document.querySelectorAll('[data-badge]').forEach((b) => {
+      const i = +b.dataset.badge;
+      const st = txt(stations[i].status);
+      if (state.done[names[i]]) { b.className = 'badge fin'; b.textContent = '✓ 學完了'; b.hidden = false; }
+      else if (STATUS[st]) { b.className = 'badge ' + st; b.textContent = STATUS[st]; b.hidden = false; }
+      else { b.hidden = true; }
+    });
+    document.querySelectorAll('[data-stop]').forEach((el) => el.classList.toggle('is-fin', !!state.done[names[+el.dataset.stop]]));
+    document.querySelectorAll('[data-memc]').forEach((el) => {
+      const i = +el.dataset.memc;
+      el.textContent = '記住 ' + mems[i].filter((m, j) => state.mem[memKey(i, j)]).length + '／' + mems[i].length;
+    });
+    document.querySelectorAll('.tab[data-p^="s"]').forEach((t) => t.classList.toggle('done', !!state.done[names[+t.dataset.p.slice(1) - 1]]));
+    const doneN = names.filter((n) => state.done[n]).length;
+    const memTotal = mems.reduce((a, m) => a + m.length, 0);
+    const memN = mems.reduce((a, m, i) => a + m.filter((x, j) => state.mem[memKey(i, j)]).length, 0);
+    document.getElementById('pg-a').innerHTML = '已走完<em>' + doneN + '</em>／<em>' + stations.length + '</em>站';
+    document.getElementById('pg-bar').style.width = (doneN / stations.length * 100) + '%';
+    document.getElementById('pg-b').textContent = memTotal ? '記住 ' + memN + '／' + memTotal + ' 件事' : '';
+  }
+
+  /* 分頁：#/ 是首頁，#/s1 是第 1 站 */
+  function show() {
+    const key = location.hash.replace(/^#\/?/, '') || 'home';
+    const id = document.getElementById('p-' + key) ? key : 'home';
+    document.querySelectorAll('.page').forEach((p) => p.classList.toggle('on', p.id === 'p-' + id));
+    document.querySelectorAll('.tab').forEach((t) => { if (t.dataset.p === id) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current'); });
+    window.scrollTo(0, 0);
+  }
+
+  document.title = txt(data.title) || '學習地圖';
+  renderTop();
+  app.innerHTML = renderHome() + stations.map(renderStation).join('');
+  renderCard();
+  document.getElementById('foot').hidden = false;
+  paint();
+  show();
+  window.addEventListener('hashchange', show);
+
+  document.addEventListener('change', (e) => {
+    const c = e.target;
+    if (c.dataset.done !== undefined) { state.done[names[+c.dataset.done]] = c.checked; }
+    else if (c.dataset.mem !== undefined) { const [i, j] = c.dataset.mem.split(':').map(Number); state.mem[memKey(i, j)] = c.checked; }
+    else return;
+    save();
+    paint();
+  });
+  document.addEventListener('click', (e) => {
+    const jump = e.target.closest('[data-jump]');
+    if (jump) { const el = document.getElementById(jump.dataset.jump); if (el) el.scrollIntoView(); return; }
+    const hide = e.target.closest('[data-hide]');
+    if (hide) {
+      const hidden = document.getElementById('quiz-' + hide.dataset.hide).classList.toggle('hide');
+      hide.textContent = hidden ? '顯示答案' : '遮住答案';
+    }
+  });
+})();
+</script>
+</body>
+</html>

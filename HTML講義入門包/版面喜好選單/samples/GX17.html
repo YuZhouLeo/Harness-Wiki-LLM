@@ -1,0 +1,121 @@
+<!doctype html><!-- 版面喜好選單範例 GX17｜熱度格提示｜來源：講師範例庫 output範例/元件庫/GX17-熱度格提示框.html；原始來源 https://github.com/uiverse-io/galaxy（Tooltips/elijahgummer_brown-moose-94.html），作者 elijahgummer，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX17 熱度格提示框（GitHub-style contribution cell with a fade-in tooltip on hover）
+  來源：https://github.com/uiverse-io/galaxy　Tooltips/elijahgummer_brown-moose-94.html
+  原作者：elijahgummer　授權：MIT（Copyright 2023 Uiverse.io）　commit adbd2ad
+  移植：原作是一格 16px 的 GitHub 綠色貢獻格，懸停時上方淡入灰底白字提示「8 contributions on March 8th.」（0.3 秒）＋菱形小箭頭。
+    改成「筆記更新熱度」近 12 週的整張熱度圖：每格都帶同樣的提示框，字改繁中（「3 則更新・10 月 8 日（週四）」）。
+    格子用原生 JS 依固定的示範資料產生；鍵盤可用方向鍵在格子間移動（roving tabindex），聚焦時一樣顯示提示框。
+    原作固定 210px 寬的提示框改成隨字寬，靠左三欄、靠右三欄改成往內對齊以免超出卡片；
+    GitHub 綠換成 P11 強調色的五階深淺，灰底提示換成 --line-strong；補 focus-visible 外框與 prefers-reduced-motion（不淡入，直接出現）。
+  2026-10-09 由子代理移植成純 HTML／CSS（加少量原生 JS）
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>熱度格提示框</title><style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+  --lv0:var(--surface-2);
+  --lv1:color-mix(in srgb,var(--accent) 22%,var(--surface));
+  --lv2:color-mix(in srgb,var(--accent) 45%,var(--surface));
+  --lv3:color-mix(in srgb,var(--accent) 72%,var(--surface));
+  --lv4:var(--accent);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--bg);color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.card{width:min(360px,100%);background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line)}
+.hd b{font-size:15px}
+.hd span{font-size:12px;color:var(--ink-2)}
+.body{padding:12px 16px 12px}
+.heat{display:grid;grid-template-columns:22px auto;column-gap:6px;justify-content:center}
+.months{grid-column:2;position:relative;height:18px;font-size:12px;color:var(--ink-2)}
+.months span{position:absolute;top:0;white-space:nowrap}
+.days{display:grid;grid-template-rows:repeat(7,16px);row-gap:4px;font-size:12px;color:var(--ink-2);line-height:16px}
+#cells{display:grid;grid-template-rows:repeat(7,16px);grid-auto-flow:column;grid-auto-columns:16px;gap:4px}
+.legend{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-top:10px;font-size:12px;color:var(--ink-2)}
+.legend i{width:12px;height:12px;border-radius:4px;display:inline-block}
+.sum{margin:10px 0 0;font-size:12px;color:var(--ink-2)}
+.sum b{color:var(--ink);font-family:"Cascadia Mono",Consolas,Menlo,monospace;font-variant-numeric:tabular-nums}
+.cap{margin-top:12px;font-size:12px;color:var(--ink-2);text-align:center}
+
+/* ── 原作提示框（GitHub 綠／灰換成 P11 變數） ── */
+.tooltip-container{
+  position:relative;background:var(--lv0);cursor:pointer;transition:all .2s;
+  width:16px;height:16px;border-radius:5px;font-size:17px;
+}
+.tooltip-container[data-lv="1"]{background:var(--lv1)}
+.tooltip-container[data-lv="2"]{background:var(--lv2)}
+.tooltip-container[data-lv="3"]{background:var(--lv3)}
+.tooltip-container[data-lv="4"]{background:var(--lv4)}
+.tooltip-container:focus-visible{outline:2px solid var(--line-strong);outline-offset:2px}
+.tooltip{
+  position:absolute;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%);z-index:5;
+  padding:.35em .7em;opacity:0;pointer-events:none;transition:all .3s;
+  background:var(--line-strong);color:var(--on-accent);border-radius:5px;
+  white-space:nowrap;font-size:13px;line-height:1.5;text-align:center;
+}
+.tooltip::before{
+  position:absolute;content:"";height:.6em;width:.6em;bottom:-.2em;left:50%;
+  transform:translate(-50%) rotate(45deg);background:var(--line-strong);
+}
+.al .tooltip{left:-4px;transform:none}.al .tooltip::before{left:12px}
+.ar .tooltip{left:auto;right:-4px;transform:none}.ar .tooltip::before{left:auto;right:6px;transform:rotate(45deg)}
+.tooltip-container:hover .tooltip,.tooltip-container:focus-visible .tooltip{opacity:1;visibility:visible}
+@media (prefers-reduced-motion:reduce){.tooltip,.tooltip-container{transition:none}}
+</style></head><body><div>
+<div class="card">
+  <div class="hd"><b>筆記更新熱度</b><span>近 12 週・到 10/09</span></div>
+  <div class="body">
+    <div class="heat">
+      <div class="months" id="months" aria-hidden="true"></div>
+      <div class="days" aria-hidden="true"><span></span><span>一</span><span></span><span>三</span><span></span><span>五</span><span></span></div>
+      <div id="cells" role="group" aria-label="每日更新次數，方向鍵移動"></div>
+    </div>
+    <div class="legend" aria-hidden="true">少<i style="background:var(--lv0)"></i><i style="background:var(--lv1)"></i><i style="background:var(--lv2)"></i><i style="background:var(--lv3)"></i><i style="background:var(--lv4)"></i>多</div>
+    <p class="sum" id="sum"></p>
+  </div>
+</div>
+<div class="cap">滑過或用方向鍵移到任一格，上方淡入當天的更新次數</div>
+</div>
+<script>
+(function(){
+  var start=new Date(2026,6,19),days=83,cols=12,wk='日一二三四五六';
+  var box=document.getElementById('cells'),months=document.getElementById('months'),seed=11,total=0,best=0,run=0,cells=[];
+  function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647}
+  for(var i=0;i<cols*7;i++){
+    var c=document.createElement('span');
+    if(i>=days){c.style.visibility='hidden';box.appendChild(c);continue;}
+    var d=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),dow=d.getDay();
+    var r=rnd(),n=r<.3?0:Math.floor(Math.pow(rnd(),1.6)*(dow===0||dow===6?4:9))+1;
+    var lv=n===0?0:n<=2?1:n<=4?2:n<=6?3:4,col=Math.floor(i/7);
+    total+=n;run=n?run+1:0;best=Math.max(best,run);
+    c.className='tooltip-container cell'+(col<=2?' al':col>=cols-3?' ar':'');
+    c.setAttribute('data-lv',lv);c.setAttribute('role','img');c.tabIndex=-1;
+    var t=document.createElement('span');t.className='tooltip';t.id='tip'+i;t.setAttribute('role','tooltip');
+    t.textContent=(n?n+' 則更新':'沒有更新')+'・'+(d.getMonth()+1)+' 月 '+d.getDate()+' 日（週'+wk[dow]+'）';
+    c.setAttribute('aria-labelledby',t.id);c.appendChild(t);box.appendChild(c);cells.push(c);
+    if(d.getDate()<=7&&dow===0||i===0){
+      var m=document.createElement('span');m.textContent=(d.getMonth()+1)+' 月';m.style.left=(col*20)+'px';months.appendChild(m);
+    }
+  }
+  var cur=cells.length-1;cells[cur].tabIndex=0;
+  document.getElementById('sum').innerHTML='共 <b>'+total+'</b> 則更新，最長連續 <b>'+best+'</b> 天';
+  box.addEventListener('keydown',function(e){
+    var k=e.key,to=cur,row=cur%7;
+    if(k==='ArrowUp'&&row>0)to=cur-1;else if(k==='ArrowDown'&&row<6)to=cur+1;
+    else if(k==='ArrowLeft')to=cur-7;else if(k==='ArrowRight')to=cur+7;
+    else if(k==='Home')to=0;else if(k==='End')to=cells.length-1;else return;
+    e.preventDefault();
+    if(to<0||to>=cells.length)return;
+    cells[cur].tabIndex=-1;cur=to;cells[cur].tabIndex=0;cells[cur].focus();
+  });
+  box.addEventListener('click',function(e){
+    var c=e.target.closest('.cell');if(!c)return;
+    cells[cur].tabIndex=-1;cur=cells.indexOf(c);c.tabIndex=0;
+  });
+})();
+</script>
+</body></html>

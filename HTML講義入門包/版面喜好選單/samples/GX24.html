@@ -1,0 +1,54 @@
+<!doctype html><!-- 版面喜好選單範例 GX24｜加粗底線輸入框｜來源：講師範例庫 output範例/元件庫/GX24-加粗底線輸入框.html；原始來源 https://github.com/uiverse-io/galaxy（Inputs/saidbl1_little-eagle-84.html），作者 saidbl1，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX24 加粗底線輸入框（Outlined input whose bottom border thickens on focus）
+  來源：https://github.com/uiverse-io/galaxy　Inputs/saidbl1_little-eagle-84.html
+  原作者：saidbl1　授權：MIT (Copyright 2023 Uiverse.io)　commit：adbd2ad
+  移植：保留原作的動作——2px 圓角外框，聚焦時底邊加粗到 4px、上方補 2px 內距，200ms ease-in；提示字用主色半透明；
+    原作的藍 hsl(236,92%,66%) 換成 P11 --accent；三格都用滿主色會太搶，未聚焦時外框改用主色與細線色混出的淡青，聚焦才換滿色加粗；
+    改成「社團活動報名」三欄表單，提示字只當範例、另加看得見的欄位標題（label for），補送出鈕與 :user-invalid 的錯誤色；
+    改 border-box 讓聚焦時欄位高度不變、不推動下方版面；prefers-reduced-motion 時不做過渡，直接切換。
+  2026-10-09 由子代理移植成純 HTML／CSS（必要時加少量原生 JS）
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>加粗底線輸入框</title>
+<style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px 16px;background:var(--bg);color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+form{width:100%;max-width:340px;margin:0;padding:12px 16px 14px;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+h1{margin:0 0 8px;font-size:15px;font-weight:700}
+.f{margin-bottom:8px}
+.f label{display:block;margin-bottom:2px;font-size:12px;font-weight:700;color:var(--ink-2)}
+.ft{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+.ft small{font-size:12px;color:var(--ink-2)}
+.ft small.ok{color:var(--ok);font-weight:700}
+button{font:inherit;font-weight:700;padding:6px 16px;border:0;border-radius:6px;background:var(--accent);color:var(--on-accent);cursor:pointer}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* 原作 .input */
+.input{--c:var(--accent);--idle:color-mix(in srgb,var(--accent) 45%,var(--line));display:block;width:100%;height:40px;border-radius:8px;border:2px solid var(--idle);outline:none;transition:200ms ease-in;padding:0 12px 0 1rem;font:inherit;color:var(--ink);background:var(--surface)}
+.input:hover{border-color:var(--c)}
+.input:focus{border-color:var(--c);border-bottom:4px solid var(--c);padding-top:2px}
+.input::placeholder{color:var(--accent);opacity:.55}
+.input:user-invalid{--c:var(--bad);--idle:var(--bad)}
+.err{display:none;margin-top:2px;font-size:12px;color:var(--bad)}
+.input:user-invalid+.err{display:block}
+@media (prefers-reduced-motion:reduce){.input{transition:none}}
+</style></head><body>
+<form id="f" novalidate>
+  <h1>攝影社・秋季外拍報名</h1>
+  <div class="f"><label for="f1">姓名</label><input class="input" id="f1" name="name" type="text" placeholder="例：王小明" required autocomplete="name"></div>
+  <div class="f"><label for="f2">學校信箱</label><input class="input" id="f2" name="mail" type="email" placeholder="例：你的學校信箱" required autocomplete="email"><span class="err">信箱格式不對</span></div>
+  <div class="f"><label for="f3">手機</label><input class="input" id="f3" name="tel" type="tel" placeholder="例：0912-345-678" autocomplete="tel"></div>
+  <div class="ft"><small id="m" aria-live="polite">姓名與信箱必填</small><button type="submit">送出報名</button></div>
+</form>
+<script>
+const f=document.getElementById('f'),m=document.getElementById('m');
+f.addEventListener('submit',e=>{e.preventDefault();if(f.checkValidity()){m.className='ok';m.textContent='✓ 已收到報名'}else{m.className='';m.textContent='請補齊必填欄位';f.querySelector(':invalid').focus()}});
+</script>
+</body></html>

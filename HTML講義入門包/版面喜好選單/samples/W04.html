@@ -1,0 +1,442 @@
+<!doctype html>
+<!-- 版面喜好選單範例 W04｜玻璃擬態｜來源：講師範例庫 output範例/網頁設計風格/04-玻璃擬態.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W04 玻璃擬態 Glassmorphism｜網頁設計風格</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Outfit:wght@400;500;600&display=swap">')</script>
+<style>
+/* ===== 風格本體：所有規則都收在 .style 底下，不寫會漏進 .spec 的全域選擇器 ===== */
+:root { color-scheme: dark; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: #1b1a4a; }
+.style {
+  --ink: #ffffff;
+  --ink-2: rgba(255,255,255,.86);
+  --glass: rgba(255,255,255,.13);
+  --glass-strong: rgba(255,255,255,.2);
+  --edge: rgba(255,255,255,.38);
+  --deep: #1b1a4a;
+  --violet: #5f4fc4;
+  --pink: #e29ac0;
+  --sky: #9fc0f2;
+  --glow: #ffd9a8;
+  color: var(--ink);
+  font-family: "Outfit", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  line-height: 1.7;
+  text-spacing-trim: space-first;
+}
+.style *, .style *::before, .style *::after { box-sizing: border-box; }
+.style h1, .style h2, .style h3 { text-wrap: balance; margin: 0; line-height: 1.25; }
+.style p { margin: 0; text-wrap: pretty; }
+.style a { color: inherit; text-decoration: none; }
+.style a:focus-visible, .style button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+/* 玻璃：半透明底＋背景模糊＋一條亮邊＋內側高光 */
+.style .glass {
+  background: linear-gradient(135deg, rgba(255,255,255,.24), rgba(255,255,255,.08));
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid var(--edge);
+  border-radius: 22px;
+  box-shadow: 0 18px 40px rgba(20,16,70,.28), inset 0 1px 0 rgba(255,255,255,.45);
+}
+
+/* ---------- 第一屏 ---------- */
+.style .hero {
+  position: relative; isolation: isolate; overflow: hidden;
+  min-height: clamp(600px, 100svh, 860px);
+  display: flex; flex-direction: column;
+  padding: 0 clamp(20px, 5vw, 72px) clamp(32px, 5vw, 64px);
+}
+.style .scene { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; }
+.style .aurora { animation: drift 16s ease-in-out infinite alternate; transform-origin: 30% 30%; }
+@keyframes drift { from { transform: translate3d(0,0,0) rotate(0deg); } to { transform: translate3d(28px,-14px,0) rotate(1.6deg); } }
+
+.style .nav { display: flex; align-items: center; gap: 24px; padding: clamp(18px, 2.4vw, 30px) 0; }
+.style .brand { font-size: 26px; font-weight: 500; }
+.style .nav ul { display: flex; gap: clamp(18px, 3.4vw, 52px); list-style: none; margin: 0 0 0 auto; padding: 0; font-size: 15px; }
+.style .nav .cta {
+  margin-left: clamp(8px, 3vw, 48px); padding: 8px 20px; border-radius: 999px; font-size: 14px;
+  background: var(--glass-strong); border: 1px solid var(--edge);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
+
+.style .hero-body {
+  flex: 1; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.25fr);
+  gap: clamp(24px, 4vw, 64px); align-items: center;
+}
+.style .hero h1 { font-size: clamp(42px, 6.2vw, 88px); font-weight: 700; text-shadow: 0 6px 30px rgba(27,26,74,.35); }
+.style .lead { margin-top: 22px; max-width: 24em; font-size: clamp(15px, 1.25vw, 18px); color: var(--ink-2); text-shadow: 0 1px 12px rgba(27,26,74,.55); }
+.style .pill {
+  display: inline-flex; align-items: center; gap: 10px; margin-top: 30px; padding: 12px 26px;
+  border-radius: 999px; background: #fff; color: #2a2575; font-weight: 700; font-size: 15px;
+  box-shadow: 0 10px 28px rgba(27,26,74,.3); transition: transform .2s ease;
+}
+.style .pill:hover { transform: translateY(-2px); }
+
+.style .panels { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .95fr); gap: 16px; }
+.style .stack { display: grid; gap: 14px; }
+.style .row { display: flex; align-items: center; gap: 16px; padding: 18px 20px; }
+.style .ico {
+  flex: none; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center;
+  background: rgba(255,255,255,.2); border: 1px solid var(--edge);
+}
+.style .ico svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.style .row h3 { font-size: 17px; font-weight: 500; }
+.style .row p { font-size: 13.5px; color: var(--ink-2); }
+.style .tall { position: relative; padding: 24px; display: flex; flex-direction: column; min-height: 300px; overflow: hidden; }
+.style .tall h3 { font-size: clamp(19px, 1.7vw, 24px); font-weight: 500; }
+.style .tall .wave { position: absolute; inset: auto 0 56px 0; width: 100%; height: 120px; }
+.style .tall .orb {
+  position: absolute; right: -40px; bottom: -30px; width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,214,170,.85), rgba(255,160,190,.35) 45%, transparent 70%);
+}
+.style .tall small { margin-top: auto; position: relative; font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+
+/* ---------- 套到學校資料 ---------- */
+.style .school {
+  position: relative; isolation: isolate; overflow: hidden;
+  padding: clamp(40px, 6vw, 80px) clamp(20px, 5vw, 72px) clamp(48px, 6vw, 88px);
+  background:
+    radial-gradient(60% 50% at 12% 8%, rgba(226,154,192,.55), transparent 70%),
+    radial-gradient(50% 45% at 92% 22%, rgba(120,170,245,.5), transparent 70%),
+    radial-gradient(55% 50% at 60% 100%, rgba(255,200,150,.32), transparent 70%),
+    linear-gradient(160deg, #2a2575 0%, #4a3fa8 45%, #35307f 100%);
+}
+.style .school > header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin-bottom: 26px; }
+.style .school h2 { font-size: clamp(26px, 3vw, 38px); font-weight: 700; }
+.style .school > header p { color: var(--ink-2); font-size: 15px; }
+.style .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
+.style .card { padding: 22px; }
+.style .course { grid-column: span 4; display: flex; flex-direction: column; gap: 10px; }
+.style .course .meta { display: flex; align-items: center; justify-content: space-between; font-size: 13.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.style .course h3 { font-size: 19px; font-weight: 700; }
+.style .course p { font-size: 14.5px; color: var(--ink-2); }
+.style .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 6px; }
+.style .tag { font-size: 12.5px; padding: 2px 12px; border-radius: 999px; background: rgba(255,255,255,.18); border: 1px solid var(--edge); }
+.style .course .go { align-self: flex-start; margin-top: 8px; font-size: 14px; font-weight: 500; padding: 7px 16px; border-radius: 999px; background: rgba(255,255,255,.92); color: #2a2575; }
+.style .nums { grid-column: span 4; display: flex; flex-direction: column; gap: 12px; }
+.style .label { font-size: 13px; color: var(--ink-2); }
+.style .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.style .big { font-size: clamp(44px, 5vw, 64px); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.style .big span { font-size: .42em; font-weight: 500; margin-left: 2px; }
+.style .nums p { font-size: 14.5px; color: var(--ink-2); }
+.style .tablecard { grid-column: span 8; }
+.style .table-wrap { overflow-x: auto; margin-top: 12px; }
+.style table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 14.5px; }
+.style th, .style td { text-align: left; padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,.24); }
+.style thead th { font-weight: 700; background: rgba(255,255,255,.14); }
+.style thead th:first-child { border-radius: 12px 0 0 12px; }
+.style thead th:last-child { border-radius: 0 12px 12px 0; }
+.style tbody th { font-weight: 500; color: var(--ink-2); white-space: nowrap; }
+.style tbody tr:last-child th, .style tbody tr:last-child td { border-bottom: 0; }
+.style .time { grid-column: span 12; }
+.style .line { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; position: relative; }
+.style .line::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 2px; background: linear-gradient(90deg, rgba(255,255,255,.7), rgba(255,255,255,.2)); }
+.style .line li { position: relative; padding-top: 24px; font-size: 14.5px; }
+.style .line li::before { content: ""; position: absolute; top: 0; left: 0; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 5px rgba(255,255,255,.22), 0 0 18px rgba(255,220,180,.9); }
+.style .line b { display: block; font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.style .quote { grid-column: span 5; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+.style .quote blockquote { margin: 0; font-size: clamp(18px, 1.7vw, 22px); font-weight: 500; line-height: 1.6; }
+.style .keys { grid-column: span 7; }
+.style .keys ol { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; counter-reset: k; }
+.style .keys li { counter-increment: k; display: flex; gap: 14px; align-items: center; padding: 10px 14px; border-radius: 14px; background: rgba(255,255,255,.12); font-size: 15px; }
+.style .keys li::before { content: counter(k); flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #2a2575; font-weight: 700; font-size: 14px; }
+.style .card h3.t { font-size: 17px; font-weight: 700; }
+
+@media (max-width: 960px) {
+  .style .hero-body { grid-template-columns: 1fr; padding-top: 12px; }
+  .style .nav ul { display: none; }
+  .style .nav .cta { margin-left: auto; }
+  .style .course, .style .nums, .style .tablecard, .style .quote, .style .keys { grid-column: span 12; }
+}
+@media (max-width: 620px) {
+  .style .panels { grid-template-columns: 1fr; }
+  .style .line { grid-template-columns: 1fr; }
+  .style .line::before { left: 7px; right: auto; top: 0; bottom: 0; width: 2px; height: auto; }
+  .style .line li { padding: 0 0 0 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .style .aurora { animation: none; }
+  .style .pill { transition: none; }
+  html { scroll-behavior: auto; }
+}
+@media print {
+  body { background: #fff; }
+  .style { color: #1b1a4a; --ink-2: #3a3870; --edge: #b9b6e0; }
+  .style .scene, .style .tall .orb { display: none; }
+  .style .hero, .style .school { background: #fff; min-height: 0; }
+  .style .glass { background: #f4f3ff; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; break-inside: avoid; }
+  .style .hero h1, .style .lead { text-shadow: none; }
+  .style th, .style td { border-bottom-color: #cfcdea; }
+}
+
+/* ===== 共用：風格規格面板（各頁相同，逐字複製，不要改） ===== */
+.spec { all: initial; display: block; background: #f6f5f1; color: #1c1b19; color-scheme: light; border-top: 1px solid #dcd9d0;
+  font: 400 15px/1.7 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; text-spacing-trim: space-first;
+  padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 48px) 64px; }
+.spec *, .spec *::before, .spec *::after { box-sizing: border-box; }
+.spec .spec-in { max-width: 1120px; margin: 0 auto; }
+.spec .spec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin: 0 0 6px; }
+.spec .spec-code { font: 700 13px/1 ui-monospace, Consolas, monospace; color: #fff; background: #1c1b19; padding: 5px 9px; border-radius: 6px; }
+.spec h2 { margin: 0; font-size: clamp(22px, 3vw, 30px); line-height: 1.3; font-weight: 700; text-wrap: balance; }
+.spec .spec-en { font: 500 14px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-def { margin: 0 0 22px; max-width: 46em; color: #3b3935; }
+.spec .spec-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.spec .spec-card { background: #fff; border: 1px solid #e4e1da; border-radius: 12px; padding: 16px 18px; min-width: 0; }
+.spec .spec-card.wide { grid-column: 1 / -1; }
+.spec h3 { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: #6b6862; }
+.spec ul, .spec ol { margin: 0; padding-left: 1.2em; }
+.spec li { margin: 2px 0; }
+.spec p { margin: 0; }
+.spec p + p { margin-top: 6px; }
+.spec code { font: 13px/1.5 ui-monospace, Consolas, monospace; background: #f0eee8; padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.spec .spec-traits { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 16px; }
+.spec .spec-traits small { display: block; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-sw { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.spec .spec-sw li { margin: 0; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #3b3935; }
+.spec .spec-sw i { display: block; height: 34px; border-radius: 8px; border: 1px solid rgba(0,0,0,.12); margin-bottom: 4px; }
+.spec .spec-fit b { display: inline-block; min-width: 4.2em; }
+.spec .spec-prompt { background: #efedff; border-color: #dcd8ff; }
+.spec .spec-back { display: inline-block; margin-top: 22px; color: #1c1b19; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 720px) { .spec .spec-grid { grid-template-columns: 1fr; } }
+@media print { .spec { border-top: 0; } .spec .spec-card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<main class="style">
+
+  <!-- ========== 第一屏：重現參考圖 ========== -->
+  <section class="hero" id="hero">
+    <svg class="scene" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#2a2a86"/>
+          <stop offset=".38" stop-color="#5d55c8"/>
+          <stop offset=".66" stop-color="#b98bd0"/>
+          <stop offset="1" stop-color="#8fb2ee"/>
+        </linearGradient>
+        <radialGradient id="sun" cx=".74" cy=".6" r=".42">
+          <stop offset="0" stop-color="#ffd9a8" stop-opacity=".95"/>
+          <stop offset=".35" stop-color="#f3a6c4" stop-opacity=".6"/>
+          <stop offset="1" stop-color="#f3a6c4" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="streak" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#ff9fc6" stop-opacity="0"/>
+          <stop offset=".45" stop-color="#ffb3cf" stop-opacity=".9"/>
+          <stop offset="1" stop-color="#c7b8ff" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3a4e6"/><stop offset="1" stop-color="#8c8ad8"/></linearGradient>
+        <linearGradient id="m2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a74cf"/><stop offset="1" stop-color="#5a5ab8"/></linearGradient>
+        <linearGradient id="m3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4743a4"/><stop offset="1" stop-color="#2b2a7c"/></linearGradient>
+        <linearGradient id="shade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1b1a4a" stop-opacity=".62"/><stop offset=".5" stop-color="#1b1a4a" stop-opacity="0"/></linearGradient>
+        <filter id="blur" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur stdDeviation="22"/></filter>
+      </defs>
+      <rect width="1440" height="900" fill="url(#sky)"/>
+      <rect width="1440" height="900" fill="url(#sun)"/>
+      <g class="aurora" filter="url(#blur)" fill="none" stroke="url(#streak)" stroke-linecap="round">
+        <path d="M-80 250 C 260 60, 620 330, 1100 130 S 1500 180, 1560 90" stroke-width="54"/>
+        <path d="M-60 400 C 320 250, 660 470, 1040 300 S 1420 300, 1540 240" stroke-width="34" opacity=".8"/>
+        <path d="M200 120 C 520 40, 820 200, 1240 60" stroke-width="22" opacity=".7"/>
+      </g>
+      <path fill="url(#m1)" d="M0 640 L150 560 L260 610 L420 490 L560 590 L700 520 L860 600 L1010 470 L1150 580 L1290 520 L1440 600 L1440 900 L0 900Z" opacity=".85"/>
+      <path fill="url(#m2)" d="M0 720 L120 660 L280 730 L430 620 L600 720 L760 650 L900 730 L1080 610 L1230 700 L1360 650 L1440 690 L1440 900 L0 900Z"/>
+      <path fill="url(#m3)" d="M0 800 L180 740 L340 800 L520 720 L700 810 L880 750 L1060 820 L1240 740 L1440 810 L1440 900 L0 900Z"/>
+      <rect width="1440" height="900" fill="url(#shade)"/>
+    </svg>
+
+    <nav class="nav" aria-label="主選單">
+      <a class="brand" href="#hero">Aurora</a>
+      <ul>
+        <li><a href="#school">產品</a></li>
+        <li><a href="#school">方案</a></li>
+        <li><a href="#school">價格</a></li>
+        <li><a href="#spec">關於</a></li>
+      </ul>
+      <a class="cta" href="#school">立即體驗</a>
+    </nav>
+
+    <div class="hero-body">
+      <div>
+        <h1>讓靈感<br>自然流動</h1>
+        <p class="lead">Aurora 是一款全新的 AI 創作工具，在想法與現實之間，創造更短的距離。</p>
+        <a class="pill" href="#school">免費開始 <span aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="panels">
+        <div class="stack">
+          <div class="glass row">
+            <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.9L19 9.5l-5.2 1.6L12 16l-1.8-4.9L5 9.5l5.2-1.6z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg></span>
+            <div><h3>AI 靈感助手</h3><p>激發創意，輔助創作</p></div>
+          </div>
+          <div class="glass row">
+            <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.2 11.1 3.5 3.5 0 0 0 7 18z"/></svg></span>
+            <div><h3>雲端同步</h3><p>隨時隨地，靈感不遺失</p></div>
+          </div>
+          <div class="glass row">
+            <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 13h5M10 17h5"/></svg></span>
+            <div><h3>多格式匯出</h3><p>適配你的工作流程</p></div>
+          </div>
+        </div>
+        <div class="glass tall">
+          <h3>好的創意<br>值得被看見。</h3>
+          <span class="orb" aria-hidden="true"></span>
+          <svg class="wave" viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 78 C 30 78, 44 96, 70 92 S 104 30, 130 34 S 158 98, 186 82 S 226 58, 300 66" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+          </svg>
+          <small>Ideas flow.<br>A brighter tomorrow.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 套到學校資料：各頁內容相同，只換風格 ========== -->
+  <section class="school" id="school">
+    <header>
+      <h2>套到學校資料</h2>
+      <p>同一份課堂內容，換上這個風格。</p>
+    </header>
+
+    <div class="grid">
+      <article class="glass card course">
+        <div class="meta"><span>策略管理</span><time datetime="2026-09-18">09/18</time></div>
+        <h3>外部分析：PESTEL・五力分析・策略群組</h3>
+        <p>五力分析說明的是產業的獲利潛力，不是某一家公司的獲利。</p>
+        <div class="tags"><span class="tag">課堂筆記</span><span class="tag">考點</span></div>
+        <a class="go" href="#school">打開講義 →</a>
+      </article>
+      <article class="glass card course">
+        <div class="meta"><span>日本史</span><time datetime="2026-09-21">09/21</time></div>
+        <h3>古代律令制國家的建構：大化改新・奈良時代</h3>
+        <p>律是刑法、令是行政法；法制真正完成要到大寶律令、養老律令。</p>
+        <div class="tags"><span class="tag">課堂筆記</span><span class="tag">補充</span></div>
+        <a class="go" href="#school">打開講義 →</a>
+      </article>
+      <article class="glass card course">
+        <div class="meta"><span>日文寫作（一）</span><time datetime="2026-09-16">09/16</time></div>
+        <h3>作文預備知識：原稿用紙・文体・書きことば</h3>
+        <p>一篇文章只能選一種文末形式，丁寧体或普通体，不能混用。</p>
+        <div class="tags"><span class="tag">課堂筆記</span><span class="tag">考點</span></div>
+        <a class="go" href="#school">打開講義 →</a>
+      </article>
+
+      <div class="glass card nums">
+        <span class="label">策略管理・投影片 2｜公司績效從哪裡來</span>
+        <div class="pair">
+          <div><div class="big">20<span>%</span></div><span class="label">產業效果（約）</span></div>
+          <div><div class="big">25<span>%</span></div><span class="label">景氣與運氣（約）</span></div>
+        </div>
+        <p>平均而言，廠商效果比產業效果大。</p>
+      </div>
+
+      <div class="glass card tablecard">
+        <h3 class="t">產業競爭結構的四種型態</h3>
+        <span class="label">策略管理・投影片 18</span>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">結構</th><th scope="col">完全競爭</th><th scope="col">獨占性競爭</th><th scope="col">寡占</th><th scope="col">獨占</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">廠商</th><td>很多小廠</td><td>很多廠</td><td>少數大廠</td><td>一家</td></tr>
+              <tr><th scope="row">定價</th><td>只能接受市場價格</td><td>有一點定價能力</td><td>有一些定價能力</td><td>定價能力很大</td></tr>
+              <tr><th scope="row">產品</th><td>大宗商品</td><td>有差異化</td><td>有差異化</td><td>獨一無二</td></tr>
+              <tr><th scope="row">進入障礙</th><td>低</td><td>中</td><td>高</td><td>非常高</td></tr>
+              <tr><th scope="row">獲利潛力</th><td>低</td><td>→</td><td>→</td><td>高</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="glass card time">
+        <h3 class="t">律令制國家年表</h3>
+        <span class="label">日本史・09/21</span>
+        <ol class="line">
+          <li><b>645</b>改新之詔</li>
+          <li><b>663</b>白村江之戰</li>
+          <li><b>701</b>大寶律令</li>
+          <li><b>710</b>遷都平城京</li>
+          <li><b>794</b>遷都平安京</li>
+        </ol>
+      </div>
+
+      <figure class="glass card quote" style="margin:0">
+        <blockquote>「在古代社會，你沒有土地基本上就失去了生存的資格。」</blockquote>
+        <figcaption class="label">日本史・老師的話</figcaption>
+      </figure>
+
+      <div class="glass card keys">
+        <h3 class="t">記住三件事</h3>
+        <span class="label">日文寫作（一）・原稿用紙</span>
+        <ol>
+          <li>標題固定空三格，從第四格開始寫</li>
+          <li>名字前加系級，名字後空一格</li>
+          <li>格式錯誤扣兩分或五分，比文法錯誤（一分）重</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ========== 風格規格：給人挑、也給之後照這個風格實作的 AI 讀 ========== -->
+<section class="spec" id="spec">
+  <div class="spec-in">
+    <div class="spec-head">
+      <span class="spec-code">W04</span>
+      <h2>玻璃擬態</h2>
+      <span class="spec-en">Glassmorphism</span>
+    </div>
+    <p class="spec-def">在彩色或有景深的背景上疊半透明的霧面玻璃卡，靠背景模糊、亮邊與陰影做出前後層次。</p>
+
+    <div class="spec-grid">
+      <div class="spec-card">
+        <h3>關鍵特徵</h3>
+        <ul class="spec-traits">
+          <li>通透<small>TRANSPARENT</small></li>
+          <li>層次<small>LAYERED</small></li>
+          <li>通向更美好的未來<small>A MORE BEAUTIFUL FUTURE</small></li>
+        </ul>
+      </div>
+      <div class="spec-card">
+        <h3>字型</h3>
+        <p>英數 <code>Outfit</code>，中文 <code>Noto Sans TC</code>（Google Fonts），離線改用 PingFang TC／Microsoft JhengHei。字重只用 400、500、700，標題靠字級不靠裝飾。</p>
+      </div>
+      <div class="spec-card wide">
+        <h3>色票</h3>
+        <ul class="spec-sw">
+          <li><i style="background:#1b1a4a"></i>--deep #1b1a4a</li>
+          <li><i style="background:#5f4fc4"></i>--violet #5f4fc4</li>
+          <li><i style="background:#e29ac0"></i>--pink #e29ac0</li>
+          <li><i style="background:#9fc0f2"></i>--sky #9fc0f2</li>
+          <li><i style="background:#ffd9a8"></i>--glow #ffd9a8</li>
+          <li><i style="background:#ffffff"></i>--ink #ffffff</li>
+          <li><i style="background:rgba(255,255,255,.13);background-color:#6f66c9"></i>--glass 白 13%</li>
+          <li><i style="background:rgba(255,255,255,.38);background-color:#a9a3df"></i>--edge 白 38%</li>
+        </ul>
+      </div>
+      <div class="spec-card wide">
+        <h3>關鍵做法</h3>
+        <ol>
+          <li>玻璃卡四件事缺一不可：半透明底（白 8–24% 的斜向漸層）、<code>backdrop-filter: blur(18px) saturate(150%)</code>、1px 白 38% 的亮邊、<code>inset 0 1px 0</code> 的頂部高光。</li>
+          <li>玻璃後面一定要有東西可以糊：多色漸層、光暈、山景。純色底上的玻璃看不出效果。</li>
+          <li>白字要壓在偏深的那一側：背景左側另外疊一層深色漸層（<code>#shade</code>），內文對比才夠。</li>
+          <li>卡片圓角 22px、膠囊按鈕 999px；陰影用背景色系的深紫，不用純黑。</li>
+          <li>場景用一張 inline SVG 畫（漸層天空、模糊的光帶、三層山），不放照片。</li>
+        </ol>
+      </div>
+      <div class="spec-card wide spec-fit">
+        <h3>套到學校資料</h3>
+        <p><b>適合</b>課程總覽、學期儀表板這類一格一件事的頁面；數字、短句、標籤放在玻璃卡裡很好讀。</p>
+        <p><b>不適合</b>長篇講義正文與要手寫的頁面：底色深、背景花，筆跡看不清楚。</p>
+        <p><b>要改</b>用在 NCCU 交付物時換成淺色底、關掉光帶動畫，並在 <code>@media print</code> 拿掉 <code>backdrop-filter</code>（做法見 F1 毛玻璃×便當盒）。</p>
+      </div>
+      <div class="spec-card wide spec-prompt">
+        <h3>AI 描述詞</h3>
+        <p>玻璃擬態（Glassmorphism）：紫粉藍漸層背景加山景與極光光帶，半透明霧面玻璃卡，背景模糊，白色細亮邊，柔和深紫陰影，白色文字，膠囊按鈕。</p>
+      </div>
+    </div>
+    <a class="spec-back" href="../index.html">← 回喜好選單</a>
+  </div>
+</section>
+</body>
+</html>

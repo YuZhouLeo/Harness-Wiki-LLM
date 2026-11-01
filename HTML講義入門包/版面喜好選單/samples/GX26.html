@@ -1,0 +1,78 @@
+<!doctype html><!-- 版面喜好選單範例 GX26｜分層掃入通知｜來源：講師範例庫 output範例/元件庫/GX26-分層掃入通知.html；原始來源 https://github.com/uiverse-io/galaxy（Notifications/Santaval_massive-dingo-46.html），作者 Santaval，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX26 分層掃入通知（Achievement banner: colour layers wipe in one after another, hover reveals the next step）
+  來源：https://github.com/uiverse-io/galaxy　Notifications/Santaval_massive-dingo-46.html
+  原作者：Santaval　授權：MIT (Copyright 2023 Uiverse.io)　commit：adbd2ad
+  移植：保留原作的動作——三層色帶依序由左往右掃入（width 0→100%），最後一層主卡掃入後，文字與兩側圖示從上方落下；
+    滑過時深色第二層由上往下蓋滿，換成下一步的文字；
+    原作四色（深灰、青、黃、米）收斂成 P11：--line-strong、--accent、--accent-soft、--surface，只留一個強調色；
+    原作沒設 animation-fill-mode，延遲期間各層是滿版、看不出依序掃入，改成 backwards；整段時間由 1.0s 壓到 0.9s 內；
+    原作兩側是 Font Awesome 手把圖示，改成自繪打勾 SVG；英文 Well done／Next Level 改成「本週查核完成／前往下週清單」；
+    橫幅改成 button，鍵盤聚焦也會展開第二層，補 focus-visible；加「再播一次」鈕（少量原生 JS）與 role=status；
+    prefers-reduced-motion 時不掃入、不落下，整條淡入；第二層改成淡入淡出。
+  2026-10-09 由子代理移植成純 HTML／CSS（必要時加少量原生 JS）
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>分層掃入通知</title>
+<style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px 16px;background:var(--bg);color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.page{width:100%;max-width:360px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:14px 16px 12px}
+.page h1{margin:0 0 2px;font-size:15px;font-weight:700}
+.page p{margin:0 0 12px;font-size:12px;color:var(--ink-2)}
+.slot{display:flex;justify-content:center;min-height:70px}
+.ctl{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;font-size:12px;color:var(--ink-2)}
+.replay{font:inherit;font-size:12px;font-weight:700;padding:4px 12px;border:1px solid var(--line-strong);border-radius:4px;background:var(--surface);color:var(--ink);cursor:pointer}
+.replay:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* 原作 .banner */
+.banner{position:relative;display:block;width:280px;max-width:100%;height:70px;padding:0;border:0;border-radius:10px;background-color:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer;overflow:hidden;box-shadow:0 2px 8px rgb(17 24 31 / .12)}
+.banner:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.loader{position:absolute;top:0;left:0;height:100%;width:100%;border-radius:10px}
+.loader1{background-color:var(--line-strong);animation:loader .42s linear 0s backwards}
+.loader2{background-color:var(--accent);animation:loader .42s linear .12s backwards}
+.loader3{background-color:var(--accent-soft);animation:loader .42s linear .22s backwards}
+.mainCard{display:flex;justify-content:space-around;align-items:center;overflow:hidden;background-color:var(--surface);color:var(--ink);animation:loader .42s linear .32s backwards}
+.mainCard>span:not(.secondCard){flex:none;white-space:nowrap;font-size:21px;font-weight:900;transform:translateY(-120px);animation:appear .12s ease-in .76s forwards}
+.mainCard>svg{flex:none;width:26px;height:26px;color:var(--accent);transform:translateY(-100px);animation:appear .12s ease-in .76s forwards}
+.secondCard{display:flex;justify-content:center;align-items:center;gap:8px;background-color:var(--line-strong);color:transparent;height:0;transition:all .3s ease-in-out;font-size:17px;font-weight:700}
+.banner:hover .secondCard,.banner:focus-visible .secondCard{height:100%;color:var(--surface)}
+@keyframes loader{from{width:0%}to{width:100%}}
+@keyframes appear{from{transform:translateY(-100px)}to{transform:translateY(0)}}
+@keyframes fadein{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  .banner{animation:fadein .3s ease-out}
+  .loader1,.loader2,.loader3,.mainCard{animation:none}
+  .mainCard>span:not(.secondCard),.mainCard>svg{animation:none;transform:none}
+  .secondCard{height:100%;opacity:0;transition:opacity .2s}
+  .banner:hover .secondCard,.banner:focus-visible .secondCard{opacity:1}
+}
+</style></head><body>
+<div class="page">
+  <h1>週檢查表</h1>
+  <p>七項都打勾後跳出這條通知</p>
+  <div class="slot" id="slot" role="status">
+    <button class="banner" type="button" aria-label="本週查核完成，前往下週清單">
+      <span class="loader loader1"></span><span class="loader loader2"></span><span class="loader loader3"></span>
+      <span class="loader mainCard">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>
+        <span>本週查核完成</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>
+        <span class="loader secondCard">前往下週清單 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </span>
+    </button>
+  </div>
+  <div class="ctl"><span id="hint">滑過或用 Tab 聚焦橫幅看下一步</span><button class="replay" id="replay" type="button">再播一次</button></div>
+</div>
+<script>
+const slot=document.getElementById('slot'),hint=document.getElementById('hint');
+document.getElementById('replay').addEventListener('click',()=>{const b=slot.querySelector('.banner'),n=b.cloneNode(true);b.replaceWith(n);hint.textContent='滑過或用 Tab 聚焦橫幅看下一步'});
+slot.addEventListener('click',e=>{if(e.target.closest('.banner'))hint.textContent='（示範）已切換到下週清單'});
+</script>
+</body></html>

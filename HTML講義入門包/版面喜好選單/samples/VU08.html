@@ -1,0 +1,46 @@
+<!doctype html>
+<!-- 版面喜好選單範例 VU08｜彈跳文字載入｜來源：講師範例庫 output範例/元件庫/VU08-彈跳文字載入.html；原始來源 https://github.com/Ashutoshx7/VengeanceUI（src/components/ui/kinetic-text-loader.tsx），作者 None，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  VU08 彈跳文字載入（KineticTextLoader）
+  來源：https://github.com/Ashutoshx7/VengeanceUI　src/components/ui/kinetic-text-loader.tsx
+  原作者：原檔未標　授權：MIT
+  移植：原作用 Google Fonts Roboto Light，離線不可用，改 Arial；圓點位置原作寫死像素，改 JS 量測 L 與 i 的位置；圓點色由黑改藍；reduced-motion 時停在 i 上方。
+  2026-10-08 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>彈跳文字載入</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f6f7f9;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;color:#1f2937}
+.w{display:grid;gap:18px;justify-items:center}
+.t{position:relative;font:300 54px/1.2 Arial,"Helvetica Neue",sans-serif;color:#262626;white-space:nowrap}
+.t span{display:inline-block;letter-spacing:6px}
+.L{transform-origin:100% 70%;animation:lb 1.8s linear infinite}
+.I{transform-origin:100% 70%;animation:ls 1.8s linear infinite}
+.dot{position:absolute;left:var(--x,60px);top:var(--y,26px);width:6px;height:6px;margin-left:-3px;border-radius:50%;background:#2563eb;
+ animation:dm 1.8s linear infinite}
+p{margin:0;font-size:13px;color:#6b7280}
+@keyframes dm{0%,100%{transform:rotate(180deg) translate(calc(var(--d,120px)/-2),-10px) rotate(-180deg)}
+ 50%{transform:rotate(0) translate(calc(var(--d,120px)/-2 - 1px),10px) rotate(0)}}
+@keyframes ls{0%,100%{transform:scale(1,.35)}8%,28%{transform:scale(1,1.4)}37%{transform:scale(1,.875)}46%{transform:scale(1,1.03)}50%,97%{transform:scale(1)}}
+@keyframes lb{0%,45%,70%,100%{transform:scaleY(1.11)}49%{transform:scaleY(.31)}50%{transform:scaleY(.16)}53%{transform:scaleY(.63)}60%{transform:scaleY(1.275)}68%{transform:scaleY(1.04)}}
+@media (prefers-reduced-motion:reduce){.L,.I,.dot{animation:none}.dot{transform:translate(calc(var(--d,120px)/2),0)}}
+</style>
+</head>
+<body>
+<div class="w">
+<div class="t" id="t" aria-label="Loading"><span class="L">L</span><span>o</span><span>a</span><span>d</span><span class="I" id="i">ı</span><span>n</span><span>g</span><i class="dot" id="dot"></i></div>
+<p>講義產生中，請稍候</p>
+</div>
+<script>
+const t=document.getElementById('t'),L=t.firstChild,i=document.getElementById('i'),d=document.getElementById('dot');
+function pos(){const a=L.offsetLeft+L.offsetWidth/2,b=i.offsetLeft+i.offsetWidth/2-3;
+ t.style.setProperty('--d',(b-a)+'px');t.style.setProperty('--x',(a+b)/2+'px');
+ t.style.setProperty('--y',(i.offsetTop+i.offsetHeight*.3)+'px')}
+pos();addEventListener('load',pos);
+</script>
+</body>
+</html>

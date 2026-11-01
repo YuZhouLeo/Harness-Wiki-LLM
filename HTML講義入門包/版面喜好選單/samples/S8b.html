@@ -1,0 +1,521 @@
+<!doctype html>
+<!-- 版面喜好選單範例 S8b｜滾動敘事簡報｜來源：講師範例庫 output範例/設計偏好選擇/samples/S8b-滾動敘事簡報.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S8b 滾動敘事簡報（修正版）｜知識庫準確度基線</title>
+<style>
+/* ═════════ S8b（S8 修正版）滾動敘事：token ═════════
+   角色分工（G17 Resn 的五色，提燈黃是唯一強調色）
+   底 night #0E1A2B　面 tide #1D4C5A（場景中間色）　主字 paper #F5EBDA　次字 mist #8EA4B2（喘息、說明）
+   強調 lantern #FFC14D：只給「主角」——提燈、重點數字、未達標記、爆點場景的暖光
+   狀態：未達＝提燈黃　接近＝紙色描邊　達標＝淺青 #86c5bb */
+:root {
+  --shell: #04080f;
+  --surface: #0E1A2B;
+  --surface-2: #12313f;
+  --surface-3: #1D4C5A;
+  --text: #F5EBDA;
+  --text-2: #d8d7cf;
+  --text-mute: #8EA4B2;
+  --text-faint: #4f6b78;
+  --rule: #4f6b78;
+  --accent: #FFC14D;
+  --font-display-cn: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-mono: ui-monospace, Consolas, Menlo, monospace;
+  --dur-base: 800ms; --dur-slow: 1200ms;
+  --r-stage: 0;
+  --shadow-stage: 0 40px 120px rgba(0, 0, 0, .6);
+  --surface-pattern: none; --surface-pattern-size: 1px 1px; --surface-pattern-blend: normal; --surface-pattern-opacity: 0;
+  --ease-quart: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --ink: #F5EBDA;
+  --ink-2: #d8d7cf;
+  --mute: #9db1bd;
+  --kick: #a9bcc7;
+  --num: #FFC14D;
+  --line: rgba(245, 235, 218, .28);
+  --track: rgba(245, 235, 218, .16);
+  --fillc: #FFC14D;
+  --bad: #FFC14D;
+  --mid: #F5EBDA;
+  --good: #86c5bb;
+  --on-flag: #0E1A2B;
+  --lantern: #FFC14D;
+  --paper: #F5EBDA;
+  --night: #0E1A2B;
+  --deep: #070d16;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ═════════ STAGE ENGINE · CSS（VF 系列共用，整段可直接複製） ═════════ */
+.deck { position: relative; height: 100vh; height: 100svh; min-height: 240px; background: var(--shell);
+  display: flex; align-items: center; justify-content: center; overflow: hidden; }
+@media (max-aspect-ratio: 1/1) { .deck { height: calc(100vw * 9 / 16 + 48px); min-height: 0; } }
+.stage-fitter { position: relative; flex: none; }
+.stage-frame { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0;
+  background: var(--surface); overflow: hidden; cursor: pointer; box-shadow: var(--shadow-stage);
+  border-radius: var(--r-stage); user-select: none; -webkit-user-select: none; }
+.stage-frame::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background-image: var(--surface-pattern); background-size: var(--surface-pattern-size);
+  mix-blend-mode: var(--surface-pattern-blend); opacity: var(--surface-pattern-opacity); }
+.slide { position: absolute; inset: 0; z-index: 2; opacity: 0; visibility: hidden;
+  transition: opacity var(--dur-base) var(--ease-soft), visibility 0s linear var(--dur-base); }
+.slide.is-active { opacity: 1; visibility: visible;
+  transition: opacity var(--dur-slow) var(--ease-soft) 120ms, visibility 0s; }
+/* 宣告式逐步揭示：data-at="n" 的元素在 step ≥ n 時得到 .on（= n 時另有 .now，> n 時 .past） */
+.rv { opacity: 0; transform: translateY(18px);
+  transition: opacity var(--dur-base) var(--ease-soft), transform var(--dur-slow) var(--ease-quart); }
+.rv.on { opacity: 1; transform: none; }
+.wipe { clip-path: inset(0 100% 0 0); transition: clip-path var(--dur-slow) var(--ease-quart); }
+.wipe.on { clip-path: inset(0 0 0 0); }
+.stage-frame.instant .slide, .stage-frame.instant .slide * { transition: none !important; }
+/* 旁白字幕（N 切換，預設關；畫在舞台內，錄影抓得到） */
+.cap { position: absolute; left: 50%; bottom: 150px; transform: translateX(-50%); z-index: 30; width: max-content;
+  max-width: 1500px; padding: 14px 30px; background: var(--text); color: var(--surface-2);
+  font-family: var(--font-display-cn); font-size: 32px; line-height: 1.5; text-align: center;
+  pointer-events: none; opacity: 0; transition: opacity 300ms linear; }
+.stage-frame.show-cap .cap { opacity: 1; }
+.cap:empty { display: none; }
+/* 底部進度列：平常完全隱藏，滑鼠移到底部 56px 才出現 */
+.pb-hover { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; z-index: 40;
+  display: flex; justify-content: center; align-items: flex-end; }
+.pb { display: flex; align-items: center; gap: 2px; max-width: calc(100% - 24px); overflow-x: auto; scrollbar-width: none;
+  padding: 8px 12px; background: var(--text); color: var(--surface);
+  opacity: 0; transform: translateY(100%);
+  transition: opacity var(--dur-base) var(--ease-quart), transform var(--dur-base) var(--ease-quart); }
+.pb-hover:hover .pb, .pb:focus-within { opacity: 1; transform: none; }
+.pb button { font: inherit; font-size: 13px; line-height: 1.4; color: var(--text-faint); background: none;
+  border: 1px solid transparent; padding: 4px 10px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.pb button:hover { color: var(--surface); }
+.pb button.act { color: var(--surface); border-color: var(--accent); }
+.pb .no { font-family: var(--font-mono); color: var(--accent); }
+.pb .pips { display: flex; gap: 4px; }
+.pb .pip { width: 7px; height: 7px; border-radius: 50%; background: var(--text-mute); }
+.pb .pip.on { background: var(--accent); }
+.pb .cnt { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); padding: 0 6px 0 10px; white-space: nowrap; }
+/* ═════════ STAGE ENGINE · CSS 結束 ═════════ */
+/* ═════════ 共用版面骨架（三份簡報同一套網格，差別只在 token 與裝飾） ═════════
+   1920×1080 舞台。字級三層：標題 88／重點 數字 340 或 句子 56／說明 38；最小 26。
+   邊界 左右 120；標題區 top 80；內容區 top 318 ~ bottom 150；頁尾 bottom 52。 */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--shell); color: var(--ink); overflow-x: hidden;
+  font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+  -webkit-font-smoothing: antialiased; letter-spacing: normal; }
+h1, h2, h3, p, ul, ol, li { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+.slide { overflow: hidden; color: var(--ink); }
+.hd { position: absolute; left: 120px; right: 120px; top: 80px; z-index: 3; }
+.kick { margin: 0 0 12px; font-size: 30px; line-height: 1.3; font-weight: 700; color: var(--kick); }
+.hd h2 { font-size: 88px; line-height: 1.18; font-weight: 900; }
+.bd { position: absolute; left: 120px; right: 120px; top: 318px; bottom: 150px; z-index: 3; }
+.src { position: absolute; left: 120px; right: 120px; bottom: 52px; z-index: 3; display: flex; justify-content: space-between;
+  align-items: baseline; gap: 40px; font-size: 26px; line-height: 1.4; color: var(--mute); }
+.src .pg { flex: none; font-variant-numeric: tabular-nums; }
+
+/* 封面 */
+.cover { position: absolute; inset: 0; z-index: 3; }
+.cover .kick { position: absolute; left: 120px; top: 236px; font-size: 36px; margin: 0; }
+.cover h1 { position: absolute; left: 120px; top: 300px; font-size: 176px; line-height: 1.1; font-weight: 900; white-space: nowrap; }
+.cover .sub { position: absolute; left: 120px; top: 640px; width: 1180px; font-size: 44px; line-height: 1.55; color: var(--ink-2); }
+.cover .meta { position: absolute; left: 120px; right: 120px; bottom: 64px; display: flex; gap: 20px 64px; flex-wrap: wrap; font-size: 30px; line-height: 1.45; color: var(--mute); }
+.cover .meta b { font-weight: 500; color: var(--ink-2); }
+
+/* 左：重點數字；右：說明 */
+.split { display: grid; grid-template-columns: 780px 1fr; column-gap: 100px; align-items: center; height: 100%; }
+.big { font-size: 340px; line-height: .92; font-weight: 900; font-variant-numeric: tabular-nums; color: var(--num); white-space: nowrap; }
+.big small { font-size: .3em; font-weight: 700; margin-left: .08em; color: var(--ink-2); }
+.lab { margin-top: 22px; font-size: 42px; line-height: 1.4; font-weight: 500; color: var(--ink-2); }
+.notes { display: grid; gap: 44px; }
+.notes li { font-size: 40px; line-height: 1.5; }
+.notes li b { display: block; margin-bottom: 6px; font-size: 30px; font-weight: 700; color: var(--kick); }
+.chips { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; }
+.chips span { font-size: 30px; line-height: 1; padding: 12px 20px; font-variant-numeric: tabular-nums; }
+
+/* 第 2 張：公式＋三步 */
+.lede { font-size: 56px; line-height: 1.45; font-weight: 700; }
+.lede .eq { color: var(--num); }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 56px; }
+.steps li { padding: 34px 38px 38px; font-size: 36px; line-height: 1.55; }
+.steps li b { display: block; margin-bottom: 12px; font-size: 48px; line-height: 1.2; font-weight: 900; }
+.steps li i { font-style: normal; color: var(--num); margin-right: 14px; font-variant-numeric: tabular-nums; }
+
+/* 第 4 張：三列分數 */
+.rows { display: grid; gap: 22px; height: 100%; align-content: center; }
+.row { display: grid; grid-template-columns: 170px 1fr 290px 190px 190px; align-items: center; column-gap: 32px; padding: 22px 44px; opacity: .38; transition: opacity .6s var(--ease-soft); }
+.row.on { opacity: 1; }
+.row .nm { font-size: 58px; font-weight: 900; line-height: 1.1; }
+.row .track { position: relative; height: 36px; background: var(--track); }
+.row .fill { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--v) * 100%); background: var(--fillc);
+  transform: scaleX(0); transform-origin: 0 50%; transition: transform 1.2s var(--ease-quart) .25s; }
+.row.on .fill { transform: scaleX(1); }
+.row .thr { position: absolute; top: -16px; bottom: -16px; left: calc(var(--t) * 100%); width: 6px; margin-left: -3px; background: var(--ink); }
+.row .val { font-size: 112px; line-height: 1; font-weight: 900; text-align: right; font-variant-numeric: tabular-nums; color: var(--num); }
+.row .ref { font-size: 34px; line-height: 1.3; color: var(--mute); }
+.row .ref b { display: block; font-size: 50px; line-height: 1.1; font-weight: 700; color: var(--ink-2); }
+.flag { display: inline-flex; align-items: center; gap: 12px; font-size: 38px; font-weight: 700; white-space: nowrap; }
+.flag svg { width: 34px; height: 34px; flex: none; }
+.flag.bad { color: var(--bad); } .flag.mid { color: var(--mid); } .flag.good { color: var(--good); }
+.legend { margin-top: 22px; font-size: 28px; color: var(--mute); }
+
+/* 第 5 張：檢查清單 */
+.checks { display: grid; }
+.chk { display: grid; grid-template-columns: 1fr 190px 190px; align-items: center; column-gap: 24px; padding: 26px 0; border-bottom: 2px solid var(--line); font-size: 38px; line-height: 1.35; }
+.chk:first-child { border-top: 2px solid var(--line); }
+.chk .v { font-size: 72px; line-height: 1; font-weight: 900; text-align: right; font-variant-numeric: tabular-nums; color: var(--num); }
+.chk small { display: block; font-size: 28px; color: var(--mute); }
+
+/* 第 7 張：判讀＋三題 */
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 52px; }
+.tile { padding: 32px 38px 36px; }
+.tile .qid { font-size: 28px; font-weight: 700; color: var(--kick); }
+.tile h3 { margin: 8px 0 14px; font-size: 40px; line-height: 1.35; font-weight: 700; }
+.tile .sc { font-size: 88px; line-height: 1; font-weight: 900; color: var(--num); font-variant-numeric: tabular-nums; }
+.tile p { margin-top: 12px; font-size: 32px; line-height: 1.5; color: var(--ink-2); }
+
+/* 第 8 張：三個缺口 */
+.gaps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+.gap { padding: 34px 40px 38px; }
+.gap .nm { font-size: 52px; font-weight: 900; line-height: 1.2; }
+.gap .ft { margin-top: 10px; font-size: 34px; line-height: 1.5; color: var(--ink-2); }
+.gap .d { margin-top: 22px; font-size: 140px; line-height: 1; font-weight: 900; font-variant-numeric: tabular-nums; color: var(--ink); }
+.gap .d small { font-size: 40px; font-weight: 700; margin-right: 12px; color: var(--ink-2); }
+.gap.max .d { color: var(--num); }
+.flow { margin-top: 52px; font-size: 44px; line-height: 1.5; font-weight: 500; }
+.flow b { color: var(--num); font-weight: 900; }
+
+@media (prefers-reduced-motion: reduce) {
+  .row .fill { transition: none; transform: scaleX(1); }
+}
+
+/* ═════════ 風格覆寫（放在引擎與骨架之後） ═════════ */
+/* S8：場景切換（I10 圓形展開）＋視差圖層＋提燈（G17） */
+.stage-frame { background: #070d16; }
+.slide { opacity: 1; visibility: hidden; z-index: 2; background: #0E1A2B;
+  clip-path: circle(0% at var(--cx, 50%) var(--cy, 76%)); transition: none; }
+.slide.is-active { visibility: visible; z-index: 3; clip-path: circle(150% at var(--cx, 50%) var(--cy, 76%));
+  transition: clip-path 1.6s cubic-bezier(.6, 0, .2, 1), visibility 0s; }
+.slide.leaving { visibility: visible; z-index: 2; clip-path: circle(150% at var(--cx, 50%) var(--cy, 76%)); transition: none; }
+.stage-frame.instant .slide, .stage-frame.instant .slide * { transition: none !important; }
+.stage-frame.instant .lantern, .stage-frame.instant .lantern * { transition: none !important; }
+
+/* 場景底圖 */
+.scenebg { position: absolute; inset: 0; z-index: 0; transform: scale(1.14); transition: transform 2.4s var(--ease); }
+.slide.is-active .scenebg { transform: none; }
+.layer { position: absolute; left: -10%; top: 0; width: 120%; height: 100%; display: block; transition: transform 2.6s var(--ease); }
+.layer.far { transform: translateX(-3%); } .layer.mid { transform: translateX(-6%); } .layer.near { transform: translateX(-11%); }
+.slide.is-active .layer { transform: none; }
+.far path { fill: var(--far); } .mid path { fill: var(--midc); } .near path { fill: var(--near); }
+.cover, .hd, .bd, .src { z-index: 4; }
+
+#sl-1 .scenebg { background: linear-gradient(180deg, #0E1A2B 0%, #12313f 52%, #46605a 84%, #1d4c5a 100%); --far: #1a3b49; --midc: #12313f; --near: #070d16; }
+#sl-2 .scenebg { background: linear-gradient(180deg, #070d16 0%, #12313f 60%, #1d4c5a 100%); --far: #25505c; --midc: #12313f; --near: #070d16; }
+#sl-3 .scenebg { background: linear-gradient(180deg, #0E1A2B 0%, #12313f 64%, #1a3b49 100%); --far: #1d4452; --midc: #14303d; --near: #070d16; }
+#sl-4 .scenebg { background: linear-gradient(180deg, #0E1A2B 0%, #173f4d 80%, #1d4c5a 100%); --far: #2f5864; --midc: #1d4c5a; --near: #070d16; }
+#sl-5 .scenebg { background: linear-gradient(180deg, #0E1A2B 0%, #1d4c5a 50%, #8a6a35 100%); --far: #1a3b49; --midc: #12313f; --near: #070d16; }
+#sl-6 .scenebg { background: linear-gradient(180deg, #12313f 0%, #2a5260 55%, #6f8c99 100%); --far: #4b6c7b; --midc: #365766; --near: #14303d; }
+#sl-7 .scenebg { background: linear-gradient(180deg, #070d16 0%, #0E1A2B 60%, #12313f 100%); --far: #12313f; --midc: #0e2530; --near: #070d16; }
+#sl-8 .scenebg { background: linear-gradient(180deg, #1d4c5a 0%, #2f5a5a 62%, #c99a47 100%); --far: #2b5560; --midc: #1d4c5a; --near: #0E1A2B; }
+.win { fill: var(--lantern) !important; }
+.moon { fill: var(--paper) !important; } .moonhalo { fill: rgba(245, 235, 218, .08) !important; }
+.star { fill: var(--paper) !important; opacity: .7; animation: tw 3.4s ease-in-out infinite alternate; animation-delay: calc(var(--s) * -.7s); }
+@keyframes tw { from { opacity: .25; } to { opacity: .9; } }
+.sun { fill: var(--lantern) !important; opacity: .92; }
+.fogband { animation: fog 20s ease-in-out infinite alternate; } .fogband.b2 { animation-duration: 28s; opacity: .7; }
+@keyframes fog { from { transform: translateX(-60px); } to { transform: translateX(60px); } }
+
+/* 文字：落在場景的留白處，像 G17 的敘事節拍（模糊淡入） */
+.rv { opacity: 0; transform: translateY(22px); filter: blur(7px);
+  transition: opacity 1.1s var(--ease) calc(500ms + var(--i, 0) * 130ms), transform 1.3s var(--ease) calc(500ms + var(--i, 0) * 130ms), filter 1.1s var(--ease) calc(500ms + var(--i, 0) * 130ms); }
+.rv.on { opacity: 1; transform: none; filter: none; }
+.kick { color: var(--kick); font-size: 30px; }
+.cover .kick { color: var(--lantern); }
+.hd h2, .cover h1 { color: var(--paper); text-shadow: 0 4px 40px rgba(4, 8, 15, .55); }
+.cover h1 { font-weight: 800; }
+.cover .sub { color: var(--ink-2); }
+.cover .meta { color: #b8c8d1; }
+.cover .meta b { color: var(--paper); font-weight: 700; }
+.big { text-shadow: 0 0 80px rgba(255, 193, 77, .35); }
+.src { color: #9db1bd; }
+
+/* 面板：半透明暗玻璃（圓潤，無陰影），數字與標題直接落在場景上 */
+.row, .tile, .gap, .steps li { background: rgba(7, 13, 22, .52); border: 1px solid rgba(245, 235, 218, .2); border-radius: 30px; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.row { transition: opacity .8s var(--ease), background .6s, border-color .6s; }
+.row.now { background: rgba(7, 13, 22, .72); border-color: rgba(255, 193, 77, .6); }
+.row .track { border-radius: 999px; } .row .fill { border-radius: 999px; }
+.row.mid { --fillc: #F5EBDA; } .row.bad { --fillc: #FFC14D; }
+.row .thr { background: #F5EBDA; border-radius: 3px; }
+.steps li i { color: var(--lantern); }
+.gap.max { border-color: rgba(255, 193, 77, .6); }
+.notes li { padding-left: 32px; border-left: 4px solid rgba(245, 235, 218, .28); }
+.notes li b { color: var(--kick); }
+.chips span { background: rgba(245, 235, 218, .12); border: 1px solid rgba(245, 235, 218, .26); border-radius: 999px; }
+.chk small { color: #9db1bd; }
+.lede { color: var(--paper); }
+.lede .eq { color: var(--lantern); }
+.flow b { color: var(--lantern); }
+
+/* S8b 修正①：第 4 張三列分數改靠上排。原本垂直置中，第三列底邊 y=883 碰到提燈（y=886 起，燈環還會隨 bob 上浮），
+   靠上排後第三列底邊約 y=836，與提燈之間留約 50px。 */
+#sl-4 .rows { align-content: start; }
+/* S8b 修正②：旁白字幕條下移。原 bottom:150px 讓字幕壓在內容區下緣（內容最低約 y=883，字幕 y=854–930），
+   改成 bottom:114px、上下留白 10px，字幕落在 y≈898–966，介於內容下緣與頁尾（y=992）之間。 */
+.cap { bottom: 114px; padding: 10px 30px; }
+
+/* 提燈：一路跟著步數走（左下→右） */
+.lantern { position: absolute; left: 0; top: 0; width: 64px; height: 96px; z-index: 12; pointer-events: none;
+  transform: translate(calc(var(--lx, 80) * 19.2px), calc(var(--ly, 74) * 10.8px)); transition: transform 1.7s cubic-bezier(.5, 0, .2, 1); }
+.lantern svg { position: relative; width: 100%; height: 100%; display: block; overflow: visible; animation: bob 4.6s ease-in-out infinite alternate; }
+.lantern .glow { position: absolute; left: 50%; top: 52%; width: 460px; height: 460px; margin: -230px 0 0 -230px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 193, 77, .55) 0, rgba(255, 193, 77, .14) 28%, transparent 64%); mix-blend-mode: screen;
+  transition: transform 1.4s var(--ease), opacity 1s; }
+.lantern.burst .glow { transform: scale(2.4); }
+.lp-metal { fill: #F5EBDA; } .lp-ring { fill: none; stroke: #F5EBDA; stroke-width: 2.6; }
+.lp-glass { fill: rgba(255, 193, 77, .3); stroke: #F5EBDA; stroke-width: 2.6; }
+.lp-flame { fill: #FFC14D; transform-origin: 30px 54px; transform-box: view-box; animation: flick 1.6s ease-in-out infinite alternate; }
+.lp-core { fill: #F5EBDA; transform-origin: 30px 54px; transform-box: view-box; animation: flick 1.1s ease-in-out infinite alternate-reverse; }
+@keyframes flick { from { transform: scale(.9, .94); } to { transform: scale(1.04, 1.08); } }
+@keyframes bob { from { transform: translateY(-5px) rotate(-1.5deg); } to { transform: translateY(6px) rotate(1.5deg); } }
+
+/* 場景指示（I10）：右緣，直條一格一場景，走過的填滿 */
+.idx { position: absolute; right: 38px; top: 50%; transform: translateY(-50%); z-index: 20; display: grid; justify-items: center; gap: 16px; color: #F5EBDA; }
+.idx .num { font-size: 26px; line-height: 1.25; text-align: center; font-variant-numeric: tabular-nums; color: #b8c8d1; }
+.idx .num b { display: block; font-size: 40px; color: #F5EBDA; }
+.idx ol { display: grid; gap: 8px; }
+.idx button { position: relative; display: block; width: 32px; height: 52px; padding: 0; border: 0; background: none; cursor: pointer; color: inherit; }
+.idx button::before, .idx button i { content: ""; position: absolute; left: 14px; top: 0; bottom: 0; width: 4px; border-radius: 4px; background: #F5EBDA; }
+.idx button::before { opacity: .26; }
+.idx button i { transform-origin: 50% 0; transform: scaleY(0); transition: transform .9s var(--ease); background: #FFC14D; }
+.idx button.done i, .idx button.cur i { transform: scaleY(1); }
+.idx button.cur i { background: #F5EBDA; }
+.idx button:focus-visible { outline: 3px solid #FFC14D; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide, .slide.is-active, .slide.leaving { clip-path: none !important; opacity: 0; transition: opacity 240ms linear, visibility 0s !important; }
+  .slide.is-active { opacity: 1; }
+  .slide.leaving { opacity: 0; visibility: hidden; }
+  .scenebg, .layer, .layer.far, .layer.mid, .layer.near { transform: none !important; transition: none !important; }
+  .rv { transform: none !important; filter: none !important; transition: opacity 240ms linear !important; }
+  .lantern, .lantern .glow, .idx button i { transition: none !important; }
+  .lantern svg, .lp-flame, .lp-core, .star, .fogband { animation: none !important; }
+}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="m-bad" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6.5" fill="currentColor"/><rect x="6.1" y="3" width="1.8" height="5.2" rx=".6" fill="var(--on-flag,#fff)"/><rect x="6.1" y="9.4" width="1.8" height="1.8" rx=".6" fill="var(--on-flag,#fff)"/></symbol>
+  <symbol id="m-mid" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="7" cy="7" r="2" fill="currentColor"/></symbol>
+  <symbol id="m-good" viewBox="0 0 14 14"><path d="M2.5 7.4l3 3 6-6.6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+<section class="deck" id="deck" aria-label="簡報：知識庫準確度基線">
+  <div class="stage-fitter" id="fitter">
+    <div class="stage-frame" id="frame">
+<section class="slide" id="sl-1" aria-label="封面" style="--cx:82%;--cy:86%"><div class="scenebg"><svg class="layer far" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,617 L-176,640 L-152,664 L-128,687 L-104,708 L-80,725 L-56,739 L-32,748 L-8,754 L16,757 L40,758 L64,759 L88,761 L112,765 L136,771 L160,781 L184,793 L208,807 L232,822 L256,838 L280,851 L304,862 L328,868 L352,869 L376,866 L400,857 L424,843 L448,827 L472,809 L496,791 L520,774 L544,761 L568,752 L592,749 L616,750 L640,757 L664,767 L688,781 L712,795 L736,810 L760,822 L784,832 L808,838 L832,839 L856,837 L880,832 L904,824 L928,815 L952,806 L976,799 L1000,794 L1024,792 L1048,793 L1072,797 L1096,803 L1120,809 L1144,815 L1168,818 L1192,818 L1216,814 L1240,804 L1264,789 L1288,769 L1312,745 L1336,718 L1360,690 L1384,663 L1408,638 L1432,617 L1456,602 L1480,592 L1504,587 L1528,588 L1552,593 L1576,602 L1600,612 L1624,622 L1648,631 L1672,639 L1696,643 L1720,645 L1744,644 L1768,642 L1792,640 L1816,638 L1840,638 L1864,641 L1888,648 L1912,659 L1936,675 L1960,693 L1984,714 L2008,736 L2032,757 L2056,775 L2080,790 L2104,800 L2128,805 L2144,1080 Z"/></svg><svg class="layer mid" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,805 L-176,812 L-152,823 L-128,836 L-104,850 L-80,866 L-56,882 L-32,896 L-8,909 L16,919 L40,926 L64,929 L88,930 L112,927 L136,923 L160,917 L184,911 L208,905 L232,901 L256,898 L280,897 L304,899 L328,902 L352,906 L376,911 L400,916 L424,919 L448,921 L472,921 L496,919 L520,915 L544,909 L568,903 L592,896 L616,890 L640,886 L664,884 L688,884 L712,888 L736,894 L760,902 L784,912 L808,922 L832,933 L856,941 L880,948 L904,952 L928,952 L952,949 L976,943 L1000,935 L1024,925 L1048,913 L1072,902 L1096,891 L1120,881 L1144,874 L1168,868 L1192,864 L1216,862 L1240,860 L1264,859 L1288,857 L1312,854 L1336,849 L1360,842 L1384,834 L1408,824 L1432,812 L1456,801 L1480,790 L1504,781 L1528,774 L1552,771 L1576,771 L1600,774 L1624,781 L1648,790 L1672,802 L1696,815 L1720,827 L1744,840 L1768,850 L1792,858 L1816,864 L1840,867 L1864,867 L1888,866 L1912,863 L1936,860 L1960,858 L1984,857 L2008,857 L2032,859 L2056,863 L2080,869 L2104,875 L2128,882 L2144,1080 Z"/><rect class="win" x="-8" y="935" width="9" height="13" opacity="0.40"/><rect class="win" x="160" y="943" width="9" height="13" opacity="0.55"/><rect class="win" x="328" y="928" width="9" height="13" opacity="0.70"/><rect class="win" x="496" y="945" width="9" height="13" opacity="0.85"/><rect class="win" x="664" y="910" width="9" height="13" opacity="0.40"/><rect class="win" x="832" y="959" width="9" height="13" opacity="0.55"/><rect class="win" x="1000" y="961" width="9" height="13" opacity="0.70"/><rect class="win" x="1168" y="894" width="9" height="13" opacity="0.85"/><rect class="win" x="1336" y="875" width="9" height="13" opacity="0.40"/><rect class="win" x="1504" y="807" width="9" height="13" opacity="0.55"/><rect class="win" x="1672" y="828" width="9" height="13" opacity="0.70"/><rect class="win" x="1840" y="893" width="9" height="13" opacity="0.85"/></svg><svg class="layer near" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,953 L-176,954 L-152,956 L-128,959 L-104,962 L-80,966 L-56,969 L-32,972 L-8,975 L16,976 L40,977 L64,977 L88,975 L112,973 L136,971 L160,968 L184,965 L208,963 L232,961 L256,960 L280,960 L304,961 L328,962 L352,964 L376,966 L400,968 L424,970 L448,971 L472,972 L496,972 L520,972 L544,971 L568,970 L592,970 L616,969 L640,970 L664,971 L688,973 L712,976 L736,980 L760,984 L784,989 L808,994 L832,999 L856,1003 L880,1007 L904,1009 L928,1010 L952,1010 L976,1009 L1000,1008 L1024,1005 L1048,1002 L1072,1000 L1096,997 L1120,995 L1144,994 L1168,993 L1192,992 L1216,992 L1240,992 L1264,992 L1288,992 L1312,991 L1336,990 L1360,987 L1384,984 L1408,981 L1432,977 L1456,973 L1480,969 L1504,966 L1528,964 L1552,962 L1576,962 L1600,962 L1624,964 L1648,966 L1672,969 L1696,972 L1720,975 L1744,977 L1768,979 L1792,979 L1816,979 L1840,978 L1864,976 L1888,974 L1912,971 L1936,969 L1960,966 L1984,964 L2008,963 L2032,962 L2056,962 L2080,962 L2104,963 L2128,964 L2144,1080 Z"/></svg></div><div class="cover"><p class="kick rv" data-at="0" style="--i:0">改流程之前的第一次完整量測</p><h1 class="ttl rv" data-at="0" style="--i:1">知識庫準確度基線</h1><p class="sub rv" data-at="0" style="--i:2">三個分數對門檻、零編造、8 題漏答。</p><div class="meta"><span class="m rv" data-at="0" style="--i:3"><b>量測日期</b>　2026-10-08</span><span class="m rv" data-at="0" style="--i:4"><b>題數</b>　33 題（主題庫 28、保留題 5）</span><span class="m rv" data-at="0" style="--i:5"><b>版本</b>　830b563</span></div></div></section>
+<section class="slide" id="sl-2" aria-label="怎麼量" style="--cx:68%;--cy:86%"><div class="scenebg"><svg class="layer far" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,701 L-170,772 L-140,666 L-110,766 L-80,660 L-50,761 L-20,670 L10,757 L40,667 L70,754 L100,678 L130,753 L160,689 L190,753 L220,671 L250,754 L280,662 L310,756 L340,690 L370,760 L400,659 L430,764 L460,692 L490,770 L520,698 L550,776 L580,713 L610,783 L640,674 L670,790 L700,693 L730,797 L760,694 L790,803 L820,713 L850,810 L880,747 L910,815 L940,738 L970,820 L1000,734 L1030,824 L1060,756 L1090,826 L1120,717 L1150,827 L1180,746 L1210,827 L1240,755 L1270,826 L1300,721 L1330,823 L1360,752 L1390,819 L1420,708 L1450,815 L1480,726 L1510,809 L1540,715 L1570,803 L1600,719 L1630,796 L1660,705 L1690,789 L1720,712 L1750,782 L1780,713 L1810,775 L1840,666 L1870,769 L1900,691 L1930,764 L1960,659 L1990,759 L2020,683 L2050,756 L2080,643 L2110,753 L2140,645 L2150,1080 Z"/></svg><svg class="layer mid" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,856 L-166,926 L-132,854 L-98,920 L-64,821 L-30,913 L4,829 L38,905 L72,794 L106,898 L140,819 L174,890 L208,775 L242,882 L276,800 L310,876 L344,780 L378,870 L412,759 L446,866 L480,767 L514,863 L548,754 L582,863 L616,764 L650,863 L684,798 L718,866 L752,761 L786,869 L820,779 L854,875 L888,799 L922,881 L956,812 L990,888 L1024,787 L1058,896 L1092,808 L1126,904 L1160,799 L1194,912 L1228,814 L1262,919 L1296,812 L1330,926 L1364,837 L1398,931 L1432,835 L1466,935 L1500,842 L1534,937 L1568,861 L1602,937 L1636,827 L1670,936 L1704,856 L1738,934 L1772,830 L1806,929 L1840,817 L1874,924 L1908,825 L1942,917 L1976,843 L2010,910 L2044,802 L2078,902 L2112,802 L2146,894 L2154,1080 Z"/></svg><svg class="layer near" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,929 L-156,1001 L-112,931 L-68,995 L-24,920 L20,988 L64,928 L108,980 L152,918 L196,972 L240,900 L284,964 L328,901 L372,957 L416,885 L460,951 L504,897 L548,948 L592,892 L636,946 L680,867 L724,947 L768,880 L812,950 L856,881 L900,954 L944,878 L988,961 L1032,900 L1076,968 L1120,919 L1164,977 L1208,899 L1252,985 L1296,915 L1340,992 L1384,919 L1428,998 L1472,926 L1516,1003 L1560,916 L1604,1006 L1648,941 L1692,1006 L1736,925 L1780,1004 L1824,937 L1868,1000 L1912,924 L1956,994 L2000,914 L2044,987 L2088,920 L2132,979 L2164,1080 Z"/></svg></div><header class="hd"><p class="kick rv" data-at="0" style="--i:0">怎麼量</p><h2 class="ttl rv" data-at="0" style="--i:1">分數量的是：答到幾成關鍵事實</h2></header><div class="bd"><p class="lede rv" data-at="0" style="--i:2"><span class="eq">分數 ＝</span>（答到 ＋ 0.5 × 答到一半）<br>　　　 ／ 標準答案的事實數</p><ol class="steps"><li class="st rv" data-at="0" style="--i:3"><b><i>1</i>派題</b>每題一個新的子代理，照 wiki-query 規則、只用知識庫作答，看不到標準答案</li><li class="st rv" data-at="0" style="--i:4"><b><i>2</i>比對</b>程式先比對標準答案與可接受寫法，沒對上的由評分代理逐條判定</li><li class="st rv" data-at="0" style="--i:5"><b><i>3</i>計分</b>每條事實判成答到、答到一半或沒答到，並引用答案原句</li></ol></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）</span><span class="pg">02 / 08</span></footer></section>
+<section class="slide" id="sl-3" aria-label="總評" style="--cx:52%;--cy:86%"><div class="scenebg"><svg class="layer far" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,899 L-180,898 L-160,897 L-140,895 L-120,893 L-100,891 L-80,889 L-60,886 L-40,884 L-20,881 L0,878 L20,876 L40,873 L60,871 L80,869 L100,866 L120,865 L140,863 L160,862 L180,861 L200,860 L220,860 L240,860 L260,861 L280,861 L300,863 L320,864 L340,866 L360,868 L380,870 L400,872 L420,875 L440,877 L460,880 L480,883 L500,885 L520,888 L540,890 L560,892 L580,894 L600,896 L620,898 L640,899 L660,899 L680,900 L700,900 L720,900 L740,899 L760,898 L780,897 L800,895 L820,893 L840,891 L860,889 L880,887 L900,884 L920,881 L940,879 L960,876 L980,874 L1000,871 L1020,869 L1040,867 L1060,865 L1080,863 L1100,862 L1120,861 L1140,860 L1160,860 L1180,860 L1200,860 L1220,861 L1240,862 L1260,864 L1280,865 L1300,867 L1320,870 L1340,872 L1360,874 L1380,877 L1400,880 L1420,882 L1440,885 L1460,888 L1480,890 L1500,892 L1520,894 L1540,896 L1560,897 L1580,899 L1600,899 L1620,900 L1640,900 L1660,900 L1680,899 L1700,898 L1720,897 L1740,896 L1760,894 L1780,892 L1800,889 L1820,887 L1840,884 L1860,882 L1880,879 L1900,876 L1920,874 L1940,871 L1960,869 L1980,867 L2000,865 L2020,863 L2040,862 L2060,861 L2080,860 L2100,860 L2120,860 L2140,860 L2140,1080 Z"/><circle class="moon" cx="1500" cy="250" r="56"/><circle class="moonhalo" cx="1500" cy="250" r="150"/></svg><svg class="layer mid" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,938 L-180,935 L-160,932 L-140,929 L-120,926 L-100,922 L-80,918 L-60,915 L-40,911 L-20,907 L0,904 L20,901 L40,898 L60,895 L80,893 L100,891 L120,890 L140,889 L160,889 L180,889 L200,890 L220,891 L240,893 L260,895 L280,897 L300,900 L320,903 L340,906 L360,910 L380,914 L400,917 L420,921 L440,925 L460,928 L480,932 L500,935 L520,937 L540,940 L560,942 L580,943 L600,944 L620,945 L640,945 L660,945 L680,944 L700,942 L720,941 L740,938 L760,936 L780,933 L800,930 L820,926 L840,922 L860,919 L880,915 L900,911 L920,908 L940,904 L960,901 L980,898 L1000,896 L1020,893 L1040,892 L1060,890 L1080,889 L1100,889 L1120,889 L1140,890 L1160,891 L1180,892 L1200,894 L1220,897 L1240,900 L1260,903 L1280,906 L1300,909 L1320,913 L1340,917 L1360,921 L1380,924 L1400,928 L1420,931 L1440,934 L1460,937 L1480,939 L1500,941 L1520,943 L1540,944 L1560,945 L1580,945 L1600,945 L1620,944 L1640,943 L1660,941 L1680,939 L1700,936 L1720,933 L1740,930 L1760,927 L1780,923 L1800,919 L1820,916 L1840,912 L1860,908 L1880,905 L1900,902 L1920,899 L1940,896 L1960,894 L1980,892 L2000,890 L2020,889 L2040,889 L2060,889 L2080,890 L2100,891 L2120,892 L2140,894 L2140,1080 Z"/></svg><svg class="layer near" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,956 L-180,958 L-160,960 L-140,963 L-120,966 L-100,969 L-80,973 L-60,976 L-40,979 L-20,983 L0,986 L20,989 L40,991 L60,994 L80,996 L100,997 L120,999 L140,1000 L160,1000 L180,1000 L200,999 L220,999 L240,997 L260,996 L280,994 L300,991 L320,988 L340,986 L360,982 L380,979 L400,976 L420,973 L440,969 L460,966 L480,963 L500,960 L520,958 L540,955 L560,954 L580,952 L600,951 L620,950 L640,950 L660,950 L680,951 L700,952 L720,953 L740,955 L760,957 L780,960 L800,963 L820,966 L840,969 L860,972 L880,976 L900,979 L920,982 L940,985 L960,988 L980,991 L1000,993 L1020,995 L1040,997 L1060,999 L1080,999 L1100,1000 L1120,1000 L1140,1000 L1160,999 L1180,997 L1200,996 L1220,994 L1240,991 L1260,989 L1280,986 L1300,983 L1320,980 L1340,976 L1360,973 L1380,970 L1400,966 L1420,963 L1440,961 L1460,958 L1480,956 L1500,954 L1520,952 L1540,951 L1560,950 L1580,950 L1600,950 L1620,951 L1640,952 L1660,953 L1680,955 L1700,957 L1720,960 L1740,962 L1760,965 L1780,969 L1800,972 L1820,975 L1840,978 L1860,982 L1880,985 L1900,988 L1920,991 L1940,993 L1960,995 L1980,997 L2000,998 L2020,999 L2040,1000 L2060,1000 L2080,1000 L2100,999 L2120,998 L2140,996 L2140,1080 Z"/></svg></div><header class="hd"><p class="kick rv" data-at="0" style="--i:0">總評</p><h2 class="ttl rv" data-at="0" style="--i:1">有 9 題的關鍵事實沒答全</h2></header><div class="bd"><div class="split"><div class="keybox"><p class="big rv" data-at="0" style="--i:2">9<small>／33</small></p><p class="lab rv" data-at="0" style="--i:3">題的關鍵事實沒答全</p></div><ul class="notes"><li class="n rv" data-at="0" style="--i:4"><b>題庫</b>主題庫 28 題，加上保留題 5 題</li><li class="n rv" data-at="0" style="--i:5"><b>這張表的用途</b>改流程之前的基準點。改完再跑同一份題目，比的是這張表的變化。</li></ul></div></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）</span><span class="pg">03 / 08</span></footer></section>
+<section class="slide" id="sl-4" aria-label="三項分數" style="--cx:22%;--cy:86%"><div class="scenebg"><svg class="layer far" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,545 L-170,568 L-140,595 L-110,596 L-80,598 L-50,605 L-20,620 L10,642 L40,670 L70,705 L100,745 L130,788 L160,831 L190,841 L220,846 L250,821 L280,789 L310,759 L340,734 L370,714 L400,699 L430,687 L460,678 L490,638 L520,602 L550,572 L580,549 L610,535 L640,529 L670,532 L700,543 L730,561 L760,581 L790,574 L820,572 L850,576 L880,588 L910,607 L940,634 L970,668 L1000,707 L1030,751 L1060,791 L1090,802 L1120,813 L1150,825 L1180,821 L1210,797 L1240,774 L1270,755 L1300,740 L1330,728 L1360,711 L1390,669 L1420,630 L1450,597 L1480,571 L1510,553 L1540,543 L1570,542 L1600,548 L1630,561 L1660,571 L1690,559 L1720,552 L1750,553 L1780,561 L1810,578 L1840,602 L1870,634 L1900,672 L1930,714 L1960,749 L1990,760 L2020,774 L2050,790 L2080,808 L2110,826 L2140,811 L2150,1080 Z"/></svg><svg class="layer mid" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,893 L-170,872 L-140,854 L-110,839 L-80,828 L-50,820 L-20,814 L10,791 L40,766 L70,745 L100,729 L130,719 L160,715 L190,717 L220,724 L250,737 L280,753 L310,751 L340,750 L370,753 L400,761 L430,774 L460,793 L490,816 L520,843 L550,872 L580,903 L610,912 L640,919 L670,926 L700,916 L730,898 L760,881 L790,868 L820,856 L850,848 L880,841 L910,812 L940,785 L970,762 L1000,743 L1030,730 L1060,724 L1090,723 L1120,727 L1150,736 L1180,748 L1210,740 L1240,736 L1270,736 L1300,742 L1330,753 L1360,770 L1390,792 L1420,818 L1450,847 L1480,876 L1510,884 L1540,892 L1570,903 L1600,914 L1630,920 L1660,907 L1690,896 L1720,885 L1750,877 L1780,866 L1810,835 L1840,807 L1870,782 L1900,762 L1930,747 L1960,737 L1990,734 L2020,735 L2050,741 L2080,746 L2110,734 L2140,727 L2150,1080 Z"/></svg><svg class="layer near" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,988 L-172,990 L-144,990 L-116,987 L-88,983 L-60,978 L-32,972 L-4,966 L24,962 L52,959 L80,957 L108,957 L136,958 L164,959 L192,959 L220,958 L248,955 L276,950 L304,943 L332,934 L360,925 L388,915 L416,907 L444,900 L472,897 L500,896 L528,898 L556,904 L584,911 L612,920 L640,929 L668,937 L696,944 L724,949 L752,953 L780,955 L808,956 L836,957 L864,958 L892,959 L920,963 L948,968 L976,974 L1004,982 L1032,989 L1060,996 L1088,1002 L1116,1005 L1144,1006 L1172,1004 L1200,1000 L1228,994 L1256,986 L1284,979 L1312,973 L1340,968 L1368,966 L1396,966 L1424,969 L1452,974 L1480,980 L1508,986 L1536,992 L1564,996 L1592,999 L1620,1000 L1648,999 L1676,997 L1704,994 L1732,991 L1760,989 L1788,988 L1816,988 L1844,990 L1872,994 L1900,998 L1928,1001 L1956,1003 L1984,1004 L2012,1001 L2040,996 L2068,988 L2096,978 L2124,967 L2148,1080 Z"/></svg></div><header class="hd"><p class="kick rv" data-at="0" style="--i:0">三項核心分數</p><h2 class="ttl rv" data-at="0" style="--i:1">查找、彙整、推論，都沒過門檻</h2></header><div class="bd"><div class="rows"><div class="row bad" data-at="0" style="--i:0;--v:0.7;--t:0.9"><p class="nm">查找</p><div class="track"><i class="fill"></i><i class="thr"></i></div><p class="val">0.70</p><p class="ref">門檻<b>0.9</b></p><span class="flag bad"><svg aria-hidden="true"><use href="#m-bad"/></svg>未達</span></div><div class="row mid" data-at="1" style="--i:1;--v:0.8;--t:0.9"><p class="nm">彙整</p><div class="track"><i class="fill"></i><i class="thr"></i></div><p class="val">0.80</p><p class="ref">門檻<b>0.9</b></p><span class="flag mid"><svg aria-hidden="true"><use href="#m-mid"/></svg>接近</span></div><div class="row bad" data-at="2" style="--i:2;--v:0.59;--t:0.8"><p class="nm">推論</p><div class="track"><i class="fill"></i><i class="thr"></i></div><p class="val">0.59</p><p class="ref">門檻<b>0.8</b></p><span class="flag bad"><svg aria-hidden="true"><use href="#m-bad"/></svg>未達</span></div></div></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）｜coverage，滿分 1.00</span><span class="pg">04 / 08</span></footer></section>
+<section class="slide" id="sl-5" aria-label="零編造" style="--cx:74%;--cy:86%"><div class="scenebg"><svg class="layer far" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,710 L-172,693 L-144,681 L-116,673 L-88,670 L-60,671 L-32,676 L-4,684 L24,676 L52,668 L80,664 L108,665 L136,670 L164,679 L192,694 L220,712 L248,734 L276,758 L304,779 L332,786 L360,794 L388,803 L416,815 L444,828 L472,843 L500,845 L528,838 L556,831 L584,824 L612,806 L640,780 L668,755 L696,733 L724,715 L752,701 L780,690 L808,685 L836,683 L864,684 L892,689 L920,677 L948,666 L976,659 L1004,656 L1032,658 L1060,665 L1088,676 L1116,692 L1144,712 L1172,734 L1200,753 L1228,759 L1256,766 L1284,775 L1312,788 L1340,802 L1368,820 L1396,839 L1424,857 L1452,856 L1480,851 L1508,833 L1536,807 L1564,782 L1592,760 L1620,740 L1648,724 L1676,712 L1704,704 L1732,699 L1760,698 L1788,699 L1816,684 L1844,669 L1872,659 L1900,653 L1928,651 L1956,655 L1984,664 L2012,677 L2040,694 L2068,714 L2096,730 L2124,734 L2148,1080 Z"/><defs><radialGradient id="bg5"><stop offset="0" stop-color="#FFC14D" stop-opacity=".5"/><stop offset=".55" stop-color="#FFC14D" stop-opacity=".14"/><stop offset="1" stop-color="#FFC14D" stop-opacity="0"/></radialGradient></defs><circle class="burst" cx="1000" cy="940" r="900" fill="url(#bg5)"/></svg><svg class="layer mid" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,940 L-174,935 L-148,932 L-122,930 L-96,929 L-70,927 L-44,924 L-18,918 L8,908 L34,896 L60,881 L86,864 L112,846 L138,829 L164,814 L190,803 L216,796 L242,793 L268,795 L294,802 L320,812 L346,823 L372,836 L398,848 L424,857 L450,864 L476,867 L502,866 L528,863 L554,858 L580,852 L606,846 L632,842 L658,840 L684,841 L710,844 L736,850 L762,857 L788,864 L814,871 L840,875 L866,877 L892,876 L918,871 L944,864 L970,854 L996,844 L1022,835 L1048,827 L1074,823 L1100,823 L1126,828 L1152,837 L1178,850 L1204,867 L1230,885 L1256,903 L1282,921 L1308,936 L1334,948 L1360,956 L1386,961 L1412,963 L1438,963 L1464,961 L1490,960 L1516,960 L1542,962 L1568,966 L1594,972 L1620,979 L1646,987 L1672,994 L1698,998 L1724,1000 L1750,998 L1776,991 L1802,980 L1828,965 L1854,948 L1880,929 L1906,910 L1932,892 L1958,878 L1984,867 L2010,861 L2036,859 L2062,860 L2088,865 L2114,871 L2140,878 L2146,1080 Z"/></svg><svg class="layer near" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,992 L-174,991 L-148,990 L-122,990 L-96,991 L-70,992 L-44,994 L-18,997 L8,1000 L34,1002 L60,1005 L86,1006 L112,1006 L138,1004 L164,1001 L190,997 L216,993 L242,987 L268,983 L294,979 L320,976 L346,975 L372,975 L398,977 L424,980 L450,985 L476,989 L502,994 L528,998 L554,1000 L580,1001 L606,1001 L632,1000 L658,997 L684,994 L710,990 L736,987 L762,984 L788,982 L814,981 L840,981 L866,981 L892,982 L918,982 L944,981 L970,980 L996,977 L1022,973 L1048,968 L1074,961 L1100,954 L1126,947 L1152,940 L1178,934 L1204,930 L1230,928 L1256,927 L1282,928 L1308,931 L1334,935 L1360,940 L1386,945 L1412,949 L1438,953 L1464,956 L1490,958 L1516,958 L1542,959 L1568,958 L1594,959 L1620,959 L1646,961 L1672,963 L1698,967 L1724,971 L1750,976 L1776,981 L1802,986 L1828,990 L1854,993 L1880,994 L1906,994 L1932,992 L1958,989 L1984,985 L2010,980 L2036,976 L2062,972 L2088,970 L2114,969 L2140,970 L2146,1080 Z"/></svg></div><header class="hd"><p class="kick rv" data-at="0" style="--i:0">零編造</p><h2 class="ttl rv" data-at="0" style="--i:1">答出來的都是對的：零編造</h2></header><div class="bd"><div class="split"><div class="keybox"><p class="big rv" data-at="0" style="--i:2">0</p><p class="lab rv" data-at="0" style="--i:3">確認後的編造</p></div><ul class="checks"><li class="chk rv" data-at="0" style="--i:3"><span>must_not 命中</span><span class="v">0</span><span class="flag good"><svg aria-hidden="true"><use href="#m-good"/></svg>達標</span></li><li class="chk rv" data-at="0" style="--i:4"><span>確認後的編造</span><span class="v">0</span><span class="flag good"><svg aria-hidden="true"><use href="#m-good"/></svg>達標</span></li><li class="chk rv" data-at="0" style="--i:5"><span>無資料題錯答</span><span class="v">0</span><span class="flag good"><svg aria-hidden="true"><use href="#m-good"/></svg>達標</span></li><li class="chk rv" data-at="0" style="--i:6"><span>precision<small>答出的事實有幾成對</small></span><span class="v">1.00</span><span></span></li></ul></div></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）</span><span class="pg">05 / 08</span></footer></section>
+<section class="slide" id="sl-6" aria-label="漏答" style="--cx:42%;--cy:86%"><div class="scenebg"><svg class="layer far" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,612 L-174,635 L-148,662 L-122,691 L-96,720 L-70,747 L-44,770 L-18,788 L8,800 L34,807 L60,810 L86,810 L112,808 L138,807 L164,808 L190,811 L216,818 L242,828 L268,839 L294,852 L320,863 L346,872 L372,876 L398,876 L424,869 L450,857 L476,840 L502,821 L528,799 L554,779 L580,762 L606,749 L632,743 L658,742 L684,748 L710,759 L736,773 L762,789 L788,804 L814,817 L840,826 L866,830 L892,828 L918,823 L944,813 L970,801 L996,789 L1022,777 L1048,768 L1074,763 L1100,760 L1126,762 L1152,765 L1178,769 L1204,772 L1230,772 L1256,767 L1282,758 L1308,743 L1334,722 L1360,698 L1386,670 L1412,642 L1438,616 L1464,594 L1490,577 L1516,567 L1542,564 L1568,568 L1594,578 L1620,592 L1646,609 L1672,626 L1698,642 L1724,655 L1750,665 L1776,671 L1802,674 L1828,675 L1854,675 L1880,676 L1906,680 L1932,688 L1958,699 L1984,715 L2010,734 L2036,756 L2062,777 L2088,798 L2114,815 L2140,827 L2146,1080 Z"/></svg><svg class="layer mid" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,933 L-174,933 L-148,931 L-122,926 L-96,919 L-70,908 L-44,895 L-18,880 L8,864 L34,849 L60,836 L86,825 L112,819 L138,817 L164,819 L190,824 L216,833 L242,842 L268,852 L294,861 L320,868 L346,871 L372,871 L398,868 L424,862 L450,854 L476,846 L502,838 L528,831 L554,827 L580,825 L606,825 L632,828 L658,831 L684,835 L710,838 L736,840 L762,839 L788,834 L814,827 L840,818 L866,807 L892,796 L918,786 L944,778 L970,774 L996,773 L1022,778 L1048,786 L1074,799 L1100,814 L1126,831 L1152,848 L1178,865 L1204,879 L1230,890 L1256,898 L1282,904 L1308,907 L1334,908 L1360,908 L1386,909 L1412,912 L1438,916 L1464,922 L1490,930 L1516,939 L1542,948 L1568,957 L1594,964 L1620,968 L1646,968 L1672,964 L1698,956 L1724,945 L1750,931 L1776,916 L1802,901 L1828,888 L1854,878 L1880,871 L1906,868 L1932,869 L1958,873 L1984,879 L2010,886 L2036,894 L2062,900 L2088,904 L2114,905 L2140,904 L2146,1080 Z"/><defs><linearGradient id="fg6" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8EA4B2" stop-opacity="0"/><stop offset=".5" stop-color="#8EA4B2" stop-opacity=".35"/><stop offset="1" stop-color="#8EA4B2" stop-opacity="0"/></linearGradient></defs><rect class="fogband" x="-192" y="700" width="2304" height="170" fill="url(#fg6)"/><rect class="fogband b2" x="-192" y="840" width="2304" height="140" fill="url(#fg6)"/></svg><svg class="layer near" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,945 L-174,947 L-148,950 L-122,953 L-96,956 L-70,957 L-44,958 L-18,958 L8,957 L34,957 L60,956 L86,957 L112,958 L138,961 L164,966 L190,971 L216,978 L242,986 L268,994 L294,1001 L320,1008 L346,1013 L372,1016 L398,1017 L424,1017 L450,1015 L476,1012 L502,1008 L528,1004 L554,1000 L580,998 L606,996 L632,995 L658,995 L684,996 L710,997 L736,997 L762,997 L788,997 L814,995 L840,992 L866,988 L892,983 L918,978 L944,974 L970,970 L996,967 L1022,966 L1048,967 L1074,969 L1100,972 L1126,976 L1152,981 L1178,985 L1204,988 L1230,990 L1256,991 L1282,989 L1308,987 L1334,983 L1360,978 L1386,972 L1412,967 L1438,963 L1464,959 L1490,957 L1516,955 L1542,955 L1568,955 L1594,955 L1620,955 L1646,955 L1672,954 L1698,952 L1724,948 L1750,944 L1776,940 L1802,936 L1828,932 L1854,930 L1880,929 L1906,930 L1932,933 L1958,937 L1984,943 L2010,951 L2036,958 L2062,966 L2088,972 L2114,978 L2140,983 L2146,1080 Z"/></svg></div><header class="hd"><p class="kick rv" data-at="0" style="--i:0">漏答</p><h2 class="ttl rv" data-at="0" style="--i:1">分數低不是答錯，是答不出來</h2></header><div class="bd"><div class="split"><div class="keybox"><p class="big rv" data-at="0" style="--i:2">8</p><p class="lab rv" data-at="0" style="--i:3">題有資料卻回答「筆記裡沒有」</p></div><ul class="notes"><li class="n rv" data-at="0" style="--i:4"><b>怎麼掉的分</b>不是答錯，是該答的沒答</li><li class="n rv" data-at="0" style="--i:5"><b>對照</b>答出來的事實全對（precision 1.00）</li><li class="n rv" data-at="0" style="--i:6"><b>這 8 題</b><span class="chips"><span>Q01</span><span>Q02</span><span>Q10</span><span>Q13</span><span>Q14</span><span>Q20</span><span>Q21</span><span>H02</span></span></li></ul></div></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）</span><span class="pg">06 / 08</span></footer></section>
+<section class="slide" id="sl-7" aria-label="原因判讀" style="--cx:62%;--cy:86%"><div class="scenebg"><svg class="layer far" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,694 L-172,694 L-144,698 L-116,704 L-88,714 L-60,718 L-32,716 L-4,716 L24,718 L52,724 L80,733 L108,745 L136,759 L164,776 L192,795 L220,815 L248,823 L276,828 L304,833 L332,837 L360,827 L388,816 L416,806 L444,798 L472,791 L500,786 L528,780 L556,761 L584,744 L612,729 L640,716 L668,707 L696,702 L724,699 L752,701 L780,705 L808,711 L836,713 L864,709 L892,706 L920,707 L948,710 L976,717 L1004,728 L1032,741 L1060,757 L1088,775 L1116,795 L1144,803 L1172,808 L1200,814 L1228,822 L1256,830 L1284,833 L1312,825 L1340,818 L1368,812 L1396,806 L1424,800 L1452,780 L1480,762 L1508,745 L1536,731 L1564,720 L1592,713 L1620,708 L1648,707 L1676,709 L1704,713 L1732,712 L1760,705 L1788,700 L1816,698 L1844,700 L1872,705 L1900,713 L1928,725 L1956,740 L1984,757 L2012,775 L2040,782 L2068,788 L2096,794 L2124,802 L2148,1080 Z"/><circle class="star" cx="418" cy="342" r="2.5" style="--s:0"/><circle class="star" cx="1281" cy="291" r="2.0" style="--s:1"/><circle class="star" cx="1910" cy="261" r="2.5" style="--s:2"/><circle class="star" cx="1484" cy="170" r="2.5" style="--s:3"/><circle class="star" cx="-27" cy="383" r="2.0" style="--s:4"/><circle class="star" cx="1675" cy="139" r="2.5" style="--s:0"/><circle class="star" cx="307" cy="120" r="2.5" style="--s:1"/><circle class="star" cx="193" cy="233" r="1.5" style="--s:2"/><circle class="star" cx="1908" cy="73" r="1.5" style="--s:3"/><circle class="star" cx="222" cy="181" r="1.5" style="--s:4"/><circle class="star" cx="473" cy="266" r="1.5" style="--s:0"/><circle class="star" cx="50" cy="201" r="2.0" style="--s:1"/><circle class="star" cx="1593" cy="520" r="1.5" style="--s:2"/><circle class="star" cx="1670" cy="421" r="2.5" style="--s:3"/><circle class="star" cx="1874" cy="126" r="1.5" style="--s:4"/><circle class="star" cx="1090" cy="357" r="2.0" style="--s:0"/><circle class="star" cx="1803" cy="455" r="2.5" style="--s:1"/><circle class="star" cx="358" cy="193" r="2.0" style="--s:2"/><circle class="star" cx="944" cy="455" r="2.5" style="--s:3"/><circle class="star" cx="827" cy="44" r="2.5" style="--s:4"/><circle class="star" cx="1847" cy="59" r="2.0" style="--s:0"/><circle class="star" cx="1609" cy="99" r="2.5" style="--s:1"/><circle class="star" cx="1867" cy="540" r="1.5" style="--s:2"/><circle class="star" cx="385" cy="533" r="2.5" style="--s:3"/><circle class="star" cx="1026" cy="361" r="2.0" style="--s:4"/><circle class="star" cx="698" cy="369" r="2.5" style="--s:0"/><circle class="star" cx="675" cy="393" r="2.5" style="--s:1"/><circle class="star" cx="1834" cy="490" r="2.0" style="--s:2"/><circle class="star" cx="1853" cy="255" r="2.0" style="--s:3"/><circle class="star" cx="1379" cy="453" r="2.0" style="--s:4"/><circle class="star" cx="1954" cy="389" r="2.0" style="--s:0"/><circle class="star" cx="1462" cy="191" r="1.5" style="--s:1"/><circle class="star" cx="40" cy="118" r="1.5" style="--s:2"/><circle class="star" cx="1752" cy="168" r="2.0" style="--s:3"/><circle class="star" cx="1894" cy="120" r="1.5" style="--s:4"/><circle class="star" cx="-41" cy="400" r="2.5" style="--s:0"/><circle class="star" cx="1107" cy="512" r="1.5" style="--s:1"/><circle class="star" cx="734" cy="187" r="1.5" style="--s:2"/><circle class="star" cx="179" cy="120" r="2.0" style="--s:3"/><circle class="star" cx="1712" cy="117" r="2.5" style="--s:4"/><circle class="star" cx="331" cy="511" r="1.5" style="--s:0"/><circle class="star" cx="47" cy="357" r="1.5" style="--s:1"/><circle class="star" cx="1270" cy="276" r="2.5" style="--s:2"/><circle class="star" cx="793" cy="518" r="2.5" style="--s:3"/><circle class="star" cx="273" cy="487" r="2.0" style="--s:4"/><circle class="star" cx="434" cy="388" r="2.0" style="--s:0"/></svg><svg class="layer mid" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,879 L-172,888 L-144,895 L-116,899 L-88,900 L-60,898 L-32,893 L-4,887 L24,879 L52,871 L80,865 L108,861 L136,860 L164,861 L192,865 L220,868 L248,872 L276,874 L304,873 L332,868 L360,861 L388,850 L416,837 L444,823 L472,810 L500,800 L528,793 L556,790 L584,793 L612,800 L640,810 L668,824 L696,838 L724,853 L752,865 L780,876 L808,883 L836,888 L864,891 L892,893 L920,895 L948,898 L976,903 L1004,911 L1032,921 L1060,933 L1088,945 L1116,957 L1144,967 L1172,974 L1200,977 L1228,976 L1256,970 L1284,960 L1312,948 L1340,934 L1368,921 L1396,911 L1424,903 L1452,899 L1480,899 L1508,902 L1536,908 L1564,915 L1592,922 L1620,927 L1648,930 L1676,930 L1704,927 L1732,923 L1760,916 L1788,910 L1816,905 L1844,902 L1872,901 L1900,903 L1928,908 L1956,914 L1984,921 L2012,926 L2040,929 L2068,928 L2096,924 L2124,914 L2148,1080 Z"/></svg><svg class="layer near" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,939 L-174,937 L-148,937 L-122,938 L-96,941 L-70,945 L-44,950 L-18,956 L8,962 L34,967 L60,971 L86,974 L112,976 L138,976 L164,976 L190,975 L216,973 L242,972 L268,971 L294,970 L320,971 L346,973 L372,975 L398,978 L424,980 L450,983 L476,985 L502,986 L528,985 L554,984 L580,982 L606,979 L632,976 L658,974 L684,972 L710,971 L736,972 L762,974 L788,978 L814,982 L840,988 L866,994 L892,999 L918,1004 L944,1008 L970,1011 L996,1013 L1022,1012 L1048,1011 L1074,1009 L1100,1007 L1126,1005 L1152,1003 L1178,1002 L1204,1001 L1230,1001 L1256,1001 L1282,1002 L1308,1002 L1334,1002 L1360,1001 L1386,998 L1412,995 L1438,990 L1464,984 L1490,977 L1516,970 L1542,964 L1568,958 L1594,954 L1620,951 L1646,950 L1672,950 L1698,952 L1724,954 L1750,957 L1776,960 L1802,963 L1828,965 L1854,967 L1880,967 L1906,966 L1932,964 L1958,963 L1984,961 L2010,960 L2036,959 L2062,959 L2088,961 L2114,963 L2140,966 L2146,1080 Z"/></svg></div><header class="hd"><p class="kick rv" data-at="0" style="--i:0">原因判讀</p><h2 class="ttl rv" data-at="0" style="--i:1">漏答多半是 wiki 沒收進這些細節</h2></header><div class="bd"><p class="lede rv" data-at="0" style="--i:2">題目只從 1-raw 出，漏答的細節多半沒被 wiki 收進去</p><ul class="tiles"><li class="tile rv" data-at="0" style="--i:3"><p class="qid">Q10　期末報告</p><h3>第一週的分組報告，這組選了哪個主題？</h3><p class="sc">0.00</p><p>標準答案：需查原文</p></li><li class="tile rv" data-at="0" style="--i:4"><p class="qid">Q14　大阪美食</p><h3>不預約也能吃到的寶藏美食有哪幾家？</h3><p class="sc">0.00</p><p>標準答案：なべや等 6 家</p></li><li class="tile rv" data-at="0" style="--i:5"><p class="qid">Q20　模型評估</p><h3>評估一個預測模型，會挑什麼毛病？</h3><p class="sc">0.00</p><p>標準答案：樣本偏誤等 5 點</p></li></ul></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）｜「wiki 漏收」是判讀，尚待逐題確認</span><span class="pg">07 / 08</span></footer></section>
+<section class="slide" id="sl-8" aria-label="下一步" style="--cx:86%;--cy:86%"><div class="scenebg"><svg class="layer far" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,679 L-172,676 L-144,681 L-116,692 L-88,710 L-60,734 L-32,762 L-4,791 L24,819 L52,844 L80,864 L108,878 L136,885 L164,888 L192,887 L220,884 L248,880 L276,878 L304,879 L332,884 L360,891 L388,899 L416,908 L444,915 L472,919 L500,917 L528,910 L556,897 L584,878 L612,857 L640,835 L668,813 L696,795 L724,783 L752,776 L780,777 L808,783 L836,794 L864,808 L892,822 L920,834 L948,842 L976,845 L1004,842 L1032,835 L1060,825 L1088,812 L1116,800 L1144,789 L1172,781 L1200,777 L1228,777 L1256,780 L1284,784 L1312,788 L1340,789 L1368,786 L1396,778 L1424,764 L1452,745 L1480,723 L1508,699 L1536,675 L1564,655 L1592,640 L1620,631 L1648,631 L1676,637 L1704,650 L1732,667 L1760,687 L1788,707 L1816,724 L1844,739 L1872,750 L1900,757 L1928,760 L1956,763 L1984,765 L2012,769 L2040,776 L2068,788 L2096,803 L2124,822 L2148,1080 Z"/><circle class="sun" cx="1380" cy="900" r="170"/></svg><svg class="layer mid" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,838 L-172,828 L-144,821 L-116,819 L-88,821 L-60,827 L-32,837 L-4,848 L24,860 L52,872 L80,880 L108,885 L136,887 L164,884 L192,879 L220,872 L248,864 L276,857 L304,851 L332,848 L360,848 L388,851 L416,856 L444,861 L472,866 L500,870 L528,871 L556,870 L584,866 L612,860 L640,853 L668,846 L696,841 L724,838 L752,840 L780,847 L808,857 L836,872 L864,889 L892,908 L920,926 L948,942 L976,955 L1004,964 L1032,969 L1060,970 L1088,969 L1116,966 L1144,963 L1172,960 L1200,959 L1228,960 L1256,962 L1284,966 L1312,971 L1340,974 L1368,975 L1396,973 L1424,968 L1452,959 L1480,946 L1508,931 L1536,914 L1564,899 L1592,885 L1620,874 L1648,868 L1676,866 L1704,868 L1732,873 L1760,881 L1788,889 L1816,897 L1844,902 L1872,905 L1900,904 L1928,900 L1956,894 L1984,887 L2012,879 L2040,873 L2068,868 L2096,866 L2124,867 L2148,1080 Z"/></svg><svg class="layer near" viewBox="-192 0 2304 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M-200,1080 L-200,982 L-174,987 L-148,990 L-122,991 L-96,991 L-70,990 L-44,988 L-18,985 L8,982 L34,980 L60,979 L86,979 L112,979 L138,981 L164,983 L190,986 L216,988 L242,990 L268,991 L294,992 L320,991 L346,990 L372,988 L398,985 L424,983 L450,982 L476,982 L502,983 L528,985 L554,988 L580,993 L606,998 L632,1003 L658,1008 L684,1012 L710,1014 L736,1015 L762,1015 L788,1013 L814,1010 L840,1005 L866,1001 L892,996 L918,992 L944,988 L970,985 L996,983 L1022,982 L1048,981 L1074,980 L1100,979 L1126,978 L1152,975 L1178,972 L1204,968 L1230,963 L1256,958 L1282,952 L1308,948 L1334,944 L1360,941 L1386,940 L1412,941 L1438,943 L1464,947 L1490,951 L1516,956 L1542,961 L1568,965 L1594,968 L1620,971 L1646,972 L1672,972 L1698,971 L1724,969 L1750,967 L1776,965 L1802,964 L1828,964 L1854,965 L1880,966 L1906,969 L1932,971 L1958,974 L1984,976 L2010,978 L2036,978 L2062,978 L2088,976 L2114,974 L2140,971 L2146,1080 Z"/></svg></div><header class="hd"><p class="kick rv" data-at="0" style="--i:0">下一步</p><h2 class="ttl rv" data-at="0" style="--i:1">改完流程，重跑同一份 33 題</h2></header><div class="bd"><ul class="gaps"><li class="gap rv" data-at="0" style="--i:2"><p class="nm">查找</p><p class="ft">現在 0.70　門檻 0.9</p><p class="d"><small>還差</small>0.20</p></li><li class="gap rv" data-at="0" style="--i:3"><p class="nm">彙整</p><p class="ft">現在 0.80　門檻 0.9</p><p class="d"><small>還差</small>0.10</p></li><li class="gap max rv" data-at="0" style="--i:4"><p class="nm">推論</p><p class="ft">現在 0.59　門檻 0.8</p><p class="d"><small>還差</small>0.21</p></li></ul><p class="flow rv" data-at="0" style="--i:5">改流程　→　<b>重跑同一份 33 題</b>　→　只比這張表的變化</p></div><footer class="src"><span>來源：知識庫準確度 2026-10-08（基線，改流程前）｜缺口 ＝ 門檻 − 本次</span><span class="pg">08 / 08</span></footer></section>
+<div class="lantern" id="lantern" aria-hidden="true"><i class="glow"></i>
+<svg viewBox="0 0 60 96"><path class="lp-ring" d="M22 10 Q30 -4 38 10"/><rect class="lp-metal" x="17" y="9" width="26" height="8" rx="2"/>
+<path class="lp-glass" d="M18 17 H42 L46 70 Q46 78 38 78 H22 Q14 78 14 70 Z"/><ellipse class="lp-flame" cx="30" cy="52" rx="7" ry="13"/>
+<ellipse class="lp-core" cx="30" cy="56" rx="3" ry="6"/><rect class="lp-metal" x="15" y="78" width="30" height="7" rx="2"/></svg></div><nav class="idx" id="idx" aria-label="場景"><p class="num"><b id="idxNo">01</b>/ 08</p><ol id="idxList"></ol></nav>
+      <div class="cap" id="cap" aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="pb-hover" data-no-advance><nav class="pb" id="pb" aria-label="簡報進度"></nav></div>
+</section>
+<script id="stage-engine">
+/* ═════════ STAGE ENGINE v1（VF 系列共用，整段原樣複製，只在下方另寫 Stage.init 設定） ═════════
+ * 需要的 DOM：#deck > #fitter > #frame > section.slide…、#frame 內的 #cap、#deck 內的 #pb。
+ * Stage.init({ slides: [{ el: '#id', title: '封面', narr: ['旁白…', …], onStep(k, ctx) {} }] })
+ *   ctx = { step, prevStep(同張上一步，換張時為 -1), fresh(剛換張), instant(不播動畫), dir, reduce, el }
+ * 宣告式揭示：slide 內 [data-at="n"] 在 step ≥ n 時加 .on；= n 加 .now；> n 加 .past；
+ *   [data-until="m"] 讓它在 step > m 時再拿掉 .on。
+ * 操作：→／空白／PageDown／點擊＝下一步；←／PageUp＝上一步；Home／End；1–9 跳張；N 切換字幕。
+ * #s=<1 起算的全域步數> 直接開到該步（instant），翻頁時 replaceState 更新。 */
+const Stage = (() => {
+  const W = 1920, H = 1080;
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  let deck, fitter, frame, cap, pb, slides = [], offsets = [], total = 0, g = -1, visible = true;
+
+  function locate(gi) {
+    let s = 0;
+    while (s < slides.length - 1 && gi >= offsets[s] + slides[s].narr.length) s++;
+    return { s, k: gi - offsets[s] };
+  }
+  function fit() {
+    const r = deck.getBoundingClientRect();
+    const sc = Math.min(r.width / W, r.height / H);
+    fitter.style.width = (W * sc) + 'px';
+    fitter.style.height = (H * sc) + 'px';
+    frame.style.transform = 'scale(' + sc + ')';
+  }
+  function markSteps(sl, k) {
+    sl.el.dataset.step = k;
+    sl.el.querySelectorAll('[data-at]').forEach(el => {
+      const n = +el.dataset.at, u = el.dataset.until != null ? +el.dataset.until : Infinity;
+      el.classList.toggle('on', k >= n && k <= u);
+      el.classList.toggle('now', k === n);
+      el.classList.toggle('past', k > n);
+    });
+  }
+  function go(target, opts = {}) {
+    target = clamp(target | 0, 0, total - 1);
+    if (target === g && !opts.force) return;
+    const prev = g, from = prev < 0 ? { s: -1, k: -1 } : locate(prev), to = locate(target);
+    const fresh = from.s !== to.s;
+    const instant = !!opts.instant;
+    g = target;
+    frame.classList.toggle('instant', instant);
+    const sl = slides[to.s];
+    if (fresh) {                                   // 剛進這張：先清掉上次留下的狀態，讓揭示重新播
+      sl.el.querySelectorAll('[data-at]').forEach(el => el.classList.remove('on', 'now', 'past'));
+      void sl.el.offsetWidth;
+    }
+    slides.forEach((s, i) => {
+      s.el.classList.toggle('is-active', i === to.s);
+      s.el.setAttribute('aria-hidden', i === to.s ? 'false' : 'true');
+    });
+    markSteps(sl, to.k);
+    const ctx = { step: to.k, prevStep: fresh ? -1 : from.k, fresh, instant, dir: Math.sign(target - prev),
+                  reduce: reduceMQ.matches, el: sl.el };
+    if (fresh && from.s >= 0 && slides[from.s].onLeave) slides[from.s].onLeave();
+    if (sl.onStep) sl.onStep(to.k, ctx);
+    cap.textContent = sl.narr[to.k] || '';
+    renderPB();
+    frame.dataset.g = g + 1;
+    if (instant) requestAnimationFrame(() => requestAnimationFrame(() => frame.classList.remove('instant')));
+    const h = '#s=' + (g + 1);
+    if (location.hash !== h) history.replaceState(null, '', h);
+  }
+  function buildPB() {
+    pb.innerHTML = slides.map((s, i) =>
+      '<button type="button" data-s="' + i + '"><span class="no">' + String(i + 1).padStart(2, '0') + '</span>' +
+      '<span>' + s.title + '</span><span class="pips"></span></button>').join('') + '<span class="cnt"></span>';
+    pb.addEventListener('click', e => {
+      e.stopPropagation();
+      const pip = e.target.closest('.pip');
+      if (pip) { go(+pip.dataset.g); return; }
+      const b = e.target.closest('button');
+      if (b) go(offsets[+b.dataset.s]);
+    });
+  }
+  function renderPB() {
+    const { s: cs, k } = locate(g);
+    pb.querySelectorAll('button').forEach((b, i) => {
+      b.classList.toggle('act', i === cs);
+      const pips = b.querySelector('.pips');
+      pips.innerHTML = i === cs ? slides[i].narr.map((_, j) =>
+        '<span class="pip' + (j <= k ? ' on' : '') + '" data-g="' + (offsets[i] + j) + '"></span>').join('') : '';
+    });
+    pb.querySelector('.cnt').textContent = String(g + 1).padStart(2, '0') + ' / ' + total;
+  }
+  function fromHash() {
+    const m = /(?:^#|&)s=(\d+)/.exec(location.hash);
+    return m ? clamp(+m[1] - 1, 0, total - 1) : null;
+  }
+  function init(cfg) {
+    deck = document.getElementById('deck'); fitter = document.getElementById('fitter');
+    frame = document.getElementById('frame'); cap = document.getElementById('cap'); pb = document.getElementById('pb');
+    slides = cfg.slides.map(s => Object.assign({}, s, { el: typeof s.el === 'string' ? document.querySelector(s.el) : s.el }));
+    let acc = 0;
+    offsets = slides.map(s => { const o = acc; acc += s.narr.length; return o; });
+    total = acc;
+    buildPB(); fit();
+    addEventListener('resize', fit);
+    if (typeof ResizeObserver === 'function') new ResizeObserver(fit).observe(deck);
+    if (typeof IntersectionObserver === 'function')
+      new IntersectionObserver(es => { visible = es[0].intersectionRatio >= 0.5; }, { threshold: [0, 0.5, 1] }).observe(deck);
+    frame.addEventListener('click', e => {
+      if (e.target.closest('a, button, input, [data-no-advance]')) return;
+      go(g + 1);
+    });
+    addEventListener('keydown', e => {
+      if (!visible || e.ctrlKey || e.metaKey || e.altKey) return;
+      const t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      const k = e.key;
+      if (k === 'ArrowRight' || k === ' ' || k === 'PageDown') { e.preventDefault(); go(g + 1); }
+      else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); go(g - 1); }
+      else if (k === 'Home') { e.preventDefault(); go(0); }
+      else if (k === 'End') { e.preventDefault(); go(total - 1); }
+      else if (/^[1-9]$/.test(k)) { const i = +k - 1; if (i < slides.length) go(offsets[i]); }
+      else if (k === 'n' || k === 'N') frame.classList.toggle('show-cap');
+    });
+    addEventListener('hashchange', () => { const h = fromHash(); if (h != null && h !== g) go(h, { instant: true }); });
+    const h = fromHash();
+    go(h == null ? 0 : h, { instant: h != null, force: true });
+    return api;
+  }
+  const api = { init, go, get index() { return g; }, get total() { return total; }, reduceMQ };
+  return api;
+})();
+/* ═════════ STAGE ENGINE v1 結束 ═════════ */
+</script>
+<script id="deck-config" type="application/json">{"narr": [["知識庫準確度基線：改流程之前，第一次完整量測。"], ["每題一個新的子代理，只准查知識庫；分數是答到幾成關鍵事實。"], ["33 題裡，有 9 題的關鍵事實沒答全。"], ["查找 0.70，門檻 0.9，未達。", "彙整 0.80，門檻 0.9，接近但沒過。", "推論 0.59，門檻 0.8，未達。"], ["零編造：三項都是 0，答出來的事實全對。"], ["分數低不是答錯，是有資料卻答不出來，共 8 題。"], ["漏答多半是 wiki 沒收進細節；這是判讀，要逐題確認。"], ["改完流程重跑同一份 33 題；推論還差最多。"]], "titles": ["封面", "怎麼量", "總評", "三項分數", "零編造", "漏答", "原因判讀", "下一步"], "lant": [[80, 82], [66, 82], [50, 82], [20, 82], [50, 82], [80, 82], [72, 82], [40, 82], [60, 82], [84, 82]]}</script>
+<script id="deck-effects">
+(() => {
+  'use strict';
+  const cfg = JSON.parse(document.getElementById('deck-config').textContent);
+  const frame = document.getElementById('frame');
+  const lantern = document.getElementById('lantern');
+  const idxList = document.getElementById('idxList');
+  const idxNo = document.getElementById('idxNo');
+  const offs = []; let acc = 0;
+  cfg.narr.forEach(n => { offs.push(acc); acc += n.length; });
+  const total = acc;
+  const pad = n => String(n).padStart(2, '0');
+  const timers = [];
+
+  idxList.innerHTML = cfg.titles.map((t, i) => '<li><button type="button" aria-label="跳到場景 ' + (i + 1) + '：' + t + '"><i></i></button></li>').join('');
+  const btns = [...idxList.querySelectorAll('button')];
+  btns.forEach((b, i) => b.addEventListener('click', () => Stage.go(offs[i])));
+
+  const slides = cfg.narr.map((n, i) => ({
+    el: '#sl-' + (i + 1), title: cfg.titles[i], narr: n,
+    onStep(k, ctx) {
+      const g = offs[i] + k;
+      if (ctx.fresh) { clearTimeout(timers[i]); ctx.el.classList.remove('leaving'); }
+      const p = cfg.lant[g];
+      lantern.style.setProperty('--lx', p[0]);
+      lantern.style.setProperty('--ly', p[1]);
+      lantern.classList.toggle('burst', i === 4);
+      idxNo.textContent = pad(i + 1);
+      btns.forEach((b, j) => {
+        b.classList.toggle('done', j < i);
+        b.classList.toggle('cur', j === i);
+        if (j === i) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+      });
+    },
+    onLeave() {
+      const el = document.getElementById('sl-' + (i + 1));
+      el.classList.add('leaving');
+      clearTimeout(timers[i]);
+      timers[i] = setTimeout(() => el.classList.remove('leaving'), 1800);
+    }
+  }));
+  Stage.init({ slides });
+
+  /* 滾輪也能翻頁（像捲動敘事）：一次一步，900ms 內不重複觸發 */
+  let lock = 0;
+  document.getElementById('deck').addEventListener('wheel', e => {
+    if (Math.abs(e.deltaY) < 8) return;
+    e.preventDefault();
+    const now = performance.now();
+    if (now < lock) return;
+    lock = now + 900;
+    Stage.go(Stage.index + (e.deltaY > 0 ? 1 : -1));
+  }, { passive: false });
+})();
+
+</script>
+</body>
+</html>

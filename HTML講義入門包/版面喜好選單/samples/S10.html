@@ -1,0 +1,613 @@
+<!doctype html>
+<!-- 版面喜好選單範例 S10｜立體模型導覽簡報｜來源：講師範例庫 output範例/設計偏好選擇/samples/S10-立體模型導覽簡報.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>S10 立體模型導覽簡報</title>
+<meta name="description" content="S10 立體模型導覽簡報：一個可拖曳的立體模型鋪滿 1920×1080 舞台，左側章節文字淡入淡出、鏡頭在章節間飛行、圖釘標註跟著模型移動、底部章節進度軌。示範內容是本 vault 的三層管線（2026-10-09 實際檔案數）。">
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500;700&display=swap">')</script>
+<!--
+給接手的 AI（怎麼拿這支做新簡報）
+- 版式來源：a767thycode「板橋站共構開發案｜基地環境分析」動態簡報（https://a767thycode.github.io/banqiao-station-infographic/）。
+  原站用 three.js＋SketchUp 模型；這支只重現版式與動態手法，三維改用 Canvas 2D 正交投影自己畫方塊，單檔、離線可開、不靠外部套件（字型外連，斷線時退回系統字型）。
+- 舞台：#stage 固定 1920×1080，fit() 依視窗等比縮放（letterbox）。所有座標都用舞台 px，不必管 RWD。
+- 換內容只改 <script> 開頭的「資料」段：
+  LAYER／FOLDERS＝量體（每個資料夾一棟，高度＝10＋9.5×√檔案數）；MARK＝其他小量體；ROUTES／SARCS＝弧線路徑；
+  CH＝章節（cam 是鏡頭：t 目標點、az 方位角、el 仰角、span 畫面寬度對應的世界寬、cx 目標點在舞台的 x；op／tint 是各群組的不透明度與上色程度；grow＝進章時哪一群量體重新長高；side＝要不要右側面板）。
+  左側文字在 #panel 的 <section class="pg" data-s="章節id">，右側互動在 #side 的 <section class="sd" data-s="章節id">。
+- 動態清單：鏡頭飛行 1.6 秒（不鎖操作，中途可再翻頁）；文字淡入 0.6 秒；量體依序長高；封面緩慢自轉；街區章節輕微擺動；
+  弧線虛線流動＋流動點；未點過的互動元件有呼吸圈提示；全部在 prefers-reduced-motion 時改成瞬間切換、不動。
+- 操作：→／空白／PageDown 下一章，←／PageUp 上一章，Home／End，F 全螢幕；拖曳模型旋轉，「重設視角」回正；網址 #3 直接開第 3 章。
+- 配色只有一個強調色 --green（互動提示、選中路線）；三層的分類色 --lRaw／--lWiki／--lOut 由淺到深表示先後。
+-->
+<style>
+:root{
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Consolas,Menlo,"Noto Sans TC",monospace;
+  --bg:#F3F3F1; --ink:#161616; --ink2:#55575A; --ink3:#8E9093; --rule:rgba(22,22,22,.16); --halo:#F3F3F1; --btn:rgba(255,255,255,.72);
+  --land:#F1F1EE; --road:#E4E4E0; --curb:#C9C9C4; --plaza:#FAFAF8; --city:#FFFFFF; --cityEdge:#3A3A3A;
+  --lRaw:#C2A877; --lWiki:#8FAEBA; --lOut:#6E8792;
+  --green:#6B8B3B; --shadowCol:#161616; --shadowOp:.13; --edgeOp:.42; --grainOp:.05;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141516; --ink:#EDEDED; --ink2:#B4B6B9; --ink3:#7D8084; --rule:rgba(237,237,237,.16); --halo:#141516; --btn:rgba(30,32,34,.72);
+    --land:#1A1B1D; --road:#222427; --curb:#34373A; --plaza:#1F2022; --city:#2E3135; --cityEdge:#C9CBCE;
+    --lRaw:#A8916A; --lWiki:#5E7F8C; --lOut:#4A6470;
+    --green:#8DB05F; --shadowCol:#000000; --shadowOp:.42; --edgeOp:.5; --grainOp:.035;
+  }
+}
+:root[data-theme="dark"]{
+    --bg:#141516; --ink:#EDEDED; --ink2:#B4B6B9; --ink3:#7D8084; --rule:rgba(237,237,237,.16); --halo:#141516; --btn:rgba(30,32,34,.72);
+    --land:#1A1B1D; --road:#222427; --curb:#34373A; --plaza:#1F2022; --city:#2E3135; --cityEdge:#C9CBCE;
+    --lRaw:#A8916A; --lWiki:#5E7F8C; --lOut:#4A6470;
+    --green:#8DB05F; --shadowCol:#000000; --shadowOp:.42; --edgeOp:.5; --grainOp:.035;
+}
+html{height:100%}
+body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow:hidden}
+#vp{position:relative;width:100%;height:100%;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;overflow:hidden;background:var(--bg);transform-origin:50% 50%}
+button{font-family:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+#gl{position:absolute;left:0;top:0;width:1920px;height:1080px;display:block;touch-action:none;cursor:grab}
+#gl:active{cursor:grabbing}
+#grain{position:absolute;inset:0;pointer-events:none;z-index:7;opacity:var(--grainOp);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.scrimL{position:absolute;left:0;top:0;bottom:0;width:860px;pointer-events:none;z-index:5;background:linear-gradient(90deg,var(--bg) 0,var(--bg) 520px,color-mix(in srgb,var(--bg) 72%,transparent) 630px,transparent 840px)}
+.scrimR{position:absolute;right:0;top:0;bottom:0;width:620px;pointer-events:none;z-index:5;opacity:0;transition:opacity .6s ease;background:linear-gradient(270deg,var(--bg) 0,var(--bg) 420px,transparent 610px)}
+body[data-side="1"] .scrimR{opacity:1}
+.scrimB{position:absolute;left:0;right:0;bottom:0;height:140px;pointer-events:none;z-index:5;background:linear-gradient(0deg,var(--bg) 0,color-mix(in srgb,var(--bg) 70%,transparent) 64px,transparent 140px)}
+
+/* 圖釘：點＋豎線＋標籤，位置每一幀由模型投影算出 */
+#pins{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:4}
+.pin{position:absolute;left:0;top:0;opacity:0;transition:opacity .45s ease;color:var(--ink);will-change:transform}
+.pin.on{opacity:1}
+.pin .dot{position:absolute;left:-3.5px;top:-3.5px;width:7px;height:7px;border-radius:50%;background:var(--c,var(--ink));box-shadow:0 0 0 2.5px var(--halo)}
+.pin .stem{position:absolute;left:-.5px;bottom:0;width:1px;height:var(--lift,56px);background:var(--c,var(--ink))}
+.pin .cap{position:absolute;left:-.5px;bottom:var(--lift,56px);white-space:nowrap}
+.pin .cap b{display:inline-block;font-family:var(--mono);font-size:14.5px;font-weight:500;line-height:1;padding:6px 9px;background:var(--c,var(--ink));color:var(--bg)}
+.pin .cap small{display:block;font-family:var(--mono);font-size:12.5px;color:var(--ink2);line-height:1.4;margin-top:5px;text-shadow:0 0 3px var(--halo),0 0 8px var(--halo)}
+.pin.plain .cap b{background:none;color:var(--ink);padding:0 0 0 8px;font-size:14px;text-shadow:0 0 2px var(--halo),0 0 4px var(--halo),0 0 8px var(--halo),0 0 12px var(--halo)}
+.pin.plain .cap small{padding-left:8px}
+.pin.flash .cap b{animation:flash 1.2s ease-out}
+@keyframes flash{0%{background:var(--green);color:#fff}100%{}}
+.pin.route .cap b{background:var(--btn);color:var(--ink2);border:1px solid var(--rule);transition:background .3s,color .3s}
+.pin.route.sel .cap b{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* 頂列 */
+#top{position:absolute;left:72px;right:56px;top:36px;height:44px;display:flex;align-items:center;justify-content:space-between;z-index:20}
+#mark{font-size:16px;display:flex;align-items:center;gap:14px;color:var(--ink2)}
+#mark b{color:var(--ink);font-weight:500}
+#mark span{padding-left:14px;border-left:1px solid var(--rule)}
+#tools{display:flex;gap:8px}
+.tb{height:36px;padding:0 14px;border:1px solid var(--rule);background:var(--btn);font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .2s,color .2s,border-color .2s}
+.tb[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tb:hover:not([aria-pressed="true"]){background:color-mix(in srgb,var(--green) 18%,var(--btn))}
+
+/* 左側章節文字 */
+#panel{position:absolute;left:72px;top:126px;width:490px;bottom:118px;z-index:10}
+.pg{position:absolute;inset:0;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease,visibility 0s linear .3s}
+.pg.on{opacity:1;visibility:visible;transform:none;transition:opacity .6s ease .25s,transform .6s ease .25s,visibility 0s}
+.mk{display:flex;align-items:center;gap:14px;font-size:15px;color:var(--ink2);margin:0 0 22px}
+.mk span{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--bg);background:var(--c,var(--ink));padding:4px 8px}
+h1{font-size:76px;line-height:1.12;font-weight:300;margin:0 0 22px}
+h2{font-size:48px;line-height:1.24;font-weight:300;margin:0 0 20px}
+.lede{font-size:18.5px;line-height:1.8;color:var(--ink2);margin:0 0 26px}
+.figs{display:grid;grid-template-columns:1fr 1fr;gap:18px 24px;margin:0 0 24px;padding:16px 0 0;border-top:1px solid var(--ink)}
+.figs.three{grid-template-columns:1fr 1fr 1fr}
+.fig .n{font-family:var(--mono);font-weight:300;font-size:46px;line-height:1;font-variant-numeric:tabular-nums}
+.fig .n small{font-family:var(--sans);font-size:16px;font-weight:400;margin-left:4px;color:var(--ink2)}
+.fig .l{font-size:13.5px;color:var(--ink3);margin-top:8px;line-height:1.45}
+.notes{display:flex;flex-direction:column;gap:13px;margin:0}
+.nt{position:relative;padding-left:22px;font-size:16.5px;line-height:1.68;color:var(--ink2)}
+.nt::before{content:"";position:absolute;left:0;top:10px;width:9px;height:9px;border:1.5px solid var(--c,var(--ink));border-radius:50%}
+.nt b{color:var(--ink);font-weight:500;margin-right:6px}
+.nt code,.sec-note code{font-family:var(--mono);font-size:.92em;color:var(--ink)}
+.stack{margin:0 0 24px;border-top:1px solid var(--rule)}
+.stack>div{display:grid;grid-template-columns:96px 1fr;align-items:center;padding:11px 0;border-bottom:1px solid var(--rule);font-size:16.5px}
+.stack>div>span{font-family:var(--mono);font-size:13px;color:var(--ink3)}
+.stack i{display:inline-block;width:22px;height:0;border-top:4px solid;margin-right:12px;vertical-align:4px}
+.stack small{color:var(--ink3);font-size:13.5px;margin-left:8px}
+.mx{display:flex;flex-direction:column;border-top:1px solid var(--ink)}
+.mx>div{display:grid;grid-template-columns:34px 1fr;gap:3px 12px;padding:12px 0;border-bottom:1px solid var(--rule)}
+.mx em{grid-row:span 2;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--bg);font-style:normal;font-family:var(--mono);font-weight:500;font-size:13px;display:grid;place-items:center;margin-top:2px}
+.mx span{font-size:13.5px;color:var(--ink3)}
+.mx p{margin:0;font-size:16.5px;line-height:1.5}
+.hint{font-size:14px;line-height:1.55;color:var(--ink3);margin:6px 0 0}
+.src{position:absolute;left:0;right:0;bottom:0;font-size:12.5px;line-height:1.6;color:var(--ink3);margin:0}
+
+/* 右側互動面板 */
+#side{position:absolute;left:1512px;top:126px;width:352px;bottom:200px;z-index:10}
+.sd{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s linear .3s}
+.sd.on{opacity:1;visibility:visible;transition:opacity .6s ease .4s,visibility 0s}
+h3{font-size:15px;font-weight:500;margin:0 0 6px}
+.interaction-hint{display:flex;align-items:center;gap:8px;font:14px var(--mono);color:var(--ink2);margin:0 0 14px}
+.interaction-hint::before{content:'↗';color:var(--green);font-size:16px}
+.fac{display:flex;flex-direction:column;border-top:1px solid var(--rule);margin:0 0 14px}
+.fac button{display:grid;grid-template-columns:118px 1fr 46px;align-items:center;gap:10px;padding:10px 8px;margin:0 -8px;border:0;border-bottom:1px solid var(--rule);background:transparent;font-size:14.5px;color:var(--ink2);cursor:pointer;text-align:left;transition:background .25s}
+.fac button span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fac button i{height:8px;background:var(--rule);overflow:hidden;display:block}
+.fac button em{display:block;height:100%;width:0;background:var(--c);transition:width .7s ease .5s}
+.sd.on .fac button em{width:var(--w)}
+.fac button b{font-family:var(--mono);font-weight:400;font-size:15px;text-align:right;color:var(--ink)}
+.fac button:hover{background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--ink)}
+.fac button.act{background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink);box-shadow:inset 3px 0 var(--green)}
+.route-choices{display:grid;gap:6px;margin:0 0 12px}
+.route-choices button{position:relative;display:grid;grid-template-columns:21px 1fr;gap:4px 10px;padding:11px 32px 11px 12px;text-align:left;border:1px solid var(--rule);background:var(--btn);color:var(--ink2);font:15px var(--sans);cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+.route-choices button i{width:18px;height:0;border-top:3px dashed var(--ink3);align-self:center}
+.route-choices button small{grid-column:2;font:12px var(--sans);color:var(--ink3)}
+.route-choices button span{font-family:var(--mono);font-size:14.5px}
+.route-choices button::after{content:'↗';position:absolute;right:12px;top:12px;color:var(--ink3);transition:transform .2s,color .2s}
+.route-choices button:hover{border-color:var(--green);color:var(--ink)}
+.route-choices button:hover::after{transform:translate(2px,-2px);color:var(--green)}
+.route-choices button[aria-pressed="true"]{border-color:var(--green);box-shadow:inset 3px 0 var(--green);color:var(--ink);background:color-mix(in srgb,var(--green) 8%,var(--btn))}
+.route-choices button[aria-pressed="true"] i{border-top-color:var(--green)}
+.sec-note{font-size:15px;line-height:1.8;color:var(--ink2);min-height:110px;margin:6px 0 0}
+.tl{list-style:none;margin:0 0 16px;padding:0;position:relative}
+.tl::before{content:"";position:absolute;left:5px;top:8px;bottom:22px;width:1px;background:var(--rule)}
+.tl li{position:relative;padding:0 0 16px 30px;cursor:pointer;color:var(--ink3);transition:color .4s}
+.tl li::before{content:"";position:absolute;left:0;top:5px;width:11px;height:11px;border-radius:50%;border:1.5px solid var(--ink3);background:var(--bg);transition:all .4s}
+.tl li.on{color:var(--ink2)}.tl li.on::before{background:var(--ink);border-color:var(--ink)}
+.tl li.cur{color:var(--ink)}.tl li.cur::before{background:var(--green);border-color:var(--green);transform:scale(1.3)}
+.tl li:hover span{color:var(--green)}
+.tl b{display:block;font-family:var(--mono);font-weight:500;font-size:14.5px;margin-bottom:2px}
+.tl span{font-size:16px;line-height:1.5;transition:color .2s}
+.tl small{display:block;font-size:13px;color:var(--ink3);font-family:var(--mono)}
+.tl code{font-family:var(--mono);font-size:13px}
+
+/* 未操作過的互動元件：呼吸圈 */
+@keyframes nudge{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--green) 60%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.nudge{animation:nudge 1.7s ease-out infinite}
+.tl li.nudge{animation:none}.tl li.nudge::before{animation:nudge 1.7s ease-out infinite}
+
+#compass{position:absolute;left:1806px;top:902px;width:58px;height:58px;z-index:9;color:var(--ink)}
+#dragHint{position:absolute;left:880px;bottom:122px;z-index:11;font-size:14px;padding:8px 14px;background:var(--btn);border:1px solid var(--green);color:var(--ink);opacity:0;transition:opacity .6s;pointer-events:none}
+#dragHint.on{opacity:1}
+#resetView{position:absolute;left:1650px;top:914px;z-index:12;height:32px;padding:0 12px;font-size:13px;border:1px solid var(--green);background:var(--btn);color:var(--ink);cursor:pointer;opacity:0;visibility:hidden;transition:opacity .4s}
+#resetView.on{opacity:1;visibility:visible}
+
+/* 底部章節進度軌 */
+#rail{position:absolute;left:72px;right:56px;bottom:30px;height:56px;display:flex;align-items:stretch;gap:6px;z-index:20}
+#chap{flex:1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px}
+#chap button{position:relative;border:0;background:transparent;cursor:pointer;text-align:left;padding:14px 0 0;font-size:13.5px;white-space:nowrap;overflow:hidden;color:var(--ink3);display:flex;gap:8px;align-items:baseline;transition:color .2s}
+#chap button::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--rule)}
+#chap button i{position:absolute;left:0;top:-1px;height:3px;width:0;background:var(--ink);transition:width .5s ease}
+#chap button span{font-family:var(--mono);font-size:12px}
+#chap button[aria-current="step"]{color:var(--ink)}
+#chap button[aria-current="step"] i{width:100%}
+#chap button.run[aria-current="step"] i{width:var(--pr,0%);transition:none}
+#chap button:hover{color:var(--ink)}#chap button:hover::before{background:var(--green);height:2px}
+.arr{width:46px;border:0;background:transparent;cursor:pointer;font-size:20px;color:var(--ink2);font-family:var(--mono);transition:color .2s}
+.arr:hover{color:var(--green)}
+
+@media (prefers-reduced-motion: reduce){
+  .pg,.pg.on,.sd,.sd.on{transition:none;transform:none}
+  .nudge,.tl li.nudge::before,.pin.flash .cap b{animation:none}
+  .fac button em{transition:none}
+}
+</style>
+</head>
+<body data-ch="cover" data-side="0">
+<div id="vp">
+<div id="stage" aria-label="知識庫三層管線立體導覽簡報">
+  <canvas id="gl" width="1920" height="1080" aria-label="知識庫三層管線立體模型，可拖曳旋轉"></canvas>
+  <div class="scrimL"></div><div class="scrimR"></div><div class="scrimB"></div>
+  <div id="pins" aria-hidden="true"></div>
+  <div id="grain" aria-hidden="true"></div>
+
+  <svg id="compass" viewBox="-33 -33 66 66" aria-hidden="true" overflow="visible"><circle r="29" fill="none" stroke="var(--rule)" stroke-width="1.2"/><g id="cmpg"><path d="M0,-23 L6,4 L0,-1 L-6,4 Z" fill="currentColor"/><path d="M0,23 L6,-4 L0,1 L-6,-4 Z" fill="none" stroke="currentColor" stroke-width="1.1"/><text x="0" y="-33" text-anchor="middle" font-size="12" font-family="IBM Plex Mono,monospace" fill="currentColor">N</text></g></svg>
+  <div id="dragHint" aria-hidden="true">⟲ 在模型上拖曳可旋轉視角</div>
+  <button id="resetView" type="button">↺ 重設視角</button>
+
+  <header id="top">
+    <div id="mark"><b>個人知識庫</b><span>三層管線導覽</span></div>
+    <div id="tools">
+      <button class="tb" id="auto" type="button" aria-pressed="false">自動播放</button>
+      <button class="tb" id="theme" type="button" aria-label="切換深色／淺色">明暗</button>
+      <button class="tb" id="fs" type="button">全螢幕</button>
+    </div>
+  </header>
+
+  <div id="panel">
+    <section class="pg" data-s="cover">
+      <div class="mk"><span>00</span>Obsidian vault｜2026-10-09 盤點</div>
+      <h1>知識庫<br>三層管線</h1>
+      <p class="lede">把貼進來的原料、整理過的知識頁、交給人看的 HTML，排成三個街區。每一棟是一個資料夾，高度隨檔案數增加（取平方根）。</p>
+      <div class="figs three">
+        <div class="fig"><div class="n">286<small>檔</small></div><div class="l">1-raw 原料<br>（含 215 支前端範例）</div></div>
+        <div class="fig"><div class="n">81<small>頁</small></div><div class="l">2-wiki 知識頁</div></div>
+        <div class="fig"><div class="n">40<small>份</small></div><div class="l">3-output 交付物</div></div>
+      </div>
+      <p class="hint">按 → 或空白鍵開始，F 全螢幕；模型可拖曳旋轉。</p>
+      <p class="src">資料：2026-10-09 vault 檔案盤點（資料夾內 .md／.html 計數；2-wiki 分類取自 知識庫-索引.csv）。版式與動態重現自 a767thycode「板橋站共構開發案｜基地環境分析」動態簡報。</p>
+    </section>
+
+    <section class="pg" data-s="overview">
+      <div class="mk"><span>01</span>全景</div>
+      <h2>原料、精煉、<br>交付三段</h2>
+      <p class="lede">資料只往一個方向流：1-raw 唯讀，2-wiki 由 AI 整理，3-output 是給人看的成品。顏色由淺到深代表先後。</p>
+      <div class="stack">
+        <div><span>1-raw</span><p style="margin:0"><i style="border-color:var(--lRaw)"></i>原料層<small>raw-capture 逐字存入</small></p></div>
+        <div><span>2-wiki</span><p style="margin:0"><i style="border-color:var(--lWiki)"></i>精煉層<small>wiki-compile 加連結</small></p></div>
+        <div><span>3-output</span><p style="margin:0"><i style="border-color:var(--lOut)"></i>交付層<small>wiki-output 產 HTML</small></p></div>
+      </div>
+      <div class="figs">
+        <div class="fig"><div class="n">3<small>層</small></div><div class="l">固定的管線階段</div></div>
+        <div class="fig"><div class="n">19<small>棟</small></div><div class="l">模型裡的資料夾量體</div></div>
+      </div>
+      <p class="src">管線定義見 vault 根目錄 CLAUDE.md「The pipeline」段。</p>
+    </section>
+
+    <section class="pg" data-s="raw" style="--c:var(--lRaw)">
+      <div class="mk"><span>02</span>1-raw 原料層</div>
+      <h2>只進不改的<br>原料倉</h2>
+      <p class="lede">貼進來的內容逐字保存，錯字也留著。唯一能改的是搬移圖片時的路徑字串，不碰內文。</p>
+      <div class="figs">
+        <div class="fig"><div class="n">286<small>檔</small></div><div class="l">原料總數（不含對話紀錄）</div></div>
+        <div class="fig"><div class="n">215<small>檔</small></div><div class="l">output範例：前端範例庫，凍結唯讀</div></div>
+      </div>
+      <div class="notes">
+        <div class="nt"><b>唯讀可驗證</b><code>raw_checksum.py</code> 以 SHA-256 快照比對，改了就抓得到。</div>
+        <div class="nt"><b>收件匣</b>檔案先丟 <code>_inbox/</code>，再用 <code>/ingest</code> 歸檔，不留過夜。</div>
+      </div>
+      <p class="src">「其他」含三個資料夾與根目錄的 5 檔。</p>
+    </section>
+
+    <section class="pg" data-s="wiki" style="--c:var(--lWiki)">
+      <div class="mk"><span>03</span>2-wiki 精煉層</div>
+      <h2>一頁一個主題，<br>互相連結</h2>
+      <p class="lede">wiki-compile 把原料編成知識頁。每頁的 frontmatter 有 tags、date、category、source 四個必填欄位，source 指回原料。</p>
+      <div class="figs">
+        <div class="fig"><div class="n">81<small>頁</small></div><div class="l">知識頁（不含自動產生的索引）</div></div>
+        <div class="fig"><div class="n">22<small>類</small></div><div class="l">category 種類</div></div>
+      </div>
+      <div class="notes">
+        <div class="nt"><b>寫連結前</b>先確認目標頁存在，沒有就寫純文字加「尚無 wiki 頁」。</div>
+        <div class="nt"><b>刪除或搬移前</b>先找反向連結一併處理，斷鏈多半出在這一步。</div>
+      </div>
+      <p class="src">分類合併：Github＝Github＋GitHub Repo；日本旅遊含日本採購；日文含日文寫作。</p>
+    </section>
+
+    <section class="pg" data-s="out" style="--c:var(--lOut)">
+      <div class="mk"><span>04</span>3-output 交付層</div>
+      <h2>交付物<br>一律做成 HTML</h2>
+      <p class="lede">2026-10-04 起交付物都是單檔 HTML，直接用瀏覽器讀；只存本機，不發佈到外部託管。</p>
+      <div class="figs">
+        <div class="fig"><div class="n">40<small>份</small></div><div class="l">交付物（含改制前的 .md）</div></div>
+        <div class="fig"><div class="n">22<small>份</small></div><div class="l">NCCU：要能匯出 182×243mm PDF</div></div>
+      </div>
+      <div class="notes">
+        <div class="nt"><b>依主題分資料夾</b>同主題滿 2 份才開新資料夾。</div>
+        <div class="nt"><b>來源清單</b>用到 vault 檔案的頁面在 head 放 <code>meta name="sources"</code>，方便反查。</div>
+      </div>
+      <p class="src">工具調查與教學的 4 份是 2026-10-04 前產出的 .md，維持原樣。</p>
+    </section>
+
+    <section class="pg" data-s="flow">
+      <div class="mk"><span>05</span>流向</div>
+      <h2>四個 skill，<br>四條路線</h2>
+      <p class="lede">三層之間靠 skill 搬運資料。虛線上的點是流動方向；在右側點一條路線，其餘會淡化。</p>
+      <div class="notes">
+        <div class="nt" style="--c:var(--green)"><b>單向</b>3-output 不自動寫回 2-wiki，使用者說「歸檔到 wiki」才寫。</div>
+        <div class="nt"><b>例外入口</b>GitHub 網址直接產 2-wiki/Github/ 介紹頁，不經 1-raw。</div>
+      </div>
+      <p class="src">skill 定義在 .claude/skills/；路線為示意，弧線高度不代表資料量。</p>
+    </section>
+
+    <section class="pg" data-s="sync">
+      <div class="mk"><span>06</span>同步</div>
+      <h2>兩台機器，<br>手動同步</h2>
+      <p class="lede">同一個 vault 在 macOS 與 Windows 各有一份。自動備份已全部關閉，只靠手動跑 sync.sh 經 GitHub 交換。</p>
+      <div class="figs">
+        <div class="fig"><div class="n">2<small>台</small></div><div class="l">macOS（主力）與 Windows</div></div>
+        <div class="fig"><div class="n">0<small>個</small></div><div class="l">自動排程（2026-08-04 起）</div></div>
+      </div>
+      <div class="notes">
+        <div class="nt"><b>不寫死路徑</b>腳本一律從自己的位置推算 vault 根目錄。</div>
+        <div class="nt"><b>換行與連結</b>.sh／.py 強制 LF；禁止 symlink，Windows 會還原成文字檔。</div>
+      </div>
+      <p class="src">規則見 CLAUDE.md「多裝置注意事項」與「Git workflow」段。</p>
+    </section>
+
+    <section class="pg" data-s="rules">
+      <div class="mk"><span>07</span>鐵律</div>
+      <h2>四條不能破的規則</h2>
+      <div class="mx">
+        <div><em>1</em><span>1-raw</span><p>原料唯讀，錯字也不修；改檔名與搬移要回報並更新快照。</p></div>
+        <div><em>2</em><span>缺資料</span><p>留白並寫「需使用者提供」，不編造補空。</p></div>
+        <div><em>3</em><span>層級隔離</span><p>產出不自動寫回 wiki，使用者點頭才歸檔。</p></div>
+        <div><em>4</em><span>3-output</span><p>交付物一律單檔 HTML，只存本機。</p></div>
+      </div>
+      <p class="src">出處：CLAUDE.md「Iron rules」。按 Home 回到封面。</p>
+    </section>
+  </div>
+
+  <div id="side">
+    <section class="sd" data-s="raw"><h3>資料夾</h3><p class="interaction-hint">點一棟，鏡頭移過去</p><div class="fac" data-layer="raw"></div><button class="tb back" type="button">回到街區全景</button></section>
+    <section class="sd" data-s="wiki"><h3>分類</h3><p class="interaction-hint">點一棟，鏡頭移過去</p><div class="fac" data-layer="wiki"></div><button class="tb back" type="button">回到街區全景</button></section>
+    <section class="sd" data-s="out"><h3>主題資料夾</h3><p class="interaction-hint">點一棟，鏡頭移過去</p><div class="fac" data-layer="out"></div><button class="tb back" type="button">回到街區全景</button></section>
+    <section class="sd" data-s="flow">
+      <h3>路線</h3><p class="interaction-hint">點選路線，其餘淡化</p>
+      <div class="route-choices" id="routes" role="group" aria-label="路線">
+        <button type="button" data-route="all" aria-pressed="true"><i></i><span>全部疊合</span><small>四條一起看</small></button>
+        <button type="button" data-route="rc" aria-pressed="false"><i></i><span>raw-capture</span><small>貼上 → 1-raw</small></button>
+        <button type="button" data-route="wc" aria-pressed="false"><i></i><span>wiki-compile</span><small>1-raw → 2-wiki</small></button>
+        <button type="button" data-route="wo" aria-pressed="false"><i></i><span>wiki-output</span><small>2-wiki → 3-output</small></button>
+        <button type="button" data-route="wq" aria-pressed="false"><i></i><span>wiki-query</span><small>2-wiki、1-raw → 對話</small></button>
+      </div>
+      <p class="sec-note" id="routeNote" aria-live="polite"></p>
+    </section>
+    <section class="sd" data-s="sync">
+      <h3>一次同步</h3><p class="interaction-hint">點步驟，看資料走哪一段</p>
+      <ol class="tl" id="syncSteps">
+        <li data-k="0" role="button" tabindex="0"><b>01</b><span>在任一台改檔<small>例：macOS 新增一頁 wiki</small></span></li>
+        <li data-k="1" role="button" tabindex="0"><b>02</b><span>跑 <code>sh .scripts/sync.sh "訊息"</code><small>add → commit → pull --rebase → push</small></span></li>
+        <li data-k="2" role="button" tabindex="0"><b>03</b><span>另一台再跑一次 sync.sh<small>從 GitHub 拉回同一份</small></span></li>
+      </ol>
+      <p class="sec-note" id="syncNote" aria-live="polite"></p>
+    </section>
+  </div>
+
+  <nav id="rail" aria-label="章節">
+    <button class="arr" id="prev" type="button" aria-label="上一章">←</button>
+    <div id="chap"></div>
+    <button class="arr" id="next" type="button" aria-label="下一章">→</button>
+  </nav>
+</div>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),lerp=(a,b,t)=>a+(b-a)*t,rad=d=>d*Math.PI/180,deg=r=>r*180/Math.PI;
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const root=document.documentElement;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ================= 資料（換內容只改這段） ================= */
+const LAYER={
+  raw:{ctr:[-210,70],cols:4,col:'lRaw',label:'1-raw',sub:'原料層',unit:'檔'},
+  wiki:{ctr:[0,0],cols:3,col:'lWiki',label:'2-wiki',sub:'精煉層',unit:'頁'},
+  out:{ctr:[200,-70],cols:3,col:'lOut',label:'3-output',sub:'交付層',unit:'份'},
+};
+// 2026-10-09 盤點的實際數字（排在前面的放後排，避免高樓擋住矮樓）
+const FOLDERS={
+  raw:[['output範例',215],['其他',30],['日本',14],['日文寫作',8],['社責講座',7],['日本史',6],['程式使用說明書',4],['策略管理',2]],
+  wiki:[['其他',33],['Github',26],['日本旅遊',10],['日文',5],['日本史',4],['策略管理',3]],
+  out:[['NCCU',22],['知識庫維運',8],['工具調查與教學',4],['實習',3],['根目錄',3]],
+};
+const PITCH=48,FOOT=34,hOf=n=>10+9.5*Math.sqrt(n);
+const BOXES=[];
+for(const k in FOLDERS){const L=LAYER[k];FOLDERS[k].forEach(([name,n],i)=>{
+  const col=i%L.cols,row=Math.floor(i/L.cols),inRow=Math.min(L.cols,FOLDERS[k].length-row*L.cols);
+  const x=L.ctr[0]+(col-(inRow-1)/2)*PITCH,z=L.ctr[1]+(row-.5)*PITCH;
+  BOXES.push({id:k+i,grp:k,name,n,x,z,y:0,w:FOOT,d:FOOT,h:hOf(n),g:1,t0:-1e9,tower:true});});}
+const MARK=[
+  {id:'inbox',grp:'inbox',x:-345,z:200,w:46,d:30,h:6},
+  {id:'chat',grp:'chat',x:115,z:150,w:34,d:34,h:6},
+  {id:'mac',grp:'sync',x:-115,z:285,w:52,d:34,h:7},
+  {id:'git',grp:'sync',x:0,z:355,w:44,d:44,h:18},
+  {id:'win',grp:'sync',x:115,z:285,w:36,d:36,h:30},
+];
+MARK.forEach(m=>{m.y=0;m.g=1;m.t0=-1e9;BOXES.push(m);});
+const at=k=>{const L=LAYER[k];return[L.ctr[0],22,L.ctr[1]];};
+const ROUTES=[
+  {id:'rc',name:'raw-capture',segs:[[[-345,6,200],at('raw'),90]],note:'貼上的內容逐字存進 1-raw：只挑資料夾和檔名，不改字、不修錯字。丟進 _inbox/ 的檔案用 /ingest 走同一套規則。'},
+  {id:'wc',name:'wiki-compile',segs:[[at('raw'),at('wiki'),140]],note:'把 1-raw 編成 2-wiki 知識頁：加 [[雙向連結]]、照既有檔名慣例，frontmatter 的 source 指回原料。過程中不改 1-raw。'},
+  {id:'wo',name:'wiki-output',segs:[[at('wiki'),at('out'),140]],note:'從 2-wiki 產出 3-output 的單檔 HTML（報告、簡報、問答）。不自動寫回 2-wiki，要使用者說「歸檔到 wiki」才寫。'},
+  {id:'wq',name:'wiki-query',segs:[[at('wiki'),[115,6,150],90],[at('raw'),[115,6,150],190]],note:'只用筆記回答問題：先讀 2-wiki 的結構，再沿 source 回 1-raw 讀細節，每個論點附來源。寫回 wiki 要使用者點頭。'},
+];
+const ROUTE_ALL='四條路線疊在一起看。資料只從左往右流：原料進 1-raw、編成 2-wiki、再產出 3-output；wiki-query 例外，它只讀不寫。';
+const SARCS=[{id:'m2g',a:[-115,7,285],b:[0,18,355],pk:120},{id:'g2w',a:[0,18,355],b:[115,30,285],pk:120}];
+const SYNC_NOTE=['macOS 是主力機，寫入與跑腳本都在這台。改完不會自己上傳。','sync.sh 先 commit 本機改動，pull --rebase 合併遠端，再 push 到 GitHub。','另一台跑同一支腳本把改動拉回來。兩台都要跑，才算同步完成。'];
+const SYNC_ALL='點左邊的步驟，看資料走哪一段。弧線上的點是推送與拉取的方向。';
+const SYNC_ARCS=[[],['m2g'],['g2w']];
+
+const CH=[
+  {id:'cover',name:'封面',dur:7,cam:{t:[0,30,60],az:205,el:30,span:940,cx:1230},op:{},tint:{raw:0,wiki:0,out:0}},
+  {id:'overview',name:'全景',dur:8,cam:{t:[-30,20,60],az:200,el:36,span:900,cx:1240},op:{inbox:1,chat:1},tint:{}},
+  {id:'raw',name:'原料層',dur:9,cam:{t:[-210,48,70],az:200,el:24,span:440,cx:1040},op:{wiki:.25,out:.25,inbox:1},tint:{wiki:0,out:0},grow:'raw',side:1},
+  {id:'wiki',name:'精煉層',dur:9,cam:{t:[0,26,0],az:196,el:30,span:430,cx:1040},op:{raw:.25,out:.25},tint:{raw:0,out:0},grow:'wiki',side:1},
+  {id:'out',name:'交付層',dur:9,cam:{t:[200,18,-70],az:212,el:32,span:470,cx:1040},op:{raw:.25,wiki:.25},tint:{raw:0,wiki:0},grow:'out',side:1},
+  {id:'flow',name:'流向',dur:10,cam:{t:[-40,30,60],az:192,el:38,span:1280,cx:1000},op:{inbox:1,chat:1,routes:1},tint:{raw:.55,wiki:.55,out:.55},side:1},
+  {id:'sync',name:'同步',dur:10,cam:{t:[0,20,285],az:190,el:38,span:620,cx:990},op:{raw:.15,wiki:.15,out:.15,sync:1,sarcs:1},tint:{raw:0,wiki:0,out:0},side:1},
+  {id:'rules',name:'鐵律',dur:8,cam:{t:[0,50,30],az:168,el:6,span:960,cx:1200},op:{},tint:{}},
+];
+const GROUPS=['raw','wiki','out','inbox','chat','sync','routes','sarcs'];
+const opOf=(c,g)=>c.op[g]??(['raw','wiki','out'].includes(g)?1:0);
+const tintOf=(c,g)=>c.tint[g]??1;
+const GOP={},GT={};GROUPS.forEach(g=>{GOP[g]=opOf(CH[0],g);GT[g]=tintOf(CH[0],g);});
+
+/* ================= 配色（從 CSS 變數讀） ================= */
+let PAL={};
+const hex=h=>{h=h.trim().replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];};
+function readPal(){const cs=getComputedStyle(root);
+  ['bg','land','road','curb','plaza','city','cityEdge','lRaw','lWiki','lOut','green','ink','ink3','shadowCol'].forEach(k=>PAL[k]=hex(cs.getPropertyValue('--'+k)));
+  PAL.shadowOp=parseFloat(cs.getPropertyValue('--shadowOp'));PAL.edgeOp=parseFloat(cs.getPropertyValue('--edgeOp'));}
+const mix=(a,b,t)=>[lerp(a[0],b[0],t),lerp(a[1],b[1],t),lerp(a[2],b[2],t)];
+const rgb=(c,a=1)=>`rgba(${c[0]|0},${c[1]|0},${c[2]|0},${a})`;
+const shade=(c,k)=>c.map(v=>clamp(v*k,0,255));
+
+/* ================= 鏡頭與投影（正交） ================= */
+const canvas=$('#gl'),ctx=canvas.getContext('2d');
+const camS={t:[...CH[0].cam.t],az:CH[0].cam.az,el:CH[0].cam.el,span:CH[0].cam.span,cx:CH[0].cam.cx};
+let camA=null,camB=null,camT0=0,camDur=1;
+const drag={az:0,el:0,active:false,x:0,y:0,touched:false,reset:false};let orbit=0,everDragged=false;
+const SWAY=new Set(['raw','wiki','out']);
+let V=null;
+function setCam(p,dur){camA={t:[...camS.t],az:camS.az,el:camS.el,span:camS.span,cx:camS.cx};camB={t:[...p.t],az:p.az,el:p.el,span:p.span,cx:p.cx};camT0=performance.now();camDur=reduce?.001:dur;}
+function foldDrag(){camS.az+=drag.az+orbit;camS.el=clamp(camS.el+drag.el,minEl(),88);drag.az=drag.el=0;orbit=0;drag.reset=false;}
+const minEl=()=>CH[cur].id==='rules'?3:10;
+function stepCam(now,dt){
+  if(camB){const k=clamp((now-camT0)/1000/camDur,0,1),e=ease(k);
+    for(let i=0;i<3;i++)camS.t[i]=lerp(camA.t[i],camB.t[i],e);
+    const da=((camB.az-camA.az+540)%360)-180;camS.az=camA.az+da*e;camS.el=lerp(camA.el,camB.el,e);
+    camS.span=Math.exp(lerp(Math.log(camA.span),Math.log(camB.span),e));camS.cx=lerp(camA.cx,camB.cx,e);if(k>=1)camB=null;}
+  else if(CH[cur].id==='cover'&&!reduce&&!drag.touched){camS.az=(camS.az+dt*3.2)%360;}
+  if(drag.reset){drag.az*=.88;drag.el*=.88;if(Math.abs(drag.az)<.05&&Math.abs(drag.el)<.05){drag.az=drag.el=0;drag.reset=false;}}
+  orbit=(SWAY.has(CH[cur].id)&&!reduce&&!drag.touched&&!FOCUS)?Math.sin(now/1000*.2)*7:0;
+  $('#resetView').classList.toggle('on',Math.abs(drag.az)>2||Math.abs(drag.el)>2);
+  const az=rad(camS.az+drag.az+orbit),el=rad(clamp(camS.el+drag.el,minEl(),88));
+  const d=[Math.sin(az)*Math.cos(el),Math.sin(el),-Math.cos(az)*Math.cos(el)];
+  const f=[-d[0],-d[1],-d[2]],r=[-Math.cos(az),0,-Math.sin(az)];
+  const u=[r[1]*f[2]-r[2]*f[1],r[2]*f[0]-r[0]*f[2],r[0]*f[1]-r[1]*f[0]];
+  V={d,f,r,u,t:camS.t,s:1920/camS.span,cx:camS.cx,cy:560};}
+function P(p){const x=p[0]-V.t[0],y=p[1]-V.t[1],z=p[2]-V.t[2];
+  return[V.cx+(x*V.r[0]+y*V.r[1]+z*V.r[2])*V.s,V.cy-(x*V.u[0]+y*V.u[1]+z*V.u[2])*V.s,x*V.f[0]+y*V.f[1]+z*V.f[2]];}
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+
+/* ================= 繪製 ================= */
+const LIGHT=(()=>{const v=[-.45,.8,.42],m=Math.hypot(...v);return v.map(x=>x/m);})();
+function poly(pts){ctx.beginPath();pts.forEach((p,i)=>{const q=P(p);i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);});ctx.closePath();}
+function hull(pts){pts=pts.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);
+  const lo=[],up=[];for(const p of pts){while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p);}
+  for(let i=pts.length-1;i>=0;i--){const p=pts[i];while(up.length>=2&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p);}
+  up.pop();lo.pop();return lo.concat(up);}
+const opB=b=>GOP[b.grp]??0;
+const hB=b=>Math.max(.4,b.h*b.g);
+function boxColor(b){const lc=b.tower?PAL[LAYER[b.grp].col]:PAL.city;const base=b.tower?mix(PAL.city,lc,GT[b.grp]):PAL.city;return mix(base,PAL.land,1-opB(b));}
+function drawShadow(b){const op=opB(b);if(op<.02)return;const h=hB(b),x0=b.x-b.w/2,x1=b.x+b.w/2,z0=b.z-b.d/2,z1=b.z+b.d/2;
+  const k=h/LIGHT[1],pts=[];[[x0,z0],[x1,z0],[x1,z1],[x0,z1]].forEach(([x,z])=>{pts.push(P([x,0,z]));pts.push(P([x-LIGHT[0]*k,0,z-LIGHT[2]*k]));});
+  const H=hull(pts);ctx.beginPath();H.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();
+  ctx.fillStyle=rgb(PAL.shadowCol,PAL.shadowOp*op);ctx.fill();}
+function drawBox(b){const op=opB(b);if(op<.02)return;const h=hB(b),y0=b.y,y1=y0+h,x0=b.x-b.w/2,x1=b.x+b.w/2,z0=b.z-b.d/2,z1=b.z+b.d/2;
+  const col=boxColor(b),edge=rgb(PAL.cityEdge,PAL.edgeOp*op);
+  const F=[
+    {n:[1,0,0],q:[[x1,y0,z0],[x1,y1,z0],[x1,y1,z1],[x1,y0,z1]]},{n:[-1,0,0],q:[[x0,y0,z1],[x0,y1,z1],[x0,y1,z0],[x0,y0,z0]]},
+    {n:[0,0,1],q:[[x1,y0,z1],[x1,y1,z1],[x0,y1,z1],[x0,y0,z1]]},{n:[0,0,-1],q:[[x0,y0,z0],[x0,y1,z0],[x1,y1,z0],[x1,y0,z0]]},
+    {n:[0,1,0],q:[[x0,y1,z0],[x1,y1,z0],[x1,y1,z1],[x0,y1,z1]],top:1}];
+  ctx.lineJoin='round';
+  for(const fc of F){if(dot(fc.n,V.d)<=0.001)continue;
+    const k=(fc.top?1.02:.84)+.2*Math.max(0,dot(fc.n,LIGHT));
+    poly(fc.q);ctx.fillStyle=rgb(shade(col,k));ctx.fill();ctx.strokeStyle=edge;ctx.lineWidth=1;ctx.stroke();
+    if(b.tower&&!fc.top&&h>16){ctx.strokeStyle=rgb(PAL.cityEdge,.1*op);ctx.beginPath();
+      for(let y=y0+12;y<y1-4;y+=12){const a=P([fc.q[0][0],y,fc.q[0][2]]),c=P([fc.q[3][0],y,fc.q[3][2]]);ctx.moveTo(a[0],a[1]);ctx.lineTo(c[0],c[1]);}
+      ctx.stroke();}}}
+function bez(A,B,pk,u){const C=[(A[0]+B[0])/2,pk,(A[2]+B[2])/2],a=(1-u)*(1-u),b=2*(1-u)*u,c=u*u;return[a*A[0]+b*C[0]+c*B[0],a*A[1]+b*C[1]+c*B[1],a*A[2]+b*C[2]+c*B[2]];}
+function drawArc(A,B,pk,w,sel,now,op){if(op*w<.02)return;
+  ctx.save();ctx.globalAlpha=op*w;ctx.strokeStyle=rgb(sel?PAL.green:PAL.ink3);ctx.lineWidth=sel?2.6:1.6;ctx.setLineDash([6,9]);ctx.lineDashOffset=reduce?0:-now/45;
+  ctx.beginPath();for(let i=0;i<=40;i++){const q=P(bez(A,B,pk,i/40));i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);}ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=rgb(sel?PAL.green:PAL.ink3);
+  for(const E of[A,B]){const q=P(E);ctx.beginPath();ctx.arc(q[0],q[1],3.5,0,7);ctx.fill();}
+  if(sel){const n=4;for(let j=0;j<n;j++){const uu=reduce?(j+.5)/n:((now/1000)*.22+j/n)%1,q=P(bez(A,B,pk,uu));
+    ctx.beginPath();ctx.arc(q[0],q[1],4.5,0,7);ctx.fillStyle=rgb(PAL.green);ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=rgb(PAL.bg);ctx.stroke();}}
+  ctx.restore();}
+let ROUTE='all',SYNC=-1;const RW={},SW={};ROUTES.forEach(r=>RW[r.id]=1);SARCS.forEach(a=>SW[a.id]=1);
+function render(now){
+  ctx.setTransform(PR,0,0,PR,0,0);ctx.fillStyle=rgb(PAL.bg);ctx.fillRect(0,0,1920,1080);
+  poly([[-430,0,-230],[430,0,-230],[430,0,440],[-430,0,440]]);ctx.fillStyle=rgb(PAL.land);ctx.fill();
+  ctx.strokeStyle=rgb(PAL.road);ctx.lineWidth=1.2;ctx.beginPath();
+  for(let x=-400;x<=400;x+=40){const a=P([x,0,-230]),b=P([x,0,440]);ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);}
+  for(let z=-200;z<=440;z+=40){const a=P([-430,0,z]),b=P([430,0,z]);ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);}ctx.stroke();
+  for(const k in LAYER){const bs=BOXES.filter(b=>b.grp===k),m=20;
+    const xs=bs.map(b=>b.x),zs=bs.map(b=>b.z),xa=Math.min(...xs)-FOOT/2-m,xb=Math.max(...xs)+FOOT/2+m,za=Math.min(...zs)-FOOT/2-m,zb=Math.max(...zs)+FOOT/2+m;
+    poly([[xa,0,za],[xb,0,za],[xb,0,zb],[xa,0,zb]]);ctx.fillStyle=rgb(mix(PAL.plaza,PAL.land,1-GOP[k]));ctx.fill();ctx.strokeStyle=rgb(PAL.curb,GOP[k]);ctx.lineWidth=1.2;ctx.stroke();}
+  const vis=BOXES.filter(b=>opB(b)>.02);
+  vis.forEach(drawShadow);
+  vis.map(b=>[P([b.x,0,b.z])[2],b]).sort((a,b)=>b[0]-a[0]).forEach(([,b])=>drawBox(b));
+  ROUTES.forEach(r=>{const sel=ROUTE==='all'||ROUTE===r.id;RW[r.id]=reduce?(sel?1:.18):lerp(RW[r.id],sel?1:.18,.12);
+    r.segs.forEach(([A,B,pk])=>drawArc(A,B,pk,RW[r.id],sel,now,GOP.routes));});
+  SARCS.forEach(a=>{const sel=SYNC<0||SYNC_ARCS[SYNC].includes(a.id);SW[a.id]=reduce?(sel?1:.2):lerp(SW[a.id],sel?1:.2,.12);
+    drawArc(a.a,a.b,a.pk,SW[a.id],sel,now,GOP.sarcs);});}
+
+/* ================= 圖釘 ================= */
+const PINS=[],pinsEl=$('#pins');
+function pin(o){const el=document.createElement('div');el.className='pin '+(o.cls||'');el.style.setProperty('--lift',(o.lift||56)+'px');if(o.c)el.style.setProperty('--c',o.c);
+  el.innerHTML=`<i class="dot"></i><i class="stem"></i><div class="cap"><b>${o.b}</b>${o.s?`<small>${o.s}</small>`:''}</div>`;pinsEl.appendChild(el);o.el=el;PINS.push(o);return o;}
+for(const k in LAYER){const L=LAYER[k],bs=BOXES.filter(b=>b.grp===k),zf=Math.max(...bs.map(b=>b.z))+FOOT/2+20;
+  pin({p:()=>[L.ctr[0],0,zf],b:L.label,s:L.sub,c:`var(--${L.col})`,lift:34,ch:['overview','flow','rules'],grp:k});}
+BOXES.filter(b=>b.tower).forEach(b=>{const L=LAYER[b.grp],i=FOLDERS[b.grp].findIndex(f=>f[0]===b.name);
+  b.pin=pin({p:()=>[b.x,b.y+hB(b),b.z],b:b.name,s:b.n+' '+L.unit,c:`var(--${L.col})`,cls:'plain',lift:26+(i%2)*30,ch:[b.grp],grp:b.grp});});
+const MP={inbox:['_inbox／貼上','/ingest 歸檔',['overview','flow']],chat:['對話','wiki-query 的回答',['overview','flow']],
+  mac:['macOS','主力：寫入、跑腳本',['sync']],git:['GitHub 遠端','pull --rebase／push',['sync']],win:['Windows','Git Bash 手動同步',['sync']]};
+MARK.forEach(m=>{const [b,s,ch]=MP[m.id];m.pin=pin({p:()=>[m.x,m.h,m.z],b,s,cls:'plain',lift:40,ch,grp:m.grp});});
+ROUTES.forEach(r=>{const [A,B,pk]=r.segs[0];r.pin=pin({p:()=>bez(A,B,pk,.5),b:r.name,cls:'route',lift:18,ch:['flow'],grp:'routes'});});
+function updPins(){const id=CH[cur].id;for(const p of PINS){const on=p.ch.includes(id)&&(GOP[p.grp]??1)>.5;p.el.classList.toggle('on',on);
+  if(on||p.el.style.opacity!=='0'){const q=P(p.p());p.el.style.transform=`translate(${q[0].toFixed(1)}px,${q[1].toFixed(1)}px)`;}}
+  ROUTES.forEach(r=>r.pin.el.classList.toggle('sel',ROUTE===r.id));}
+
+/* ================= 量體長高 ================= */
+function grow(list,delay){const now=performance.now();if(reduce)return;list.forEach((b,i)=>{b.t0=now+(delay+i*.07)*1000;b.g=0;});}
+function stepGrow(now){for(const b of BOXES){if(b.g<1){b.g=ease(clamp((now-b.t0)/900,0,1));}}}
+
+/* ================= 右側面板 ================= */
+let FOCUS=null;
+$$('.fac').forEach(box=>{const k=box.dataset.layer,L=LAYER[k],max=Math.max(...FOLDERS[k].map(f=>f[1]));
+  FOLDERS[k].map(f=>BOXES.find(b=>b.grp===k&&b.name===f[0])).sort((a,b)=>b.n-a.n).forEach((b,i)=>{
+    const bt=document.createElement('button');bt.type='button';bt.style.setProperty('--c',`var(--${L.col})`);bt.style.setProperty('--w',(100*b.n/max).toFixed(1)+'%');
+    bt.innerHTML=`<span>${b.name}</span><i><em></em></i><b>${b.n}</b>`;if(i===0)bt.classList.add('nudge');
+    bt.addEventListener('click',()=>focusBox(b,bt));box.appendChild(bt);});});
+function focusBox(b,bt){foldDrag();drag.touched=false;FOCUS=b;$$('.fac button').forEach(x=>x.classList.toggle('act',x===bt));
+  setCam({t:[b.x,hB(b)*.5,b.z],az:camS.az,el:22,span:clamp(hB(b)*2.4,190,420),cx:1030},1.2);
+  b.pin.el.classList.remove('flash');void b.pin.el.offsetWidth;b.pin.el.classList.add('flash');}
+$$('.back').forEach(bt=>bt.addEventListener('click',()=>{foldDrag();FOCUS=null;$$('.fac button').forEach(x=>x.classList.remove('act'));setCam(CH[cur].cam,1.2);}));
+function setRoute(k){ROUTE=k;$$('#routes button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.route===k));
+  $('#routeNote').textContent=k==='all'?ROUTE_ALL:ROUTES.find(r=>r.id===k).note;}
+$$('#routes button').forEach(b=>b.addEventListener('click',()=>setRoute(b.dataset.route)));
+function setSync(k){SYNC=k;$$('#syncSteps li').forEach((li,i)=>{li.classList.toggle('on',k>=0&&i<k);li.classList.toggle('cur',i===k);});
+  $('#syncNote').textContent=k<0?SYNC_ALL:SYNC_NOTE[k];
+  const m=MARK.find(x=>x.id===(k===2?'win':k===1?'git':'mac'));if(k>=0){m.pin.el.classList.remove('flash');void m.pin.el.offsetWidth;m.pin.el.classList.add('flash');}}
+$$('#syncSteps li').forEach(li=>{const k=+li.dataset.k;li.addEventListener('click',()=>setSync(k));
+  li.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();setSync(k);}});});
+// 呼吸圈：每組只要點過一次就不再提示
+$('#routes button[data-route="rc"]').classList.add('nudge');$('#syncSteps li').classList.add('nudge');
+document.addEventListener('pointerdown',e=>{const g=e.target.closest('.fac,#routes,#syncSteps');if(g)g.querySelectorAll('.nudge').forEach(x=>x.classList.remove('nudge'));},true);
+
+/* ================= 章節 ================= */
+const chap=$('#chap');
+CH.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.innerHTML=`<i></i><span>${String(i).padStart(2,'0')}</span>${c.name}`;b.addEventListener('click',()=>go(i));chap.appendChild(b);});
+let cur=0,enterT=performance.now();
+function go(i,first){i=clamp(i,0,CH.length-1);if(i===cur&&!first)return;cur=i;const c=CH[i];
+  document.body.dataset.ch=c.id;document.body.dataset.side=c.side?'1':'0';
+  $$('.pg').forEach(p=>p.classList.toggle('on',p.dataset.s===c.id));
+  $$('.sd').forEach(p=>p.classList.toggle('on',p.dataset.s===c.id));
+  $$('#chap button').forEach((b,j)=>{if(j===i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
+  if(!first)foldDrag();drag.touched=false;FOCUS=null;$$('.fac button').forEach(x=>x.classList.remove('act'));
+  setCam(c.cam,first?.001:1.6);
+  if(first)grow(BOXES.filter(b=>b.tower),.3);else if(c.grow)grow(BOXES.filter(b=>b.grp===c.grow),.45);
+  if(c.id==='flow')setRoute('all');if(c.id==='sync')setSync(-1);
+  if(!everDragged&&c.id!=='cover'&&!first){const h=$('#dragHint');h.classList.add('on');clearTimeout(h._t);h._t=setTimeout(()=>h.classList.remove('on'),4000);}
+  try{history.replaceState(null,'','#'+i);}catch(e){}
+  enterT=performance.now();}
+$('#prev').addEventListener('click',()=>go(cur-1));$('#next').addEventListener('click',()=>go(cur+1));
+$('#resetView').addEventListener('click',()=>{drag.reset=true;drag.touched=false;});
+addEventListener('keydown',e=>{const tg=e.target;if(tg&&(tg.tagName==='INPUT'||tg.tagName==='TEXTAREA'))return;
+  if(['ArrowRight','PageDown',' '].includes(e.key)){if(e.key===' '&&tg&&(tg.tagName==='BUTTON'||tg.tagName==='LI'))return;e.preventDefault();go(cur+1);}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(cur-1);}
+  else if(e.key==='Home')go(0);else if(e.key==='End')go(CH.length-1);else if(e.key==='f'||e.key==='F')toggleFS();});
+function toggleFS(){const d=document,el=d.documentElement;if(!(d.fullscreenElement||d.webkitFullscreenElement)){(el.requestFullscreen||el.webkitRequestFullscreen||(()=>{})).call(el);}else{(d.exitFullscreen||d.webkitExitFullscreen).call(d);}}
+$('#fs').addEventListener('click',toggleFS);
+let AUTO=false;$('#auto').addEventListener('click',()=>{AUTO=!AUTO;$('#auto').setAttribute('aria-pressed',AUTO);enterT=performance.now();$$('#chap button').forEach(b=>b.classList.toggle('run',AUTO));});
+canvas.addEventListener('pointerdown',e=>{if(!drag.touched){drag.az+=orbit;orbit=0;}drag.touched=true;drag.reset=false;everDragged=true;$('#dragHint').classList.remove('on');drag.active=true;drag.x=e.clientX;drag.y=e.clientY;canvas.setPointerCapture(e.pointerId);});
+canvas.addEventListener('pointermove',e=>{if(!drag.active)return;drag.az+=(e.clientX-drag.x)/K*.22;drag.el+=(e.clientY-drag.y)/K*.12;drag.x=e.clientX;drag.y=e.clientY;});
+canvas.addEventListener('pointerup',()=>{drag.active=false;});
+
+/* ================= 明暗 ================= */
+const themeMQ=matchMedia('(prefers-color-scheme: dark)');
+const isDark=()=>root.dataset.theme?root.dataset.theme==='dark':themeMQ.matches;
+$('#theme').addEventListener('click',()=>{root.dataset.theme=isDark()?'light':'dark';readPal();});
+themeMQ.addEventListener?.('change',readPal);
+
+/* ================= 縮放與主迴圈 ================= */
+const stage=$('#stage'),vp=$('#vp');let K=1,PR=1;
+function fit(){K=Math.min(vp.clientWidth/1920,vp.clientHeight/1080);stage.style.transform=`translate(-50%,-50%) scale(${K})`;
+  PR=Math.min(2,Math.max(.5,(devicePixelRatio||1)*K));canvas.width=Math.round(1920*PR);canvas.height=Math.round(1080*PR);}
+addEventListener('resize',fit);
+function updCompass(){const dx=-V.r[2],dy=V.u[2];$('#cmpg').setAttribute('transform',`rotate(${deg(Math.atan2(dx,-dy)).toFixed(1)})`);}
+let last=performance.now();
+function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;const c=CH[cur];
+  const a=reduce?1:Math.min(1,dt*3.2);GROUPS.forEach(g=>{GOP[g]=lerp(GOP[g],opOf(c,g),a);GT[g]=lerp(GT[g],tintOf(c,g),a);});
+  stepGrow(now);stepCam(now,dt);render(now);updPins();updCompass();
+  if(AUTO){const pr=clamp((now-enterT)/1000/c.dur,0,1);$$('#chap button')[cur].style.setProperty('--pr',(pr*100).toFixed(1)+'%');
+    if(pr>=1){if(cur<CH.length-1)go(cur+1);else{AUTO=false;$('#auto').setAttribute('aria-pressed',false);$$('#chap button').forEach(b=>b.classList.remove('run'));}}}
+  requestAnimationFrame(loop);}
+readPal();fit();
+const h0=parseInt(location.hash.slice(1),10);cur=-1;go(Number.isFinite(h0)?h0:0,true);
+GROUPS.forEach(g=>{GOP[g]=opOf(CH[cur],g);GT[g]=tintOf(CH[cur],g);});
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

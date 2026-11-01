@@ -1,0 +1,92 @@
+<!doctype html><!-- 版面喜好選單範例 GX15｜圓點縮放開關｜來源：講師範例庫 output範例/元件庫/GX15-圓點縮放開關.html；原始來源 https://github.com/uiverse-io/galaxy（Toggle-switches/Praashoo7_cuddly-moose-15.html），作者 Praashoo7，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX15 圓點縮放開關（Round dot toggle: circle shrinks while an inner square spins into a dot）
+  來源：https://github.com/uiverse-io/galaxy　Toggle-switches/Praashoo7_cuddly-moose-15.html
+  原作者：Praashoo7　授權：MIT（Copyright 2023 Uiverse.io）　commit adbd2ad
+  移植：原作是一顆 2em 的灰色圓鈕，開啟時整顆縮到 0.7 倍並變綠，裡面的白色小方塊旋轉 360° 長大、變成圓點（0.4 秒）。
+    改成看盤圖表的「圖層」面板：每個圖層一顆開關，關掉的圖層在右邊預覽圖裡隱藏（CSS :has，不用 JS）。
+    limegreen 換成 P11 強調色、灰 #ccc 換成中性灰；預覽圖的 K 棒用墨色空心／實心，只有均線與通道用強調色。
+    加 role="switch"、文字標籤、focus-visible 外框；補 prefers-reduced-motion（不縮放、不旋轉，只換顏色）。
+  2026-10-09 由子代理移植成純 HTML／CSS
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>圓點縮放開關</title><style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--bg);color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.panel{width:min(470px,100%);display:grid;grid-template-columns:176px 1fr;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.layers{border-right:1px solid var(--line)}
+.hd{padding:10px 14px;border-bottom:1px solid var(--line);font-weight:700;font-size:15px}
+.hd span{font-weight:400;font-size:12px;color:var(--ink-2);margin-left:6px}
+ul{list-style:none;margin:0;padding:4px 0}
+li{display:flex;align-items:center;gap:10px;padding:7px 14px}
+.nm{flex:1;cursor:pointer}
+.nm small{display:block;font-size:12px;color:var(--ink-2);line-height:1.3}
+.chart{padding:10px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.chart .t{font-size:12px;color:var(--ink-2);display:flex;justify-content:space-between}
+.chart .t b{font-family:"Cascadia Mono",Consolas,Menlo,monospace;font-variant-numeric:tabular-nums;color:var(--ink);font-size:13px}
+svg.prev{width:100%;height:auto;display:block;background:var(--surface);border:1px solid var(--surface-2);border-radius:4px}
+.g-k line{stroke:var(--ink-2);stroke-width:1}
+.g-k rect.up{fill:var(--surface);stroke:var(--ink-2);stroke-width:1}
+.g-k rect.dn{fill:var(--ink-2)}
+.g-vol rect{fill:var(--line)}
+.g-ma{fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linejoin:round}
+.g-band{fill:var(--accent-soft);stroke:color-mix(in srgb,var(--accent) 45%,transparent);stroke-width:.8;stroke-dasharray:3 2}
+.prev g,.prev path,.prev polyline{transition:opacity .2s}
+.panel:has(#l1:not(:checked)) .g-k,
+.panel:has(#l2:not(:checked)) .g-vol,
+.panel:has(#l3:not(:checked)) .g-ma,
+.panel:has(#l4:not(:checked)) .g-band{opacity:0}
+.cap{margin-top:12px;font-size:12px;color:var(--ink-2);text-align:center}
+@media (max-width:440px){.panel{grid-template-columns:1fr}.layers{border-right:0;border-bottom:1px solid var(--line)}}
+
+/* ── 原作開關（limegreen／#ccc 換成 P11 變數） ── */
+.switch{font-size:15px;position:relative;display:inline-block;flex:none;width:2em;height:2em}
+.switch .chk{opacity:0;width:0;height:0;position:absolute}
+.slider{
+  position:absolute;cursor:pointer;inset:0;
+  background-color:color-mix(in srgb,var(--ink-2) 30%,var(--surface));
+  transition:.4s;border-radius:50%;
+}
+.slider:before{
+  position:absolute;content:"";height:1.4em;width:1.4em;border-radius:2.5px;left:.3em;bottom:.3em;
+  background-color:var(--surface);transition:.4s;scale:0;
+}
+.chk:checked + .slider{background-color:var(--accent);transform:scale(.7);border-radius:50%}
+.chk:checked + .slider:before{transform:rotateZ(360deg);scale:1;border-radius:50%}
+.chk:focus-visible + .slider{outline:2px solid var(--accent);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){
+  .slider,.slider:before{transition:background-color .2s}
+  .chk:checked + .slider{transform:none}
+  .chk:checked + .slider:before{transform:none;scale:.6}
+  .prev g,.prev path,.prev polyline{transition:none}
+}
+</style></head><body><div>
+<div class="panel">
+  <div class="layers">
+    <div class="hd">圖層<span>日線</span></div>
+    <ul>
+      <li><label class="switch"><input class="chk" id="l1" type="checkbox" role="switch" checked><span class="slider"></span></label><label class="nm" for="l1">K 線</label></li>
+      <li><label class="switch"><input class="chk" id="l2" type="checkbox" role="switch" checked><span class="slider"></span></label><label class="nm" for="l2">成交量</label></li>
+      <li><label class="switch"><input class="chk" id="l3" type="checkbox" role="switch" checked><span class="slider"></span></label><label class="nm" for="l3">均線<small>MA5</small></label></li>
+      <li><label class="switch"><input class="chk" id="l4" type="checkbox" role="switch"><span class="slider"></span></label><label class="nm" for="l4">布林通道<small>5 日，2 倍標準差</small></label></li>
+    </ul>
+  </div>
+  <div class="chart">
+    <div class="t"><span>示範標的・近 16 日</span><b>101.8</b></div>
+    <svg class="prev" viewBox="0 0 224 132" role="img" aria-label="K 線預覽圖，依左側圖層顯示">
+      <path class="g-band" d="M14.5,24.5 L27.5,19.4 L40.5,11.2 L53.5,12.8 L66.5,15.4 L79.5,5.8 L92.5,8.3 L105.5,8.4 L118.5,9.4 L131.5,8.1 L144.5,19.3 L157.5,21.6 L170.5,19.2 L183.5,19.1 L196.5,15.3 L209.5,15.7 L209.5,75.8 L196.5,75.9 L183.5,63.7 L170.5,67.4 L157.5,71.3 L144.5,69.4 L131.5,74.5 L118.5,77.1 L105.5,81.0 L92.5,81.6 L79.5,81.9 L66.5,77.6 L53.5,78.9 L40.5,73.3 L27.5,52.7 L14.5,51.0Z"/>
+      <g class="g-vol"><rect x="10.5" y="118.9" width="8" height="9.1"/><rect x="23.5" y="111.0" width="8" height="17.0"/><rect x="36.5" y="118.5" width="8" height="9.5"/><rect x="49.5" y="116.1" width="8" height="11.9"/><rect x="62.5" y="113.0" width="8" height="15.0"/><rect x="75.5" y="114.9" width="8" height="13.1"/><rect x="88.5" y="105.3" width="8" height="22.7"/><rect x="101.5" y="113.4" width="8" height="14.6"/><rect x="114.5" y="116.5" width="8" height="11.5"/><rect x="127.5" y="109.5" width="8" height="18.5"/><rect x="140.5" y="107.5" width="8" height="20.5"/><rect x="153.5" y="104.3" width="8" height="23.7"/><rect x="166.5" y="118.1" width="8" height="9.9"/><rect x="179.5" y="111.3" width="8" height="16.7"/><rect x="192.5" y="109.8" width="8" height="18.2"/><rect x="205.5" y="109.4" width="8" height="18.6"/></g>
+      <g class="g-k"><line x1="14.5" y1="26.6" x2="14.5" y2="47.7"/><rect x="10.5" y="31.0" width="8" height="6.8" class="dn"/><line x1="27.5" y1="27.6" x2="27.5" y2="41.2"/><rect x="23.5" y="34.4" width="8" height="3.4" class="up"/><line x1="40.5" y1="26.8" x2="40.5" y2="58.2"/><rect x="36.5" y="34.4" width="8" height="20.3" class="dn"/><line x1="53.5" y1="42.8" x2="53.5" y2="60.8"/><rect x="49.5" y="54.7" width="8" height="1.9" class="dn"/><line x1="66.5" y1="35.7" x2="66.5" y2="65.8"/><rect x="62.5" y="48.9" width="8" height="7.7" class="up"/><line x1="79.5" y1="21.4" x2="79.5" y2="61.2"/><rect x="75.5" y="24.6" width="8" height="24.3" class="up"/><line x1="92.5" y1="20.6" x2="92.5" y2="46.1"/><rect x="88.5" y="24.6" width="8" height="15.3" class="dn"/><line x1="105.5" y1="30.7" x2="105.5" y2="63.2"/><rect x="101.5" y="39.9" width="8" height="13.5" class="dn"/><line x1="118.5" y1="46.0" x2="118.5" y2="56.8"/><rect x="114.5" y="49.5" width="8" height="3.9" class="up"/><line x1="131.5" y1="31.8" x2="131.5" y2="55.7"/><rect x="127.5" y="39.2" width="8" height="10.3" class="up"/><line x1="144.5" y1="33.2" x2="144.5" y2="51.3"/><rect x="140.5" y="39.2" width="8" height="1" class="dn"/><line x1="157.5" y1="30.7" x2="157.5" y2="58.9"/><rect x="153.5" y="39.8" width="8" height="10.5" class="dn"/><line x1="170.5" y1="31.8" x2="170.5" y2="63.9"/><rect x="166.5" y="37.7" width="8" height="12.6" class="up"/><line x1="183.5" y1="26.6" x2="183.5" y2="44.4"/><rect x="179.5" y="37.7" width="8" height="2.3" class="dn"/><line x1="196.5" y1="29.8" x2="196.5" y2="71.4"/><rect x="192.5" y="40.0" width="8" height="20.2" class="dn"/><line x1="209.5" y1="34.5" x2="209.5" y2="70.7"/><rect x="205.5" y="40.7" width="8" height="19.5" class="up"/></g>
+      <polyline class="g-ma" points="14.5,37.8 27.5,36.1 40.5,42.3 53.5,45.9 66.5,46.5 79.5,43.9 92.5,45.0 105.5,44.7 118.5,43.3 131.5,41.3 144.5,44.4 157.5,46.4 170.5,43.3 183.5,41.4 196.5,45.6 209.5,45.8"/>
+    </svg>
+  </div>
+</div>
+<div class="cap">開啟時圓鈕縮小、中間的小方塊轉一圈變成圓點；關掉的圖層會從預覽圖消失</div>
+</div>
+</body></html>

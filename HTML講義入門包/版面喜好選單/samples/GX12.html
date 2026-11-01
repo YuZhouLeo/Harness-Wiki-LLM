@@ -1,0 +1,96 @@
+<!doctype html><!-- 版面喜好選單範例 GX12｜毛玻璃回到頂端鈕｜來源：講師範例庫 output範例/元件庫/GX12-毛玻璃回到頂端鈕.html；原始來源 https://github.com/uiverse-io/galaxy（Buttons/ArturCodeCraft_black-chicken-8.html），作者 ArturCodeCraft，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX12 毛玻璃回到頂端鈕（Frosted-glass scroll-to-top button that slides up after scrolling）
+  來源：https://github.com/uiverse-io/galaxy　Buttons/ArturCodeCraft_black-chicken-8.html
+  原作者：ArturCodeCraft　授權：MIT（Copyright 2023 Uiverse.io）　commit adbd2ad
+  移植：原作是 32×32 的半透明深色方鈕（saturate＋blur 毛玻璃），捲動後從底部滑上來（bottom .4s），懸停上浮 .25rem；
+    原作的顯示 class 要另外寫 JS 切換、連結是 href="#"。改成「更新紀錄」捲動清單右下角的按鈕：捲超過 60px 才浮出，
+    點擊平滑捲回頂端並把焦點還給清單；<a href="#"> 換成 <button>，隱藏時 visibility:hidden 不能被 Tab 到。
+    深灰 rgba(29,29,31,.7) 換成 P11 --line-strong 的 70% 透明，白箭頭用 --on-accent；
+    補 focus-visible 外框與 prefers-reduced-motion（不滑動、不上浮，直接出現，捲回頂端也不平滑）。
+  2026-10-09 由子代理移植成純 HTML／CSS（加少量原生 JS）
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>毛玻璃回到頂端鈕</title><style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--bg);color:var(--ink);font:14px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.wrap{width:min(420px,100%)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.hd{display:flex;align-items:baseline;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--line)}
+.hd b{font-size:15px}
+.hd span{font-size:12px;color:var(--ink-2)}
+.viewport{position:relative;overflow:hidden}
+.scroller{height:226px;overflow-y:auto;overscroll-behavior:contain}
+.scroller:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.log{list-style:none;margin:0;padding:4px 0}
+.log li{display:grid;grid-template-columns:3.4em 1fr;gap:10px;padding:10px 16px;border-bottom:1px solid var(--surface-2)}
+.log li:last-child{border:0}
+.log time{font-family:"Cascadia Mono",Consolas,Menlo,monospace;font-variant-numeric:tabular-nums;font-size:13px;color:var(--ink-2);font-weight:700}
+.log p{margin:0}
+.log small{display:block;font-size:12px;color:var(--ink-2)}
+.cap{margin-top:12px;font-size:12px;color:var(--ink-2);text-align:center}
+
+/* ── 原作按鈕（配色換成 P11 變數；position:absolute 對應清單外框） ── */
+.scroll-up{
+  position:absolute;right:14px;bottom:-48px;z-index:10;
+  width:32px;height:32px;padding:0;border:0;border-radius:4px;cursor:pointer;
+  background-color:color-mix(in srgb,var(--line-strong) 70%,transparent);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  visibility:hidden;
+  transition:bottom .4s,transform .4s,visibility 0s linear .4s;
+}
+.scroll-up svg{width:24px;height:24px}
+.scroll-up:hover{transform:translateY(-.25rem)}
+.scroll-up:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+._show-scroll{bottom:14px;visibility:visible;transition:bottom .4s,transform .4s,visibility 0s}
+@media (prefers-reduced-motion:reduce){
+  .scroll-up,._show-scroll{transition:none}
+  .scroll-up:hover{transform:none}
+}
+</style></head><body><div class="wrap">
+<div class="panel">
+  <div class="hd"><b>更新紀錄</b><span>近兩週・共 8 筆</span></div>
+  <div class="viewport">
+    <div class="scroller" id="sc" tabindex="0" aria-label="更新紀錄清單">
+      <ol class="log">
+        <li><time>10/09</time><p>範例庫加入 Uiverse 按鈕與開關的移植版<small>元件庫・9 支待表態</small></p></li>
+        <li><time>10/08</time><p>導航地圖的表格改由 catalog 自動產生<small>腳本 frontend_navmap.py</small></p></li>
+        <li><time>10/07</time><p>決策頁改成交回 .md 回答<small>不再下載整頁 HTML</small></p></li>
+        <li><time>10/06</time><p>3-output 頁面加上來源清單 meta<small>給 AI 反查用，不顯示</small></p></li>
+        <li><time>10/05</time><p>計劃書改回 Markdown，決策頁另出 HTML<small>依讀者分格式</small></p></li>
+        <li><time>10/04</time><p>交付物一律改做單檔 HTML<small>PDF 只當匯出附檔</small></p></li>
+        <li><time>10/02</time><p>3-output 依主題分子資料夾<small>同主題滿 2 份才開</small></p></li>
+        <li><time>10/01</time><p>批次處理只動開工時盤點到的檔<small>途中新放的留到下一輪</small></p></li>
+      </ol>
+    </div>
+    <button class="scroll-up" id="toTop" type="button" aria-label="回到頂端">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M0 0h24v24H0z" fill="none"></path>
+        <path style="fill:var(--on-accent)" d="M11.9997 10.8284L7.04996 15.7782L5.63574 14.364L11.9997 8L18.3637 14.364L16.9495 15.7782L11.9997 10.8284Z"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+<div class="cap">往下捲動清單，右下角會浮出半透明的回到頂端鈕</div>
+</div>
+<script>
+(function(){
+  var sc=document.getElementById('sc'),btn=document.getElementById('toTop');
+  var rm=window.matchMedia('(prefers-reduced-motion: reduce)');
+  function upd(){btn.classList.toggle('_show-scroll',sc.scrollTop>60)}
+  sc.addEventListener('scroll',upd,{passive:true});
+  btn.addEventListener('click',function(){
+    sc.scrollTo({top:0,behavior:rm.matches?'auto':'smooth'});
+    sc.focus({preventScroll:true});
+  });
+  upd();
+})();
+</script>
+</body></html>

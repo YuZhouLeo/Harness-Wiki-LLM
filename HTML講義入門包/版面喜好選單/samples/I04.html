@@ -1,0 +1,699 @@
+<!doctype html>
+<!-- 版面喜好選單範例 I04｜磁吸游標與碼表｜來源：講師範例庫 output範例/UI互動技巧/04-磁吸游標與滾動碼表.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>04 · 磁吸游標與滾動碼表</title>
+<script>
+  // 先於 CSS 套用 embed 模式，避免閃一下完整版面
+  try { if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed'); } catch (e) {}
+</script>
+<style>
+  :root {
+    --bg:#f4f3ef; --surface:#ffffff; --text:#1c1b19; --muted:#6b6862; --line:#e4e1da;
+    --accent:#5b4bff; --accent-2:#00b3a4;
+    --up:#d9302a; --down:#0a8a55;
+    --font:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Consolas,"Microsoft JhengHei",monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+      --accent:#8b7dff; --accent-2:#2fd6c6;
+      --up:#ff6a5f; --down:#35d49a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+    --accent:#8b7dff; --accent-2:#2fd6c6;
+    --up:#ff6a5f; --down:#35d49a;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: var(--font); line-height: 1.6;
+    overflow-x: hidden;
+  }
+  main { max-width: 920px; margin: 0 auto; padding: 0 16px 64px; }
+
+  /* ---------- header ---------- */
+  header { padding: 44px 0 8px; position: relative; }
+  .kicker { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; letter-spacing: .08em; }
+  .kicker .no { font-family: var(--mono); font-size: 13px; color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 1px 10px; }
+  h1 { margin: 10px 0 6px; font-size: clamp(28px, 6vw, 44px); line-height: 1.15; letter-spacing: -.01em; font-weight: 800; }
+  h1 .n { color: var(--accent); font-family: var(--mono); font-weight: 600; margin-right: .3em; }
+  header p { margin: 0; max-width: 40em; color: var(--muted); font-size: 16px; }
+  .theme-btn {
+    position: absolute; right: 0; top: 44px; font: inherit; font-size: 13px; color: var(--muted);
+    background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; cursor: pointer;
+  }
+  .theme-btn:hover { color: var(--text); border-color: var(--muted); }
+
+  /* ---------- stage ---------- */
+  .stage {
+    margin-top: 28px; padding: 40px 0; border-radius: 28px; border: 1px solid var(--line);
+    display: flex; justify-content: center; position: relative; overflow: hidden;
+    background:
+      radial-gradient(520px 360px at 50% 40%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+      radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text) 13%, transparent) 1px, transparent 1.4px) 0 0/22px 22px,
+      var(--bg);
+  }
+  .phone {
+    width: min(390px, 100vw - 32px); height: 720px; border-radius: 44px; flex: none;
+    background: var(--surface); border: 1px solid var(--line);
+    box-shadow: 0 30px 60px -20px rgba(20,18,40,.28), 0 8px 20px -8px rgba(20,18,40,.18);
+    position: relative; overflow: hidden; display: flex; flex-direction: column;
+  }
+  .phone::before { /* 瀏海 */
+    content: ""; position: absolute; top: 10px; left: 50%; width: 104px; height: 28px; margin-left: -52px;
+    border-radius: 99px; background: #0c0c0e; z-index: 3;
+  }
+  .screen { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; background: var(--surface); }
+  .status { height: 50px; flex: none; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 30px 6px; font-size: 14px; font-weight: 700; }
+  .status i { font-style: normal; font-size: 11px; letter-spacing: 2px; }
+
+  .appbar { display: flex; align-items: center; gap: 10px; padding: 10px 18px 4px; }
+  .appbar .back { width: 30px; height: 30px; display: grid; place-items: center; color: var(--muted); flex: none; }
+  .appbar .ttl { flex: 1; min-width: 0; }
+  .appbar h2 { margin: 0; font-size: 19px; font-weight: 800; letter-spacing: .03em; line-height: 1.25; white-space: nowrap; }
+  .appbar small { display: block; color: var(--muted); font-size: 11.5px; letter-spacing: .04em; }
+  .appbar small b { font-family: var(--mono); font-weight: 600; color: var(--text); }
+  .demo-tag { font-size: 10.5px; border: 1px solid var(--line); border-radius: 99px; padding: 0 6px; margin-left: 4px; color: var(--muted); }
+  .hap {
+    flex: none; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+    color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 4px 10px 4px 8px;
+  }
+  .hap svg { width: 15px; height: 15px; }
+  .hap[aria-pressed="true"] { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); background: color-mix(in srgb, var(--accent) 9%, transparent); }
+  .hap:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- 報價（滾動碼表） ---------- */
+  .quote { padding: 12px 22px 4px; --tone: var(--muted); }
+  .quote.up { --tone: var(--up); }
+  .quote.down { --tone: var(--down); }
+  .qdate { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12.5px; letter-spacing: .04em; height: 20px; }
+  .qdate .roll { font-family: var(--mono); font-weight: 600; color: var(--text); font-size: 13px; }
+  .qdate .live { font-size: 11px; padding: 0 7px; border-radius: 99px; background: color-mix(in srgb, var(--text) 7%, transparent); transition: opacity .2s; }
+  .price {
+    display: flex; align-items: baseline; gap: 6px; margin-top: 2px;
+    font-size: 48px; font-weight: 800; letter-spacing: -.02em; color: var(--tone); transition: color .25s;
+  }
+  .price .cur { font-size: 14px; font-weight: 600; color: var(--muted); letter-spacing: .06em; }
+  .chg { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 700; color: var(--tone); transition: color .25s; margin-top: 2px; }
+  .chg .pill {
+    display: inline-flex; align-items: center; gap: 1px; padding: 0 9px 0 7px; border-radius: 8px; line-height: 1.7;
+    background: color-mix(in srgb, var(--tone) 13%, transparent); transition: background-color .25s;
+  }
+  .chg .arrow { display: inline-block; width: 1em; text-align: center; font-size: .8em; transition: transform .3s; }
+  .quote.down .arrow { transform: rotate(180deg); }
+  .chg .muted { color: var(--muted); font-weight: 500; font-size: 12.5px; margin-left: 4px; }
+
+  /* 每一位數字＝一條直欄 */
+  .roll { display: inline-flex; align-items: baseline; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .dg {
+    display: inline-block; position: relative; overflow: hidden; height: 1.1em; line-height: 1.1em; width: .62em;
+    vertical-align: bottom; transition: width .28s ease, opacity .2s ease;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+  }
+  .dg.lz { width: 0; opacity: 0; }
+  .strip { display: block; will-change: transform; }
+  .strip i { display: block; height: 1.1em; text-align: center; font-style: normal; }
+  .sep { display: inline-block; height: 1.1em; line-height: 1.1em; vertical-align: bottom; }
+  .price .sep { width: .3em; text-align: center; }
+
+  /* ---------- 期間 tabs ---------- */
+  .tabs { display: flex; gap: 4px; margin: 12px 18px 0; padding: 3px; border-radius: 12px; background: color-mix(in srgb, var(--text) 5%, transparent); }
+  .tabs span { flex: 1; text-align: center; font-size: 12.5px; font-weight: 600; color: var(--muted); padding: 4px 0; border-radius: 9px; }
+  .tabs span.on { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+
+  /* ---------- 圖表 ---------- */
+  .scrub {
+    position: relative; height: 264px; margin: 8px 12px 0; flex: none;
+    touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+    cursor: crosshair; outline: none; border-radius: 14px; -webkit-tap-highlight-color: transparent;
+    --trend: var(--up); --breath: 1.8s;
+  }
+  .scrub.down-trend { --trend: var(--down); }
+  .scrub:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .scrub svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .grid-l { stroke: var(--line); stroke-width: 1; }
+  .ylab { fill: var(--muted); font-family: var(--mono); font-size: 10.5px; }
+  .base-l { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 4; opacity: .7; }
+  .ln { fill: none; stroke: var(--trend); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+  .ln.dim { opacity: .28; }
+  .vb { fill: color-mix(in srgb, var(--muted) 38%, transparent); }
+  .vb.up { fill: color-mix(in srgb, var(--up) 42%, transparent); }
+  .vb.down { fill: color-mix(in srgb, var(--down) 42%, transparent); }
+  .vb.on { fill: var(--text); }
+  .vol-lab { fill: var(--muted); font-size: 10px; }
+
+  .cur-line {
+    position: absolute; left: 0; top: 24px; height: 238px; width: 0; pointer-events: none; will-change: transform;
+    border-left: 1.5px dashed color-mix(in srgb, var(--text) 45%, transparent); opacity: .35; transition: opacity .25s;
+  }
+  .date-pill {
+    position: absolute; left: 0; top: 0; pointer-events: none; will-change: transform, opacity;
+    font-family: var(--mono); font-size: 11.5px; font-weight: 700; line-height: 20px; padding: 0 8px; border-radius: 99px;
+    background: var(--text); color: var(--surface); white-space: nowrap; opacity: 0; transition: opacity .2s;
+  }
+  .scrub.active .cur-line { opacity: 1; }
+  .scrub.active .date-pill { opacity: 1; }
+  .dotwrap { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; will-change: transform; }
+  .pop { position: absolute; left: -26px; top: -26px; width: 52px; height: 52px; will-change: transform; }
+  .halo {
+    position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--trend) 55%, transparent) 0%, color-mix(in srgb, var(--trend) 22%, transparent) 45%, transparent 70%);
+    animation: breathe var(--breath) ease-in-out infinite;
+  }
+  .dot {
+    position: absolute; left: 50%; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%;
+    background: var(--trend); box-shadow: 0 0 0 2.5px var(--surface), 0 1px 6px rgba(0,0,0,.25);
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(.62); opacity: .95; }
+    50%      { transform: scale(1.18); opacity: .35; }
+  }
+
+  /* ---------- 當日明細 ---------- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 10px 18px 0; border-top: 1px solid var(--line); padding-top: 10px; }
+  .stats div { text-align: center; }
+  .stats dt { font-size: 11px; color: var(--muted); letter-spacing: .06em; }
+  .stats dd { margin: 0; font-family: var(--mono); font-size: 13.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stats dd.up { color: var(--up); } .stats dd.down { color: var(--down); }
+  dl { margin: 0; }
+
+  .readout {
+    margin: auto auto 22px; padding: 5px 14px; border-radius: 99px; background: color-mix(in srgb, var(--text) 4%, var(--surface)); border: 1px solid var(--line);
+    font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap;
+  }
+  .readout b { color: var(--text); font-weight: 600; display: inline-block; min-width: 3.6em; text-align: right; }
+
+  /* ---------- knobs / prompt / notes ---------- */
+  section.knobs, section.prompt, section.notes { margin-top: 28px; }
+  h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .1em; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+  .knobs .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .knob { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+  .knob label { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 600; }
+  .knob output { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .knob small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  input[type=range] { width: 100%; margin: 10px 0 0; accent-color: var(--accent); height: 28px; }
+  input[type=range]:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+  .prompt .box { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; display: flex; gap: 16px; align-items: flex-start; }
+  .prompt blockquote { margin: 0; flex: 1; font-size: 16px; line-height: 1.8; border-left: 3px solid var(--accent-2); padding-left: 14px; }
+  .copy { flex: none; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 0; border-radius: 10px; padding: 8px 16px; background: var(--accent); color: #fff; min-width: 76px; }
+  .copy.ok { background: var(--accent-2); color: #06201d; }
+
+  .notes ol { margin: 0; padding: 0; counter-reset: n; list-style: none; display: grid; gap: 10px; }
+  .notes li { counter-increment: n; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px 12px 52px; position: relative; font-size: 15px; }
+  .notes li::before { content: counter(n); position: absolute; left: 16px; top: 12px; width: 24px; height: 24px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); font-family: var(--mono); font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+  .notes code { font-family: var(--mono); font-size: 13px; background: color-mix(in srgb, var(--text) 8%, transparent); padding: 1px 6px; border-radius: 6px; }
+
+  @media (max-width: 560px) {
+    .prompt .box { flex-direction: column; }
+    .copy { align-self: stretch; }
+    .theme-btn { position: static; margin-top: 12px; }
+    .stage { border-radius: 20px; padding: 24px 0; }
+  }
+  @media (max-width: 380px) {
+    .price { font-size: 42px; }
+    .hap span { display: none; }
+  }
+
+  /* ---------- embed ---------- */
+  html.embed, html.embed body { background: transparent; overflow: hidden; height: 100%; }
+  html.embed header, html.embed .knobs, html.embed .prompt, html.embed .notes { display: none; }
+  html.embed main { max-width: none; padding: 0; height: 100%; }
+  html.embed .stage { margin: 0; padding: 0; border: 0; background: none; height: 100%; align-items: center; border-radius: 0; overflow: visible; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+    .halo { transform: scale(.9); opacity: .6; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="kicker"><span class="no">04</span><span>UI 互動技巧・實體質感</span></div>
+    <h1><span class="n">04 ·</span>磁吸游標與滾動碼表</h1>
+    <p>在小小的走勢圖上用手指找某一天，很難剛好停在點上。讓游標自己「吸」到最近的資料點、焦點光暈跟著呼吸，頂部價格像機械碼表一樣逐位翻滾，手指每掃過一格都有明確的落點感。</p>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="切換淺色與深色">切換深淺色</button>
+  </header>
+
+  <section class="stage" aria-label="Demo 舞台">
+    <div class="phone">
+      <div class="screen">
+        <div class="status"><span>9:41</span><i>●●●● ▮</i></div>
+        <div class="appbar">
+          <div class="back" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div>
+          <div class="ttl">
+            <h2>晶禾半導體</h2>
+            <small><b>6789</b> 上市・半導體業 <span class="demo-tag">示意資料</span></small>
+          </div>
+          <button class="hap" id="hapBtn" type="button" aria-pressed="true" title="經過資料點時輕震（裝置支援時）">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M4 8v8M20 8v8"/></svg><span>震動</span>
+          </button>
+        </div>
+
+        <div class="quote up" id="quote" aria-live="polite">
+          <div class="qdate"><span class="roll" id="rDate" aria-hidden="true"></span><span id="wday"></span><span class="live" id="live">最新收盤</span></div>
+          <div class="price"><span class="roll" id="rPrice" aria-hidden="true"></span><span class="cur">TWD</span></div>
+          <div class="chg">
+            <span class="pill"><span class="arrow" aria-hidden="true">▲</span><span class="roll" id="rChg" aria-hidden="true"></span></span>
+            <span class="pill"><span id="sign" aria-hidden="true">+</span><span class="roll" id="rPct" aria-hidden="true"></span>%</span>
+            <span class="muted">與前日比</span>
+          </div>
+          <span id="srText" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></span>
+        </div>
+
+        <div class="tabs" aria-hidden="true"><span>1日</span><span>5日</span><span class="on">1月</span><span>3月</span><span>1年</span></div>
+
+        <div class="scrub" id="scrub" tabindex="0" role="slider" aria-label="近 30 日收盤走勢，左右鍵切換日期" aria-valuemin="1" aria-valuemax="30" aria-valuenow="30">
+          <svg id="svg" aria-hidden="true"></svg>
+          <div class="cur-line" id="curLine"></div>
+          <div class="date-pill" id="datePill">09/30</div>
+          <div class="dotwrap" id="dotWrap"><div class="pop" id="pop"><div class="halo"></div><div class="dot"></div></div></div>
+        </div>
+
+        <dl class="stats">
+          <div><dt>開盤</dt><dd id="sO">—</dd></div>
+          <div><dt>最高</dt><dd id="sH">—</dd></div>
+          <div><dt>最低</dt><dd id="sL">—</dd></div>
+          <div><dt>成交量(張)</dt><dd id="sV">—</dd></div>
+        </dl>
+
+        <div class="readout" aria-live="off">吸附點 <b id="roIdx">30/30</b>　游標偏移 <b id="roOff">0.0px</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="knobs" aria-label="可調參數">
+    <h3>可調參數</h3>
+    <div class="grid">
+      <div class="knob"><label for="kMag">磁吸強度 <output id="oMag"></output></label><input id="kMag" type="range" min="0" max="100" step="5" value="85"><small>0% 游標逐像素跟手；100% 完全吸在資料點上</small></div>
+      <div class="knob"><label for="kCur">游標彈簧剛性 <output id="oCur"></output></label><input id="kCur" type="range" min="60" max="800" step="10" value="300"><small>越大吸得越快；阻尼比固定 0.8，幾乎不過衝</small></div>
+      <div class="knob"><label for="kRoll">碼表彈簧剛性 <output id="oRoll"></output></label><input id="kRoll" type="range" min="40" max="500" step="10" value="170"><small>數字直欄滾動的彈簧；阻尼比 0.72，停下時會微微回彈</small></div>
+      <div class="knob"><label for="kBreath">光暈呼吸週期 <output id="oBreath"></output></label><input id="kBreath" type="range" min="0.6" max="4" step="0.1" value="1.8"><small>焦點圓一次放大縮小所需秒數</small></div>
+    </div>
+  </section>
+
+  <section class="prompt" aria-label="AI 描述詞">
+    <h3>AI 描述詞</h3>
+    <div class="box">
+      <blockquote id="promptText">折線圖橫向滑動帶資料點磁吸吸附，頂部數字使用滾動計數器即時平滑連動。</blockquote>
+      <button class="copy" id="copyBtn" type="button">複製</button>
+    </div>
+  </section>
+
+  <section class="notes" aria-label="實作要點">
+    <h3>實作要點</h3>
+    <ol>
+      <li><b>磁吸＝先插值目標、再用彈簧追：</b>手指 x 先找最近資料點 <code>snapX</code>，目標設為 <code>px + (snapX − px) × 磁吸強度</code>，游標 x 再用彈簧（預設 k=300、阻尼比 0.8）追這個目標。手指在兩點中間時游標停在點上，越過中線瞬間「咻」地滑到下一點；焦點圓的 y 沿折線插值，所以它是順著線滑過去，不是瞬移。</li>
+      <li><b>滾動碼表是一位一欄：</b>每一位數字是 0–9 重複三次的直欄，用 <code>translateY(−(10 + p mod 10) × 1.1em)</code> 顯示，p 是該位自己的彈簧位置。數值變大就往上滾、變小就往下滾，跨過 9→0 會順著繞一圈。千分位逗號與小數點是靜態字元，不參與滾動；漲跌額的前導零會收合寬度。用 <code>em</code> 當單位，換字級不必重新量 DOM。</li>
+      <li><b>呼吸與 pop 分兩層：</b>內層光暈用 CSS keyframes 持續呼吸（週期可調），外層用彈簧做 scale；焦點換到新資料點時給外層一個速度衝量，就會放大一下再收回。漲跌額、漲跌幅、日期、明細都只在「焦點 index 改變」時更新，拖曳過程中游標的像素位移不會觸發重繪數字。</li>
+      <li><b>放手行為：</b>觸控放開（或滑鼠移出圖表）0.35 秒後，游標以同一組彈簧滑回<b>最新一筆</b>，數字也滾回最新收盤，符合多數看盤 App 的習慣。經過資料點時若開啟「震動」且 <code>navigator.vibrate</code> 存在才呼叫 <code>vibrate(5)</code>，iOS Safari 等不支援的環境靜默略過。</li>
+      <li><b>套用時注意：</b>圖表設 <code>touch-action: none</code> 才能橫滑而不捲頁，但圖表區就無法用來上下捲動，高度別佔滿整個畫面。顏色走台股慣例漲紅跌綠，深色模式另外調亮兩色。本頁價格為固定亂數種子產生的示意資料（1,000 元以上升降單位 5 元），非真實行情。</li>
+    </ol>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+  const fmt = n => n.toLocaleString('en-US');
+  const fmt2 = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  /* ---------- 參數 ---------- */
+  const P = { mag: .85, ck: 300, rk: 170, breath: 1.8 };
+  let ready = false;
+  const scrub = $('#scrub');
+  [
+    ['kMag', 'oMag', v => { P.mag = v / 100; return v + '%'; }],
+    ['kCur', 'oCur', v => { P.ck = v; return String(v); }],
+    ['kRoll', 'oRoll', v => { P.rk = v; return String(v); }],
+    ['kBreath', 'oBreath', v => { P.breath = v; scrub.style.setProperty('--breath', v + 's'); return v.toFixed(1) + 's'; }],
+  ].forEach(([id, oid, set]) => {
+    const el = $('#' + id), out = $('#' + oid);
+    const apply = () => { out.textContent = set(+el.value); if (id === 'kMag' && ready) retarget(); };
+    el.addEventListener('input', apply);
+    apply();
+  });
+
+  /* ---------- 示意資料（固定種子，每次開啟都一樣） ---------- */
+  function mulberry32(a) {
+    return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  }
+  const rnd = mulberry32(20260930);
+  const gauss = () => { let u = 0, v = 0; while (!u) u = rnd(); while (!v) v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+  const tick = x => Math.round(x / 5) * 5;               // 1,000 元以上升降單位 5 元
+  const N = 30;
+  const WD = ['日', '一', '二', '三', '四', '五', '六'];
+  // 由 2026/09/30 往回數 30 個交易日（只略過週末，示意用）
+  const dates = [];
+  for (let d = new Date(2026, 8, 30); dates.length < N; d.setDate(d.getDate() - 1)) {
+    if (d.getDay() !== 0 && d.getDay() !== 6) dates.unshift(new Date(d));
+  }
+  const days = [];
+  let prev = 1060;
+  for (let i = 0; i < N; i++) {
+    const drift = i < 9 ? .004 : i < 17 ? -.003 : .006;  // 先漲、回檔、再攻高
+    let c = tick(prev * (1 + clamp(drift + gauss() * .013, -.05, .05)));
+    c = clamp(c, 1005, 1195);
+    if (c === prev && rnd() < .6) c += rnd() < .5 ? 5 : -5;
+    const o = tick(prev + (c - prev) * rnd() * .5 + (rnd() - .5) * 10);
+    const h = Math.max(o, c) + 5 * Math.floor(rnd() * 3);
+    const l = Math.min(o, c) - 5 * Math.floor(rnd() * 3);
+    const vol = Math.round(14000 + rnd() * 16000 + Math.abs(c - prev) * 420);
+    days.push({ date: dates[i], o, h, l, c, prev, vol, chg: c - prev, pct: (c - prev) / prev * 100 });
+    prev = c;
+  }
+  const trendUp = days[N - 1].c >= days[0].prev;
+  scrub.classList.toggle('down-trend', !trendUp);
+
+  /* ---------- 滾動碼表 ---------- */
+  const EM = 1.1;   // 每格高度（em）
+  function Roller(el, tpl, intDigits) {
+    this.slots = []; this.intDigits = intDigits;
+    for (const ch of tpl) {
+      if (ch === '#') {
+        const dg = document.createElement('span'); dg.className = 'dg';
+        const strip = document.createElement('span'); strip.className = 'strip';
+        let html = '';
+        for (let r = 0; r < 3; r++) for (let d = 0; d < 10; d++) html += '<i>' + d + '</i>';
+        strip.innerHTML = html; dg.appendChild(strip); el.appendChild(dg);
+        this.slots.push({ dg, strip, x: 0, v: 0, t: 0 });
+      } else {
+        const s = document.createElement('span'); s.className = 'sep'; s.textContent = ch; el.appendChild(s);
+      }
+    }
+  }
+  // digits：純數字字串；dir：數值變化方向（>0 往上滾、<0 往下滾）
+  Roller.prototype.set = function (digits, dir, instant) {
+    let leading = true;
+    this.slots.forEach((s, i) => {
+      const d = +digits[i];
+      const cur = ((Math.round(s.t) % 10) + 10) % 10;
+      if (d !== cur) {
+        const up = (d - cur + 10) % 10, dn = (cur - d + 10) % 10;
+        s.t += dir > 0 ? up : dir < 0 ? -dn : (up <= dn ? up : -dn);
+      }
+      if (instant) { s.x = s.t; s.v = 0; }
+      const lz = leading && d === 0 && i < this.intDigits - 1;
+      if (!lz) leading = false;
+      s.dg.classList.toggle('lz', lz);
+    });
+    wake();
+  };
+  Roller.prototype.step = function (h, k, c) {
+    let moving = false;
+    for (const s of this.slots) {
+      if (s.x === s.t && s.v === 0) continue;
+      const a = -k * (s.x - s.t) - c * s.v;     // m = 1，半隱式 Euler
+      s.v += a * h; s.x += s.v * h;
+      moving = true;
+    }
+    return moving;
+  };
+  Roller.prototype.settle = function (snapAll) {
+    let still = true;
+    for (const s of this.slots) {
+      if (snapAll || (Math.abs(s.x - s.t) < .002 && Math.abs(s.v) < .02)) {
+        const base = Math.floor(s.t / 10) * 10;   // 收斂後把位置正規化回 0–9
+        s.t -= base; s.x = s.t; s.v = 0;
+      } else still = false;
+    }
+    return still;
+  };
+  Roller.prototype.render = function () {
+    for (const s of this.slots) {
+      const m = ((s.x % 10) + 10) % 10;
+      s.strip.style.transform = 'translate3d(0,' + (-(10 + m) * EM).toFixed(4) + 'em,0)';
+    }
+  };
+
+  const rPrice = new Roller($('#rPrice'), '#,###.##', 4);
+  const rChg = new Roller($('#rChg'), '##.##', 2);
+  const rPct = new Roller($('#rPct'), '#.##', 1);
+  const rDate = new Roller($('#rDate'), '##/##', 4);
+  const rollers = [rPrice, rChg, rPct, rDate];
+
+  /* ---------- 圖表幾何 ---------- */
+  const svg = $('#svg'), curLine = $('#curLine'), datePill = $('#datePill'), dotWrap = $('#dotWrap'), pop = $('#pop');
+  const PLOT_T = 34, PLOT_B = 190, VOL_T = 208, VOL_B = 256;
+  let W = 360, L = 8, R = 312, step = 10, ys = [], clipRect = null, bars = [], pillW = 50;
+  const xOf = i => L + i * step;
+  function yAt(x) {
+    const f = clamp((x - L) / step, 0, N - 1);
+    const i = Math.min(Math.floor(f), N - 2), t = f - i;
+    return ys[i] * (1 - t) + ys[i + 1] * t;
+  }
+  function build() {
+    W = scrub.clientWidth || 360;
+    L = 10; R = W - 50; step = (R - L) / (N - 1);
+    const lo = Math.min(...days.map(d => d.c)), hi = Math.max(...days.map(d => d.c));
+    const pad = (hi - lo) * .12 + 5, y0 = lo - pad, y1 = hi + pad;
+    const yOf = v => PLOT_B - (v - y0) / (y1 - y0) * (PLOT_B - PLOT_T);
+    ys = days.map(d => yOf(d.c));
+    const NS = 'http://www.w3.org/2000/svg';
+    let s = '<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0" style="stop-color:var(--trend);stop-opacity:.26"/><stop offset="1" style="stop-color:var(--trend);stop-opacity:0"/></linearGradient>' +
+      '<clipPath id="cp"><rect id="cpr" x="0" y="0" width="' + W + '" height="' + VOL_B + '"/></clipPath></defs>';
+    // 格線與價位標籤
+    const gs = (y1 - y0) > 120 ? 50 : 25;                  // 整數刻度
+    for (let v = Math.ceil(y0 / gs) * gs; v <= y1; v += gs) {
+      const y = yOf(v).toFixed(1);
+      s += '<line class="grid-l" x1="' + L + '" x2="' + (W - 4) + '" y1="' + y + '" y2="' + y + '"/>' +
+           '<text class="ylab" x="' + (W - 4) + '" y="' + (y - 4) + '" text-anchor="end">' + fmt(Math.round(v)) + '</text>';
+    }
+    // 區間起點（前收）基準線
+    const by = yOf(days[0].prev).toFixed(1);
+    if (by > PLOT_T && by < PLOT_B) s += '<line class="base-l" x1="' + L + '" x2="' + R + '" y1="' + by + '" y2="' + by + '"/>';
+    const pts = ys.map((y, i) => xOf(i).toFixed(2) + ',' + y.toFixed(2));
+    const line = 'M' + pts.join('L');
+    const area = line + 'L' + R.toFixed(2) + ',' + PLOT_B + 'L' + L + ',' + PLOT_B + 'Z';
+    s += '<path d="' + area + '" fill="url(#ga)" clip-path="url(#cp)"/>';
+    s += '<path class="ln dim" d="' + line + '"/>';
+    s += '<path class="ln" d="' + line + '" clip-path="url(#cp)"/>';
+    // 成交量
+    const vmax = Math.max(...days.map(d => d.vol));
+    const bw = Math.max(2, step * .56);
+    days.forEach((d, i) => {
+      const h = (d.vol / vmax) * (VOL_B - VOL_T);
+      s += '<rect class="vb ' + (d.chg > 0 ? 'up' : d.chg < 0 ? 'down' : '') + '" x="' + (xOf(i) - bw / 2).toFixed(2) + '" y="' + (VOL_B - h).toFixed(2) + '" width="' + bw.toFixed(2) + '" height="' + h.toFixed(2) + '" rx="1"/>';
+    });
+    svg.setAttribute('viewBox', '0 0 ' + W + ' 264');
+    svg.innerHTML = s;
+    clipRect = svg.querySelector('#cpr');
+    bars = [...svg.querySelectorAll('.vb')];
+    bars.forEach((b, i) => b.classList.toggle('on', i === idx));
+    cur.x = cur.t = xOf(idx); cur.v = 0;
+    retarget();
+    wake();
+  }
+
+  /* ---------- 狀態 ---------- */
+  const cur = { x: 0, v: 0, t: 0 };        // 游標 x（px）
+  const popS = { x: 0, v: 0, t: 0 };       // pop 放大量（scale = 1 + x）
+  let idx = N - 1, px = null, active = false, releaseTimer = 0;
+  let haptic = true;
+  const canVibrate = typeof navigator.vibrate === 'function';
+
+  function retarget() {
+    if (px == null) { cur.t = xOf(idx); wake(); return; }
+    const snapX = xOf(idx);
+    cur.t = px + (snapX - px) * P.mag;      // 磁吸：在手指與最近點之間插值
+    wake();
+  }
+
+  const pad2 = n => String(n).padStart(2, '0');
+  const srText = $('#srText'), quote = $('#quote');
+  function focus(i, opts = {}) {
+    const prevIdx = idx, d = days[i], old = days[prevIdx];
+    idx = i;
+    const inst = !!opts.instant;
+    const priceDir = opts.dirOverride != null ? opts.dirOverride : Math.sign(d.c - old.c);
+    rPrice.set(d.c.toFixed(2).replace('.', '').padStart(6, '0'), priceDir, inst);
+    const ac = Math.min(Math.abs(d.chg), 99.99), ap = Math.min(Math.abs(d.pct), 9.99);
+    rChg.set(ac.toFixed(2).replace('.', '').padStart(4, '0'), opts.dirOverride != null ? opts.dirOverride : Math.sign(ac - Math.min(Math.abs(old.chg), 99.99)), inst);
+    rPct.set(ap.toFixed(2).replace('.', '').padStart(3, '0'), opts.dirOverride != null ? opts.dirOverride : Math.sign(ap - Math.min(Math.abs(old.pct), 9.99)), inst);
+    rDate.set(pad2(d.date.getMonth() + 1) + pad2(d.date.getDate()), opts.dirOverride != null ? opts.dirOverride : Math.sign(i - prevIdx), inst);
+    quote.classList.toggle('up', d.chg > 0);
+    quote.classList.toggle('down', d.chg < 0);
+    $('#sign').textContent = d.chg > 0 ? '+' : d.chg < 0 ? '−' : '';
+    $('#wday').textContent = '（' + WD[d.date.getDay()] + '）';
+    $('#live').style.opacity = i === N - 1 ? 1 : 0;
+    const tone = v => v > d.prev ? 'up' : v < d.prev ? 'down' : '';
+    [['#sO', d.o], ['#sH', d.h], ['#sL', d.l]].forEach(([id, v]) => { const el = $(id); el.textContent = fmt(v); el.className = tone(v); });
+    $('#sV').textContent = fmt(d.vol);
+    datePill.textContent = pad2(d.date.getMonth() + 1) + '/' + pad2(d.date.getDate()) + ' 週' + WD[d.date.getDay()];
+    pillW = datePill.offsetWidth || pillW;
+    bars.forEach((b, k) => b.classList.toggle('on', k === i));
+    scrub.setAttribute('aria-valuenow', i + 1);
+    scrub.setAttribute('aria-valuetext', (d.date.getMonth() + 1) + '月' + d.date.getDate() + '日 收盤 ' + fmt(d.c) + ' 元');
+    srText.textContent = (d.date.getMonth() + 1) + '月' + d.date.getDate() + '日，收盤 ' + fmt2(d.c) + ' 元，' + (d.chg >= 0 ? '漲 ' : '跌 ') + fmt2(Math.abs(d.chg)) + ' 元，' + fmt2(Math.abs(d.pct)) + '%';
+    $('#roIdx').textContent = (i + 1) + '/' + N;
+    if (i !== prevIdx && !inst) {
+      popS.v += 7.5;                            // 剛吸附到新點：給 pop 一個衝量
+      if (opts.user && haptic && canVibrate) { try { navigator.vibrate(5); } catch (_) {} }
+    }
+    wake();
+  }
+
+  /* ---------- rAF 彈簧迴圈 ---------- */
+  let running = false, last = 0;
+  function wake() {
+    if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
+  }
+  function frame(now) {
+    const dt = Math.min((now - last) / 1000, 1 / 20);
+    last = now;
+    const reduce = reduceMQ.matches;
+    let busy = false;
+    if (reduce) {
+      cur.x = cur.t; cur.v = 0; popS.x = 0; popS.v = 0;
+      rollers.forEach(r => r.settle(true));
+    } else {
+      const n = Math.max(1, Math.ceil(dt / (1 / 120))), h = dt / n;
+      const ck = P.ck, cc = 2 * .8 * Math.sqrt(ck);          // 游標：阻尼比 0.8
+      const rk = P.rk, rc = 2 * .72 * Math.sqrt(rk);         // 碼表：阻尼比 0.72
+      const pk = 420, pc = 2 * .42 * Math.sqrt(pk);          // pop：阻尼比 0.42，彈一下
+      for (let s = 0; s < n; s++) {
+        cur.v += (-ck * (cur.x - cur.t) - cc * cur.v) * h; cur.x += cur.v * h;
+        popS.v += (-pk * (popS.x - popS.t) - pc * popS.v) * h; popS.x += popS.v * h;
+        rollers.forEach(r => r.step(h, rk, rc));
+      }
+      if (Math.abs(cur.x - cur.t) < .05 && Math.abs(cur.v) < .5) { cur.x = cur.t; cur.v = 0; } else busy = true;
+      if (Math.abs(popS.x) < .001 && Math.abs(popS.v) < .01) { popS.x = 0; popS.v = 0; } else busy = true;
+      rollers.forEach(r => { if (!r.settle(false)) busy = true; });
+    }
+    render();
+    if (busy) requestAnimationFrame(frame); else running = false;
+  }
+
+  const roOff = $('#roOff');
+  function render() {
+    const x = cur.x, y = yAt(x);
+    curLine.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,0)';
+    const pl = clamp(x - pillW / 2, 0, W - pillW);
+    datePill.style.transform = 'translate3d(' + pl.toFixed(2) + 'px,0,0)';
+    dotWrap.style.transform = 'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0)';
+    pop.style.transform = 'scale(' + (1 + Math.max(-.4, popS.x)).toFixed(4) + ')';
+    if (clipRect) clipRect.setAttribute('width', Math.max(0, x).toFixed(2));
+    rollers.forEach(r => r.render());
+    roOff.textContent = (x - xOf(idx)).toFixed(1) + 'px';
+  }
+
+  /* ---------- Pointer Events ---------- */
+  let pid = null;
+  function localX(e) { const r = scrub.getBoundingClientRect(); return (e.clientX - r.left) * (W / r.width); }
+  function scrubTo(x, user) {
+    clearTimeout(releaseTimer);
+    if (!active) { active = true; scrub.classList.add('active'); }
+    px = clamp(x, L, R);
+    const i = clamp(Math.round((px - L) / step), 0, N - 1);
+    if (i !== idx) focus(i, { user });
+    retarget();
+  }
+  function release(delay = 350) {
+    clearTimeout(releaseTimer);
+    px = null;
+    releaseTimer = setTimeout(() => {
+      active = false; scrub.classList.remove('active');
+      if (idx !== N - 1) focus(N - 1);      // 放手後平滑回到最新一筆
+      retarget();
+    }, delay);
+  }
+  scrub.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    pid = e.pointerId;
+    try { scrub.setPointerCapture(pid); } catch (_) {}
+    scrubTo(localX(e), true);
+    e.preventDefault();
+  });
+  scrub.addEventListener('pointermove', e => {
+    if (pid === e.pointerId) scrubTo(localX(e), true);
+    else if (pid == null && e.pointerType === 'mouse') scrubTo(localX(e), true);   // 滑鼠懸停也可掃
+  });
+  const end = e => {
+    if (e.pointerId !== pid) return;
+    try { scrub.releasePointerCapture(pid); } catch (_) {}
+    pid = null;
+    if (e.pointerType === 'mouse' && e.type === 'pointerup') {
+      const r = scrub.getBoundingClientRect();
+      if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) return; // 仍在圖上：繼續懸停
+    }
+    release();
+  };
+  scrub.addEventListener('pointerup', end);
+  scrub.addEventListener('pointercancel', end);
+  scrub.addEventListener('pointerleave', e => { if (pid == null && e.pointerType === 'mouse') release(); });
+  scrub.addEventListener('contextmenu', e => e.preventDefault());
+
+  // 鍵盤：← → 逐點移動、Home/End 跳頭尾、Esc 放開
+  scrub.addEventListener('keydown', e => {
+    let i = idx;
+    if (e.key === 'ArrowLeft') i--; else if (e.key === 'ArrowRight') i++;
+    else if (e.key === 'Home') i = 0; else if (e.key === 'End') i = N - 1;
+    else if (e.key === 'Escape') { release(0); return; }
+    else return;
+    e.preventDefault();
+    i = clamp(i, 0, N - 1);
+    clearTimeout(releaseTimer);
+    active = true; scrub.classList.add('active'); px = null;
+    if (i !== idx) focus(i, { user: false });
+    retarget();
+  });
+  scrub.addEventListener('blur', () => { if (pid == null) release(); });
+
+  /* ---------- 震動開關 ---------- */
+  const hapBtn = $('#hapBtn');
+  if (!canVibrate) hapBtn.title = '此裝置不支援震動，開啟也會靜默略過';
+  hapBtn.addEventListener('click', () => { haptic = !haptic; hapBtn.setAttribute('aria-pressed', String(haptic)); });
+
+  /* ---------- 初始化：數字從 0 滾到最新收盤 ---------- */
+  build();
+  const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(() => { if (Math.abs(scrub.clientWidth - W) > .5) build(); }) : null;
+  if (ro) ro.observe(scrub); else addEventListener('resize', build);
+  focus(N - 1, { instant: true });
+  rollers.forEach(r => r.slots.forEach(s => { s.x = s.t - 10; s.v = 0; }));  // 開場：每位從低處往上滾到定位
+  cur.x = cur.t = xOf(N - 1);
+  render(); wake(); ready = true;
+  reduceMQ.addEventListener && reduceMQ.addEventListener('change', wake);
+
+  /* ---------- 複製 ---------- */
+  const copyBtn = $('#copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    const text = $('#promptText').textContent.trim();
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (_) {}
+    if (!ok) {
+      try {
+        const r = document.createRange(); r.selectNodeContents($('#promptText'));
+        const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        ok = document.execCommand('copy');
+      } catch (_) {}
+    }
+    copyBtn.textContent = ok ? '已複製' : '請按 Ctrl+C';
+    copyBtn.classList.toggle('ok', ok);
+    setTimeout(() => { copyBtn.textContent = '複製'; copyBtn.classList.remove('ok'); }, 1600);
+  });
+
+  /* ---------- 深淺色手動切換 ---------- */
+  $('#themeBtn').addEventListener('click', () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+  });
+})();
+</script>
+</body>
+</html>

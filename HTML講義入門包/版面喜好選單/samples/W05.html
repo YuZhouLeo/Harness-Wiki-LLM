@@ -1,0 +1,507 @@
+<!doctype html>
+<!-- 版面喜好選單範例 W05｜便當盒格子｜來源：講師範例庫 output範例/網頁設計風格/05-便當盒佈局.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W05 便當盒佈局 Bento Grid｜網頁設計風格</title>
+<script>if(navigator.onLine)document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">')</script>
+<style>
+/* ===== 風格本體：所有規則都收在 .style 底下，不寫會漏進 .spec 的全域選擇器 ===== */
+:root { color-scheme: light; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: #ffffff; }
+.style {
+  --ink: #111318;
+  --muted: #5a6072;
+  --faint: #a4a9b8;
+  --lilac: #e8ebfb;
+  --mint: #dcf2dd;
+  --leaf: #5fae68;
+  --leaf-soft: #a9d8ac;
+  --leaf-ink: #2f6a3a;
+  --sky: #e3eaf6;
+  --lavender: #efe9fb;
+  --tile: #f5f5f8;
+  --line: #e7e8ef;
+  --blue: #5b8def;
+  --violet: #a98fec;
+  --r: 28px;
+  --gap: 16px;
+  background: #fff;
+  color: var(--ink);
+  font-family: "Plus Jakarta Sans", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  line-height: 1.7;
+  text-spacing-trim: space-first;
+}
+.style *, .style *::before, .style *::after { box-sizing: border-box; }
+.style h1, .style h2, .style h3 { text-wrap: balance; margin: 0; line-height: 1.25; }
+.style p { margin: 0; text-wrap: pretty; }
+.style a { color: inherit; text-decoration: none; }
+.style a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+/* 一格：大圓角、淡彩底、不加陰影，格與格之間只靠留縫分開 */
+.style .cell { position: relative; min-width: 0; border-radius: var(--r); background: var(--tile); padding: clamp(18px, 2vw, 26px); overflow: hidden; }
+.style .cap { font-size: 13px; color: var(--muted); }
+.style .pill {
+  display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 999px;
+  background: var(--ink); color: #fff; font-size: 15px; font-weight: 500; line-height: 1.4; white-space: nowrap;
+  transition: transform .18s ease;
+}
+.style .pill:hover { transform: translateY(-2px); }
+
+/* ---------- 第一屏 ---------- */
+.style .hero {
+  min-height: clamp(600px, 100svh, 860px);
+  display: flex; flex-direction: column;
+  padding: 0 clamp(16px, 3.1vw, 40px) clamp(16px, 2.4vw, 30px);
+}
+.style .nav { display: flex; align-items: center; gap: 20px; padding: clamp(14px, 1.6vw, 20px) 4px; }
+.style .brand { display: inline-flex; align-items: center; gap: 9px; font-size: 24px; font-weight: 700; line-height: 1; }
+.style .brand svg { width: 26px; height: 26px; }
+.style .nav ul { display: flex; gap: clamp(22px, 4.4vw, 60px); list-style: none; margin: 0 auto; padding: 0; font-size: 15px; font-weight: 500; }
+.style .auth { display: flex; align-items: center; gap: 10px; }
+.style .login { padding: 8px 20px; border-radius: 999px; border: 1px solid var(--line); font-size: 14px; font-weight: 500; }
+.style .signup { padding: 9px 22px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 14px; font-weight: 500; }
+
+.style .bento {
+  flex: 1; display: grid; gap: var(--gap);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, .5fr) minmax(0, .5fr) minmax(0, 1.2fr);
+  grid-template-rows: repeat(12, minmax(34px, 1fr));
+}
+.style .c-main { grid-column: 1; grid-row: 1 / -1; }
+.style .c-cal { grid-column: 2 / 4; grid-row: 1 / 8; }
+.style .c-task { grid-column: 2; grid-row: 8 / -1; }
+.style .c-note { grid-column: 3; grid-row: 8 / -1; }
+.style .c-focus { grid-column: 4; grid-row: 1 / 6; }
+.style .c-pic { grid-column: 4; grid-row: 6 / -1; }
+
+.style .c-main {
+  display: flex; flex-direction: column; padding: clamp(24px, 3vw, 40px) clamp(22px, 2.5vw, 32px) clamp(22px, 2.6vw, 34px);
+  background:
+    radial-gradient(70% 45% at 18% 100%, rgba(255,255,255,.85), transparent 70%),
+    radial-gradient(60% 40% at 100% 0%, rgba(214,220,250,.9), transparent 70%),
+    linear-gradient(160deg, #e6e9fb 0%, #eef0fd 55%, #e9eefc 100%);
+}
+.style .hero h1 { font-size: clamp(38px, 5.4vw, 70px); font-weight: 700; line-height: 1.2; }
+.style .lead { margin-top: clamp(16px, 2vw, 26px); max-width: 21em; font-size: clamp(15px, 1.4vw, 18px); color: var(--muted); line-height: 1.85; }
+.style .c-main .pill { align-self: flex-start; margin: clamp(22px, 2.6vw, 34px) 0 28px; padding: 14px 26px; font-size: 16px; }
+.style .crowd { margin-top: auto; display: flex; align-items: center; gap: 16px; padding: 16px 20px; border-radius: 20px; background: rgba(255,255,255,.78); }
+.style .faces { display: flex; }
+.style .faces svg { width: 46px; height: 46px; border-radius: 50%; border: 3px solid #fff; margin-left: -12px; background: #fff; }
+.style .faces svg:first-child { margin-left: 0; }
+.style .crowd b { display: block; font-size: 20px; font-weight: 700; line-height: 1.2; }
+.style .crowd span { font-size: 13px; color: var(--muted); }
+
+.style .c-cal { background: var(--tile); border: 1px solid var(--line); display: flex; flex-direction: column; padding: clamp(16px, 1.8vw, 24px); }
+.style .cal-head { display: flex; align-items: center; justify-content: space-between; font-size: 15px; font-weight: 700; padding: 0 6px 8px; }
+.style .cal-head .arrows { display: flex; gap: 22px; color: var(--ink); font-size: 18px; line-height: 1; }
+.style .cal-grid { flex: 1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-template-rows: auto repeat(5, minmax(30px, 1fr)); font-size: 14px; font-variant-numeric: tabular-nums; }
+.style .cal-grid span { display: grid; place-items: center; font-weight: 500; }
+.style .cal-grid .wd { font-size: 12.5px; color: var(--muted); font-weight: 400; padding: 6px 0; }
+.style .cal-grid .off { color: var(--faint); }
+.style .cal-grid .on i { font-style: normal; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; background: var(--ink); color: #fff; font-weight: 700; }
+
+.style .mini { display: flex; flex-direction: column; }
+.style .mini-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; font-size: 15px; font-weight: 700; }
+.style .mini-ico { flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; }
+.style .mini-ico svg { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.style .mini .n { margin-top: auto; font-size: clamp(40px, 4.2vw, 56px); font-weight: 600; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.style .c-task { background: #e9eefb; }
+.style .c-task .mini-ico { background: var(--blue); }
+.style .c-note { background: var(--lavender); }
+.style .c-note .mini-ico { background: var(--violet); }
+
+.style .c-focus { background: var(--mint); display: flex; gap: 14px; }
+.style .focus-txt { display: flex; flex-direction: column; flex: none; }
+.style .focus-txt h3 { font-size: 15px; font-weight: 700; }
+.style .focus-txt .n { margin-top: 6px; font-size: clamp(30px, 3vw, 40px); font-weight: 600; line-height: 1.15; white-space: nowrap; }
+.style .focus-txt .cap { color: var(--leaf-ink); margin-top: 4px; }
+.style .bars { flex: 1; align-self: flex-end; height: 72%; display: flex; align-items: flex-end; justify-content: flex-end; gap: clamp(5px, .7vw, 9px); min-height: 90px; }
+.style .bars i { display: block; width: clamp(7px, .8vw, 10px); height: var(--h); border-radius: 999px; background: var(--leaf-soft); }
+.style .bars i.hi { background: var(--leaf); }
+
+.style .c-pic { padding: 0; background: var(--sky); display: grid; grid-template-columns: minmax(0, 1.04fr) minmax(0, 1fr); }
+.style .c-pic svg { width: 100%; height: 100%; display: block; }
+.style .pic-txt { display: flex; flex-direction: column; justify-content: center; padding: 20px clamp(14px, 1.6vw, 22px); }
+.style .pic-txt h3 { font-size: clamp(17px, 1.6vw, 21px); font-weight: 700; line-height: 1.5; white-space: nowrap; }
+.style .pic-txt a { margin-top: 22px; font-size: 14px; font-weight: 600; display: inline-flex; gap: 10px; }
+
+/* ---------- 套到學校資料 ---------- */
+.style .school { padding: clamp(36px, 5vw, 64px) clamp(16px, 3.1vw, 40px) clamp(44px, 6vw, 80px); }
+.style .school > header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin: 0 4px 22px; }
+.style .school h2 { font-size: clamp(28px, 3.2vw, 40px); font-weight: 700; }
+.style .school > header p { color: var(--muted); font-size: 15px; }
+.style .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap); }
+.style .t { font-size: 18px; font-weight: 700; }
+
+.style .course { grid-column: span 4; display: flex; flex-direction: column; gap: 12px; }
+.style .course.a { background: var(--lilac); }
+.style .course.b { background: var(--mint); }
+.style .course.c { background: var(--lavender); }
+.style .course .meta { display: flex; align-items: center; justify-content: space-between; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.style .course .meta span { padding: 3px 12px; border-radius: 999px; background: #fff; font-weight: 700; }
+.style .course .meta time { color: var(--muted); font-weight: 600; }
+.style .course h3 { font-size: 20px; font-weight: 700; line-height: 1.45; }
+.style .course p { font-size: 14.5px; color: var(--muted); }
+.style .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 4px; }
+.style .tag { font-size: 12.5px; padding: 2px 12px; border-radius: 999px; background: rgba(255,255,255,.7); border: 1px solid rgba(17,19,24,.1); }
+.style .course .pill { align-self: flex-start; padding: 9px 18px; font-size: 14px; }
+
+.style .nums { grid-column: span 4; background: var(--mint); display: flex; flex-direction: column; gap: 14px; }
+.style .pair { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.style .pair > div { background: rgba(255,255,255,.72); border-radius: 18px; padding: 18px 16px 16px; display: flex; flex-direction: column; justify-content: flex-end; }
+.style .big { font-size: clamp(48px, 5.6vw, 74px); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.style .big span { font-size: .4em; font-weight: 600; margin-left: 2px; }
+.style .meter { display: block; height: 8px; border-radius: 999px; background: var(--leaf-soft); margin: 12px 0 8px; overflow: hidden; }
+.style .meter i { display: block; height: 100%; width: var(--w); border-radius: 999px; background: var(--leaf); }
+.style .nums .cap { color: var(--leaf-ink); }
+.style .nums p { font-size: 15px; font-weight: 500; }
+
+.style .tablecard { grid-column: span 8; border: 1px solid var(--line); }
+.style .table-wrap { overflow-x: auto; margin: 10px -6px -6px; }
+.style table { width: 100%; min-width: 580px; border-collapse: separate; border-spacing: 6px; font-size: 14.5px; }
+.style th, .style td { text-align: left; padding: 9px 12px; border-radius: 12px; background: #fff; line-height: 1.5; }
+.style thead th { background: var(--ink); color: #fff; font-weight: 700; }
+.style thead th:first-child { background: transparent; color: var(--muted); }
+.style tbody th { background: var(--lilac); font-weight: 700; white-space: nowrap; }
+
+.style .time { grid-column: span 12; background: var(--sky); }
+.style .line { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.style .line li { background: #fff; border-radius: 18px; padding: 14px 16px 14px; font-size: 14.5px; position: relative; }
+.style .line li::before { content: ""; display: block; width: 10px; height: 10px; border-radius: 50%; background: var(--ink); margin-bottom: 10px; box-shadow: 0 0 0 4px var(--sky); }
+.style .line li::after { content: ""; position: absolute; left: 30px; right: -10px; top: 18px; height: 2px; background: #cdd6e6; }
+.style .line li:last-child::after { right: 16px; }
+.style .line b { display: block; font-size: 28px; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; }
+
+.style .quote { grid-column: span 5; margin: 0; background: var(--ink); color: #fff; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
+.style .quote blockquote { margin: 0; font-size: clamp(20px, 2.3vw, 29px); font-weight: 700; line-height: 1.55; }
+.style .quote .cap { color: #c9cddb; }
+
+.style .keys { grid-column: span 7; background: var(--lilac); }
+.style .keys ol { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; counter-reset: k; }
+.style .keys li { counter-increment: k; display: flex; gap: 14px; align-items: center; padding: 11px 16px; border-radius: 16px; background: #fff; font-size: 15px; }
+.style .keys li::before { content: counter(k); flex: none; width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; background: var(--ink); color: #fff; font-weight: 700; font-size: 14px; }
+
+@media (max-width: 960px) {
+  .style .nav ul { display: none; }
+  .style .auth { margin-left: auto; }
+  .style .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; }
+  .style .c-main, .style .c-cal, .style .c-focus, .style .c-pic { grid-column: 1 / -1; grid-row: auto; }
+  .style .c-task { grid-column: 1; grid-row: auto; }
+  .style .c-note { grid-column: 2; grid-row: auto; }
+  .style .mini { min-height: 168px; }
+  .style .c-cal { min-height: 330px; }
+  .style .c-focus { min-height: 170px; }
+  .style .c-pic { min-height: 230px; }
+  .style .course, .style .nums, .style .tablecard, .style .quote, .style .keys { grid-column: span 12; }
+}
+@media (max-width: 620px) {
+  .style { --r: 24px; --gap: 12px; }
+  .style .login { display: none; }
+  .style .line { grid-template-columns: 1fr 1fr; }
+  .style .line li::after { display: none; }
+  .style .line li:last-child { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .style .pill { transition: none; }
+  html { scroll-behavior: auto; }
+}
+@media print {
+  .style .hero { min-height: 0; }
+  .style .cell { break-inside: avoid; }
+  .style .quote { background: #fff; color: var(--ink); border: 2px solid var(--ink); }
+  .style .quote .cap { color: var(--muted); }
+  .style .c-main { background: var(--lilac); }
+}
+
+/* ===== 共用：風格規格面板（各頁相同，逐字複製，不要改） ===== */
+.spec { all: initial; display: block; background: #f6f5f1; color: #1c1b19; color-scheme: light; border-top: 1px solid #dcd9d0;
+  font: 400 15px/1.7 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; text-spacing-trim: space-first;
+  padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 48px) 64px; }
+.spec *, .spec *::before, .spec *::after { box-sizing: border-box; }
+.spec .spec-in { max-width: 1120px; margin: 0 auto; }
+.spec .spec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin: 0 0 6px; }
+.spec .spec-code { font: 700 13px/1 ui-monospace, Consolas, monospace; color: #fff; background: #1c1b19; padding: 5px 9px; border-radius: 6px; }
+.spec h2 { margin: 0; font-size: clamp(22px, 3vw, 30px); line-height: 1.3; font-weight: 700; text-wrap: balance; }
+.spec .spec-en { font: 500 14px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-def { margin: 0 0 22px; max-width: 46em; color: #3b3935; }
+.spec .spec-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.spec .spec-card { background: #fff; border: 1px solid #e4e1da; border-radius: 12px; padding: 16px 18px; min-width: 0; }
+.spec .spec-card.wide { grid-column: 1 / -1; }
+.spec h3 { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: #6b6862; }
+.spec ul, .spec ol { margin: 0; padding-left: 1.2em; }
+.spec li { margin: 2px 0; }
+.spec p { margin: 0; }
+.spec p + p { margin-top: 6px; }
+.spec code { font: 13px/1.5 ui-monospace, Consolas, monospace; background: #f0eee8; padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.spec .spec-traits { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 16px; }
+.spec .spec-traits small { display: block; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #6b6862; }
+.spec .spec-sw { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.spec .spec-sw li { margin: 0; font: 12px/1.4 ui-monospace, Consolas, monospace; color: #3b3935; }
+.spec .spec-sw i { display: block; height: 34px; border-radius: 8px; border: 1px solid rgba(0,0,0,.12); margin-bottom: 4px; }
+.spec .spec-fit b { display: inline-block; min-width: 4.2em; }
+.spec .spec-prompt { background: #efedff; border-color: #dcd8ff; }
+.spec .spec-back { display: inline-block; margin-top: 22px; color: #1c1b19; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 720px) { .spec .spec-grid { grid-template-columns: 1fr; } }
+@media print { .spec { border-top: 0; } .spec .spec-card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<main class="style">
+
+  <!-- ========== 第一屏：重現參考圖 ========== -->
+  <section class="hero" id="hero">
+    <nav class="nav" aria-label="主選單">
+      <a class="brand" href="#hero">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.8 20 4.6v7.2c0 5.2-3.4 8.7-8 10.4-4.6-1.7-8-5.2-8-10.4V4.6z" fill="#111318"/><circle cx="12" cy="11.4" r="3.3" fill="none" stroke="#fff" stroke-width="2.2"/></svg>
+        Tasko
+      </a>
+      <ul>
+        <li><a href="#school">產品</a></li>
+        <li><a href="#school">模板</a></li>
+        <li><a href="#school">資源</a></li>
+        <li><a href="#spec">定價</a></li>
+      </ul>
+      <div class="auth">
+        <a class="login" href="#spec">登入</a>
+        <a class="signup" href="#school">免費註冊</a>
+      </div>
+    </nav>
+
+    <div class="bento">
+      <div class="cell c-main">
+        <h1>高效生活<br>從有序開始</h1>
+        <p class="lead">Tasko 幫助你整合任務、筆記與日程，讓每一天都更專注、更有意義。</p>
+        <a class="pill" href="#school">開始使用 <span aria-hidden="true">→</span></a>
+        <div class="crowd">
+          <div class="faces" aria-hidden="true">
+            <svg viewBox="0 0 36 36"><rect width="36" height="36" fill="#cdd6f6"/><path d="M4 38c1-9 7-12 14-12s13 3 14 12z" fill="#2f3a56"/><circle cx="18" cy="16" r="7.2" fill="#f0c6a2"/><path d="M10.5 15c-.4-5.6 3-9 7.5-9s8 3.3 7.5 9c-1.8-3.2-4.3-4.3-7.5-4.3S12.3 11.8 10.5 15z" fill="#2a211d"/></svg>
+            <svg viewBox="0 0 36 36"><rect width="36" height="36" fill="#f6dcc6"/><path d="M4 38c1-9 7-12 14-12s13 3 14 12z" fill="#e9eef7"/><path d="M9.5 26c-1.5-7-.5-19 8.5-19s10 12 8.5 19z" fill="#c98a4b"/><circle cx="18" cy="16.5" r="6.8" fill="#f4d2b4"/><path d="M11 15.5c.6-4.6 3.4-6.8 7-6.8s6.4 2.2 7 6.8c-2.6-1-4.6-2.4-6-4.4-1.8 2.2-4.6 3.7-8 4.4z" fill="#c98a4b"/></svg>
+            <svg viewBox="0 0 36 36"><rect width="36" height="36" fill="#d9ecd9"/><path d="M4 38c1-9 7-12 14-12s13 3 14 12z" fill="#b5553c"/><circle cx="18" cy="16" r="7.2" fill="#d9a47c"/><path d="M10.6 14.5C10.8 9.4 13.8 6.5 18 6.5s7.2 2.9 7.4 8c-1.4-2-3.6-3-7.4-3s-6 1-7.4 3z" fill="#3a2a22"/><path d="M12.5 19.5c1.2 3.3 3 4.9 5.5 4.9s4.3-1.6 5.5-4.9c-1.6 1-3.4 1.4-5.5 1.4s-3.9-.4-5.5-1.4z" fill="#3a2a22"/></svg>
+            <svg viewBox="0 0 36 36"><rect width="36" height="36" fill="#e6dcf8"/><path d="M4 38c1-9 7-12 14-12s13 3 14 12z" fill="#3d4a5c"/><circle cx="18" cy="16" r="7.2" fill="#f1cdb0"/><path d="M10.4 16c-.8-6 2.6-10 7.6-10 5.2 0 8.4 3.6 7.6 10-1-2.8-2.4-4.4-4.2-5-2.6 1.4-6 1.8-8.8 1.2-1 .9-1.7 2.2-2.2 3.8z" fill="#6a4a36"/><g fill="none" stroke="#2a2a2e" stroke-width="1"><circle cx="15" cy="16.5" r="2.3"/><circle cx="21" cy="16.5" r="2.3"/><path d="M17.3 16.5h1.4"/></g></svg>
+          </div>
+          <div><b>+12K</b><span>全球用戶的選擇</span></div>
+        </div>
+      </div>
+
+      <div class="cell c-cal" role="img" aria-label="2024 年四月月曆，15 日標為今天">
+        <div class="cal-head"><span>四月 2024</span><span class="arrows" aria-hidden="true"><span>‹</span><span>›</span></span></div>
+        <div class="cal-grid" aria-hidden="true">
+          <span class="wd">一</span><span class="wd">二</span><span class="wd">三</span><span class="wd">四</span><span class="wd">五</span><span class="wd">六</span><span class="wd">日</span>
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
+          <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+          <span class="on"><i>15</i></span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span>
+          <span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span>
+          <span>29</span><span>30</span><span class="off">1</span><span class="off">2</span><span class="off">3</span><span class="off">4</span><span class="off">5</span>
+        </div>
+      </div>
+
+      <div class="cell c-focus">
+        <div class="focus-txt">
+          <h3>專注時段</h3>
+          <div class="n">3h 24m</div>
+          <span class="cap">比上週 +40%</span>
+        </div>
+        <div class="bars" aria-hidden="true">
+          <i style="--h:22%"></i><i style="--h:36%"></i><i style="--h:44%"></i><i class="hi" style="--h:72%"></i><i style="--h:40%"></i><i class="hi" style="--h:86%"></i><i style="--h:42%"></i><i class="hi" style="--h:66%"></i><i class="hi" style="--h:100%"></i>
+        </div>
+      </div>
+
+      <div class="cell mini c-task">
+        <div class="mini-top"><span>任務</span><span class="mini-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.5l4.2 4.2L18.5 8"/></svg></span></div>
+        <div class="n">5</div>
+        <span class="cap">今日待完成</span>
+      </div>
+      <div class="cell mini c-note">
+        <div class="mini-top"><span>筆記</span><span class="mini-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7l4 4V20.5H7z"/><path d="M10 12h5M10 16h5"/></svg></span></div>
+        <div class="n">12</div>
+        <span class="cap">記錄靈感</span>
+      </div>
+
+      <div class="cell c-pic">
+        <svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <linearGradient id="b-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#aebfd6"/><stop offset=".5" stop-color="#d6e0ec"/><stop offset="1" stop-color="#eef2f7"/></linearGradient>
+            <linearGradient id="b-far" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#93a7c0"/><stop offset="1" stop-color="#c6d2e1"/></linearGradient>
+            <linearGradient id="b-mid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7189a4"/><stop offset="1" stop-color="#aebccd"/></linearGradient>
+            <linearGradient id="b-lake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdd8e4"/><stop offset=".6" stop-color="#a3b4c8"/><stop offset="1" stop-color="#8a9fb7"/></linearGradient>
+            <linearGradient id="b-snow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dfe7f0"/></linearGradient>
+            <linearGradient id="b-mist" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".55" stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            <g id="b-pine"><rect x="-2.5" y="-12" width="5" height="14"/><path d="M0-100-11-66h5L-17-36h7L-24-8h48L10-36h7L6-66h5z"/></g>
+            <path id="b-cap" d="M0-100-7-78l4 2 3-5 3 5 4-2z"/>
+          </defs>
+          <rect width="300" height="400" fill="url(#b-sky)"/>
+          <path d="M0 214 44 168l22 16 40-66 22 30 28-44 34 56 22-20 40 48 48-30v100H0z" fill="url(#b-far)"/>
+          <g fill="#fff" opacity=".9"><path d="M106 118 92 142l9-3 6 9 8-10 9 6z"/><path d="M156 104l-13 21 9-2 5 8 7-9 8 5z"/><path d="M44 168l-9 10 8-1 5 6 5-8z"/></g>
+          <path d="M0 240c36-20 70-14 104-22s64-22 100-16 64 2 96-8v72H0z" fill="url(#b-mid)"/>
+          <rect y="214" width="300" height="46" fill="url(#b-mist)"/>
+          <rect y="256" width="300" height="144" fill="url(#b-lake)"/>
+          <g fill="#4d6377" opacity=".28">
+            <use href="#b-pine" transform="translate(160 262) scale(.34 -.3)"/><use href="#b-pine" transform="translate(180 262) scale(.48 -.42)"/><use href="#b-pine" transform="translate(203 262) scale(.66 -.56)"/><use href="#b-pine" transform="translate(229 262) scale(.84 -.7)"/><use href="#b-pine" transform="translate(256 262) scale(.7 -.6)"/>
+          </g>
+          <g fill="#fff" opacity=".5"><rect x="64" y="276" width="78" height="1.8" rx="1"/><rect x="92" y="292" width="120" height="1.8" rx="1"/><rect x="60" y="310" width="62" height="1.8" rx="1"/><rect x="126" y="324" width="96" height="1.8" rx="1"/></g>
+          <path d="M300 236c-34 8-70 16-106 21-18 3-34 4-50 4 24 4 52 6 84 6h72z" fill="#f2f5f9"/>
+          <g fill="#6e859b"><use href="#b-pine" transform="translate(170 258) scale(.3)"/><use href="#b-pine" transform="translate(192 256) scale(.4)"/><use href="#b-pine" transform="translate(243 250) scale(.56)"/><use href="#b-pine" transform="translate(272 244) scale(.6)"/></g>
+          <g fill="#2f4454"><use href="#b-pine" transform="translate(160 262) scale(.34)"/><use href="#b-pine" transform="translate(180 261) scale(.48)"/><use href="#b-pine" transform="translate(203 259) scale(.66)"/><use href="#b-pine" transform="translate(229 256) scale(.84)"/><use href="#b-pine" transform="translate(256 252) scale(.7)"/><use href="#b-pine" transform="translate(284 246) scale(.9)"/></g>
+          <g fill="#fff" opacity=".85"><use href="#b-cap" transform="translate(203 259) scale(.66)"/><use href="#b-cap" transform="translate(229 256) scale(.84)"/><use href="#b-cap" transform="translate(256 252) scale(.7)"/><use href="#b-cap" transform="translate(180 261) scale(.48)"/></g>
+          <path d="M0 400v-40c34-20 78-28 128-22s92 26 172 14v48z" fill="url(#b-snow)"/>
+          <path d="M0 400v-18c44-12 92-10 140-3s104 12 160 4v17z" fill="#fff"/>
+        </svg>
+        <div class="pic-txt">
+          <h3>小小的進步<br>也是一種偉大</h3>
+          <a href="#school">Keep going <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 套到學校資料：各頁內容相同，只換風格 ========== -->
+  <section class="school" id="school">
+    <header>
+      <h2>套到學校資料</h2>
+      <p>同一份課堂內容，換上這個風格。</p>
+    </header>
+
+    <div class="grid">
+      <article class="cell course a">
+        <div class="meta"><span>策略管理</span><time datetime="2026-09-18">09/18</time></div>
+        <h3>外部分析：PESTEL・五力分析・策略群組</h3>
+        <p>五力分析說明的是產業的獲利潛力，不是某一家公司的獲利。</p>
+        <div class="tags"><span class="tag">課堂筆記</span><span class="tag">考點</span></div>
+        <a class="pill" href="#school">打開講義 →</a>
+      </article>
+      <article class="cell course b">
+        <div class="meta"><span>日本史</span><time datetime="2026-09-21">09/21</time></div>
+        <h3>古代律令制國家的建構：大化改新・奈良時代</h3>
+        <p>律是刑法、令是行政法；法制真正完成要到大寶律令、養老律令。</p>
+        <div class="tags"><span class="tag">課堂筆記</span><span class="tag">補充</span></div>
+        <a class="pill" href="#school">打開講義 →</a>
+      </article>
+      <article class="cell course c">
+        <div class="meta"><span>日文寫作（一）</span><time datetime="2026-09-16">09/16</time></div>
+        <h3>作文預備知識：原稿用紙・文体・書きことば</h3>
+        <p>一篇文章只能選一種文末形式，丁寧体或普通体，不能混用。</p>
+        <div class="tags"><span class="tag">課堂筆記</span><span class="tag">考點</span></div>
+        <a class="pill" href="#school">打開講義 →</a>
+      </article>
+
+      <div class="cell nums">
+        <span class="cap">策略管理・投影片 2｜公司績效從哪裡來</span>
+        <div class="pair">
+          <div><div class="big">20<span>%</span></div><i class="meter" style="--w:20%" aria-hidden="true"><i></i></i><span class="cap">產業效果（約）</span></div>
+          <div><div class="big">25<span>%</span></div><i class="meter" style="--w:25%" aria-hidden="true"><i></i></i><span class="cap">景氣與運氣（約）</span></div>
+        </div>
+        <p>平均而言，廠商效果比產業效果大。</p>
+      </div>
+
+      <div class="cell tablecard">
+        <h3 class="t">產業競爭結構的四種型態</h3>
+        <span class="cap">策略管理・投影片 18</span>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">結構</th><th scope="col">完全競爭</th><th scope="col">獨占性競爭</th><th scope="col">寡占</th><th scope="col">獨占</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">廠商</th><td>很多小廠</td><td>很多廠</td><td>少數大廠</td><td>一家</td></tr>
+              <tr><th scope="row">定價</th><td>只能接受市場價格</td><td>有一點定價能力</td><td>有一些定價能力</td><td>定價能力很大</td></tr>
+              <tr><th scope="row">產品</th><td>大宗商品</td><td>有差異化</td><td>有差異化</td><td>獨一無二</td></tr>
+              <tr><th scope="row">進入障礙</th><td>低</td><td>中</td><td>高</td><td>非常高</td></tr>
+              <tr><th scope="row">獲利潛力</th><td>低</td><td>→</td><td>→</td><td>高</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="cell time">
+        <h3 class="t">律令制國家年表</h3>
+        <span class="cap">日本史・09/21</span>
+        <ol class="line">
+          <li><b>645</b>改新之詔</li>
+          <li><b>663</b>白村江之戰</li>
+          <li><b>701</b>大寶律令</li>
+          <li><b>710</b>遷都平城京</li>
+          <li><b>794</b>遷都平安京</li>
+        </ol>
+      </div>
+
+      <figure class="cell quote">
+        <blockquote>「在古代社會，你沒有土地基本上就失去了生存的資格。」</blockquote>
+        <figcaption class="cap">日本史・老師的話</figcaption>
+      </figure>
+
+      <div class="cell keys">
+        <h3 class="t">記住三件事</h3>
+        <span class="cap">日文寫作（一）・原稿用紙</span>
+        <ol>
+          <li>標題固定空三格，從第四格開始寫</li>
+          <li>名字前加系級，名字後空一格</li>
+          <li>格式錯誤扣兩分或五分，比文法錯誤（一分）重</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ========== 風格規格：給人挑、也給之後照這個風格實作的 AI 讀 ========== -->
+<section class="spec" id="spec">
+  <div class="spec-in">
+    <div class="spec-head">
+      <span class="spec-code">W05</span>
+      <h2>便當盒佈局</h2>
+      <span class="spec-en">Bento Grid</span>
+    </div>
+    <p class="spec-def">把一頁切成大小不一的圓角格子，每格只放一件事，用格子的面積表示份量、用淡彩底色分類。</p>
+
+    <div class="spec-grid">
+      <div class="spec-card">
+        <h3>關鍵特徵</h3>
+        <ul class="spec-traits">
+          <li>模組化<small>MODULAR</small></li>
+          <li>靈活<small>FLEXIBLE</small></li>
+          <li>一切盡在掌握<small>ALL IN ONE PLACE</small></li>
+        </ul>
+      </div>
+      <div class="spec-card">
+        <h3>字型</h3>
+        <p>英數 <code>Plus Jakarta Sans</code>，中文 <code>Noto Sans TC</code>（Google Fonts），離線改用 PingFang TC／Microsoft JhengHei。標題 700、數字 600、內文 400–500；格內的大數字用 <code>tabular-nums</code>。</p>
+      </div>
+      <div class="spec-card wide">
+        <h3>色票</h3>
+        <ul class="spec-sw">
+          <li><i style="background:#111318"></i>--ink #111318</li>
+          <li><i style="background:#5a6072"></i>--muted #5a6072</li>
+          <li><i style="background:#e8ebfb"></i>--lilac #e8ebfb</li>
+          <li><i style="background:#dcf2dd"></i>--mint #dcf2dd</li>
+          <li><i style="background:#5fae68"></i>--leaf #5fae68</li>
+          <li><i style="background:#e3eaf6"></i>--sky #e3eaf6</li>
+          <li><i style="background:#efe9fb"></i>--lavender #efe9fb</li>
+          <li><i style="background:#f5f5f8"></i>--tile #f5f5f8</li>
+        </ul>
+      </div>
+      <div class="spec-card wide">
+        <h3>關鍵做法</h3>
+        <ol>
+          <li>外層一張 CSS Grid：<code>grid-template-columns: 1.4fr .5fr .5fr 1.2fr</code>、<code>grid-template-rows: repeat(12, minmax(34px, 1fr))</code>、<code>gap: 16px</code>。每格用 <code>grid-column</code>／<code>grid-row</code> 指定佔幾欄幾列，中欄 7:5、右欄 5:7，讓橫縫錯開。</li>
+          <li>格子：<code>border-radius: 28px</code>、淡彩底色、不加陰影，白色頁面底。一格一個顏色，同一類內容固定用同一色。</li>
+          <li>一格一件事：小標（15px 粗）、一個大數字（40–56px）、一行說明（13px 灰）。主格放標題、說明與黑色膠囊鈕（<code>border-radius: 999px</code>）。</li>
+          <li>格內小元件用純 CSS：月曆是 7 欄 grid、當天是 36px 黑色圓角方塊；長條圖是 flex 靠底對齊的圓頭直條，深淺兩階綠。</li>
+          <li>格子裡再放白色小格（<code>border-radius: 16–18px</code>）做第二層：表格用 <code>border-spacing: 6px</code> 把每個儲存格變成小格。</li>
+          <li>窄螢幕改成 2 欄，主格、月曆、圖片格跨滿，兩個數字格並排。</li>
+        </ol>
+      </div>
+      <div class="spec-card wide spec-fit">
+        <h3>套到學校資料</h3>
+        <p><b>適合</b>課程總覽、一週進度、考前重點卡：內容本來就能切成一格一件事，數字與短句放得下。</p>
+        <p><b>不適合</b>有前後文的長篇講義：切成格子後閱讀順序不明確，段落會被格子的高度卡住。</p>
+        <p><b>要改</b>用在 NCCU 交付物時把格高改成由內容決定（不要 <code>1fr</code> 撐滿視窗）、拿掉按鈕的 <code>transition</code>，留一兩格空白格當手寫區；淡彩底列印時會變淡，格子加 1px 邊線（做法見 F1 毛玻璃×便當盒、F2 瑞士×便當盒）。</p>
+      </div>
+      <div class="spec-card wide spec-prompt">
+        <h3>AI 描述詞</h3>
+        <p>便當盒佈局（Bento Grid）：白底，大小不一的圓角格子（圓角 28px、間距 16px）拼成一張網格，每格一個淡彩底色（淡紫藍、淡綠、淡紫、淺灰），不加陰影；左側一個大主格放粗黑體標題與黑色膠囊按鈕，其餘小格各放一個元件：月曆、長條圖、大數字、圖片；黑色文字，幾何無襯線英數字。</p>
+      </div>
+    </div>
+    <a class="spec-back" href="../index.html">← 回喜好選單</a>
+  </div>
+</section>
+</body>
+</html>

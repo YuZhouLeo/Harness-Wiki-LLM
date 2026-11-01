@@ -1,0 +1,378 @@
+<!doctype html>
+<!-- 版面喜好選單範例 D6b｜看盤工作台｜來源：講師範例庫 output範例/設計偏好選擇/samples/D6b-看盤工作台.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<!-- 範例 D6b 看盤工作台（D6 的窄版修正版，桌機版面與 D6 相同）：參考圖表看盤頁的版面結構。上方工具列（代號、週期、指標、淺深切換）、左側細工具欄（畫線工具）、中央主圖（K 線＋成交量＋一條 10 日均線，SVG 手畫；游標移上去出十字線與該根開高低收）、右側自選清單、右下報價明細與新聞、底部狀態列。漲跌色採台股習慣：紅漲綠跌。全部是示意資料，代號與價格皆虛構。淺色為預設，右上按鈕或網址加 ?theme=dark 切深色。D6b 只改 max-width:860px 區塊：狀態列折行（D6 在 390px 會把「示意資料」聲明截斷）、工具列兩端加捲動陰影提示（工具列本來就可橫向捲動，右側的淺深切換在窄版看不到）。 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>看盤工作台（D6b 窄版修正）</title>
+<style>
+/* 變數名與 配色/palettes.css 相同，換配色時整段蓋掉即可；--up／--down 是這個版式自己的（漲跌色，紅漲綠跌） */
+:root{
+  color-scheme:light;
+  --bg:#eef1f5;
+  --surface:#ffffff;
+  --surface-2:#f1f3f7;
+  --ink:#151a21;
+  --ink-2:#566070;
+  --line:#dde2ea;
+  --accent:#1f5fd1;
+  --on-accent:#ffffff;
+  --accent-soft:#e3ecfb;
+  --up:#d12f27; --up-soft:#fbe6e4;
+  --down:#12804a; --down-soft:#e0f3e8;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0e1219;
+  --surface:#151a23;
+  --surface-2:#1d2330;
+  --ink:#dfe3ea;
+  --ink-2:#939bab;
+  --line:#2a3140;
+  --accent:#6c9bff;
+  --on-accent:#0e1219;
+  --accent-soft:#1f2b45;
+  --up:#f0524b; --up-soft:#3a1c1f;
+  --down:#2bb673; --down-soft:#14301f;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 13px/1.5 var(--sans);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+h1,h2,h3,p,ul,dl,dd{margin:0;padding:0}
+ul{list-style:none}
+button{font:inherit;color:inherit;cursor:pointer}
+.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.up{color:var(--up)} .dn{color:var(--down)}
+
+.app{display:grid;grid-template-rows:48px minmax(0,1fr) 28px;height:max(720px,100vh);min-width:0;background:var(--surface);transition:background .2s}
+
+/* 工具列 */
+.tb{display:flex;align-items:center;gap:4px;padding:0 10px;border-bottom:1px solid var(--line);min-width:0}
+.tb .sep{width:1px;height:22px;background:var(--line);margin:0 6px;flex:none}
+.btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:0;border-radius:6px;background:none;color:var(--ink);font-size:13px;white-space:nowrap}
+.btn:hover{background:var(--surface-2)}
+.btn.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.btn.sym{font-weight:700;font-size:14px;padding:0 12px;background:var(--surface-2)}
+.btn.sym small{font-weight:400;font-size:12px;color:var(--ink-2)}
+.btn.icon{width:32px;padding:0;justify-content:center;color:var(--ink-2)}
+.btn.icon:hover{color:var(--ink)}
+.fx{font-style:italic;font-weight:700;font-size:13px;font-family:Georgia,"Times New Roman",serif}
+.tb .grow{flex:1}
+.conv{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;border-radius:14px;background:var(--surface-2);font-size:12px;color:var(--ink-2);white-space:nowrap}
+.conv i{display:inline-block;width:10px;height:10px;border-radius:2px}
+.conv i.u{background:var(--up)} .conv i.d{background:var(--down)}
+.conv b{font-weight:500;color:var(--ink)}
+.demo{height:24px;display:inline-flex;align-items:center;padding:0 10px;border-radius:12px;border:1px solid var(--accent);color:var(--accent);font-size:12px;font-weight:700;white-space:nowrap}
+.theme{border:1px solid var(--line)}
+
+/* 主體三欄 */
+.body{display:grid;grid-template-columns:48px minmax(0,1fr) 320px;min-height:0}
+.tools{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;border-right:1px solid var(--line);overflow:hidden}
+.tools .btn{width:34px;height:34px;padding:0;justify-content:center;color:var(--ink-2)}
+.tools .btn:hover{color:var(--ink)}
+.tools .btn.on{color:var(--accent)}
+.tools hr{width:26px;border:0;border-top:1px solid var(--line);margin:6px 0}
+.tools .end{margin-top:auto}
+
+/* 主圖 */
+.main{display:grid;grid-template-rows:minmax(0,1fr) 26px;grid-template-columns:minmax(0,1fr) 58px;min-width:0;min-height:0}
+.plot{position:relative;grid-row:1;grid-column:1;overflow:hidden;cursor:crosshair;touch-action:pan-y}
+.chart{position:absolute;inset:0;width:100%;height:100%;display:block}
+.grid line{stroke:var(--line);stroke-width:1;stroke-dasharray:2 5;vector-effect:non-scaling-stroke}
+.chart .sep{stroke:var(--line);stroke-width:1;vector-effect:non-scaling-stroke}
+.k line{stroke-width:1.4;vector-effect:non-scaling-stroke}
+.k .u line{stroke:var(--up)} .k .u rect{fill:var(--up)}
+.k .d line{stroke:var(--down)} .k .d rect{fill:var(--down)}
+.vol .vu{fill:var(--up);opacity:.45} .vol .vd{fill:var(--down);opacity:.45}
+.ma{fill:none;stroke:var(--accent);stroke-width:1.8;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.lp{stroke-width:1;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
+.lp.u{stroke:var(--up)} .lp.d{stroke:var(--down)}
+
+.legend{position:absolute;left:12px;top:8px;pointer-events:none;font-size:12px;line-height:1.7;color:var(--ink-2);text-shadow:0 0 6px var(--surface),0 0 6px var(--surface)}
+.legend .l1{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:14px;font-weight:700}
+.legend .l1 span{font-weight:400;font-size:12px;color:var(--ink-2)}
+.legend .l2 b{font-weight:500;margin-right:8px;color:var(--ink)}
+.legend .l2 em{font-style:normal;color:var(--ink-2);margin-right:2px}
+.legend .l3{color:var(--accent);font-weight:500}
+.vlegend{position:absolute;left:12px;top:77%;pointer-events:none;font-size:12px;color:var(--ink-2);text-shadow:0 0 6px var(--surface)}
+.vlegend b{font-weight:500;color:var(--ink);margin-left:6px}
+
+.xh{position:absolute;inset:0;pointer-events:none;display:none}
+.xh.show{display:block}
+.xh .v{position:absolute;top:0;bottom:0;width:0;border-left:1px dashed var(--ink-2)}
+.xh .h{position:absolute;left:0;right:0;height:0;border-top:1px dashed var(--ink-2)}
+.yax{position:relative;grid-row:1;grid-column:2;border-left:1px solid var(--line);font-size:12px;color:var(--ink-2);overflow:hidden}
+.yax span{position:absolute;left:8px;transform:translateY(-50%)}
+.yax .chip{left:0;right:0;transform:translateY(-50%);padding:2px 0 2px 8px;font-weight:500}
+.chip.last{background:var(--up);color:#fff}
+.chip.last.dn{background:var(--down);color:#fff}
+.chip.cur{display:none;background:var(--ink);color:var(--surface)}
+.xax{position:relative;grid-row:2;grid-column:1;border-top:1px solid var(--line);font-size:12px;color:var(--ink-2);overflow:hidden}
+.xax span{position:absolute;top:4px;transform:translateX(-50%);white-space:nowrap}
+.xax .chip{display:none;top:2px;padding:1px 8px;background:var(--ink);color:var(--surface);font-weight:500}
+.corner{grid-row:2;grid-column:2;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+
+/* 右欄 */
+.side{display:flex;flex-direction:column;border-left:1px solid var(--line);min-width:0;min-height:0;overflow:auto}
+.ph{display:flex;align-items:center;gap:6px;height:36px;padding:0 8px 0 14px;flex:none}
+.ph h2{font-size:13px;font-weight:700;margin-right:auto}
+.ph .btn{height:28px}
+.wl{width:100%;border-collapse:collapse}
+.wl th{padding:4px 14px;font-size:12px;font-weight:400;color:var(--ink-2);text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.wl th:first-child,.wl td:first-child{text-align:left}
+.wl td{padding:0 14px;height:29px;text-align:right;font-size:13px;white-space:nowrap}
+.wl td:first-child{font-weight:500}
+.wl td:first-child .dot{margin-right:8px;vertical-align:middle}
+.wl tr.grp td{height:26px;font-size:12px;font-weight:700;color:var(--ink-2);background:var(--surface-2)}
+.wl tbody tr:not(.grp):hover{background:var(--surface-2)}
+.wl tr.cur{background:var(--accent-soft)}
+.wl tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.dot{width:18px;height:18px;border-radius:50%;display:inline-grid;place-items:center;background:var(--surface-2);color:var(--ink-2);font-size:11px;font-weight:700;flex:none}
+.sec{border-top:1px solid var(--line);flex:none}
+.det{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;padding:0 14px 10px;font-size:12px}
+.det div{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid var(--line)}
+.det dt{color:var(--ink-2)} .det dd{font-weight:500}
+.news li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;padding:5px 14px;border-top:1px solid var(--line);font-size:12.5px;line-height:1.45}
+.news li:first-child{border-top:0}
+.news time{color:var(--ink-2);font-size:12px}
+.news small{display:block;color:var(--ink-2);font-size:12px}
+
+/* 狀態列 */
+.st{display:flex;align-items:center;gap:16px;padding:0 14px;border-top:1px solid var(--line);background:var(--bg);font-size:12px;color:var(--ink-2);white-space:nowrap;overflow:hidden}
+.st b{font-weight:500;color:var(--ink)}
+.st .r{margin-left:auto}
+
+button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+@media (max-width:1100px){
+  .body{grid-template-columns:48px minmax(0,1fr) 270px}
+  .conv{display:none}
+}
+@media (max-width:860px){
+  .app{height:auto}
+  .body{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto}
+  .tools{display:none}
+  .main{height:440px}
+  .side{border-left:0;border-top:1px solid var(--line);overflow:visible}
+  .tb{overflow-x:auto}
+  .st .hint{display:none}
+  /* D6b 修正①：狀態列折行。原本 nowrap＋overflow:hidden，窄版「示意資料：…」整句被截掉；改成可折行、高度隨內容。 */
+  .app{grid-template-rows:48px auto auto}
+  .st{height:auto;flex-wrap:wrap;white-space:normal;gap:0 16px;padding:6px 14px;line-height:1.5}
+  .st .r{margin-left:0}
+  /* D6b 修正②：工具列可橫向捲動，兩端有東西沒顯示時出現淡陰影（捲動陰影技巧：local 蓋住、scroll 常駐）。 */
+  .tb{background:
+    linear-gradient(90deg,var(--surface) 30%,transparent) left center/32px 100% no-repeat local,
+    linear-gradient(270deg,var(--surface) 30%,transparent) right center/32px 100% no-repeat local,
+    linear-gradient(90deg,color-mix(in srgb,var(--ink) 16%,transparent),transparent) left center/12px 100% no-repeat scroll,
+    linear-gradient(270deg,color-mix(in srgb,var(--ink) 16%,transparent),transparent) right center/12px 100% no-repeat scroll,
+    var(--surface)}
+}
+@media (prefers-reduced-motion:reduce){ .app{transition:none} }
+@media print{ .app{height:auto} .tb,.st{display:none} }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-candle" viewBox="0 0 24 24"><path d="M8 4v16M16 4v16"/><rect x="5.500" y="8" width="5" height="7" rx="1"/><rect x="13.500" y="6" width="5" height="9" rx="1"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l1.500 2h-15zM10 21h4"/></symbol>
+  <symbol id="i-replay" viewBox="0 0 24 24"><path d="M5 12a7 7 0 1 0 2.200-5.100M5 4v4h4"/><path d="M11 9.500v5l4-2.500z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.600 5.600L7 7M17 17l1.400 1.400M5.600 18.400L7 17M17 7l1.400-1.400"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19 14.500A8 8 0 0 1 9.500 5 8 8 0 1 0 19 14.500z"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><path d="M6 12h.01M12 12h.01M18 12h.01" stroke-width="3"/></symbol>
+  <symbol id="t-cross" viewBox="0 0 24 24"><path d="M12 4v6M12 14v6M4 12h6M14 12h6"/></symbol>
+  <symbol id="t-trend" viewBox="0 0 24 24"><path d="M6.500 17.500l11-11"/><circle cx="5.500" cy="18.500" r="1.800"/><circle cx="18.500" cy="5.500" r="1.800"/></symbol>
+  <symbol id="t-hline" viewBox="0 0 24 24"><path d="M3 12h7M14 12h7"/><circle cx="12" cy="12" r="1.800"/></symbol>
+  <symbol id="t-fib" viewBox="0 0 24 24"><path d="M4 5h16M4 10h11M4 15h16M4 20h11"/></symbol>
+  <symbol id="t-brush" viewBox="0 0 24 24"><path d="M14 5l5 5-8.500 8.500H5.500v-5z"/></symbol>
+  <symbol id="t-text" viewBox="0 0 24 24"><path d="M6 6.500h12M12 6.500V19M9.500 19h5"/></symbol>
+  <symbol id="t-ruler" viewBox="0 0 24 24"><path d="M4 15.500L15.500 4 20 8.500 8.500 20z"/><path d="M8 12l2.500 2.500M11 9l1.500 1.500M14 6l2.500 2.500"/></symbol>
+  <symbol id="t-zoom" viewBox="0 0 24 24"><circle cx="10.500" cy="10.500" r="5.500"/><path d="M15 15l5 5M8 10.500h5M10.500 8v5"/></symbol>
+  <symbol id="t-magnet" viewBox="0 0 24 24"><path d="M7 4v8a5 5 0 0 0 10 0V4h-3v8a2 2 0 0 1-4 0V4zM7 8h3M14 8h3"/></symbol>
+  <symbol id="t-lock" viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="9" rx="2"/><path d="M8.500 11V8a3.500 3.500 0 0 1 7 0v3"/></symbol>
+  <symbol id="t-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="tb">
+    <button class="btn sym" type="button"><svg class="i"><use href="#i-search"/></svg>示意 A <small>日</small></button>
+    <button class="btn icon" type="button" aria-label="加入比較"><svg class="i"><use href="#i-plus"/></svg></button>
+    <span class="sep"></span>
+    <button class="btn" type="button">1分</button>
+    <button class="btn" type="button">5分</button>
+    <button class="btn" type="button">15分</button>
+    <button class="btn" type="button">1時</button>
+    <button class="btn on" type="button" aria-pressed="true">日</button>
+    <button class="btn" type="button">週</button>
+    <button class="btn" type="button">月</button>
+    <span class="sep"></span>
+    <button class="btn icon" type="button" aria-label="K 線圖型"><svg class="i"><use href="#i-candle"/></svg></button>
+    <button class="btn" type="button"><span class="fx">fx</span>指標</button>
+    <button class="btn icon" type="button" aria-label="提醒"><svg class="i"><use href="#i-bell"/></svg></button>
+    <button class="btn" type="button"><svg class="i"><use href="#i-replay"/></svg>重播</button>
+    <span class="grow"></span>
+    <span class="conv" title="漲跌色慣例"><i class="u"></i>漲<i class="d"></i>跌<b>紅漲綠跌（台股習慣）</b></span>
+    <button class="btn theme" id="theme" type="button" aria-pressed="false"><svg class="i"><use id="theme-i" href="#i-moon"/></svg><span id="theme-t">深色</span></button>
+    <span class="demo">示意資料</span>
+  </header>
+
+  <div class="body">
+    <nav class="tools" aria-label="畫線工具">
+      <button class="btn on" type="button" aria-label="十字游標" title="十字游標"><svg class="i"><use href="#t-cross"/></svg></button>
+      <button class="btn" type="button" aria-label="趨勢線" title="趨勢線"><svg class="i"><use href="#t-trend"/></svg></button>
+      <button class="btn" type="button" aria-label="水平線" title="水平線"><svg class="i"><use href="#t-hline"/></svg></button>
+      <button class="btn" type="button" aria-label="回檔比例" title="回檔比例"><svg class="i"><use href="#t-fib"/></svg></button>
+      <button class="btn" type="button" aria-label="筆刷" title="筆刷"><svg class="i"><use href="#t-brush"/></svg></button>
+      <button class="btn" type="button" aria-label="文字" title="文字"><svg class="i"><use href="#t-text"/></svg></button>
+      <hr>
+      <button class="btn" type="button" aria-label="量測" title="量測"><svg class="i"><use href="#t-ruler"/></svg></button>
+      <button class="btn" type="button" aria-label="縮放" title="縮放"><svg class="i"><use href="#t-zoom"/></svg></button>
+      <button class="btn" type="button" aria-label="磁吸" title="磁吸"><svg class="i"><use href="#t-magnet"/></svg></button>
+      <button class="btn" type="button" aria-label="鎖定繪圖" title="鎖定繪圖"><svg class="i"><use href="#t-lock"/></svg></button>
+      <button class="btn end" type="button" aria-label="刪除繪圖" title="刪除繪圖"><svg class="i"><use href="#t-trash"/></svg></button>
+    </nav>
+
+    <main class="main" aria-label="主圖">
+      <div class="plot" id="plot">
+        <svg class="chart" viewBox="0 0 1000 600" preserveAspectRatio="none" role="img" aria-label="示意 A 日 K 線圖，含成交量與 10 日均線，共 60 根；最後一根收盤 118.40，較前日上漲">
+          <g class="grid"><line x1="0" x2="1000" y1="430.0" y2="430.0"/><line x1="0" x2="1000" y1="389.4" y2="389.4"/><line x1="0" x2="1000" y1="348.8" y2="348.8"/><line x1="0" x2="1000" y1="308.2" y2="308.2"/><line x1="0" x2="1000" y1="267.6" y2="267.6"/><line x1="0" x2="1000" y1="227.0" y2="227.0"/><line x1="0" x2="1000" y1="186.4" y2="186.4"/><line x1="0" x2="1000" y1="145.8" y2="145.8"/><line x1="0" x2="1000" y1="105.2" y2="105.2"/><line x1="0" x2="1000" y1="64.6" y2="64.6"/><line x1="0" x2="1000" y1="24.0" y2="24.0"/></g>
+          <line class="sep" x1="0" x2="1000" y1="450" y2="450"/>
+          <g class="vol"><rect class="vu" x="3.3" y="537.2" width="10" height="60.8"/><rect class="vu" x="20.0" y="549.8" width="10" height="48.2"/><rect class="vu" x="36.7" y="529.5" width="10" height="68.5"/><rect class="vu" x="53.3" y="548.4" width="10" height="49.6"/><rect class="vu" x="70.0" y="536.1" width="10" height="61.9"/><rect class="vd" x="86.7" y="540.5" width="10" height="57.5"/><rect class="vu" x="103.3" y="522.2" width="10" height="75.8"/><rect class="vu" x="120.0" y="555.8" width="10" height="42.2"/><rect class="vu" x="136.7" y="543.2" width="10" height="54.8"/><rect class="vd" x="153.3" y="544.0" width="10" height="54.0"/><rect class="vu" x="170.0" y="504.6" width="10" height="93.4"/><rect class="vd" x="186.7" y="557.3" width="10" height="40.7"/><rect class="vu" x="203.3" y="544.2" width="10" height="53.8"/><rect class="vd" x="220.0" y="526.0" width="10" height="72.0"/><rect class="vu" x="236.7" y="550.8" width="10" height="47.2"/><rect class="vu" x="253.3" y="542.3" width="10" height="55.7"/><rect class="vu" x="270.0" y="551.3" width="10" height="46.7"/><rect class="vu" x="286.7" y="544.4" width="10" height="53.6"/><rect class="vd" x="303.3" y="552.5" width="10" height="45.5"/><rect class="vd" x="320.0" y="539.8" width="10" height="58.2"/><rect class="vu" x="336.7" y="543.9" width="10" height="54.1"/><rect class="vu" x="353.3" y="540.3" width="10" height="57.7"/><rect class="vu" x="370.0" y="488.7" width="10" height="109.3"/><rect class="vu" x="386.7" y="537.2" width="10" height="60.8"/><rect class="vd" x="403.3" y="553.0" width="10" height="45.0"/><rect class="vu" x="420.0" y="537.8" width="10" height="60.2"/><rect class="vd" x="436.7" y="529.8" width="10" height="68.2"/><rect class="vd" x="453.3" y="538.5" width="10" height="59.5"/><rect class="vd" x="470.0" y="532.3" width="10" height="65.7"/><rect class="vu" x="486.7" y="541.5" width="10" height="56.5"/><rect class="vd" x="503.3" y="533.0" width="10" height="65.0"/><rect class="vu" x="520.0" y="538.7" width="10" height="59.3"/><rect class="vu" x="536.7" y="512.4" width="10" height="85.6"/><rect class="vu" x="553.3" y="528.5" width="10" height="69.5"/><rect class="vu" x="570.0" y="545.6" width="10" height="52.4"/><rect class="vu" x="586.7" y="546.1" width="10" height="51.9"/><rect class="vd" x="603.3" y="555.5" width="10" height="42.5"/><rect class="vu" x="620.0" y="544.7" width="10" height="53.3"/><rect class="vd" x="636.7" y="552.5" width="10" height="45.5"/><rect class="vd" x="653.3" y="529.5" width="10" height="68.5"/><rect class="vd" x="670.0" y="536.9" width="10" height="61.1"/><rect class="vd" x="686.7" y="546.7" width="10" height="51.3"/><rect class="vu" x="703.3" y="507.7" width="10" height="90.3"/><rect class="vd" x="720.0" y="551.6" width="10" height="46.4"/><rect class="vd" x="736.7" y="556.0" width="10" height="42.0"/><rect class="vu" x="753.3" y="552.0" width="10" height="46.0"/><rect class="vu" x="770.0" y="519.2" width="10" height="78.8"/><rect class="vu" x="786.7" y="546.5" width="10" height="51.5"/><rect class="vu" x="803.3" y="530.8" width="10" height="67.2"/><rect class="vd" x="820.0" y="534.1" width="10" height="63.9"/><rect class="vd" x="836.7" y="525.9" width="10" height="72.1"/><rect class="vu" x="853.3" y="546.5" width="10" height="51.5"/><rect class="vu" x="870.0" y="545.1" width="10" height="52.9"/><rect class="vd" x="886.7" y="554.6" width="10" height="43.4"/><rect class="vd" x="903.3" y="527.4" width="10" height="70.6"/><rect class="vd" x="920.0" y="540.4" width="10" height="57.6"/><rect class="vu" x="936.7" y="537.7" width="10" height="60.3"/><rect class="vu" x="953.3" y="543.8" width="10" height="54.2"/><rect class="vd" x="970.0" y="536.4" width="10" height="61.6"/><rect class="vu" x="986.7" y="531.5" width="10" height="66.5"/></g>
+          <g class="k"><g class="u"><line x1="8.3" x2="8.3" y1="375.1" y2="392.6"/><rect x="3.3" y="381.6" width="10" height="6.7"/></g><g class="u"><line x1="25.0" x2="25.0" y1="364.3" y2="381.6"/><rect x="20.0" y="368.9" width="10" height="11.6"/></g><g class="u"><line x1="41.7" x2="41.7" y1="344.0" y2="371.0"/><rect x="36.7" y="346.4" width="10" height="19.4"/></g><g class="u"><line x1="58.3" x2="58.3" y1="342.5" y2="349.6"/><rect x="53.3" y="345.0" width="10" height="3.1"/></g><g class="u"><line x1="75.0" x2="75.0" y1="320.1" y2="352.5"/><rect x="70.0" y="326.6" width="10" height="19.9"/></g><g class="d"><line x1="91.7" x2="91.7" y1="307.3" y2="335.5"/><rect x="86.7" y="327.1" width="10" height="5.4"/></g><g class="u"><line x1="108.3" x2="108.3" y1="312.1" y2="343.0"/><rect x="103.3" y="314.8" width="10" height="20.3"/></g><g class="u"><line x1="125.0" x2="125.0" y1="307.9" y2="321.0"/><rect x="120.0" y="311.4" width="10" height="3.7"/></g><g class="u"><line x1="141.7" x2="141.7" y1="295.8" y2="317.9"/><rect x="136.7" y="297.7" width="10" height="12.9"/></g><g class="d"><line x1="158.3" x2="158.3" y1="292.5" y2="307.8"/><rect x="153.3" y="294.9" width="10" height="7.3"/></g><g class="u"><line x1="175.0" x2="175.0" y1="264.0" y2="309.6"/><rect x="170.0" y="270.4" width="10" height="32.5"/></g><g class="d"><line x1="191.7" x2="191.7" y1="273.5" y2="283.6"/><rect x="186.7" y="275.4" width="10" height="4.2"/></g><g class="u"><line x1="208.3" x2="208.3" y1="255.8" y2="288.8"/><rect x="203.3" y="267.8" width="10" height="12.9"/></g><g class="d"><line x1="225.0" x2="225.0" y1="252.2" y2="285.2"/><rect x="220.0" y="264.0" width="10" height="15.7"/></g><g class="u"><line x1="241.7" x2="241.7" y1="266.9" y2="287.4"/><rect x="236.7" y="275.0" width="10" height="4.9"/></g><g class="u"><line x1="258.3" x2="258.3" y1="263.8" y2="279.1"/><rect x="253.3" y="266.1" width="10" height="6.9"/></g><g class="u"><line x1="275.0" x2="275.0" y1="262.6" y2="280.1"/><rect x="270.0" y="264.3" width="10" height="1.6"/></g><g class="u"><line x1="291.7" x2="291.7" y1="245.7" y2="265.6"/><rect x="286.7" y="251.0" width="10" height="13.1"/></g><g class="d"><line x1="308.3" x2="308.3" y1="237.7" y2="258.2"/><rect x="303.3" y="251.7" width="10" height="1.4"/></g><g class="d"><line x1="325.0" x2="325.0" y1="236.3" y2="270.4"/><rect x="320.0" y="253.0" width="10" height="16.0"/></g><g class="u"><line x1="341.7" x2="341.7" y1="249.5" y2="269.0"/><rect x="336.7" y="252.9" width="10" height="14.3"/></g><g class="u"><line x1="358.3" x2="358.3" y1="242.6" y2="261.5"/><rect x="353.3" y="250.4" width="10" height="5.5"/></g><g class="u"><line x1="375.0" x2="375.0" y1="185.6" y2="248.6"/><rect x="370.0" y="197.0" width="10" height="49.3"/></g><g class="u"><line x1="391.7" x2="391.7" y1="187.5" y2="200.4"/><rect x="386.7" y="190.5" width="10" height="7.6"/></g><g class="d"><line x1="408.3" x2="408.3" y1="182.7" y2="217.4"/><rect x="403.3" y="189.2" width="10" height="9.7"/></g><g class="u"><line x1="425.0" x2="425.0" y1="188.5" y2="203.1"/><rect x="420.0" y="195.7" width="10" height="5.7"/></g><g class="d"><line x1="441.7" x2="441.7" y1="189.7" y2="220.0"/><rect x="436.7" y="198.7" width="10" height="16.2"/></g><g class="d"><line x1="458.3" x2="458.3" y1="200.0" y2="219.0"/><rect x="453.3" y="207.8" width="10" height="6.5"/></g><g class="d"><line x1="475.0" x2="475.0" y1="213.6" y2="242.3"/><rect x="470.0" y="221.1" width="10" height="11.6"/></g><g class="u"><line x1="491.7" x2="491.7" y1="212.3" y2="233.0"/><rect x="486.7" y="218.7" width="10" height="9.7"/></g><g class="d"><line x1="508.3" x2="508.3" y1="220.5" y2="248.7"/><rect x="503.3" y="226.5" width="10" height="16.2"/></g><g class="u"><line x1="525.0" x2="525.0" y1="233.4" y2="258.6"/><rect x="520.0" y="236.2" width="10" height="6.9"/></g><g class="u"><line x1="541.7" x2="541.7" y1="214.4" y2="254.3"/><rect x="536.7" y="216.3" width="10" height="29.9"/></g><g class="u"><line x1="558.3" x2="558.3" y1="197.8" y2="222.1"/><rect x="553.3" y="202.5" width="10" height="17.1"/></g><g class="u"><line x1="575.0" x2="575.0" y1="184.7" y2="206.0"/><rect x="570.0" y="195.1" width="10" height="8.0"/></g><g class="u"><line x1="591.7" x2="591.7" y1="180.8" y2="204.1"/><rect x="586.7" y="192.8" width="10" height="1.4"/></g><g class="d"><line x1="608.3" x2="608.3" y1="190.7" y2="197.0"/><rect x="603.3" y="191.7" width="10" height="3.1"/></g><g class="u"><line x1="625.0" x2="625.0" y1="184.1" y2="203.7"/><rect x="620.0" y="189.3" width="10" height="5.8"/></g><g class="d"><line x1="641.7" x2="641.7" y1="164.6" y2="191.1"/><rect x="636.7" y="179.6" width="10" height="5.1"/></g><g class="d"><line x1="658.3" x2="658.3" y1="180.1" y2="211.5"/><rect x="653.3" y="185.2" width="10" height="13.6"/></g><g class="d"><line x1="675.0" x2="675.0" y1="188.2" y2="213.3"/><rect x="670.0" y="194.3" width="10" height="13.2"/></g><g class="d"><line x1="691.7" x2="691.7" y1="202.9" y2="223.1"/><rect x="686.7" y="207.5" width="10" height="1.4"/></g><g class="u"><line x1="708.3" x2="708.3" y1="161.0" y2="225.3"/><rect x="703.3" y="166.2" width="10" height="41.2"/></g><g class="d"><line x1="725.0" x2="725.0" y1="154.9" y2="168.9"/><rect x="720.0" y="162.8" width="10" height="4.4"/></g><g class="d"><line x1="741.7" x2="741.7" y1="156.2" y2="172.4"/><rect x="736.7" y="163.0" width="10" height="2.5"/></g><g class="u"><line x1="758.3" x2="758.3" y1="129.2" y2="161.2"/><rect x="753.3" y="147.2" width="10" height="10.4"/></g><g class="u"><line x1="775.0" x2="775.0" y1="118.2" y2="148.2"/><rect x="770.0" y="120.6" width="10" height="25.1"/></g><g class="u"><line x1="791.7" x2="791.7" y1="106.5" y2="124.6"/><rect x="786.7" y="110.2" width="10" height="13.0"/></g><g class="u"><line x1="808.3" x2="808.3" y1="93.6" y2="111.5"/><rect x="803.3" y="96.2" width="10" height="13.9"/></g><g class="d"><line x1="825.0" x2="825.0" y1="90.1" y2="123.2"/><rect x="820.0" y="94.9" width="10" height="17.7"/></g><g class="d"><line x1="841.7" x2="841.7" y1="101.6" y2="136.5"/><rect x="836.7" y="109.8" width="10" height="18.2"/></g><g class="u"><line x1="858.3" x2="858.3" y1="104.2" y2="123.8"/><rect x="853.3" y="107.9" width="10" height="12.3"/></g><g class="u"><line x1="875.0" x2="875.0" y1="88.4" y2="103.5"/><rect x="870.0" y="97.4" width="10" height="4.6"/></g><g class="d"><line x1="891.7" x2="891.7" y1="88.8" y2="102.4"/><rect x="886.7" y="94.8" width="10" height="1.4"/></g><g class="d"><line x1="908.3" x2="908.3" y1="78.4" y2="120.9"/><rect x="903.3" y="88.4" width="10" height="23.8"/></g><g class="d"><line x1="925.0" x2="925.0" y1="92.6" y2="131.8"/><rect x="920.0" y="108.5" width="10" height="8.1"/></g><g class="u"><line x1="941.7" x2="941.7" y1="91.9" y2="116.9"/><rect x="936.7" y="98.3" width="10" height="11.9"/></g><g class="u"><line x1="958.3" x2="958.3" y1="84.6" y2="107.8"/><rect x="953.3" y="89.3" width="10" height="4.3"/></g><g class="d"><line x1="975.0" x2="975.0" y1="83.8" y2="108.4"/><rect x="970.0" y="92.2" width="10" height="12.5"/></g><g class="u"><line x1="991.7" x2="991.7" y1="68.9" y2="101.3"/><rect x="986.7" y="80.8" width="10" height="15.2"/></g></g>
+          <polyline class="ma" points="158.3,332.7 175.0,321.6 191.7,312.7 208.3,304.9 225.0,298.3 241.7,293.2 258.3,286.5 275.0,281.4 291.7,275.4 308.3,270.8 325.0,267.5 341.7,265.8 358.3,262.8 375.0,255.7 391.7,246.8 408.3,239.2 425.0,232.2 441.7,227.2 458.3,223.5 475.0,221.6 491.7,216.6 508.3,215.6 525.0,214.2 541.7,216.1 558.3,217.4 575.0,217.0 591.7,216.6 608.3,214.6 625.0,212.1 641.7,207.3 658.3,205.4 675.0,201.8 691.7,199.1 708.3,194.0 725.0,190.5 741.7,187.5 758.3,182.9 775.0,175.5 791.7,167.6 808.3,158.8 825.0,150.2 841.7,142.2 858.3,132.2 875.0,125.3 891.7,118.1 908.3,112.7 925.0,109.7 941.7,107.4 958.3,105.4 975.0,106.2 991.7,103.1"/>
+          <line class="lp u" x1="0" x2="1000" y1="80.8" y2="80.8"/>
+        </svg>
+        <div class="legend" aria-live="off">
+          <div class="l1">示意 A<span>・日・示意交易所</span></div>
+          <div class="l2"><span id="ld"></span>　<em>開</em><b id="lo"></b><em>高</em><b id="lh"></b><em>低</em><b id="ll"></b><em>收</em><b id="lc"></b><b id="lg"></b></div>
+          <div class="l3" id="lm"></div>
+        </div>
+        <div class="vlegend">成交量（張）<b id="lv"></b></div>
+        <div class="xh" id="xh"><i class="v" id="xv"></i><i class="h" id="xhh"></i></div>
+      </div>
+      <div class="yax" id="yax">
+        <span style="top:71.67%">84.00</span><span style="top:64.90%">88.00</span><span style="top:58.13%">92.00</span><span style="top:51.37%">96.00</span><span style="top:44.60%">100.00</span><span style="top:37.83%">104.00</span><span style="top:31.07%">108.00</span><span style="top:24.30%">112.00</span><span style="top:17.53%">116.00</span><span style="top:10.77%">120.00</span><span style="top:4.00%">124.00</span><span style="top:98.67%">0</span>
+        <span class="chip last " style="top:13.47%">118.40</span>
+        <span class="chip cur" id="ychip"></span>
+      </div>
+      <div class="xax" id="xax">
+        <span style="left:7.50%">07/23</span><span style="left:24.17%">08/06</span><span style="left:40.83%">08/20</span><span style="left:57.50%">09/03</span><span style="left:74.17%">09/17</span><span style="left:90.83%">10/01</span>
+        <span class="chip" id="xchip"></span>
+      </div>
+      <div class="corner"></div>
+    </main>
+
+    <aside class="side" aria-label="自選清單與明細">
+      <div class="ph"><h2>自選清單</h2><button class="btn icon" type="button" aria-label="新增代號"><svg class="i"><use href="#i-plus"/></svg></button><button class="btn icon" type="button" aria-label="更多"><svg class="i"><use href="#i-dots"/></svg></button></div>
+      <table class="wl">
+        <thead><tr><th>代號</th><th>現價</th><th>漲跌</th><th>漲跌%</th></tr></thead>
+        <tbody>
+          <tr class="grp"><td colspan="4">示意清單</td></tr>
+          <tr class="cur"><td><span class="dot">A</span>示意 A</td><td class="up">118.40</td><td class="up">+2.35</td><td class="up">+2.02%</td></tr>
+          <tr><td><span class="dot">B</span>示意 B</td><td class="dn">62.30</td><td class="dn">-0.85</td><td class="dn">-1.35%</td></tr>
+          <tr><td><span class="dot">C</span>示意 C</td><td class="up">241.50</td><td class="up">+4.50</td><td class="up">+1.90%</td></tr>
+          <tr><td><span class="dot">D</span>示意 D</td><td class="">38.75</td><td class="">0.00</td><td class="">0.00%</td></tr>
+          <tr><td><span class="dot">E</span>示意 E</td><td class="dn">905.00</td><td class="dn">-12.00</td><td class="dn">-1.31%</td></tr>
+          <tr class="grp"><td colspan="4">示意產業</td></tr>
+          <tr><td><span class="dot">F</span>示意 F</td><td class="up">27.40</td><td class="up">+0.35</td><td class="up">+1.29%</td></tr>
+          <tr><td><span class="dot">G</span>示意 G</td><td class="dn">154.00</td><td class="dn">-2.10</td><td class="dn">-1.35%</td></tr>
+          <tr><td><span class="dot">H</span>示意 H</td><td class="up">73.20</td><td class="up">+1.15</td><td class="up">+1.60%</td></tr>
+        </tbody>
+      </table>
+
+      <section class="sec">
+        <div class="ph"><h2>示意 A 明細</h2></div>
+        <dl class="det">
+          <div><dt>開盤</dt><dd>116.90</dd></div>
+          <div><dt>昨收</dt><dd>116.05</dd></div>
+          <div><dt>最高</dt><dd>119.58</dd></div>
+          <div><dt>最低</dt><dd>116.38</dd></div>
+          <div><dt>成交量</dt><dd>13,414 張</dd></div>
+          <div><dt>5 日均量</dt><dd>12,113 張</dd></div>
+          <div><dt>振幅</dt><dd>2.76%</dd></div>
+          <div><dt>10 日均線</dt><dd>116.21</dd></div>
+        </dl>
+      </section>
+
+      <section class="sec">
+        <div class="ph"><h2>新聞</h2></div>
+        <ul class="news">
+          <li><time>10:42</time><div>示意 A 公布第三季營運概況，單季營收年增 12%<small>示意新聞・虛構內容</small></div></li>
+          <li><time>09:15</time><div>示意 B 上調全年展望，法人調整目標價區間<small>示意新聞・虛構內容</small></div></li>
+          <li><time>昨天</time><div>示意產業月營收出爐，七成公司較上月成長<small>示意新聞・虛構內容</small></div></li>
+        </ul>
+      </section>
+    </aside>
+  </div>
+
+  <footer class="st">
+    <span><b>漲跌色</b>：紅漲綠跌（台股習慣）</span>
+    <span class="hint">游標移到主圖上，可看每根 K 線的開高低收</span>
+    <span class="r">示意資料：代號、價格、新聞皆為虛構，非任何真實個股</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  // 每根 K 線：[日期, 開, 高, 低, 收, 成交量(張), 10 日均線或 null]
+  var D = [["2026-07-17", 88.11, 89.41, 87.68, 88.77, 12265, null], ["2026-07-20", 88.88, 90.47, 88.77, 90.02, 9715, null], ["2026-07-21", 90.33, 92.47, 89.81, 92.24, 13815, null], ["2026-07-22", 92.06, 92.62, 91.92, 92.37, 10009, null], ["2026-07-23", 92.23, 94.83, 91.64, 94.19, 12490, null], ["2026-07-24", 94.14, 96.09, 93.31, 93.61, 11594, null], ["2026-07-27", 93.35, 95.62, 92.57, 95.35, 15288, null], ["2026-07-28", 95.32, 96.03, 94.74, 95.68, 8520, null], ["2026-07-29", 95.76, 97.22, 95.04, 97.03, 11046, null], ["2026-07-30", 97.31, 97.55, 96.04, 96.59, 10897, 93.59], ["2026-07-31", 96.52, 100.35, 95.86, 99.72, 18848, 94.68], ["2026-08-03", 99.23, 99.42, 98.42, 98.82, 8213, 95.56], ["2026-08-04", 98.71, 101.16, 97.91, 99.98, 10849, 96.33], ["2026-08-05", 100.35, 101.52, 98.27, 98.8, 14520, 96.98], ["2026-08-06", 98.79, 100.07, 98.05, 99.27, 9518, 97.48], ["2026-08-07", 99.47, 100.37, 98.87, 100.15, 11227, 98.14], ["2026-08-10", 100.17, 100.49, 98.77, 100.33, 9421, 98.64], ["2026-08-11", 100.35, 102.16, 100.2, 101.64, 10813, 99.23], ["2026-08-12", 101.57, 102.95, 100.93, 101.53, 9184, 99.68], ["2026-08-13", 101.44, 103.08, 99.72, 99.86, 11738, 100.01], ["2026-08-14", 100.04, 101.78, 99.86, 101.45, 10906, 100.18], ["2026-08-17", 101.15, 102.46, 100.6, 101.69, 11645, 100.47], ["2026-08-18", 102.1, 108.08, 101.87, 106.96, 22039, 101.17], ["2026-08-19", 106.85, 107.89, 106.62, 107.6, 12272, 102.05], ["2026-08-20", 107.72, 108.36, 104.95, 106.76, 9085, 102.8], ["2026-08-21", 106.52, 107.79, 106.35, 107.08, 12153, 103.49], ["2026-08-24", 106.79, 107.67, 104.69, 105.19, 13755, 103.98], ["2026-08-25", 105.89, 106.66, 104.79, 105.25, 12007, 104.34], ["2026-08-26", 104.58, 105.32, 102.49, 103.44, 13247, 104.53], ["2026-08-27", 103.86, 105.45, 103.41, 104.82, 11401, 105.02], ["2026-08-28", 104.05, 104.64, 101.86, 102.45, 13107, 105.12], ["2026-08-31", 102.41, 103.37, 100.89, 103.09, 11963, 105.26], ["2026-09-01", 102.1, 105.24, 101.31, 105.05, 17257, 105.07], ["2026-09-02", 104.73, 106.88, 104.48, 106.41, 14018, 104.95], ["2026-09-03", 106.35, 108.17, 106.07, 107.14, 10574, 104.99], ["2026-09-04", 107.33, 108.55, 106.26, 107.37, 10469, 105.02], ["2026-09-07", 107.48, 107.58, 106.96, 107.17, 8570, 105.22], ["2026-09-08", 107.14, 108.23, 106.3, 107.71, 10753, 105.47], ["2026-09-09", 108.67, 110.15, 107.54, 108.17, 9173, 105.94], ["2026-09-10", 108.12, 108.62, 105.53, 106.78, 13823, 106.13], ["2026-09-11", 107.22, 107.82, 105.35, 105.92, 12329, 106.48], ["2026-09-14", 105.92, 106.37, 104.38, 105.81, 10350, 106.75], ["2026-09-15", 105.93, 110.5, 104.17, 109.99, 18218, 107.25], ["2026-09-16", 110.33, 111.1, 109.72, 109.9, 9356, 107.6], ["2026-09-17", 110.31, 110.98, 109.38, 110.06, 8474, 107.89], ["2026-09-18", 110.84, 113.64, 110.48, 111.86, 9284, 108.34], ["2026-09-21", 112.01, 114.72, 111.76, 114.48, 15898, 109.07], ["2026-09-22", 114.23, 115.87, 114.09, 115.51, 10398, 109.85], ["2026-09-23", 115.52, 117.14, 115.38, 116.89, 13546, 110.72], ["2026-09-24", 117.01, 117.49, 114.23, 115.27, 12899, 111.57], ["2026-09-25", 115.55, 116.35, 112.92, 113.76, 14545, 112.35], ["2026-09-28", 114.52, 116.1, 114.17, 115.73, 10396, 113.34], ["2026-09-29", 116.32, 117.66, 116.17, 116.77, 10669, 114.02], ["2026-09-30", 117.02, 117.62, 116.28, 116.99, 8763, 114.73], ["2026-10-01", 117.66, 118.64, 114.45, 115.32, 14236, 115.26], ["2026-10-02", 115.67, 117.24, 113.38, 114.87, 11613, 115.56], ["2026-10-05", 115.51, 117.31, 114.85, 116.68, 12169, 115.78], ["2026-10-06", 117.15, 118.03, 115.74, 117.57, 10938, 115.98], ["2026-10-07", 117.28, 118.11, 115.68, 116.05, 12433, 115.9], ["2026-10-08", 116.9, 119.58, 116.38, 118.4, 13414, 116.21]];
+  var G = {pmax:124, pmin:84, y0:24, y1:430, sep:450, v0:480, v1:598, vmax:23802};
+  var N = D.length;
+  var $ = function(id){ return document.getElementById(id); };
+  var f2 = function(n){ return n.toFixed(2); };
+  var fi = function(n){ return Math.round(n).toLocaleString('en-US'); };
+
+  function show(i){
+    var d = D[i], prev = i > 0 ? D[i-1][4] : d[1];
+    var chg = d[4] - prev, pct = chg / prev * 100, cls = chg >= 0 ? 'up' : 'dn', sg = chg >= 0 ? '+' : '';
+    $('ld').textContent = d[0];
+    $('lo').textContent = f2(d[1]); $('lh').textContent = f2(d[2]);
+    $('ll').textContent = f2(d[3]); $('lc').textContent = f2(d[4]);
+    var lg = $('lg'); lg.textContent = sg + f2(chg) + '（' + sg + pct.toFixed(2) + '%）'; lg.className = cls;
+    $('lm').textContent = d[6] === null ? '10 日均線　資料不足' : '10 日均線　' + f2(d[6]);
+    $('lv').textContent = fi(d[5]);
+  }
+  show(N - 1);
+
+  var plot = $('plot'), xh = $('xh'), xv = $('xv'), xhh = $('xhh'), yc = $('ychip'), xc = $('xchip');
+  function move(e){
+    var r = plot.getBoundingClientRect();
+    var x = Math.min(Math.max(e.clientX - r.left, 0), r.width - 1);
+    var y = Math.min(Math.max(e.clientY - r.top, 0), r.height);
+    var i = Math.min(N - 1, Math.floor(x / r.width * N));
+    var cx = (i + 0.5) / N * r.width;
+    xh.classList.add('show');
+    xv.style.left = cx + 'px'; xhh.style.top = y + 'px';
+    var sy = y / r.height * 600, txt = '';
+    if (sy <= G.sep) txt = f2(G.pmax - (sy - G.y0) / (G.y1 - G.y0) * (G.pmax - G.pmin));
+    else if (sy >= G.v0) txt = fi(Math.max(0, (G.v1 - sy) / (G.v1 - G.v0) * G.vmax));
+    yc.style.display = txt ? 'block' : 'none'; yc.style.top = y + 'px'; yc.textContent = txt;
+    xc.style.display = 'block'; xc.style.left = cx + 'px'; xc.style.transform = 'translateX(-50%)';
+    xc.textContent = D[i][0];
+    show(i);
+  }
+  function leave(){
+    xh.classList.remove('show'); yc.style.display = 'none'; xc.style.display = 'none'; show(N - 1);
+  }
+  plot.addEventListener('pointermove', move);
+  plot.addEventListener('pointerleave', leave);
+
+  // 淺／深切換：換 data-theme；網址加 ?theme=dark 直接開深色
+  var root = document.documentElement, tb = $('theme');
+  function setTheme(t){
+    if (t === 'dark') root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme');
+    tb.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+    $('theme-t').textContent = t === 'dark' ? '淺色' : '深色';
+    $('theme-i').setAttribute('href', t === 'dark' ? '#i-sun' : '#i-moon');
+  }
+  tb.addEventListener('click', function(){ setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); });
+  if (/[?&]theme=dark/.test(location.search)) setTheme('dark');
+})();
+</script>
+</body>
+</html>

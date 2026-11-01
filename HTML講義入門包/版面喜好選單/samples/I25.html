@@ -1,0 +1,787 @@
+<!doctype html>
+<!-- 版面喜好選單範例 I25｜扇形展開｜來源：講師範例庫 output範例/網頁互動效果/17-扇形展開.html；講師自製範例。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>17 · 扇形展開</title>
+<!-- 畫廊頁的卡片文字由這三個 meta 產生 -->
+<meta name="demo-desc" content="一疊卡片疊在一起只露出邊緣，點一下就像摺扇一樣繞著下方的軸心依序轉開，移到哪張哪張就抬起來。">
+<meta name="demo-use" content="適合：作品集精選、票券或會員卡夾、相簿與檔案堆疊的展開">
+<meta name="demo-input" content="card">
+<script>
+  // 先於 CSS 套用 embed 模式，避免閃一下完整版面
+  try { if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed'); } catch (e) {}
+</script>
+<style>
+  /* ================= 共用樣式 開始（13 頁一致，勿改） ================= */
+  :root {
+    --bg:#f4f3ef; --surface:#ffffff; --text:#1c1b19; --muted:#6b6862; --line:#e4e1da;
+    --accent:#5b4bff; --accent-2:#00b3a4;
+    --site-bg:#f7f5f0; --site-ink:#16150f; --site-sub:#6f6b61; --site-line:#dedad0;
+    --font:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Consolas,"Microsoft JhengHei",monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+      --accent:#8b7dff; --accent-2:#2fd6c6;
+      --site-bg:#0f0f12; --site-ink:#f3f1ea; --site-sub:#9d998f; --site-line:#2a2a30;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#121214; --surface:#1d1d21; --text:#f2f1ee; --muted:#9a978f; --line:#2c2c31;
+    --accent:#8b7dff; --accent-2:#2fd6c6;
+    --site-bg:#0f0f12; --site-ink:#f3f1ea; --site-sub:#9d998f; --site-line:#2a2a30;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: var(--font); line-height: 1.6;
+    overflow-x: hidden;
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 0 16px 64px; }
+
+  /* ---------- header ---------- */
+  header { padding: 44px 0 8px; position: relative; }
+  .kicker { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; letter-spacing: .08em; }
+  .kicker .no { font-family: var(--mono); font-size: 13px; color: var(--accent); border: 1px solid var(--accent); border-radius: 99px; padding: 1px 10px; }
+  h1 { margin: 10px 0 2px; font-size: clamp(28px, 6vw, 44px); line-height: 1.15; letter-spacing: 0; font-weight: 800; }
+  h1 .n { color: var(--accent); font-family: var(--mono); font-weight: 600; margin-right: .3em; }
+  .en { margin: 0 0 8px; font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  header p.sum { margin: 0; max-width: 40em; color: var(--muted); font-size: 16px; }
+  .theme-btn {
+    position: absolute; right: 0; top: 44px; font: inherit; font-size: 13px; color: var(--muted);
+    background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 4px 12px; cursor: pointer;
+  }
+  .theme-btn:hover { color: var(--text); border-color: var(--muted); }
+
+  /* ---------- stage：一個假的瀏覽器視窗，效果都發生在 .view 裡 ---------- */
+  .stage {
+    margin-top: 28px; padding: clamp(12px, 3vw, 28px); border-radius: 28px; border: 1px solid var(--line);
+    position: relative;
+    background:
+      radial-gradient(520px 360px at 50% 40%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+      radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text) 13%, transparent) 1px, transparent 1.4px) 0 0/22px 22px,
+      var(--bg);
+  }
+  .browser {
+    width: 100%; height: clamp(420px, 68vh, 600px); border-radius: 16px; border: 1px solid var(--line);
+    background: var(--site-bg); overflow: hidden; display: flex; flex-direction: column; position: relative;
+    box-shadow: 0 30px 60px -20px rgba(20,18,40,.28), 0 8px 20px -8px rgba(20,18,40,.18);
+  }
+  .bar {
+    height: 34px; flex: none; display: flex; align-items: center; gap: 7px; padding: 0 12px;
+    border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 60%, var(--surface));
+    font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap;
+  }
+  .bar i { width: 9px; height: 9px; border-radius: 50%; background: color-mix(in srgb, var(--muted) 45%, transparent); flex: none; }
+  .bar .url { margin-left: 8px; overflow: hidden; text-overflow: ellipsis; }
+  .bar .readout { margin-left: auto; overflow: hidden; text-overflow: ellipsis; }
+  .bar .readout b { color: var(--text); font-weight: 600; }
+  .bar .auto {
+    font: inherit; color: var(--muted); background: transparent; border: 1px solid var(--line);
+    border-radius: 99px; padding: 1px 10px; cursor: pointer; flex: none;
+  }
+  .bar .auto[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+  .view {
+    flex: 1; min-height: 0; position: relative; overflow: hidden; container-type: size;
+    background: var(--site-bg); color: var(--site-ink); outline: none;
+  }
+  .view.scroll { overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; }
+  .view:focus-visible { box-shadow: inset 0 0 0 3px var(--accent); }
+  .hint {
+    position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 30; pointer-events: none;
+    font-size: 12px; line-height: 1; padding: 7px 12px; border-radius: 99px; white-space: nowrap;
+    background: rgba(18,18,22,.78); color: #fff; transition: opacity .4s;
+  }
+  .hint.off { opacity: 0; }
+
+  /* 作品圖：由共用腳本的 paintArt() 畫好後塞進 --art0 … --art5 */
+  .art { background: #888 center / cover no-repeat; }
+  .art[data-a="0"] { background-image: var(--art0); } .art[data-a="1"] { background-image: var(--art1); }
+  .art[data-a="2"] { background-image: var(--art2); } .art[data-a="3"] { background-image: var(--art3); }
+  .art[data-a="4"] { background-image: var(--art4); } .art[data-a="5"] { background-image: var(--art5); }
+
+  /* ---------- knobs / prompt / notes ---------- */
+  section.knobs, section.prompt, section.notes { margin-top: 28px; }
+  h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .1em; color: var(--muted); font-weight: 700; }
+  .knobs .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .knob { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+  .knob label { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 600; }
+  .knob output { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .knob small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  input[type=range] { width: 100%; margin: 10px 0 0; accent-color: var(--accent); height: 28px; }
+  input[type=range]:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+  .prompt .box { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; display: flex; gap: 16px; align-items: flex-start; }
+  .prompt blockquote { margin: 0; flex: 1; font-size: 16px; line-height: 1.8; border-left: 3px solid var(--accent-2); padding-left: 14px; }
+  .copy { flex: none; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 0; border-radius: 10px; padding: 8px 16px; background: var(--accent); color: #fff; min-width: 76px; }
+  .copy.ok { background: var(--accent-2); color: #06201d; }
+
+  .notes ol { margin: 0; padding: 0; counter-reset: n; list-style: none; display: grid; gap: 10px; }
+  .notes li { counter-increment: n; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px 12px 52px; position: relative; font-size: 15px; }
+  .notes li::before { content: counter(n); position: absolute; left: 16px; top: 12px; width: 24px; height: 24px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); font-family: var(--mono); font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+  .notes code { font-family: var(--mono); font-size: 13px; background: color-mix(in srgb, var(--text) 8%, transparent); padding: 1px 6px; border-radius: 6px; }
+
+  @media (max-width: 560px) {
+    .prompt .box { flex-direction: column; }
+    .copy { align-self: stretch; }
+    .theme-btn { position: static; margin-top: 12px; }
+    .stage { border-radius: 20px; }
+    .bar .url { display: none; }
+  }
+
+  /* ---------- embed：畫廊卡片裡的預覽，只留瀏覽器視窗 ---------- */
+  html.embed, html.embed body { background: transparent; overflow: hidden; height: 100%; }
+  html.embed header, html.embed .knobs, html.embed .prompt, html.embed .notes { display: none; }
+  html.embed main { max-width: none; padding: 0; height: 100%; }
+  html.embed .stage { margin: 0; padding: 0; border: 0; background: none; height: 100%; border-radius: 0; }
+  html.embed .browser { height: 100%; border: 0; border-radius: 0; box-shadow: none; }
+  html.embed .bar .auto, html.embed .hint { display: none; }   /* 操作提示改由畫廊頁顯示 */
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+  }
+  /* ================= 共用樣式 結束 ================= */
+
+  /* ================= 本效果樣式 ================= */
+  /* 萬能句式拆解（14–18 五頁一致，勿改） */
+  .formula { margin: 12px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+  .formula div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+  .formula dt { font-size: 12px; font-weight: 700; color: var(--accent); }
+  .formula dd { margin: 2px 0 0; font-size: 14px; line-height: 1.55; }
+
+  /* ---------- 假網站的頁首：左邊區塊名，右邊是目前抬起那一件的資料 ---------- */
+  .site-head {
+    position: absolute; left: 5cqw; right: 5cqw; top: clamp(8px, 4.5cqh, 26px);
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px; pointer-events: none;
+  }
+  .site-ttl { margin: 0; font-size: clamp(15px, 3.2cqw, 26px); font-weight: 800; line-height: 1.3; white-space: nowrap; }
+  .site-ey { font-family: var(--mono); font-size: clamp(11px, 1.4cqw, 13px); font-weight: 500; letter-spacing: .14em; color: var(--site-sub); margin-right: .9em; }
+  .site-cap { margin: 0; min-width: 0; font-size: clamp(11px, 1.7cqw, 14px); line-height: 1.3; color: var(--site-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .site-cap b { color: var(--site-ink); font-weight: 700; margin-right: .7em; }
+  .cap-no { font-family: var(--mono); font-weight: 600; color: var(--accent); margin-right: .5em; }
+
+  /* ---------- 整把扇子：.fan 的方框就是收合時最上面那張卡的位置 ----------
+     --ch 卡片高、--pv 軸心在卡片底邊下方多遠、--fy 方框的 top，三個都由腳本依畫面大小算好寫進來；
+     這裡的 cqw／cqh 是腳本還沒跑之前的預設值 */
+  .fan {
+    --ch: min(50cqh, 34cqw); --cw: calc(var(--ch) * .72); --pv: calc(var(--ch) * .4);
+    position: absolute; left: calc(50% - var(--cw) / 2); top: var(--fy, 26cqh); width: var(--cw); height: var(--ch);
+  }
+
+  /* 軸心與兩條軌跡：卡片頂邊中點、底邊中點各走一個圓 */
+  .fan-guide {
+    position: absolute; left: 50%; top: calc(100% + var(--pv)); border-radius: 50%; pointer-events: none;
+    border: 1px dashed color-mix(in srgb, var(--site-sub) 40%, transparent); transform: translate(-50%, -50%);
+  }
+  .fan-guide.g-out { width: calc((var(--ch) + var(--pv)) * 2); height: calc((var(--ch) + var(--pv)) * 2); }
+  .fan-guide.g-in { width: calc(var(--pv) * 2); height: calc(var(--pv) * 2); }
+  .fan-pivot {
+    position: absolute; left: 50%; top: calc(100% + var(--pv)); width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px;
+    border-radius: 50%; background: var(--accent); pointer-events: none;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+
+  /* ---------- 卡片 ---------- */
+  .fan-cards { position: absolute; inset: 0; }
+  .wcard {
+    position: absolute; left: 0; top: 0; width: 100%; height: 100%; margin: 0; padding: calc(var(--cw) * .06);
+    display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto;
+    gap: calc(var(--cw) * .04) calc(var(--cw) * .05);
+    font: inherit; color: var(--site-ink); text-align: left; cursor: pointer;
+    appearance: none; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none;
+    background: var(--surface); border: 1px solid var(--site-line); border-radius: calc(var(--cw) * .08);
+    box-shadow: -5px 6px 16px -9px rgba(20,18,40,.5);
+    z-index: var(--z);
+    /* 軸心：水平置中、垂直在底邊再往下 --pv。六張共用同一個圓心 */
+    transform-origin: 50% calc(100% + var(--pv));
+    /* 先轉再移：translateY 發生在轉過之後的座標裡，所以是沿卡片自己的軸向抬起 */
+    transform: rotate(calc(var(--rot, 0deg) * var(--pk, 1))) translateY(calc(-16% * var(--up, 0)));
+    transition: transform var(--dur, 0ms) var(--ez, ease) var(--dl, 0ms);
+    will-change: transform;
+  }
+  .wcard::after {
+    content: ""; position: absolute; inset: -1px; border-radius: inherit; border: 2px solid var(--accent);
+    opacity: 0; transition: opacity .18s; pointer-events: none;
+  }
+  .wcard.is-up { z-index: 30; }
+  .wcard.is-up::after { opacity: 1; }
+  /* 抬起後在原位補一段感應區，游標不會因為卡片移走而落空 */
+  .wcard.is-up::before { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 16%; }
+  .wcard:focus-visible { border-radius: calc(var(--cw) * .08); }
+  .wcard:focus-visible::after { opacity: 0; }               /* 鍵盤聚焦時已經有外框，不再疊一圈 */
+
+  /* 扇形裡每張卡只露出左邊一條，所以作品名直排放在左側 */
+  .wcard-spine { grid-row: 1 / 3; display: flex; flex-direction: column; align-items: center; gap: calc(var(--cw) * .045); min-height: 0; overflow: hidden; }
+  .wcard-no { font-family: var(--mono); font-size: clamp(11px, calc(var(--cw) * .085), 14px); font-weight: 600; line-height: 1; color: var(--accent); }
+  .wcard-name { writing-mode: vertical-rl; font-size: clamp(11px, calc(var(--cw) * .12), 21px); font-weight: 800; line-height: 1.15; white-space: nowrap; }
+  .wcard-pic { grid-column: 2; grid-row: 1; border-radius: calc(var(--cw) * .045); box-shadow: inset 0 0 0 1px rgba(20,18,40,.1); }
+  .wcard-pic[data-a="0"] { background-position: 74% 50%; } .wcard-pic[data-a="1"] { background-position: 20% 50%; }
+  .wcard-pic[data-a="2"] { background-position: 26% 50%; } .wcard-pic[data-a="3"] { background-position: 12% 50%; }
+  .wcard-pic[data-a="4"] { background-position: 44% 50%; } .wcard-pic[data-a="5"] { background-position: 90% 50%; }
+  .wcard-tag { grid-column: 2; grid-row: 2; font-size: clamp(11px, calc(var(--cw) * .09), 14px); line-height: 1.2; color: var(--site-sub); white-space: nowrap; overflow: hidden; }
+  .fan.is-tiny .wcard-tag { display: none; }
+  .fan.is-tiny .wcard-pic { grid-row: 1 / 3; }
+
+  /* ---------- 整疊的按鈕：收合時是蓋住整疊的透明按鈕，展開後縮成扇子根部的「收回」 ---------- */
+  .fan-btn {
+    position: absolute; z-index: 40; inset: -5% -7% -4% -34%; margin: 0; padding: 0; border: 0; border-radius: 14px;
+    background: transparent; color: var(--site-bg); font: inherit; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap;
+    cursor: pointer; appearance: none; -webkit-tap-highlight-color: transparent;
+  }
+  .fan-btn span { opacity: 0; }
+  .fan.is-open .fan-btn {
+    inset: auto; left: 50%; top: 100%; padding: 8px 16px; border-radius: 99px; background: var(--site-ink);
+    transform: translate(-50%, -50%); box-shadow: 0 6px 14px -6px rgba(0,0,0,.5);
+    animation: fan-pill .22s .28s both;
+  }
+  .fan.is-open .fan-btn span { opacity: 1; }
+  .fan.is-open .fan-btn:focus-visible { border-radius: 99px; }
+  @keyframes fan-pill { from { opacity: 0; transform: translate(-50%, -50%) scale(.8); } }
+
+  /* 收合時滑鼠移上去或鍵盤聚焦：角度差放大一點，暗示這疊可以攤開 */
+  @media (hover: hover) { .fan:not(.is-open) .fan-btn:hover ~ .fan-cards { --pk: 1.8; } }
+  .fan:not(.is-open) .fan-btn:focus-visible ~ .fan-cards { --pk: 1.8; }
+
+  @container (max-width: 520px) {
+    .cap-en { display: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="kicker"><span class="no">17</span><span>網頁互動效果・卡片</span></div>
+    <h1><span class="n">17 ·</span>扇形展開</h1>
+    <p class="en">Fan-out Card Spread（card fan / fanned deck）</p>
+    <p class="sum">一疊卡片平常疊在一起，只露出一點邊。點一下，每張繞著底邊下方的同一個軸心轉到不同角度，像摺扇一樣攤開。平常只佔一張卡的位置，攤開後六張都看得到。</p>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="切換淺色與深色">切換深淺色</button>
+  </header>
+
+  <section class="stage" aria-label="Demo 舞台">
+    <div class="browser">
+      <div class="bar">
+        <i></i><i></i><i></i><span class="url">studio-kiri.tw/works/selected</span>
+        <span class="readout" id="readout" aria-hidden="true"></span>
+        <button class="auto" id="autoBtn" type="button" aria-pressed="true">自動示範：開</button>
+      </div>
+      <div class="view" id="view" tabindex="0" role="region" aria-label="示範頁面：一疊可以攤開的作品卡片">
+        <div class="site-head">
+          <p class="site-ttl"><span class="site-ey">WORKS</span>精選作品</p>
+          <p class="site-cap" id="cap">6 件作品 · 2024–2026</p>
+        </div>
+        <div class="fan" id="fan">
+          <span class="fan-guide g-out" aria-hidden="true"></span>
+          <span class="fan-guide g-in" aria-hidden="true"></span>
+          <span class="fan-pivot" aria-hidden="true"></span>
+          <button class="fan-btn" id="deckBtn" type="button" aria-expanded="false" aria-controls="cards" aria-label="攤開 6 件作品"><span>收回</span></button>
+          <div class="fan-cards" id="cards" role="group" aria-label="作品卡片" inert></div>
+        </div>
+      </div>
+      <div class="hint" id="hint">點一下這疊卡片</div>
+    </div>
+  </section>
+
+  <section class="knobs" aria-label="可調參數">
+    <h3>可調參數</h3>
+    <div class="grid">
+      <div class="knob"><label for="kSpread">展開總角度 <output id="oSpread"></output></label><input id="kSpread" type="range" min="30" max="110" step="2" value="80"><small>最左與最右兩張之間夾幾度，中間的卡片均分</small></div>
+      <div class="knob"><label for="kPivot">軸心位置 <output id="oPivot"></output></label><input id="kPivot" type="range" min="10" max="120" step="5" value="40"><small>軸心在卡片底邊下方多遠（佔卡片高度）。越低扇形越扁，越像手上的牌</small></div>
+      <div class="knob"><label for="kDelay">每張延遲 <output id="oDelay"></output></label><input id="kDelay" type="range" min="0" max="120" step="5" value="45"><small>每張比前一張晚多久出發；0 就是六張一起轉</small></div>
+      <div class="knob"><label for="kOver">過衝量 <output id="oOver"></output></label><input id="kOver" type="range" min="0" max="25" step="1" value="10"><small>轉過頭再彈回來的幅度，佔這張卡旋轉行程的比例</small></div>
+    </div>
+  </section>
+
+  <section class="prompt" aria-label="AI 描述詞">
+    <h3>AI 描述詞</h3>
+    <div class="box">
+      <blockquote id="promptText">做一個扇形展開：六張作品卡片，從疊在一起、只露出邊緣，點一下繞底邊下方的軸心轉開成 −<span data-v="half">40</span>° 到 +<span data-v="half">40</span>° 的扇形，依序甩開、過衝 <span data-v="over">10</span>%，單張 520 毫秒、每張延遲 <span data-v="delay">45</span> 毫秒。懸停的那張沿自己的軸向抬起。</blockquote>
+      <button class="copy" id="copyBtn" type="button">複製</button>
+    </div>
+    <dl class="formula" aria-label="萬能句式拆解">
+      <div><dt>主體</dt><dd>六張作品卡片疊成的一疊</dd></div>
+      <div><dt>起點</dt><dd>疊在一起，每張只差 1 到 2 度，露出一點邊</dd></div>
+      <div><dt>終點</dt><dd>繞底邊下方的同一個軸心（transform-origin 50% <span data-v="origin">140</span>%）轉開，−<span data-v="half">40</span>° 均分到 +<span data-v="half">40</span>°</dd></div>
+      <div><dt>手感</dt><dd>從第一張依序甩開，轉過頭 <span data-v="over">10</span>% 再彈回</dd></div>
+      <div><dt>時長</dt><dd>單張 520 毫秒，每張延遲 <span data-v="delay">45</span> 毫秒，六張到位共 <span data-v="total">745</span> 毫秒</dd></div>
+    </dl>
+  </section>
+
+  <section class="notes" aria-label="實作要點">
+    <h3>實作要點</h3>
+    <ol>
+      <li><b>軸心決定弧度：</b>六張卡的 <code>transform-origin</code> 都設在 <code>50% 140%</code>，也就是底邊中點再往下 40% 卡片高度，整疊共用同一個圓心。軸心越低，同樣的角度在卡片頂端掃出的弧越長，扇形越扁、越像手上的牌；軸心貼著底邊，卡片就只在原地打轉。</li>
+      <li><b>角度照序號均分：</b>第 i 張的角度是 <code>(i − (N−1)/2) × 總角度 ÷ (N−1)</code>。六張、總角度 80° 就是 −40°、−24°、−8°、8°、24°、40°。收合時不歸零，相鄰兩張留 1.6° 的角度差，邊緣才露得出來。</li>
+      <li><b>依序甩開、帶過衝：</b>只在 <code>transform</code> 上設 <code>transition</code>，單張 520ms，<code>transition-delay</code> 是序號 × 45ms。緩動用 <code>cubic-bezier(.34, 1.567, .64, 1)</code>，第二個數字大於 1，卡片會轉過頭 10% 再彈回（這個數字是由過衝量反推出來的，改過衝量它會跟著變）。收合改用不過衝的曲線、380ms，順序反過來。</li>
+      <li><b>抬起要先轉再移：</b>寫成 <code>rotate(θ) translateY(-16%)</code>，位移發生在已經轉過的座標裡，卡片就沿自己的軸向往外抽。順序反過來寫成 <code>translateY(-16%) rotate(θ)</code>，每一張都會直直往螢幕上方移。判斷滑鼠在哪一張時，把座標反轉回各張卡還沒抬起的位置去算，卡片抬走後才不會因為離開游標而上下抖。</li>
+      <li><b>套用到別的頁面：</b><code>transform-origin</code> 是這個效果最關鍵的一個數字，換了卡片比例或張數先調它；寫百分比時是相對卡片自己的寬高。展開後的外框比單張卡大得多，容器要預留空間，或像這頁一樣依外框反推卡片大小。收合時被蓋住的卡片要加 <code>tabindex="-1"</code> 或 <code>inert</code>，鍵盤才不會聚焦到看不見的卡；整疊另外給一顆帶 <code>aria-expanded</code> 的按鈕。</li>
+    </ol>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  /* ================= 共用腳本 開始（13 頁一致，勿改） ================= */
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const EMBED = document.documentElement.classList.contains('embed');
+  const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ---------- 假網站的六件作品 ---------- */
+  const WORKS = [
+    { t: '霧島茶室',   en: 'Kirishima Tea House', tag: '品牌識別', yr: '2026' },
+    { t: '潮間帶書店', en: 'Intertidal Books',    tag: '空間導視', yr: '2026' },
+    { t: '北緯二十五', en: 'N25° Outdoor',        tag: '電商網站', yr: '2025' },
+    { t: '夜行列車',   en: 'Night Express',       tag: '動態影像', yr: '2025' },
+    { t: '白露陶器',   en: 'Hakuro Ceramics',     tag: '包裝設計', yr: '2024' },
+    { t: '巷弄氣象台', en: 'Alley Weather',       tag: 'App 介面', yr: '2024' },
+  ];
+
+  /* 把第 i 件作品畫進 canvas；t（秒）會讓畫面緩慢動起來，靜態圖傳 0 */
+  function paintArt(ctx, i, w, h, t = 0) {
+    const S = Math.sin;
+    const lin = (stops, x0 = 0, y0 = 0, x1 = 0, y1 = 1) => {
+      const g = ctx.createLinearGradient(x0 * w, y0 * h, x1 * w, y1 * h);
+      stops.forEach(([o, c]) => g.addColorStop(o, c)); return g;
+    };
+    const fill = c => { ctx.fillStyle = c; ctx.fillRect(0, 0, w, h); };
+    const disc = (x, y, r, c) => { ctx.beginPath(); ctx.arc(x * w, y * h, r * h, 0, 6.2832); ctx.fillStyle = c; ctx.fill(); };
+    const wave = (y, amp, freq, ph, c) => {
+      ctx.beginPath(); ctx.moveTo(0, h);
+      for (let x = 0; x <= 1.001; x += .04) ctx.lineTo(x * w, (y + amp * S(x * freq + ph)) * h);
+      ctx.lineTo(w, h); ctx.closePath(); ctx.fillStyle = c; ctx.fill();
+    };
+    ctx.save();
+    switch (((i % 6) + 6) % 6) {
+      case 0: // 霧島茶室：墨綠、月、三層霧
+        fill(lin([[0, '#2a5a52'], [1, '#0d2220']]));
+        disc(.68 + .012 * S(t * .5), .34 + .01 * S(t * .37), .19, '#ece4c6');
+        wave(.56, .05, 5.2, 1 + t * .5, 'rgba(176,214,196,.20)');
+        wave(.68, .06, 4.1, 3 + t * .7, 'rgba(176,214,196,.26)');
+        wave(.82, .04, 6.3, 5 + t * .9, 'rgba(206,232,218,.34)');
+        break;
+      case 1: // 潮間帶書店：沙色、朱紅太陽、三道浪
+        fill(lin([[0, '#f1e7d2'], [1, '#e3d3b2']]));
+        disc(.27, .3 + .012 * S(t * .6), .13, '#e2674a');
+        wave(.56, .035, 7, 0 + t * 1.1, '#5f9cc4');
+        wave(.68, .045, 5.4, 2 + t * .8, '#2f6694');
+        wave(.82, .035, 8.2, 4 + t * 1.4, '#1b3f62');
+        break;
+      case 2: { // 北緯二十五：橘底、等高線、兩座山
+        fill(lin([[0, '#f58a45'], [1, '#d8431c']]));
+        ctx.lineWidth = Math.max(1, h * .004); ctx.strokeStyle = 'rgba(255,240,220,.3)';
+        for (let k = 1; k <= 7; k++) {
+          ctx.beginPath(); ctx.ellipse(.74 * w, .3 * h, k * .1 * h * (1 + .03 * S(t + k)), k * .065 * h, -.3, 0, 6.2832); ctx.stroke();
+        }
+        const tri = (x0, x1, top, c) => { ctx.beginPath(); ctx.moveTo(x0 * w, h); ctx.lineTo((x0 + x1) / 2 * w, top * h); ctx.lineTo(x1 * w, h); ctx.closePath(); ctx.fillStyle = c; ctx.fill(); };
+        tri(.28, 1.02, .42, '#5a2a17'); tri(-.08, .66, .3, '#2a1710');
+        ctx.beginPath(); ctx.moveTo(.29 * w, .3 * h); ctx.lineTo(.235 * w, .5 * h); ctx.lineTo(.3 * w, .46 * h); ctx.lineTo(.345 * w, .5 * h); ctx.closePath(); ctx.fillStyle = '#fbe9d4'; ctx.fill();
+        break; }
+      case 3: { // 夜行列車：深紫夜、月、一列亮窗
+        fill(lin([[0, '#14112c'], [1, '#3d2c70']]));
+        for (let k = 0; k < 26; k++) disc((k * .381966) % 1, ((k * .618034) % 1) * .52, .003 + (k % 3) * .0018, `rgba(255,255,255,${.35 + .3 * S(t * 1.3 + k)})`);
+        disc(.2, .24, .1, '#f6e7b0'); disc(.236, .215, .09, '#211a45');
+        ctx.fillStyle = '#0a0818'; ctx.fillRect(0, .78 * h, w, .22 * h);
+        const y = .6 * h, ch = .18 * h, cw = .3 * w, off = ((t * .06) % 1) * (cw + .02 * w);
+        for (let x = -cw - .02 * w + off; x < w; x += cw + .02 * w) {
+          ctx.fillStyle = '#0e0b20'; ctx.beginPath(); ctx.roundRect(x, y, cw, ch, ch * .22); ctx.fill();
+          ctx.fillStyle = '#ffd76a';
+          for (let k = 0; k < 4; k++) { ctx.beginPath(); ctx.roundRect(x + cw * (.07 + k * .225), y + ch * .2, cw * .17, ch * .36, ch * .06); ctx.fill(); }
+        }
+        break; }
+      case 4: { // 白露陶器：米白、陶瓶、小碗
+        fill(lin([[0, '#f1ede6'], [1, '#ddd5c8']]));
+        ctx.fillStyle = '#c9bfae'; ctx.fillRect(0, .76 * h, w, .24 * h);
+        const sh = (x, rx) => { ctx.beginPath(); ctx.ellipse(x * w, .775 * h, rx * h, .022 * h, 0, 0, 6.2832); ctx.fillStyle = 'rgba(60,45,30,.22)'; ctx.fill(); };
+        sh(.44, .2); sh(.72, .15);
+        const cx = .42 * w, sway = .004 * w * S(t * .8);
+        ctx.beginPath(); ctx.moveTo(cx - .05 * h, .2 * h);
+        ctx.bezierCurveTo(cx - .06 * h + sway, .34 * h, cx - .21 * h, .4 * h, cx - .19 * h, .6 * h);
+        ctx.bezierCurveTo(cx - .17 * h, .74 * h, cx - .1 * h, .775 * h, cx, .775 * h);
+        ctx.bezierCurveTo(cx + .1 * h, .775 * h, cx + .17 * h, .74 * h, cx + .19 * h, .6 * h);
+        ctx.bezierCurveTo(cx + .21 * h, .4 * h, cx + .06 * h + sway, .34 * h, cx + .05 * h, .2 * h);
+        ctx.closePath(); ctx.fillStyle = lin([[0, '#a98f74'], [1, '#7d6450']], .3, 0, .55, 0); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(.61 * w, .62 * h); ctx.bezierCurveTo(.62 * w, .8 * h, .82 * w, .8 * h, .83 * w, .62 * h); ctx.closePath(); ctx.fillStyle = '#e9e3d8'; ctx.fill();
+        ctx.beginPath(); ctx.ellipse(.72 * w, .62 * h, .11 * w, .02 * h, 0, 0, 6.2832); ctx.fillStyle = '#b9a58c'; ctx.fill();
+        break; }
+      default: { // 巷弄氣象台：天藍、太陽、三朵雲
+        fill(lin([[0, '#6bb9f2'], [1, '#e4f3ff']]));
+        disc(.74, .3, .15 + .006 * S(t * 1.2), '#ffc93c');
+        const cloud = (x, y, s, a) => { for (const [dx, dy, r] of [[0, 0, .1], [.09, -.035, .13], [.2, 0, .1], [.1, .03, .11]]) disc(x + dx * s * h / w, y + dy * s, r * s, `rgba(255,255,255,${a})`); };
+        cloud(((.08 + t * .012) % 1.3) - .15, .56, 1.25, .96);
+        cloud(((.5 + t * .02) % 1.3) - .15, .34, .8, .9);
+        cloud(((.92 + t * .008) % 1.3) - .15, .76, 1, .93);
+        break; }
+    }
+    ctx.restore();
+  }
+
+  /* 靜態作品圖 → dataURL，並塞進 --art0 … --art5 給 .art[data-a] 用 */
+  const artCache = [];
+  function artURL(i) {
+    if (!artCache[i]) {
+      const c = document.createElement('canvas'); c.width = 960; c.height = 600;
+      paintArt(c.getContext('2d'), i, 960, 600, 0);
+      artCache[i] = c.toDataURL('image/jpeg', .86);
+    }
+    return artCache[i];
+  }
+  WORKS.forEach((_, i) => document.documentElement.style.setProperty('--art' + i, `url(${artURL(i)})`));
+
+  /* ---------- 可調參數：defs = [inputId, outputId, key, 顯示格式, 換算（可省）] ---------- */
+  function bindKnobs(P, defs, onChange) {
+    defs.forEach(([id, oid, key, fmt, conv]) => {
+      const el = $('#' + id), out = $('#' + oid);
+      const apply = () => { const v = +el.value; P[key] = conv ? conv(v) : v; out.textContent = fmt(v); };
+      el.addEventListener('input', () => { apply(); onChange && onChange(key); });
+      apply();
+    });
+  }
+
+  /* ---------- 舞台是否真的在螢幕上（iframe 內也準），不在就別空轉 ---------- */
+  const Stage = { el: $('.browser'), view: $('#view'), visible: true };
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(es => { Stage.visible = es[0].isIntersecting; Auto.vis(); }).observe(Stage.el);
+  }
+
+  /* ---------- 自動示範：一載入就播；使用者一動手就停。embed 閒置 4 秒後恢復 ---------- */
+  const Auto = (() => {
+    const btn = $('#autoBtn'), hint = $('#hint');
+    let tick = null, want = false, on = false, t = 0, last = 0, raf = 0, timer = 0;
+    function frame(now) {
+      if (!on) return;
+      const dt = Math.min((now - last) / 1000, .05); last = now; t += dt;
+      tick(t, dt);
+      raf = requestAnimationFrame(frame);
+    }
+    function sync() {
+      btn.setAttribute('aria-pressed', String(want));
+      btn.textContent = want ? '自動示範：開' : '自動示範：關';
+      hint.classList.toggle('off', !want);
+    }
+    function run() {
+      if (on || !tick || !want || !Stage.visible || reduceMQ.matches) return;
+      on = true; last = performance.now(); raf = requestAnimationFrame(frame);
+    }
+    function halt() { on = false; cancelAnimationFrame(raf); }
+    btn.addEventListener('click', () => { clearTimeout(timer); want = !want; want ? run() : halt(); sync(); });
+    return {
+      get on() { return on; },
+      /* fn(t, dt)：t 為自動示範累計秒數；在裡面去改 scrollTop 或餵假的指標座標 */
+      init(fn) { tick = fn; want = !reduceMQ.matches; sync(); run(); },
+      /* 使用者真的動手時呼叫 */
+      poke() {
+        clearTimeout(timer);
+        if (want) { want = false; halt(); sync(); }
+        if (EMBED) timer = setTimeout(() => { want = true; sync(); run(); }, 4000);
+      },
+      /* 幫忙掛監聽：Auto.watch(view, 'wheel pointerdown touchstart keydown') */
+      watch(el, types) { types.split(' ').forEach(ty => el.addEventListener(ty, () => Auto.poke(), { passive: true })); },
+      vis() { Stage.visible ? run() : halt(); },
+    };
+  })();
+
+  /* ---------- 複製描述詞 ---------- */
+  const copyBtn = $('#copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    const text = $('#promptText').textContent.trim();
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (_) {}
+    if (!ok) {
+      try {
+        const r = document.createRange(); r.selectNodeContents($('#promptText'));
+        const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        ok = document.execCommand('copy');
+      } catch (_) {}
+    }
+    copyBtn.textContent = ok ? '已複製' : '請按 Ctrl+C';
+    copyBtn.classList.toggle('ok', ok);
+    setTimeout(() => { copyBtn.textContent = '複製'; copyBtn.classList.remove('ok'); }, 1600);
+  });
+
+  /* ---------- 深淺色：自己的按鈕，或由畫廊頁 postMessage 帶進來 ---------- */
+  $('#themeBtn').addEventListener('click', () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+  });
+  addEventListener('message', e => {
+    const th = e.data && e.data.theme;
+    if (th === 'light' || th === 'dark') document.documentElement.dataset.theme = th;
+    if (e.data && e.data.poke) Auto.poke();          // 畫廊頁：使用者點了預覽，準備動手
+  });
+  /* ================= 共用腳本 結束 ================= */
+
+  /* ================= 本效果 ================= */
+  const view = Stage.view, head = $('.site-head', view), fan = $('#fan'), cardsEl = $('#cards'), btn = $('#deckBtn'), cap = $('#cap'), readout = $('#readout');
+  const N = WORKS.length;
+  const ASPECT = .72;     // 卡片寬 ÷ 高
+  const LIFT = .16;       // 抬起的距離（佔卡片高度），CSS 的 translateY(-16%) 要跟它一致
+  const DUR = 520;        // 單張展開的毫秒數
+  const SHUT = 380;       // 單張收合的毫秒數
+  const PEEK = 2.24;      // 收合時相鄰兩張的角度差 = PEEK ÷ (1 + 軸心距離)，預設是 1.6°
+  const P = { spread: 80, pivot: .4, delay: 45, over: .1 };
+  const rad = d => d * Math.PI / 180;
+  const no2 = i => String(i + 1).padStart(2, '0');
+  let open = false, lifted = -1;
+  let G = { cx: 0, py: 0, w: 0, h: 0, pv: 0 };     // 軸心座標（cx, py）與卡片寬高、軸心距離，都是相對 .view 的 px
+
+  /* ---------- 卡片：WORKS 六件。DOM 順序就是由下到上的疊放順序 ---------- */
+  const cards = WORKS.map((w, i) => {
+    const c = document.createElement('button');
+    c.type = 'button'; c.className = 'wcard'; c.tabIndex = -1;
+    c.setAttribute('aria-label', `${w.t}，${w.tag}，${w.yr} 年`);
+    c.style.setProperty('--z', i + 1);
+    c.innerHTML = `<span class="wcard-spine"><span class="wcard-no">${no2(i)}</span><span class="wcard-name">${w.t}</span></span>`
+      + `<span class="wcard-pic art" data-a="${i}"></span><span class="wcard-tag">${w.tag}</span>`;
+    cardsEl.appendChild(c);
+    return c;
+  });
+
+  /* ---------- 角度：展開時照序號均分，收合時每張只差一點 ---------- */
+  const openAngle = i => (i - (N - 1) / 2) * P.spread / (N - 1);
+  const shutAngle = i => (i - (N - 1)) * PEEK / (1 + P.pivot);
+
+  /* 過衝量 o（0.1 = 轉過頭 10%）換成 cubic-bezier(.34, y1, .64, 1) 的 y1：二分法找曲線最高點剛好是 1 + o 的那個值 */
+  const easeCache = {};
+  function backEase(o) {
+    const key = o.toFixed(3);
+    if (easeCache[key]) return easeCache[key];
+    let y1 = 1;
+    if (o > 0) {
+      const peak = y => { let m = 0; for (let s = 0; s <= 1; s += .005) { const u = 1 - s; m = Math.max(m, 3 * u * u * s * y + 3 * u * s * s + s * s * s); } return m - 1; };
+      let lo = 1, hi = 3.2;
+      for (let k = 0; k < 22; k++) { const mid = (lo + hi) / 2; if (peak(mid) < o) lo = mid; else hi = mid; }
+      y1 = hi;
+    }
+    return (easeCache[key] = `cubic-bezier(.34, ${y1.toFixed(3)}, .64, 1)`);
+  }
+
+  /* 三種過渡：fan 展開（依序、帶過衝）、shut 收合（倒序、不過衝）、其餘是抬起與微調（短、不延遲） */
+  function timing(kind) {
+    cards.forEach((c, i) => {
+      const [dur, dl, ez] =
+        kind === 'fan'  ? [DUR, i * P.delay, backEase(P.over)] :
+        kind === 'shut' ? [SHUT, (N - 1 - i) * P.delay * .5, 'cubic-bezier(.5, 0, .2, 1)'] :
+                          [200, 0, 'cubic-bezier(.3, 1.4, .5, 1)'];
+      c.style.setProperty('--dur', dur + 'ms'); c.style.setProperty('--dl', dl + 'ms'); c.style.setProperty('--ez', ez);
+    });
+  }
+
+  /* 把目前狀態寫到每張卡：角度、要不要抬起 */
+  function place() {
+    cards.forEach((c, i) => {
+      const up = open && i === lifted;
+      c.style.setProperty('--rot', (open ? openAngle(i) : shutAngle(i)).toFixed(2) + 'deg');
+      c.style.setProperty('--up', up ? 1 : 0);
+      c.classList.toggle('is-up', up);
+    });
+  }
+
+  /* ---------- 版面：依畫面大小與參數反推卡片高度，讓整把扇子（含過衝與抬起）都在畫面內 ---------- */
+  function fit() {
+    const W = view.clientWidth, H = view.clientHeight;
+    if (W < 60 || H < 60) return;                            // 極小尺寸（畫廊收起來的瞬間）：維持上一次的版面
+    const top = head.offsetTop + head.offsetHeight + 8, bot = EMBED ? 12 : 46, side = 14, PILL = 16;
+    const availW = W - side * 2, availH = H - top - bot;
+    if (availW < 40 || availH < 40) return;
+    const d = P.pivot, hw = ASPECT / 2, R = 1 + d + LIFT;
+    const aMax = rad(P.spread / 2), aOver = aMax * (1 + P.over);
+    // 以卡片高度為 1，量整把扇子相對軸心的外框：up 最高點、half 半寬、low 最低點（可能比軸心還低）
+    let up = 1 + d;
+    for (let i = 0; i < N; i++) { const a = Math.abs(rad(openAngle(i))); up = Math.max(up, hw * Math.sin(a) + R * Math.cos(a)); }
+    const half = Math.max(hw * Math.cos(aOver) + (1 + d) * Math.sin(aOver), hw * Math.cos(aMax) + R * Math.sin(aMax));
+    const low = Math.min(d, d * Math.cos(aOver) - hw * Math.sin(aOver));
+    const h = Math.min(availH / (up - low), (availH - PILL) / (up - d), availW / (2 * half), H * .56);
+    if (!(h > 8)) return;
+    const lowPx = Math.min(low * h, d * h - PILL);           // 最低點離軸心多高；「收回」按鈕也算進去
+    const py = H - bot + lowPx - (availH - (up * h - lowPx)) / 2;   // 有餘裕就垂直置中
+    G = { cx: W / 2, py, w: h * ASPECT, h, pv: d * h };
+    fan.style.setProperty('--ch', h.toFixed(1) + 'px');
+    fan.style.setProperty('--pv', G.pv.toFixed(1) + 'px');
+    fan.style.setProperty('--fy', (py - G.pv - h).toFixed(1) + 'px');
+    fan.classList.toggle('is-tiny', G.w < 84);
+  }
+
+  /* ---------- 讀數：過渡期間每一格量最右那張的實際角度（看得到過衝），過渡結束就停 ---------- */
+  let until = 0, raf = 0;
+  function report() {
+    let deg = 0;
+    const m = getComputedStyle(cards[N - 1]).transform.match(/^matrix\(([^,]+),([^,]+)/);
+    if (m) deg = Math.atan2(+m[2], +m[1]) * 180 / Math.PI;
+    const txt = Math.abs(deg) < .05 ? '0.0°' : (deg > 0 ? '+' : '−') + Math.abs(deg).toFixed(1) + '°';
+    readout.innerHTML = `狀態 <b>${open ? '展開' : '收合'}</b>　最右 <b>${txt}</b>　抬起 <b>${lifted >= 0 ? WORKS[lifted].t : '—'}</b>`;
+  }
+  function frame(now) {
+    raf = 0; report();
+    if (now < until && Stage.visible) raf = requestAnimationFrame(frame);
+  }
+  function track(ms) {
+    until = Math.max(until, performance.now() + (reduceMQ.matches ? 0 : ms) + 120);
+    if (!raf) raf = requestAnimationFrame(frame);
+  }
+
+  function caption() {
+    const w = WORKS[lifted];
+    cap.innerHTML = w
+      ? `<b><span class="cap-no">${no2(lifted)}</span>${w.t}</b><span class="cap-en">${w.en} · </span>${w.tag} · ${w.yr}`
+      : `${N} 件作品 · 2024–2026`;
+  }
+
+  /* 程式自己搬焦點時不算使用者動手 */
+  let quiet = false;
+  const focusQuietly = el => { quiet = true; el.focus({ preventScroll: true }); quiet = false; };
+
+  /* ---------- 展開／收合：點擊、鍵盤、自動示範都走這裡 ---------- */
+  function toggle(want = !open) {
+    if (want === open) return;
+    open = want;
+    if (!open) {
+      lifted = -1;
+      if (cardsEl.contains(document.activeElement)) focusQuietly(btn);   // 卡片要被蓋住了，焦點先還給整疊的按鈕
+    }
+    fan.classList.toggle('is-open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? '收回這疊作品' : `攤開 ${N} 件作品`);
+    cardsEl.inert = !open;                                   // 收合時被蓋住的卡片不給鍵盤與輔助科技碰
+    cards.forEach(c => { c.tabIndex = open ? 0 : -1; });
+    timing(open ? 'fan' : 'shut');
+    place(); caption();
+    track(open ? DUR + (N - 1) * P.delay : SHUT + (N - 1) * P.delay * .5);
+  }
+
+  /* ---------- 抬起第 i 張（-1 = 全部放下）：懸停、觸控、聚焦、自動示範都走這裡 ---------- */
+  function lift(i) {
+    if (!open) i = -1;
+    if (i === lifted) return;
+    lifted = i;
+    timing('lift');
+    place(); caption();
+    track(200);
+  }
+
+  /* 座標落在哪一張：把點反轉回每張卡「還沒抬起」的位置去比，由上往下找。
+     不靠瀏覽器判斷游標底下是哪個元素，抬起的卡片浮到最上層也不會擋住旁邊那張 */
+  function pick(x, y) {
+    if (!open || G.h <= 0) return -1;
+    const dx = x - G.cx, dy = G.py - y, hw = G.w / 2;        // 以軸心為原點、y 朝上
+    const inside = (i, extra) => {
+      const a = rad(openAngle(i));
+      const lx = dx * Math.cos(a) - dy * Math.sin(a), ly = dx * Math.sin(a) + dy * Math.cos(a);
+      return Math.abs(lx) <= hw && ly >= G.pv && ly <= G.pv + G.h + extra;
+    };
+    for (let i = N - 1; i >= 0; i--) if (inside(i, 0)) return i;
+    return lifted >= 0 && inside(lifted, LIFT * G.h) ? lifted : -1;   // 抬起後多出來的那一截也算
+  }
+  function hover(x, y) { lift(pick(x, y)); }
+
+  /* ---------- 使用者接手：自動示範抬到一半的卡片放下來，排好的重播取消 ---------- */
+  let step = -1, autoUp = false, deb = 0, replayT = 0;
+  function settle() {
+    clearTimeout(replayT);
+    step = -1;
+    if (autoUp) { autoUp = false; lift(-1); }
+  }
+
+  /* ---------- 滑鼠與觸控 ---------- */
+  const local = e => { const r = view.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  let lastX = -1, lastY = -1;
+  view.addEventListener('pointermove', e => {
+    // 卡片在游標底下移動時瀏覽器會補發事件；座標沒變就代表滑鼠沒動，不處理（否則會搶走鍵盤抬起的那張）
+    if (e.clientX === lastX && e.clientY === lastY) return;
+    lastX = e.clientX; lastY = e.clientY;
+    settle();
+    if (e.pointerType !== 'touch') hover(...local(e));       // 觸控交給 pointerdown，免得捲頁面時一路亂抬
+  });
+  view.addEventListener('pointerdown', e => { settle(); hover(...local(e)); });
+  view.addEventListener('pointerleave', e => { if (!Auto.on && e.pointerType !== 'touch') lift(-1); });
+  view.addEventListener('click', e => {                      // 展開後點空白處：整疊收回
+    if (!open || e.target.closest('.fan-btn, .wcard')) return;
+    if (pick(...local(e)) < 0) toggle(false);
+  });
+  btn.addEventListener('click', () => toggle());
+
+  /* ---------- 鍵盤：整疊是一顆按鈕；展開後 Tab 或左右鍵逐張聚焦，聚焦就抬起；Esc 收回 ---------- */
+  btn.addEventListener('focus', () => { if (!quiet) { Auto.poke(); settle(); } });
+  cards.forEach((c, i) => {
+    c.addEventListener('focus', () => {
+      if (quiet) return;
+      Auto.poke(); settle();
+      if (c.matches(':focus-visible')) lift(i);              // 滑鼠點出來的焦點不算，那邊由 hover() 決定
+    });
+    c.addEventListener('blur', e => { if (lifted === i && !cardsEl.contains(e.relatedTarget)) lift(-1); });
+  });
+  view.addEventListener('keydown', e => {
+    settle();
+    if (e.key === 'Escape') { if (open) toggle(false); return; }
+    if (e.target === view && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggle(); return; }
+    const d = { ArrowLeft: -1, ArrowRight: 1 }[e.key];
+    if (!d || !open) return;
+    e.preventDefault();
+    const cur = cards.indexOf(document.activeElement), base = cur >= 0 ? cur : lifted;
+    cards[base >= 0 ? clamp(base + d, 0, N - 1) : d > 0 ? 0 : N - 1].focus({ preventScroll: true });
+  });
+
+  /* ---------- 描述詞與句式拆解裡的數字跟著參數走，複製到的就是調好的版本 ---------- */
+  function describe() {
+    const put = (k, v) => $$(`[data-v="${k}"]`).forEach(el => { el.textContent = v; });
+    put('half', P.spread / 2);
+    put('origin', Math.round((1 + P.pivot) * 100));
+    put('over', Math.round(P.over * 100));
+    put('delay', P.delay);
+    put('total', DUR + (N - 1) * P.delay);
+  }
+
+  /* 延遲與過衝要重播一次才看得出來：收起來再攤開 */
+  function replay() {
+    clearTimeout(replayT);
+    if (!open) { toggle(true); return; }
+    toggle(false);
+    replayT = setTimeout(() => toggle(true), reduceMQ.matches ? 0 : SHUT + (N - 1) * P.delay * .5 + 80);
+  }
+
+  /* ---------- 可調參數 ---------- */
+  bindKnobs(P, [
+    ['kSpread', 'oSpread', 'spread', v => v + '°'],
+    ['kPivot', 'oPivot', 'pivot', v => '底邊下 ' + v + '%', v => v / 100],
+    ['kDelay', 'oDelay', 'delay', v => v + ' ms'],
+    ['kOver', 'oOver', 'over', v => v + '%', v => v / 100],
+  ], key => {
+    Auto.poke(); settle();                                   // 調參數也算動手：停掉自動示範，扇子留在展開狀態給你看
+    describe(); fit();
+    if (key === 'spread' || key === 'pivot') {
+      clearTimeout(deb);
+      if (open) { timing('tune'); place(); track(200); } else toggle(true);
+    } else {
+      clearTimeout(deb); deb = setTimeout(replay, 160);
+    }
+  });
+
+  describe(); fit(); timing('lift'); place(); caption(); report();
+  new ResizeObserver(() => { fit(); track(0); }).observe(view);
+
+  /* ---------- 自動示範：展開 → 依序抬起三張 → 放下 → 收合，7 秒一輪。
+     呼叫的就是真實點擊與懸停用的 toggle()、lift()。每一列：[秒, 是否展開, 抬起第幾張] ---------- */
+  const SHOW = [[0, false, -1], [.5, true, -1], [1.6, true, 1], [2.6, true, 3], [3.6, true, 4], [4.6, true, -1], [5, false, -1]];
+  const LOOP = 7;
+  Auto.watch(view, 'pointermove pointerdown touchstart keydown');
+  Auto.init(t => {
+    const u = t % LOOP;
+    let k = 0;
+    while (k + 1 < SHOW.length && u >= SHOW[k + 1][0]) k++;
+    if (k === step) return;
+    step = k;
+    toggle(SHOW[k][1]); lift(SHOW[k][2]);
+    autoUp = SHOW[k][2] >= 0;
+  });
+})();
+</script>
+</body>
+</html>

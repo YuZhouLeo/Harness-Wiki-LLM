@@ -1,0 +1,90 @@
+<!doctype html><!-- 版面喜好選單範例 GX10｜轉圈重新整理按鈕｜來源：講師範例庫 output範例/元件庫/GX10-轉圈重新整理按鈕.html；原始來源 https://github.com/uiverse-io/galaxy（Buttons/JaydipPrajapati1910_dry-frog-0.html），作者 JaydipPrajapati1910，授權 MIT。複製時調整：字型改成有網路才載入、改掉對外連結與示意內容裡的私人資料。 -->
+<!--
+  GX10 轉圈重新整理按鈕（Refresh button whose arrow icon spins one turn on press）
+  來源：https://github.com/uiverse-io/galaxy　Buttons/JaydipPrajapati1910_dry-frog-0.html
+  原作者：JaydipPrajapati1910　授權：MIT（Copyright 2023 Uiverse.io）　commit adbd2ad
+  移植：原作是深灰底白字按鈕，取得焦點時箭頭圖示轉一圈（0.5 秒，只在第一次聚焦時轉）。改成狀態卡底部的「重新整理」，
+    每按一次都重轉一圈（JS 換 class 重播），轉完更新時間戳與數字並用 aria-live 播報。
+    深灰 #222／#333 換成 P11 的 --ink／--line-strong，字改繁中；補 focus-visible 外框與 prefers-reduced-motion（不轉，只換數字）。
+  2026-10-09 由子代理移植成純 HTML／CSS（加少量原生 JS）
+-->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>轉圈重新整理按鈕</title><style>
+:root{
+  --bg:#e8ecef;--surface:#f6f8f9;--surface-2:#dde3e7;--ink:#11181f;--ink-2:#435059;--line:#c5cdd4;--line-strong:#2b3945;
+  --accent:#006666;--on-accent:#ffffff;--accent-soft:#d7eeec;
+  --c1:#006666;--c2:#845600;--c3:#2b5c96;--c4:#664990;--c1-soft:#d7eeec;--c2-soft:#f7ead0;--c3-soft:#dde7f3;--c4-soft:#e9e2f3;
+  --ok:#1b6b3d;--warn:#845600;--bad:#b3261e;--ok-soft:#d9efe1;--warn-soft:#f7ead0;--bad-soft:#f8dedb;--answer:#b3261e;--hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--bg);color:var(--ink);font:14px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.wrap{width:min(400px,100%)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.hd{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.hd b{font-size:15px}
+.t{font-size:12px;color:var(--ink-2)}
+.num{font-family:"Cascadia Mono",Consolas,"SFMono-Regular",Menlo,monospace;font-variant-numeric:tabular-nums}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);margin:0;padding:14px 16px;gap:8px}
+.kv div{min-width:0}
+.kv dt{font-size:12px;color:var(--ink-2)}
+.kv dd{margin:0;font-size:24px;font-weight:700;line-height:1.3}
+.kv dd.warn{color:var(--warn)}
+.ft{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px 14px}
+.msg{font-size:12px;color:var(--ok);min-height:1em}
+.cap{margin-top:12px;font-size:12px;color:var(--ink-2);text-align:center}
+
+/* ── 原作按鈕（深灰換成 P11 變數） ── */
+.button{
+  flex:none;color:var(--on-accent);background-color:var(--ink);font:inherit;font-weight:500;
+  border-radius:.5rem;font-size:15px;line-height:2rem;padding:.45rem 1.4rem;
+  text-align:center;display:inline-flex;align-items:center;border:none;cursor:pointer;
+}
+.button:hover{background-color:var(--line-strong)}
+.button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.button svg{display:inline;width:1.3rem;height:1.3rem;margin-right:.6rem;color:var(--on-accent)}
+.button svg.spin{animation:spin_357 .5s linear}
+.button[aria-busy="true"]{cursor:progress}
+@keyframes spin_357{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.button svg.spin{animation:none}}
+</style></head><body><div class="wrap">
+<div class="card">
+  <div class="hd"><b>知識庫狀態</b><span class="t">最後更新 <span class="num" id="t">14:28:05</span></span></div>
+  <dl class="kv">
+    <div><dt>wiki 頁面</dt><dd class="num" id="v1">128</dd></div>
+    <div><dt>未編譯原料</dt><dd class="num warn" id="v2">3</dd></div>
+    <div><dt>斷鏈</dt><dd class="num" id="v3">0</dd></div>
+  </dl>
+  <div class="ft">
+    <span class="msg" id="msg" role="status" aria-live="polite"></span>
+    <button class="button" id="refresh" type="button">
+      <svg viewBox="0 0 16 16" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"></path>
+        <path d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" fill-rule="evenodd"></path>
+      </svg>重新整理
+    </button>
+  </div>
+</div>
+<div class="cap">按「重新整理」，箭頭轉一圈後更新時間與數字</div>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('refresh'),ic=btn.querySelector('svg'),
+      t=document.getElementById('t'),v1=document.getElementById('v1'),v2=document.getElementById('v2'),msg=document.getElementById('msg');
+  var rm=window.matchMedia('(prefers-reduced-motion: reduce)');
+  function two(n){return (n<10?'0':'')+n}
+  btn.addEventListener('click',function(){
+    if(btn.getAttribute('aria-busy')==='true')return;
+    btn.setAttribute('aria-busy','true');msg.textContent='';
+    ic.classList.remove('spin');void ic.getBoundingClientRect();ic.classList.add('spin');
+    setTimeout(function(){
+      var d=new Date(),n=+v2.textContent;
+      t.textContent=two(d.getHours())+':'+two(d.getMinutes())+':'+two(d.getSeconds());
+      if(n>0){v2.textContent=n-1;v1.textContent=+v1.textContent+1;msg.textContent='已更新，編譯了 1 份原料';}
+      else{msg.textContent='已是最新';}
+      v2.classList.toggle('warn',+v2.textContent>0);
+      btn.removeAttribute('aria-busy');
+    },rm.matches?0:500);
+  });
+})();
+</script>
+</body></html>
